@@ -12,3 +12,179 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+
+
+/* NavBar CSS */
+
+
+
+.email-input{
+	font-size: 0.75rem;
+	
+}
+
+.password-input{
+	font-size: .75rem;
+}
+
+.navbar {
+	min-height:3em;
+	position: fixed;
+    width: 100%;
+    top: 0;
+}
+
+.navbar-left{
+
+
+
+}
+
+/* ///////////////////////////////////////////////////////////////////////////////////////////////    */
+
+/* Home CSS */
+
+.bot-section{
+
+}
+
+.check-in-icon{
+
+	font-size: 1em;
+	background-color:white;
+	border:none;
+	padding-left:1.5em;
+
+}
+
+.check-in-input{
+	font-size:1.3em;
+	font-weight: 200;
+    border:none;
+    padding-top: 1.5em;
+	padding-bottom: 1.5em;
+	padding-right:1.5em;
+	padding-left:0.5em;
+	border-radius:0.0001em;
+
+
+}
+.check-in-input:focus{
+  border-color: #ced4da;
+  box-shadow: none;
+
+}
+
+.check-out-icon{
+
+	font-size: 1em;
+	background-color:white;
+	border:none;
+    padding-left:1.5em;
+    	border-radius:0.0001em;
+
+
+
+}
+
+.check-out-input{
+	font-size:1.3em;
+	font-weight: 200;
+    border:none;
+    padding-top: 1.5em;
+	padding-bottom: 1.5em;
+	padding-right:1.5em;
+	padding-left:1.5em;
+	border:none;
+		border-radius:0.0001em;
+
+}
+
+.check-out-input:focus{
+  border-color: #ced4da;
+  box-shadow: none;
+
+}
+
+.home-container{
+	padding:0;
+	margin:0;
+}
+
+.home-image{
+	min-height:30em;
+	min-width:77em;
+	max-height:50em;
+	max-width:87em;
+	
+}
+
+.input-group{
+	padding-top: 0.3em;
+	padding-bottom: 0.3em;
+
+}
+
+.location-input-icon{
+	font-size: 1em;
+	background-color:white;
+	border:none;
+		border-radius:0.0001em;
+
+}
+
+.location-input{
+	font-size:1.3em;
+	font-weight: 200;
+    border:none;
+    padding-top: 1.5em;
+	padding-bottom: 1.5em;
+		border-radius:0.0001em;
+
+
+
+
+	
+}
+
+.location-input:focus{
+  border-color: #ced4da;
+  box-shadow: none;
+
+}
+
+.mid-section{
+
+}
+
+.submit-button{
+
+	padding-left:1em;
+	padding-right:1em;
+	font-size:2em;
+}
+
+
+.top-section{
+	
+	background-image:url("/client/src/Home/Images/homeImage1.jpg");
+	padding:0;
+	margin:0;
+	position:relative;
+	width: 1200px;
+  height:600px;
+
+
+}
+
+.top-header{
+
+	font-size: 3.5rem;
+	color:white;
+	font-family: mallory,"Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-weight: 500;
+	line-height:1.42857;
+	letter-spacing:0;
+
+}
