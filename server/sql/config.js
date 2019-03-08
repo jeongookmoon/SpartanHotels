@@ -1,8 +1,8 @@
 let config = {
     host:'localhost',
-    user:'cmpe165',
-    password:'hotel165',
-    database:'pets'
+    user:'root',
+    password:'password',
+    database:'spartanhotel'
 }
 
 module.exports = config
