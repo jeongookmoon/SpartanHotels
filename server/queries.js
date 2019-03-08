@@ -33,13 +33,16 @@ module.exports = {
                     // return console.error(error.message)
                     reject(error)
                 }
-                console.log(`query result is ${JSON.stringify(results)}`)
-                resolve(results)
+                else{
+                  console.log(`query result is ${JSON.stringify(results)}`)
+                  resolve(results)
+                } 
             })
         })
     },
 
     // Example queries to be used with pets db in config.js
+    // Important: This means pets db must be specified in config.js, else an error will occur when query is run
     sql: `select * from pets where  age>4`,
     sql2: 'select * from pets where  name=?',
 
@@ -49,6 +52,10 @@ module.exports = {
     },
 
     hotel: {
+      /**
+       * Returns [ queryWithQuestionMarks, [placeholders] ]
+       * @param {*} params 
+       */
         search: function (params={}) {
             // Example parameter: { name: "mint", category: "baby", sortByAsc: true,  priceGreaterThan: 2, priceLessThan: 5 }
             /*
@@ -58,7 +65,7 @@ module.exports = {
             */
             // console.log(params)
         
-            const sql = "select * from product"
+            const sql = "select * from hotel"
         
             var conditions = [];
             var values = [];
@@ -66,6 +73,24 @@ module.exports = {
             var sortByClause = "order by name";
             var pageNumber = 0;
             var resultsPerPage = 10;
+
+            // CITY - Exact match
+            if (typeof params.city !== 'undefined' && params.city !== '') {
+              conditions.push("city like ?");
+              values.push("" + params.city + "");
+            }
+            // STATE - Exact match
+            if (typeof params.state !== 'undefined' && params.state !== '') {
+              conditions.push("state like ?");
+              values.push("" + params.state + "");
+            }
+            // ZIP - Exact match
+            if (typeof params.zip !== 'undefined' && params.zip !== '') {
+              conditions.push("zipcode = ?");
+              values.push("" + params.zip + "");
+            }
+
+            
         
             // WHERE/FILTER CLAUSE
             if (typeof params.searchTerm !== 'undefined' && params.searchTerm !== '') {
