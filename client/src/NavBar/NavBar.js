@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Registration from '../Registration/Registration'
 
 
 function NavBar(props) {
@@ -19,9 +19,7 @@ function NavBar(props) {
             |
             </div>
 
-            <div className="col-auto pl-0"> 
-                 REGISTER
-            </div>
+            <Registration />
         </div>
 
 
