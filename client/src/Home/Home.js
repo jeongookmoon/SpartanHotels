@@ -25,18 +25,16 @@ function Home(props) {
 
 		  	
 
-		  		<div className="">
+		  		
 
 
-		  			<div className="">
 		  			  <div className="input-group">
 		  			    <div className="input-group-prepend">
 		  			      <div className="location-input-icon input-group-text"><i className="fa fa-search"></i></div>
 		  			    </div>
 		  			    <input type="location" className="location-input form-control" placeholder="Where are you going?"></input>
 		  			  </div>
-		  			</div>
-		  		</div>
+		  		
 
 		  	{/*INPUT DATE*/} 
 		  		<div className="d-inline-flex flex-fill  ">
@@ -61,6 +59,8 @@ function Home(props) {
 		  			</div>
 		  		</div>
 
+
+
 		  	{/*GUESTS 
 
 		  		<div classNameName="form-inline d-flex justify-content-start">
@@ -82,7 +82,14 @@ function Home(props) {
 		  		*/}
 
 		  		<div className="form-inline d-flex justify-content-start">
-					<input className="p-2 flex-grow-1 bd-highlight"></input>
+					<button className="guest-dropdown p-2 flex-grow-1 bd-highlight btn btn-secondary btn-lg dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					    Guest
+					  </button>
+					  <div className="guest-dropdown dropdown-menu p-2 flex-grow-1 bd-highlight">
+					    <a className="dropdown-item p-2 flex-grow-1 bd-highlight" href="#">Action</a>
+					    <a className="dropdown-item p-2 flex-grow-1 bd-highlight" href="#">Another action</a>
+					    <a className="dropdown-item p-2 flex-grow-1 bd-highlight" href="#">Something else here</a>
+					  </div>
                  	<button className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Search</button>
 		  		</div>
 
@@ -105,6 +112,11 @@ function Home(props) {
 		  			</div>
 		  		</div>
 */}
+
+
+
+
+
 		  	</form>	
 		    
 
