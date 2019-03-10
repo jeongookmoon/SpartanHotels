@@ -98,40 +98,6 @@ router.get('/search/hotels', (req,res)=>{
         }
     )
 
-
-    
-    // Queries.run(countQuery).then(
-    //     results=>{
-    //         console.log("GGG")
-    //         console.log(results)
-    //     },
-    //     error =>{
-    //         console.log(error)
-            
-    //     }
-    // )
-    // Queries.run(fullQuery).then(
-    //     results=>{
-    //         console.log(results)
-    //     },
-    //     error =>{
-    //         console.log(error)
-            
-    //     }
-    // )
-        
-
-    // Queries.run(fullQuery).then(
-    //     results=>{
-    //         res.status(200).send(results)
-    //     },
-    //     error =>{
-    //         console.log(error)
-    //         res.status(400).send("bad")
-    //     }
-    // )
-
-    
 })
 
 

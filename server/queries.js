@@ -209,18 +209,17 @@ module.exports = {
 
             // PUTTING QUERY TOGETHER
             let mainQuery = ''
-            let selectFields = ' distinct hotel.*, min(price) as min_price, max(price) as max_price, count(room_id) as rooms_available '
             if(getCount){
               mainQuery = ` SELECT COUNT( distinct hotel.hotel_id ) as count `
             }else{
               mainQuery = ' SELECT  distinct hotel.*, min(price) as min_price, max(price) as max_price, count(room_id) as rooms_available '
             }
-
             mainQuery = mainQuery +
               `FROM
                   room
                       JOIN
                   hotel ON room.hotel_id = hotel.hotel_id
+              
               WHERE
                   NOT EXISTS(
                     SELECT 
@@ -237,7 +236,19 @@ module.exports = {
           if(getCount){
             query = withClause + mainQuery + whereClause + ';'
           }else{
-            query = withClause + mainQuery + whereClause + groupByClause + sortByClause + paginationClause  + ';'
+            // wrap query inside a select so we can join the results with hotel images
+            query = ` select rh.*, group_concat(url) as images from ( ` + 
+              withClause + mainQuery + whereClause + groupByClause + 
+              `
+                ) as rh
+                join
+                hotel_image
+                on hotel_image.hotel_id = rh.hotel_id
+                group by
+                rh.hotel_id
+              `
+              + sortByClause + paginationClause  + 
+              ';'
           }
           
           // console.log("QUERIES.JS " + query)
