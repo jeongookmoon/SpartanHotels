@@ -51,7 +51,7 @@ router.get('/search/hotels', (req,res)=>{
     let [query, placeholders] = Queries.hotel.search(req.query)
     console.log(placeholders)
     let fullQuery = mysql.format(query,placeholders)
-    console.log(fullQuery)
+    console.log(fullQuery);
 
     // For some reason, trying to reuse query & placeholder values gives error: 
     // Cannot set property '[object Array]' of undefined
@@ -66,12 +66,13 @@ router.get('/search/hotels', (req,res)=>{
     // [query, placeholders] = x
     // Maybe related: https://stackoverflow.com/questions/40539854/node-js-foreach-cannot-read-property-object-array-of-undefined
 
-    
-    [query, placeholders] = Queries.hotel.search(req.query,true)
+    // Definitely: https://stackoverflow.com/questions/40539854/node-js-foreach-cannot-read-property-object-array-of-undefined
+    // make sure the line before a destructuring ends with semicolon
+    // "let [x,y,z] = ..." destructuring probably doesnt need semicolon for line before it bc of keyword 'let'
 
-
     
-    console.log("COUNT" + query)
+    [query, placeholders] = Queries.hotel.search(req.query,true)    
+    // console.log("COUNT" + query)
     let fullQueryForCount = mysql.format(query,placeholders)
     console.log("COUNT" + fullQueryForCount)
 
@@ -79,14 +80,21 @@ router.get('/search/hotels', (req,res)=>{
     Promise.all( [Queries.run(fullQuery), Queries.run(fullQueryForCount)] )
     .then(
         values => {
-            console.log("hello")
             console.log(values)
+            let totalResultCount = values[1][0].count
+            console.log(totalResultCount)
+
+            let results = values[0]
+            // results is an array of hotel info objects
+            // ex [ {hotel A data}, {hotel B data}, {hotel C data} ]
             
+            res.status(200).send({results, totalResultCount})
         }
     )
     .catch(
         error =>{
             console.log(error)
+            res.status(400).send("bad")
         }
     )
 
