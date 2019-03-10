@@ -46,5 +46,78 @@ router.post('/test3', (req,res)=>{
 })
 
 
+router.get('/search/hotels', (req,res)=>{
+    console.log(req.query)
+    let [query, placeholders] = Queries.hotel.search(req.query)
+    console.log(placeholders)
+    let fullQuery = mysql.format(query,placeholders)
+    console.log(fullQuery)
+
+    // For some reason, trying to reuse query & placeholder values
+    // [query, placeholders] = Queries.hotel.search(req.query, true)
+    // doesnt change those variables
+    
+    let [query2, placeholders2] = Queries.hotel.search(req.query,true)
+    console.log("QQQ" + query2)
+    let fullQueryForCount = mysql.format(query2,placeholders2)
+    console.log("ABCDEF" + fullQueryForCount)
+
+
+    Promise.all( [Queries.run(fullQuery), Queries.run(fullQueryForCount)] )
+    .then(
+        values => {
+            console.log("hello")
+            console.log(values)
+            
+        }
+    )
+    .catch(
+        error =>{
+            console.log(error)
+        }
+    )
+
+
+    
+    // Queries.run(countQuery).then(
+    //     results=>{
+    //         console.log("GGG")
+    //         console.log(results)
+    //     },
+    //     error =>{
+    //         console.log(error)
+            
+    //     }
+    // )
+    // Queries.run(fullQuery).then(
+    //     results=>{
+    //         console.log(results)
+    //     },
+    //     error =>{
+    //         console.log(error)
+            
+    //     }
+    // )
+        
+
+    // Queries.run(fullQuery).then(
+    //     results=>{
+    //         res.status(200).send(results)
+    //     },
+    //     error =>{
+    //         console.log(error)
+    //         res.status(400).send("bad")
+    //     }
+    // )
+
+    
+})
+
+
+router.get('/search/hotels', (req,res)=>{
+    console.log(req.query)
+})
+
+
 
 module.exports = router;
