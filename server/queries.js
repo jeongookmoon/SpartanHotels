@@ -168,26 +168,26 @@ module.exports = {
 
             // TODO: SORT BY CLAUSE
             // default 
-            var sortByClause = "order by name"; 
+            var sortByClause = " order by name "; 
             if (typeof params.sortBy !== 'undefined' && params.sortBy !== '') {
               switch (params.sortBy) {
                 case ("Price Ascending"):
-                  sortByClause = "order by price";
+                  sortByClause = " order by price ";
                   break
                 case ("Price Descending"):
-                  sortByClause = "order by price desc"
+                  sortByClause = " order by price desc "
                   break
                 case ("Name Ascending"):
-                sortByClause = "order by name";
+                sortByClause = " order by name ";
                 break
                 case("Name Descending"):
-                sortByClause = "order by name desc";
+                sortByClause = " order by name desc ";
                 break
                 case("Category Ascending"):
-                sortByClause = "order by category";
+                sortByClause = " order by category ";
                 break
                 case("Category Descending"):
-                sortByClause = "order by category desc";
+                sortByClause = " order by category desc ";
                 break
               }
             }
@@ -203,15 +203,17 @@ module.exports = {
               resultsPerPage = params.resultsPerPage;
             }
         
-            var paginationClause = "limit " + resultsPerPage + " offset " + (pageNumber * resultsPerPage)
+
+            var paginationClause = " limit " + resultsPerPage + " offset " + (pageNumber * resultsPerPage) + " "
 
 
             // PUTTING QUERY TOGETHER
             let mainQuery = ''
+            let selectFields = ' distinct hotel.*, min(price) as min_price, max(price) as max_price, count(room_id) as rooms_available '
             if(getCount){
-              mainQuery = ' SELECT COUNT(*) as count '
+              mainQuery = ` SELECT COUNT( distinct hotel.hotel_id ) as count `
             }else{
-              mainQuery = ' SELECT * '
+              mainQuery = ' SELECT  distinct hotel.*, min(price) as min_price, max(price) as max_price, count(room_id) as rooms_available '
             }
 
             mainQuery = mainQuery +
@@ -231,10 +233,11 @@ module.exports = {
                   AND 
               `
           let query = ''
+          let groupByClause = ' group by room.hotel_id '
           if(getCount){
             query = withClause + mainQuery + whereClause + ';'
           }else{
-            query = withClause + mainQuery + whereClause +" " + sortByClause + " " + paginationClause + ';'
+            query = withClause + mainQuery + whereClause + groupByClause + sortByClause + paginationClause  + ';'
           }
           
           // console.log("QUERIES.JS " + query)
