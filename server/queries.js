@@ -237,7 +237,7 @@ module.exports = {
             query = withClause + mainQuery + whereClause +" " + sortByClause + " " + paginationClause + ';'
           }
           
-          console.log("QUERIES.JS " + query)
+          // console.log("QUERIES.JS " + query)
 
           // console.log(values)
         
