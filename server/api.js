@@ -53,14 +53,27 @@ router.get('/search/hotels', (req,res)=>{
     let fullQuery = mysql.format(query,placeholders)
     console.log(fullQuery)
 
-    // For some reason, trying to reuse query & placeholder values
+    // For some reason, trying to reuse query & placeholder values gives error: 
+    // Cannot set property '[object Array]' of undefined
     // [query, placeholders] = Queries.hotel.search(req.query, true)
-    // doesnt change those variables
+
+    // This gives error too: x is not defined
+    // let x = Queries.hotel.search(req.query,true)
+    // [query, placeholders] = x
+
+    // However, this works. Note the semicolon:
+    // let x = Queries.hotel.search(req.query,true);
+    // [query, placeholders] = x
+    // Maybe related: https://stackoverflow.com/questions/40539854/node-js-foreach-cannot-read-property-object-array-of-undefined
+
     
-    let [query2, placeholders2] = Queries.hotel.search(req.query,true)
-    console.log("QQQ" + query2)
-    let fullQueryForCount = mysql.format(query2,placeholders2)
-    console.log("ABCDEF" + fullQueryForCount)
+    [query, placeholders] = Queries.hotel.search(req.query,true)
+
+
+    
+    console.log("COUNT" + query)
+    let fullQueryForCount = mysql.format(query,placeholders)
+    console.log("COUNT" + fullQueryForCount)
 
 
     Promise.all( [Queries.run(fullQuery), Queries.run(fullQueryForCount)] )
