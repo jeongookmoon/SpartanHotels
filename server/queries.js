@@ -82,7 +82,7 @@ module.exports = {
             join hotel
             on room.hotel_id = hotel.hotel_id
             where not
-            exists (select * from rb where rb.room_id = room.room_id )
+            exists (select * from rb where rb.room_id = room.room_id AND rb.status != 'cancelled')
             ;
             */
             
@@ -209,7 +209,7 @@ module.exports = {
             // PUTTING QUERY TOGETHER
             let mainQuery = ''
             if(getCount){
-              mainQuery = ' SELECT COUNT(*) '
+              mainQuery = ' SELECT COUNT(*) as count '
             }else{
               mainQuery = ' SELECT * '
             }
