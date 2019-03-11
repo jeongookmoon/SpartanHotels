@@ -39,13 +39,12 @@ module.exports = {
         })
     },
 
-    // Example queries to be used with pets db in config.js
-    sql: `select * from pets where  age>4`,
-    sql2: 'select * from pets where  name=?',
-
-
     user: {
-        create:"sql statement here"
+        checkEmailExists: 'select * from user where email=?',
+        checkUserNameExists: 'select user_id from spartanhotel.user where name=?',
+        create: 'insert into spartanhotel.user (user_id,name,password,email) values (null,?,?,?)',
+        session: 'select LAST_INSERT_ID() as user_id ',
+        authenticate: 'select user_id, password from spartanhotel.user where email=?'
     },
 
     hotel: {
