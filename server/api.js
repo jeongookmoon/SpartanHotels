@@ -332,6 +332,33 @@ router.post('/reservations/modification', (req,res)=>{
 })
 
 
+router.get('/reservations/check', (req,res)=>{
+    console.log(req.query)
+    let query = Queries.booking.isBookable(req.query)
+    Queries.run(query)
+    .then(
+        results =>{
+            let [bookable] = Object.values(results[0]);
+            console.log(bookable)
+            
+            if(bookable){
+                console.log(true)
+                res.status(200).send("This room is bookable during the selected timespan")
+            }
+            else{
+                res.status(200).send("This room is not bookable during the selected timespan")
+            }
+        }
+    )
+    .catch(
+        error =>{
+            console.log(error)
+            res.status(400).send("bad")
+        }
+    )
+
+
+})
 
 
 
