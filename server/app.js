@@ -7,9 +7,27 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var apiRouter = require('./api.js')
+const session = require('express-session')
+const MySQLStore = require('express-mysql-session')(session)
+const config = require('./sql/config.js')
+const passport = require('./auth.js')
 
 var app = express();
 
+const sessionStore = new MySQLStore(config)
+
+app.use(session({
+  secret: 'keybfsdoardafsa cat',
+  store: sessionStore,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false }
+   // if https need set true
+ }))
+
+ app.use(passport.initialize())
+ app.use(passport.session())
+ 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -39,5 +57,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
 
 module.exports = app;
