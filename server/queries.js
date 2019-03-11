@@ -286,6 +286,57 @@ module.exports = {
     book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, room_id, total_price, cancellation_charge, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',
     cancel: 'UPDATE booking SET status="cancelled" WHERE booking_id=?',
     modify: 'UPDATE booking SET room_id=?, date_in=?, date_out=? WHERE booking_id=?'
+
+      /**
+       * 
+       * @param {*} params 
+       * @returns {*} 
+       * 
+       * This returns a query, that when run, will:
+       * 
+       * Return 'bookable', which is a number acting as a boolean
+       * To access bookable, assuming result is returned as 'results',
+       * Use:
+       * let [bookable] = Object.values(results[0]);
+       * 
+       * Else, returns an error message
+       * 
+       
+       */
+      isBookable: function(params = {}){
+        let query = `
+        SELECT 
+          NOT EXISTS( SELECT 
+                  *
+              FROM
+                  spartanhotel.booking B
+                      JOIN
+                  spartanhotel.room R ON B.room_id = R.room_id
+              WHERE
+                  date_in < ?
+                      AND date_out > ?
+                      AND status != 'cancelled'
+                      AND R.room_id = ?)
+        ;
+        
+        `
+
+        let values = [];
+        if (typeof params.date_out !== 'undefined' && params.date_out !== '') {
+          values.push(params.date_out)
+        }
+        if (typeof params.date_in !== 'undefined' && params.date_in !== '') {
+          values.push(params.date_in)
+        }
+        if (typeof params.room_id !== 'undefined' && params.room_id !== '') {
+          values.push(params.room_id)
+        }
+        let sql = mysql.format(query, values)
+        console.log(sql)
+
+        return sql
+      }
+
     },
 
     rewards: {
