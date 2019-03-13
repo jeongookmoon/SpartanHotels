@@ -26,7 +26,7 @@ router.post('/register', (req,res)=>{
           if (error.errno == 1062) {
             res.setHeader("Content-Type","text/plain");
             res.statusCode = 400
-            res.write("This email already registered")
+            res.write("This email is already registered")
           }
 
         //res.end()
@@ -35,7 +35,8 @@ router.post('/register', (req,res)=>{
         })
 
        Queries.run(q2).then((results) => {
-             const user_id = results[0].user_id;
+             //const user_id = results[0];
+             var user_id = {user_id: results[0].user_id};
              console.log(user_id);
 
              if(user_id === 0) {
@@ -45,12 +46,14 @@ router.post('/register', (req,res)=>{
 
       //Currently not working. Cannot Auto-login when register account.
       //For some reason, session is not being created when calling req.login
+            
              req.login(user_id, function(err) {
-                 console.log(req.session)
+                 console.log(req.session.passport.user)
                  console.log("Session successful. User logged in.")
-                 res.end()
+                 res.end("Login Successful")
                  });
              }
+             
 
         },
         (error) => {
@@ -63,6 +66,7 @@ router.post('/register', (req,res)=>{
 
 router.post('/login', passport.authenticate('local'), (req,res) => {
     res.end("Successful login.")
+    console.log(req.session.passport.user)
 })
 
 /* Example of receiving post request, creating a query with escaping, and sending that response
@@ -77,13 +81,30 @@ router.post('/login', passport.authenticate('local'), (req,res) => {
 router.get('/logout', authenticationMiddleware(), (req,res)=>{
     req.logout()
     console.log(req.session.cookie)
-
-    req.session.destroy(() => {
-        res.clearCookie('connect.sid')
-        res.redirect('/')
+    
+    res.clearCookie('connect.sid')
+    req.session.destroy(function (err) {
+        
+        //res.redirect('/')
         console.log("Session is deleted from the database and on the client")
     })
     res.end('Logout successful')
+    
+})
+
+router.get('/profile', authenticationMiddleware(), (req, res) =>{
+    console.log(req.session.passport.user.user_id)
+    const profile = req.session.passport.user.user_id
+    let q1 = mysql.format(Queries.user.profile, [profile])
+
+    Queries.run(q1).then((results) => {
+        console.log(results)
+        res.status(200).send(results)
+        console.log("Profile can be viewed.")
+    },
+    (error) => {
+        console.log("Cannot access profile.")
+    })
 })
 
 //Function is used to allow certain users to access features

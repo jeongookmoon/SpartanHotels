@@ -40,6 +40,7 @@ module.exports = {
     },
 
     user: {
+        profile: 'select name, email, reward from spartanhotel.user where user_id=?',
         checkEmailExists: 'select * from user where email=?',
         checkUserNameExists: 'select user_id from spartanhotel.user where name=?',
         create: 'insert into spartanhotel.user (user_id,name,password,email) values (null,?,?,?)',

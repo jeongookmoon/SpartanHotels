@@ -26,7 +26,7 @@ passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'passwor
           const hash = result[0].password.toString();
           bcrypt.compare(password, hash, function(err, response) {
             if(response === true) {
-              return done(null, {user_id: result[0].id});
+              return done(null, {user_id: result[0].user_id});
             }
             else {
               return done(null, false);
