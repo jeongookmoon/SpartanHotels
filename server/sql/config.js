@@ -1,7 +1,7 @@
 let config = {
     host:'localhost',
-    user:'root',
-    password:'password',
+    user:'cmpe165',
+    password:'hotel165',
     database:'spartanhotel'
 }
 
