@@ -205,10 +205,14 @@ code {
 /* HotelSearch CSS */
 
 
+
+
  .hotel-search-columns{
  	padding: 0px 0px 0px 0px;
  	width:100%;
  	height:100%;
+ 	margin-right: 0px;
+ 	margin-left:0px;
 
  }
  .hotel-search-container{
@@ -217,11 +221,57 @@ code {
  	height:100%;
  }
 
+ .hotel-search-item-row{
+ 	display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    text-align:center;
+
+ }
+
+ .hotel-search-item-button{
+ 	padding-left: 1em;
+    padding-right: 1em;
+    font-size: 1.3em;
+ 	color: #fff;
+    background-color: #54B2E8;
+    border-color: #54B2E8;
+ }
+
+ .hotel-search-item-header{
+ 	font-size: 1.3em;
+ }
+
+ .hotel-search-item-name{
+
+ }
+
+ .hotel-search-item-number{
+
+ }
+
+ .hotel-search-item-min-price{
+ 	color:#d32f2f;
+ 	font-size: 1.9em;
+ }
+
+ .hotel-search-item-rating{
+ 	padding-top:0.3em;
+ 	padding-bottom:0.3em;
+ }
+
+ .hotel-search-item-rating-checked{
+ 	color: #FEA642;
+ }
+
  .hotel-search-first-column{
  	padding-right:0px;
- 	min-width:10em;
+ 	min-width:12em;
  	width:100%;
  	height:100%;
+ 	background-color: #FCFDFE;
 
  }
 
@@ -229,31 +279,62 @@ code {
 
  }
 
- .hotel-search-second-column{
+ .hotel-search-row{
 
- 	min-height:39em;
- 	max-height:30em;
- 	height:100%;
- 	width:100%;
  }
- .hotel-search-table{
- 	width:100%;
- 	height:100%;
- 	border-spacing: 10px;
-    border-collapse: separate;
+
+ .hotel-search-row-image{
+ 	max-width:10em;
+ 	max-height:10em;
  	
  }
 
+ .hotel-search-second-column{
+
+ 	min-height:39em;
+ 	max-height:38.9em;
+ 	height:100%;
+ 	width:100%;
+ 	padding-right: 0px;
+ 	padding-left:0px;
+ }
+
+ .hotel-search-table{
+ 	width:100%;
+ 	height:100%;
+ 	padding-left:1em;
+ 	padding-right:1em;
+ 	border-spacing: 0 10px;
+ 	padding-top:10px;
+    border-collapse: separate;
+    table-layout:fixed;
+
+ }
+
  .hotel-search-table th{
- 	padding: 1.5rem;
     border: 0px solid #000;
+  	width:50%;
+  	padding-top:2rem;
+  	padding-bottom: 2rem;
+  	vertical-align: middle;
  }
 
   .hotel-search-table td {
-  	padding: 1.5rem;
-  	padding-bottom: 3rem;
+  	padding-top:2rem;
+  	padding-bottom: 2rem;
     border-top: 0px solid #000;
+    width:100%;
 
 }
+
+  .hotel-search-table-container{
+  	height:100%;
+  	width:100%;
+  	overflow-y: scroll;
+  	overflow-x:hidden;
+  	min-height:38em;
+ 	max-height:38em;
+ 	padding-right:10px;
+  }
 
  
