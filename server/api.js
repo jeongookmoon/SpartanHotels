@@ -34,14 +34,20 @@ router.post('/register', (req,res)=>{
           if (error.errno == 1062) {
             res.setHeader("Content-Type","text/plain");
             res.statusCode = 400
+<<<<<<< HEAD
             res.write("This email is already registered")
             res.end()
+=======
+            res.end();
+            //res.sendStatus(400).send(error)
+>>>>>>> integration on registration/login, updated login froms
           }
 
         res.end()
         return
 
         })
+<<<<<<< HEAD
        
        /**
        Queries.run(q2).then((results) => {
@@ -63,15 +69,54 @@ router.post('/register', (req,res)=>{
             console.log("Session Unsuccessful")
         })
        **/
+=======
+
+    //    Queries.run(q2).then((results) => {
+    //          //const user_id = results[0];
+    //          var user_id = {user_id: results[0].user_id};
+    //          console.log(user_id);
+
+    //          if(user_id === 0) {
+    //              console.log("Session unsuccessful")
+    //          }
+    //          else {
+
+    //   //Currently not working. Cannot Auto-login when register account.
+    //   //For some reason, session is not being created when calling req.login
+            
+    //          req.login(user_id, function(err) {
+    //              console.log(req.session.passport.user)
+    //              console.log("Session successful. User logged in.")
+    //              res.end("Login Successful")
+    //              });
+    //          }
+             
+
+    //     },
+    //     (error) => {
+    //         console.log("Session Unsuccessful")
+    //     })
+>>>>>>> integration on registration/login, updated login froms
         
     })
     
 })
 
 router.post('/login', passport.authenticate('local'), (req,res) => {
-    res.end("Successful login.")
+    console.log("req session passport result is ")
     console.log(req.session.passport.user)
+<<<<<<< HEAD
     console.log(req.session)
+=======
+    if(req.session.passport.user) {
+        res.end("S")
+    }
+    res.end("F")
+    
+    //res.sendStatus(200).end("Successful login.")
+    //res.end("Successful login.")
+    //console.log(req.session.passport.user)
+>>>>>>> integration on registration/login, updated login froms
 })
 
 /* Example of receiving post request, creating a query with escaping, and sending that response

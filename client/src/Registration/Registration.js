@@ -7,7 +7,7 @@ import {
   Form, FormGroup, Label, Input, Row, Col
 } from 'reactstrap'
 
-import { registerPost } from '../Utility/ReigstrationLoginFunction'
+import { registerPost, loginPost } from '../Utility/ReigstrationLoginFunction'
 
 class Registration extends React.Component {
   constructor() {
@@ -54,6 +54,7 @@ class Registration extends React.Component {
   // when clicking register
   register = (event) => {
     console.log('Register clicked')
+    event.preventDefault()
     if (this.validate()) {
       const temp_fields = {
         firstname: this.state.fields.firstname,
@@ -62,18 +63,35 @@ class Registration extends React.Component {
         password: this.state.fields.password
       }
 
-      let empty_fields = {}
-      empty_fields["email"] = ""
-      empty_fields["firstname"] = ""
-      empty_fields["lastname"] = ""
-      empty_fields["password"] = ""
-      empty_fields["repassword"] = ""
-      // empty fields states
-      this.setState({ fields: empty_fields })
+      // let empty_fields = {}
+      // empty_fields["email"] = ""
+      // empty_fields["firstname"] = ""
+      // empty_fields["lastname"] = ""
+      // empty_fields["password"] = ""
+      // empty_fields["repassword"] = ""
+      // // empty fields states
+      // this.setState({ fields: empty_fields })
 
       registerPost(temp_fields).then(response => {
-        console.log(response)
-        this.props.history.push(`/`)
+        console.log("registerPost got excuted")
+        if(response === 200) {
+          console.log("expected reponse 200 (registration success): ")
+          console.log(response)
+          loginPost(temp_fields).then(loginresponse => {
+            if(loginresponse === "S") {
+              console.log("login success")
+            } else if (loginresponse === "F") {
+              console.log("login fail")
+            }
+            this.props.history.push(`/`)
+        })
+        } else if (response === 400) {
+          console.log("expected reponse 400 (email already exists): ")
+          console.log(response)
+          this.props.history.push(`/`)
+        }
+        
+        
       })
     }
   }
