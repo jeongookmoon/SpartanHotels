@@ -14,11 +14,19 @@ router.post('/register', (req,res)=>{
     const name = req.body.firstname + " " + req.body.lastname
 
     let q1 = mysql.format(Queries.user.create, [name, hash, req.body.email])
-    let q2 = mysql.format(Queries.user.session,[])
+   // let q2 = mysql.format(Queries.user.session,[])
 
        Queries.run(q1).then((results) =>{
-            console.log("User is created.")
-            res.status(200).send(results)
+            console.log("User is created.") 
+            let insertID = results.insertId
+            
+            req.login(insertID, function(err) {
+                 console.log(req.session)
+                 console.log("Session status: " + req.isAuthenticated())
+                 console.log("Session successful. User logged in.")
+                 res.end("Login Successful")
+                 });
+            //res.status(200).send(results)
         },
         (error) => {
           console.log("User could not be created.")
@@ -27,38 +35,34 @@ router.post('/register', (req,res)=>{
             res.setHeader("Content-Type","text/plain");
             res.statusCode = 400
             res.write("This email is already registered")
+            res.end()
           }
 
-        //res.end()
-        //return
+        res.end()
+        return
 
         })
-
+       
+       /**
        Queries.run(q2).then((results) => {
              //const user_id = results[0];
-             var user_id = {user_id: results[0].user_id};
+             var user_id = results[0]
              console.log(user_id);
 
-             if(user_id === 0) {
+             if(results[0].user_id === 0) {
                  console.log("Session unsuccessful")
              }
              else {
 
       //Currently not working. Cannot Auto-login when register account.
       //For some reason, session is not being created when calling req.login
-            
-             req.login(user_id, function(err) {
-                 console.log(req.session.passport.user)
-                 console.log("Session successful. User logged in.")
-                 res.end("Login Successful")
-                 });
              }
-             
 
         },
         (error) => {
             console.log("Session Unsuccessful")
         })
+       **/
         
     })
     
@@ -67,6 +71,7 @@ router.post('/register', (req,res)=>{
 router.post('/login', passport.authenticate('local'), (req,res) => {
     res.end("Successful login.")
     console.log(req.session.passport.user)
+    console.log(req.session)
 })
 
 /* Example of receiving post request, creating a query with escaping, and sending that response
