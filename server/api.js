@@ -43,61 +43,71 @@ router.post('/test3', (req,res)=>{
         }
     )
     
-})
+}),
 
 //Make a reservation 
-router.post('/reservation', (req, res)=>{
-    let response = {
-        status: 400
-    }
-    
+router.post('/reservations', (req, res)=>{
+    console.log(req.body);
+    let query = mysql.format(Queries.booking.book, [req.body.user_id, req.body.room_id, req.body.total_price, req.body.cancellation_charge, req.body.date_in, req.body.date_out, req.body.status])
+    console.log(query)
 
-    try{
-        console("In api.js/reservation");
-        console.log("Hotel Name" + Queries.hotel);
+    Queries.run(query).then(
+        results =>{
+            res.status(200).send(results)
+        },
+        error =>{
+            res.status(400).send(error)
+        }
+    )
 
-        let insertReservation = "";
-        let date_today = new Date();
+    // try{
+    //     // console("In api.js/reservation");
+    //     // console.log("Hotel Name" + Queries.hotel);
 
-        let month = today_date.getUTCMonth() + 1;
-        let day = today_date.getUTCDay();
-        let year = today_date.getUTCFullYear();
+    //     // let insertReservation = "";
+    //     // let today_date = new Date();
 
-        insertReservation = "insert into booking (book_id, user_id, room_id, total_price, cancellation_charge, date_in, date_out, status)" +
-        "values ('"+ req.book_id +"','"+ req.user_id +"','"+ req.room_id +"','"+ req.total_price +"','"+ req.cancellation_charge +"','"+ req.date_in +"','"+ req.date_out +"','"+ req.status +"');";
+    //     // let month = today_date.getUTCMonth() + 1;
+    //     // let day = today_date.getUTCDay();
+    //     // let year = today_date.getUTCFullYear();
 
-        console.log("booking - SQL Query " + insertReservation);
+    //     insertReservation = `INSERT INTO booking (book_id, user_id, room_id, total_price, cancellation_charge, date_in, date_out, status)
+    //                          VALUES ('9','5','10','80','8','2019-3-21','2019-3-22','booked')`;
+    //     Queries.run(insertReservation).then(
+    //         results =>{
+    //             res.status(200).send(results)
+    //         },
+    //         error =>{
+    //             res.status(400).send(error)
+    //         }
+    //     );
+    //     connect.end;
+    //     // // console.log("booking - SQL Query " + insertReservation);
 
-        mysql.insertData(function (error, result){
-            if(error) {
-                console.log(error);
-                res(error, null);
-            }
-            else
-            {
-                console.log(result);
-                if(result.affectedRows === 1){
-                    response.status = 200;
-                    response.message = "Hotel Booked Successfully on" + month + "/" + day + "/" + year;
-                    res(null, response);
-                }
-                else
-                {
-                    response.status = 400;
-                    response.message = "Hotel Booked Failed";
-                    res(null, response);
-                }
-            }
-        }, insertReservation);
+    //     // mysql.exports(function (error, result){
+    //     //     if(error) {
+    //     //         console.log(error);
+    //     //         res.status(200).send("Error happen, please entry again!");
+    //     //     }
+    //     //     else
+    //     //     {
+    //     //         console.log(result);
+    //     //         if(result.affectedRows === 1){
+    //     //             res.status(200).send("Hotel Booked Successfully on" + month + "/" + day + "/" + year);
+    //     //         }
+    //     //         else
+    //     //         {
+    //     //             res.status(200).send("Hotel Booked Failed1");
+    //     //         }
+    //     //     }
+    //     // }, insertReservation);
 
-    }
-    catch (e){
-        console.log(e);
-        error = e;
-        response.status = 401;
-        response.message = "Hotel Booked Failed";
-        res(error, response);
-    }
+    // }
+    // catch (e){
+    //     console.log(e);
+    //     error = e;
+    //     res.status(200).send("Hotel Booked Failed2");
+    // }
 })
 
 //validation to ensure a room cannot be double-booked

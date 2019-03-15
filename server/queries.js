@@ -128,7 +128,7 @@ module.exports = {
         
         
             console.log(whereClause + " " + sortByClause + " " + paginationClause)
-            console.log(values)
+            consnole.log(values)
         
             return [sql + " where " + whereClause + " " + sortByClause + " " + paginationClause, values]
         
@@ -141,7 +141,7 @@ module.exports = {
     },
 
     booking: {
-
+    book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, room_id, total_price, cancellation_charge, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)'
     },
 
 
