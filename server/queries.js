@@ -33,13 +33,16 @@ module.exports = {
                     // return console.error(error.message)
                     reject(error)
                 }
-                console.log(`query result is ${JSON.stringify(results)}`)
-                resolve(results)
+                else{
+                  console.log(`query result is ${JSON.stringify(results)}`)
+                  resolve(results)
+                } 
             })
         })
     },
 
     // Example queries to be used with pets db in config.js
+    // Important: This means pets db must be specified in config.js, else an error will occur when query is run
     sql: `select * from pets where  age>4`,
     sql2: 'select * from pets where  name=?',
 
@@ -49,25 +52,98 @@ module.exports = {
     },
 
     hotel: {
-        search: function (params={}) {
+      /**
+       * Returns [ queryWithQuestionMarks, [placeholders] ]
+       * @param {*} params 
+       * Required: date_in, date_out
+       * Optional: city, state, zip, pageNumber, resultsPerPage
+       * @param {boolean} getCount 
+       * When true, the function will only return COUNT(*) of all possible results w/o regard to pagination parameters
+       * Default: false
+       */
+        search: function (params={}, getCount=false) {
             // Example parameter: { name: "mint", category: "baby", sortByAsc: true,  priceGreaterThan: 2, priceLessThan: 5 }
             /*
               from StackOverflow, Jordan Running,
               https://stackoverflow.com/questions/31822891/how-to-build-dynamic-query-by-binding-parameters-in-node-js-sql#31823325
               
             */
-            // console.log(params)
+
+
+            /* USING THIS
+            Example of Query to see what is available:
+
+            with 
+            rb as (SELECT  B.*, R.hotel_id, R.room_number, R.price, R.bed_type, R.bed_number 
+            from spartanhotel.booking B join spartanhotel.room R 
+            on B.room_id = R.room_id where date_in < '2019-03-21' and date_out > '2019-03-08')
+            
+            select * from room 
+            join hotel
+            on room.hotel_id = hotel.hotel_id
+            where not
+            exists (select * from rb where rb.room_id = room.room_id AND rb.status != 'cancelled')
+            ;
+            */
+            
+            /* NOT USING THIS, BUT HERE FOR REFERENCE
+            Example of query to see which rooms not available:
+
+            SELECT * FROM 
+            ( select  B.*, R.hotel_id, R.room_number, R.price, R.bed_type, R.bed_number 
+            from spartanhotel.booking B join spartanhotel.room R 
+            on B.room_id = R.room_id where date_in < '2019-03-05' and date_out > '2019-03-02' and status != 'cancelled' ) as BR
+            ;
+            */
+
         
-            const sql = "select * from product"
         
+            // 'With clause' sets up date checking
+            var dateConditions = []
+            let tempTableComponent = `with 
+            rb as (SELECT  B.*, R.hotel_id, R.room_number, R.price, R.bed_type, R.bed_number 
+            from spartanhotel.booking B join spartanhotel.room R 
+            on B.room_id = R.room_id `
+
+             // Date Conditions
+             if (typeof params.date_out !== 'undefined' && params.date_out !== '') {
+              dateConditions.push(params.date_out)
+            }
+             if (typeof params.date_in !== 'undefined' && params.date_in !== '') {
+              dateConditions.push(params.date_in)
+            }
+                        
+            let withClause = mysql.format(tempTableComponent + "where date_in < ? and date_out > ?) ", dateConditions)
+
+
+            // All other query parameters
             var conditions = [];
             var values = [];
-            // default values
-            var sortByClause = "order by name";
-            var pageNumber = 0;
-            var resultsPerPage = 10;
-        
-            // WHERE/FILTER CLAUSE
+            
+
+
+            // CITY - Exact match
+            if (typeof params.city !== 'undefined' && params.city !== '') {
+              conditions.push("city like ?");
+              values.push("" + params.city + "");
+            }
+            // STATE - Exact match
+            if (typeof params.state !== 'undefined' && params.state !== '') {
+              conditions.push("state like ?");
+              values.push("" + params.state + "");
+            }
+            // ZIP - Exact match
+            if (typeof params.zip !== 'undefined' && params.zip !== '') {
+              conditions.push("zipcode = ?");
+              values.push("" + params.zip + "");
+            }
+
+
+
+            
+            
+
+            // TODO: WHERE/FILTER CLAUSE
             if (typeof params.searchTerm !== 'undefined' && params.searchTerm !== '') {
               conditions.push("name like ?");
               values.push("%" + params.searchTerm + "%");
@@ -90,31 +166,36 @@ module.exports = {
         
             var whereClause = conditions.length ? conditions.join(' AND ') : '1'
 
-            // SORT BY CLAUSE
+            // TODO: SORT BY CLAUSE
+            // default 
+            var sortByClause = " order by name "; 
             if (typeof params.sortBy !== 'undefined' && params.sortBy !== '') {
               switch (params.sortBy) {
                 case ("Price Ascending"):
-                  sortByClause = "order by price";
+                  sortByClause = " order by price ";
                   break
                 case ("Price Descending"):
-                  sortByClause = "order by price desc"
+                  sortByClause = " order by price desc "
                   break
                 case ("Name Ascending"):
-                sortByClause = "order by name";
+                sortByClause = " order by name ";
                 break
                 case("Name Descending"):
-                sortByClause = "order by name desc";
+                sortByClause = " order by name desc ";
                 break
                 case("Category Ascending"):
-                sortByClause = "order by category";
+                sortByClause = " order by category ";
                 break
                 case("Category Descending"):
-                sortByClause = "order by category desc";
+                sortByClause = " order by category desc ";
                 break
               }
             }
         
             // PAGINATION
+            var pageNumber = 0;
+            var resultsPerPage = 10;
+
             if (typeof params.pageNumber !== 'undefined' && params.pageNumber !== '') {
               pageNumber = params.pageNumber;
             }
@@ -122,15 +203,59 @@ module.exports = {
               resultsPerPage = params.resultsPerPage;
             }
         
-            var paginationClause = "limit " + resultsPerPage + " offset " + (pageNumber * resultsPerPage)
-        
+
+            var paginationClause = " limit " + resultsPerPage + " offset " + (pageNumber * resultsPerPage) + " "
+
+
             // PUTTING QUERY TOGETHER
+            let mainQuery = ''
+            if(getCount){
+              mainQuery = ` SELECT COUNT( distinct hotel.hotel_id ) as count `
+            }else{
+              mainQuery = ' SELECT  distinct hotel.*, min(price) as min_price, max(price) as max_price, count(room_id) as rooms_available '
+            }
+            mainQuery = mainQuery +
+              `FROM
+                  room
+                      JOIN
+                  hotel ON room.hotel_id = hotel.hotel_id
+              
+              WHERE
+                  NOT EXISTS(
+                    SELECT 
+                          *
+                      FROM
+                          rb
+                      WHERE
+                          rb.room_id = room.room_id
+                              AND rb.status != 'cancelled')
+                  AND 
+              `
+          let query = ''
+          let groupByClause = ' group by room.hotel_id '
+          if(getCount){
+            query = withClause + mainQuery + whereClause + ';'
+          }else{
+            // wrap query inside a select so we can join the results with hotel images
+            query = ` select rh.*, group_concat(url) as images from ( ` + 
+              withClause + mainQuery + whereClause + groupByClause + 
+              `
+                ) as rh
+                join
+                hotel_image
+                on hotel_image.hotel_id = rh.hotel_id
+                group by
+                rh.hotel_id
+              `
+              + sortByClause + paginationClause  + 
+              ';'
+          }
+          
+          // console.log("QUERIES.JS " + query)
+
+          // console.log(values)
         
-        
-            console.log(whereClause + " " + sortByClause + " " + paginationClause)
-            console.log(values)
-        
-            return [sql + " where " + whereClause + " " + sortByClause + " " + paginationClause, values]
+          return [query, values]
         
         },
 
