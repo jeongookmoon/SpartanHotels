@@ -4,6 +4,7 @@ CMPE 165 Project
 ## Client
 Inside /client,  
     `npm install` to install dependencies
+    
     'npm install --save google-maps-react' to install map dependencies
     `npm start` to start react on port 3000  
 http://localhost:3000/ should automatically open up
