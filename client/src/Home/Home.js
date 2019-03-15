@@ -1,5 +1,7 @@
 import React from 'react';
 import homeImage from './Images/homeImage2.jpg';
+import { Link } from 'react-router-dom';
+
 
 var topSectionStyle = {
     marginTop:"4.5em",
@@ -10,7 +12,18 @@ var topSectionStyle = {
   backgroundImage: `url(${homeImage})`
 };
 
-function Home(props) {
+
+
+class Home extends React.Component {
+
+	handleSubmit = () => {
+  this.props.history.push('/moneyform');
+}
+  render() {
+
+
+	
+
   return (
 
   	<div className="home-container col-auto">
@@ -61,7 +74,7 @@ function Home(props) {
 
 
 
-		  	{/*GUESTS 
+{/*GUESTS 
 
 		  		<div classNameName="form-inline d-flex justify-content-start">
 
@@ -79,7 +92,7 @@ function Home(props) {
 			  		  </div>
 			  		</div>
 		  		</div>
-		  		*/}
+*/}
 
 		  		<div className="form-inline d-flex justify-content-start">
 					<button className="guest-dropdown p-2 flex-grow-1 bd-highlight btn btn-secondary btn-lg dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -90,6 +103,7 @@ function Home(props) {
 					    <a className="dropdown-item p-2 flex-grow-1 bd-highlight" href="#">Another action</a>
 					    <a className="dropdown-item p-2 flex-grow-1 bd-highlight" href="#">Something else here</a>
 					  </div>
+					
                  	<button className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Search</button>
 		  		</div>
 
@@ -137,5 +151,5 @@ function Home(props) {
 
 
 }
-
+}
 export default Home;
