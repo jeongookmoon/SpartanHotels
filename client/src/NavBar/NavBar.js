@@ -43,6 +43,10 @@ class NavBar extends React.Component {
       } else if (response === "F") {
         console.log("login fail")
       }
+      let empty_fields = {}
+      empty_fields["email"] = ""
+      empty_fields["password"] = ""
+      this.setState({ loginfields: empty_fields })
       this.props.history.push(`/`)
     })
   }
