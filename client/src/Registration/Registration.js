@@ -73,25 +73,24 @@ class Registration extends React.Component {
       // this.setState({ fields: empty_fields })
 
       registerPost(temp_fields).then(response => {
-        console.log("registerPost got excuted")
+        console.log("status number(200 success, else fail): ")
         if(response === 200) {
-          console.log("expected reponse 200 (registration success): ")
+          console.log("expected reponse 200 (registraion and login success): ")
           console.log(response)
-          loginPost(temp_fields).then(loginresponse => {
-            if(loginresponse === "S") {
-              console.log("login success")
-            } else if (loginresponse === "F") {
-              console.log("login fail")
-            }
-            this.props.history.push(`/`)
-        })
+          this.props.history.push(`/`)
+        //   loginPost(temp_fields).then(loginresponse => {
+        //     if(loginresponse === "S") {
+        //       console.log("login success")
+        //     } else if (loginresponse === "F") {
+        //       console.log("login fail")
+        //     }
+        //     this.props.history.push(`/`)
+        // })
         } else if (response === 400) {
           console.log("expected reponse 400 (email already exists): ")
           console.log(response)
           this.props.history.push(`/`)
-        }
-        
-        
+        }      
       })
     }
   }
