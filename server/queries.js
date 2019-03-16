@@ -48,7 +48,12 @@ module.exports = {
 
 
     user: {
-        create:"sql statement here"
+        profile: 'select name, email, reward from spartanhotel.user where user_id=?',
+        checkEmailExists: 'select * from user where email=?',
+        checkUserNameExists: 'select user_id from spartanhotel.user where name=?',
+        create: 'insert into spartanhotel.user (user_id,name,password,email) values (null,?,?,?)',
+        session: 'select LAST_INSERT_ID() as user_id ',
+        authenticate: 'select user_id, password from spartanhotel.user where email=?'
     },
 
     hotel: {
