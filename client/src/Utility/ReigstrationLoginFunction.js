@@ -14,6 +14,9 @@ export const registerPost = temp_fields => {
         email: temp_fields.email,
         password: temp_fields.password,
     }).then(response => {
+        if(response.status === 200) {
+            localStorage.setItem('accesstoken', response.data)
+        }
         return response.status
     }).catch(error => {
         //console.log(error.response.status)
