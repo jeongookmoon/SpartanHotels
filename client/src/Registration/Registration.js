@@ -1,10 +1,13 @@
-import React from 'react';
+import React from 'react'
+import { withRouter } from 'react-router-dom'
 
 // import neccessary components
 import {
   Button, Modal, ModalHeader, ModalBody, ModalFooter,
   Form, FormGroup, Label, Input, Row, Col
-} from 'reactstrap';
+} from 'reactstrap'
+
+import { registerPost, loginPost } from '../Utility/ReigstrationLoginFunction'
 
 class Registration extends React.Component {
   constructor() {
@@ -36,7 +39,7 @@ class Registration extends React.Component {
   updateFields(event) {
     let temp_fields = this.state.fields;
     temp_fields[event.target.name] = event.target.value;
-    this.setState({ fields:temp_fields });
+    this.setState({ fields: temp_fields });
   }
 
   // toggle modal
@@ -51,14 +54,44 @@ class Registration extends React.Component {
   // when clicking register
   register = (event) => {
     console.log('Register clicked')
-    if(this.validate()) {
-      let temp_fields = {};
-      // make sure target indexes have empty values
-      temp_fields["email"] = "";
-      temp_fields["password"] = "";
-      temp_fields["repassword"] = "";
-      // empty state of fields
-      this.setState({ fields:temp_fields });
+    event.preventDefault()
+    if (this.validate()) {
+      const temp_fields = {
+        firstname: this.state.fields.firstname,
+        lastname: this.state.fields.lastname,
+        email: this.state.fields.email,
+        password: this.state.fields.password
+      }
+
+      // let empty_fields = {}
+      // empty_fields["email"] = ""
+      // empty_fields["firstname"] = ""
+      // empty_fields["lastname"] = ""
+      // empty_fields["password"] = ""
+      // empty_fields["repassword"] = ""
+      // // empty fields states
+      // this.setState({ fields: empty_fields })
+
+      registerPost(temp_fields).then(response => {
+        console.log("status number(200 success, else fail): ")
+        if(response === 200) {
+          console.log("expected reponse 200 (registraion and login success): ")
+          console.log(response)
+          this.props.history.push(`/`)
+        //   loginPost(temp_fields).then(loginresponse => {
+        //     if(loginresponse === "S") {
+        //       console.log("login success")
+        //     } else if (loginresponse === "F") {
+        //       console.log("login fail")
+        //     }
+        //     this.props.history.push(`/`)
+        // })
+        } else if (response === 400) {
+          console.log("expected reponse 400 (email already exists): ")
+          console.log(response)
+          this.props.history.push(`/`)
+        }      
+      })
     }
   }
 
@@ -67,19 +100,20 @@ class Registration extends React.Component {
     let temp_errors = {};
     let formIsValid = true;
 
-    if (temp_fields["firstname"] === ''){
+    if (temp_fields["firstname"] === '') {
       formIsValid = false;
       temp_errors["firstname"] = "*Please enter first name";
     }
 
+    // allowed "spacing" for character check
     if (temp_fields["firstname"] !== '') {
-      if (!temp_fields["firstname"].match(/^[a-zA-Z]*$/)) {
+      if (!temp_fields["firstname"].match(/^[a-z A-Z]*$/)) {
         formIsValid = false;
         temp_errors["firstname"] = "*Please enter English characters only.";
       }
     }
 
-    if (temp_fields["lastname"] === ''){
+    if (temp_fields["lastname"] === '') {
       formIsValid = false;
       temp_errors["lastname"] = "*Please enter last name";
     }
@@ -91,7 +125,7 @@ class Registration extends React.Component {
       }
     }
 
-    if (temp_fields["email"] === ''){
+    if (temp_fields["email"] === '') {
       formIsValid = false;
       temp_errors["email"] = "*Please enter email";
     }
@@ -105,26 +139,26 @@ class Registration extends React.Component {
       }
     }
 
-    if (temp_fields["password"] === ''){
+    if (temp_fields["password"] === '') {
       formIsValid = false;
       temp_errors["password"] = "*Please enter password";
     }
 
     if (temp_fields["password"] !== '') {
       let checker = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})");
-      if(!checker.test(temp_fields["password"])){
+      if (!checker.test(temp_fields["password"])) {
         formIsValid = false;
         temp_errors["password"] = "*Password must be at least 8 characters containing at least 1 uppercase and special characters";
       }
     }
 
-    if (temp_fields["repassword"] === ''){
+    if (temp_fields["repassword"] === '') {
       formIsValid = false;
       temp_errors["repassword"] = "*Please re-enter password";
     }
 
     if (temp_fields["repassword"] !== '') {
-      if(!temp_fields["repassword"].match(temp_fields["password"])){
+      if (!temp_fields["repassword"].match(temp_fields["password"])) {
         formIsValid = false;
         temp_errors["repassword"] = "*Passwords must match";
       }
@@ -146,7 +180,7 @@ class Registration extends React.Component {
 
           {/*registration form */}
           <ModalBody>
-            <Form onSubmit= {this.register}>
+            <Form onSubmit={this.register}>
               <Row form>
                 <Col md={6}>
                   <FormGroup>
@@ -192,4 +226,4 @@ class Registration extends React.Component {
   }
 }
 
-export default Registration;
+export default withRouter(Registration);
