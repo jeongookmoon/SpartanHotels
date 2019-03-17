@@ -81,6 +81,9 @@ router.post('/login', passport.authenticate('local'), (req,res) => {
     console.log("req session passport result is ")
     console.log(req.session.passport.user)
     if(req.session.passport.user) {
+        if(req.session.passport.user === "WrongPW") {
+            res.end("WrongPW")    
+        }
         res.end("S")
     }
     res.end("F")

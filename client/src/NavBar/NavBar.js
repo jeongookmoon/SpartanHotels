@@ -41,8 +41,14 @@ class NavBar extends React.Component {
       if(response === "S") {
         console.log("login success")
       } else if (response === "F") {
-        console.log("login fail")
-      }
+        console.log("login fail due to input email not found on db")
+      } else if (response === "WrongPW") {
+        console.log("login fail due to WrongPW")
+      } 
+      let empty_fields = {}
+      empty_fields["email"] = ""
+      empty_fields["password"] = ""
+      this.setState({ loginfields: empty_fields })
       this.props.history.push(`/`)
     })
   }

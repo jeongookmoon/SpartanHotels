@@ -63,15 +63,6 @@ class Registration extends React.Component {
         password: this.state.fields.password
       }
 
-      // let empty_fields = {}
-      // empty_fields["email"] = ""
-      // empty_fields["firstname"] = ""
-      // empty_fields["lastname"] = ""
-      // empty_fields["password"] = ""
-      // empty_fields["repassword"] = ""
-      // // empty fields states
-      // this.setState({ fields: empty_fields })
-
       registerPost(temp_fields).then(response => {
         console.log("status number(200 success, else fail): ")
         if(response === 200) {
