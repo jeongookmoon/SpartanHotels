@@ -30,11 +30,10 @@ export const loginPost = temp_fields => {
         password: temp_fields.password,
     }).then(response => {
         console.log("login result status: " + response.data)
+        // log-in possible only when server says "S"
         if (response.data === "S") {
             localStorage.setItem('accesstoken', response.data)
-        } else if (response.data === "F") {
-            console.log("login failed")
-        }
+        } 
         return response.data
     }).catch(error => {
         console.log("error message for login: " + error)

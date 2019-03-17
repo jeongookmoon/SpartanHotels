@@ -36,7 +36,7 @@ passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'passwor
           });
 
         } else { // no user found, empty result
-          return done(null, "Empty");
+          return done(null, false);
         }
       })
   })
