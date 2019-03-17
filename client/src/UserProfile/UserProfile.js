@@ -1,18 +1,17 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom'
 import "./../App.css";
+import axios from 'axios';
 
 
 
-
-
-
-export default class UserProfile extends React.Component{
+class UserProfile extends React.Component{
   state = {
-
-    firstName: "",    
-    lastName: "",
+ 
+    name: "",
     email: "",
-    rewards: "",
+    reward: "",
+    user : []
     
   }
   
@@ -31,11 +30,19 @@ export default class UserProfile extends React.Component{
       console.log(event.target.files[0]);
   }
   
+  componentDidMount() {
+      axios.get('/api/profile')
+        .then(res => 
+          this.setState({
+            name: res.data[0].name,
+            email: res.data[0].email,
+            reward: res.data[0].reward
+          }))  
+  }
 
+  
   render() {
     return(
-
-
       <form>
         <br/>
         <br/>
@@ -44,47 +51,32 @@ export default class UserProfile extends React.Component{
         <br/> 
         <h1 class = "display-4" > User Profile </h1>
         
-        <label for="firstName" class="col-sm-1 col-form-label">First Name:</label>
+        <label for="firstName" class="col-sm-1 col-form-label">Name:</label>
         <input 
-           name = "firstName"      
-           placeholder= 'First name' 
-           value={this.state.firstName}
+               
+        
+           value={this.state.name}
            onChange={e => this.change(e)} 
            />      
            <br/>
            <br/>
-           <label for="lastName" class="col-sm-1 col-form-label">Last Name:</label>
-           <input 
-           name = "lastName"
-           placeholder= 'Last name' 
-           value={this.state.lastName} 
-           onChange={e => this.change(e)} 
-           />
-           <br/>
-           <br/>
            <label for="email" class="col-sm-1 col-form-label">Email:</label>  
-           <input 
-           name = "email"
-           placeholder= 'Email' 
-           value={this.state.email} 
-           onChange={e => this.change(e)} 
-           />
+           <input value={this.state.email} onChange={e => this.change(e)} size="30"/>
            <br/>           
            <br/>
-           <button type="button" class="btn btn-outline-info" onClick = {e => this.onSubmit(e)}>UPDATE INFORMATION </button>
            <br/>
            <br/>
            <h1 class = "display-4" > Rewards </h1>
            <br/>
            <br/>
-           <label for="rewards" ></label>  
+           <label for="reward" ></label>  
            <input 
-           name = "rewards"
-           placeholder= '0' 
-           value={this.state.rewards} 
+        
+           value={this.state.reward} 
            //onChange={e => this.change(e)} 
            />
       </form>
     );
   }
 }
+export default withRouter(UserProfile);

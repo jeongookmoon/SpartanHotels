@@ -23,9 +23,10 @@ router.post('/register', (req,res)=>{
        Queries.run(q1).then((results) =>{
             console.log("User is created.") 
             let insertID = results.insertId
-            
-            req.login(insertID, function(err) {
+            let temp = {user_id:insertID}
+            req.login(temp, function(err) {
                  console.log(req.session)
+                 console.log(req.session.passport.user.user_id)
                  console.log("Session status: " + req.isAuthenticated())
                  console.log("Session successful. User logged in.")
                  res.sendStatus(200).end("Login Successful")
