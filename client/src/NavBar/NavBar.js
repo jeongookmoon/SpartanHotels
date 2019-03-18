@@ -53,11 +53,29 @@ class NavBar extends React.Component {
     })
   }
 
+  Home(event){
+    event.preventDefault()
+
+    this.props.history.push(`/`)
+  }
+
   Logout(event) {
     logoutClearSession()
     event.preventDefault()
     localStorage.removeItem('accesstoken')
     this.props.history.push(`/`)
+  }
+
+  UserProfile(event){
+    event.preventDefault()
+
+    this.props.history.push(`/UserProfile`)
+  }
+
+  Reservations(event){
+    event.preventDefault()
+
+    this.props.history.push(`/Reservations`)
   }
 
   validate() {
@@ -82,6 +100,9 @@ class NavBar extends React.Component {
 
   render() {
     const EmptyForm = (<div></div>)
+
+    const ProfileLink = (<div className="col-auto" onClick={this.UserProfile.bind(this)} >My Profile</div>)  
+    const ReservationLink = (<div className="col-auto" onClick={this.Reservations.bind(this)} >My Reservations</div>)
 
     const LoginForm = (
       /*RIGHT SIDE*/
@@ -137,7 +158,7 @@ class NavBar extends React.Component {
 
         {/*LEFT SIDE*/}
         <div className="navbar-left form-inline my-2 my-lg-0" >
-          <div className="col-auto pl-0">
+          <div className="col-auto pl-0" onClick={this.Home.bind(this)}>
             SPARTAN HOTELS
           </div>
           <div className="col-auto pl-0">
@@ -148,7 +169,14 @@ class NavBar extends React.Component {
 
 
         {/*RIGHT SIDE*/}
+        <div className="navbar-right form-inline my-2 my-lg-0" >
+
+        {localStorage.accesstoken ? ProfileLink : EmptyForm}
+        {localStorage.accesstoken ? ReservationLink : EmptyForm}
         {localStorage.accesstoken ? LogoutForm : LoginForm}
+
+        </div>
+
       </nav>
     );
   }
