@@ -6,6 +6,7 @@ import Home from './Home/Home';
 import HotelSearch from './HotelSearch/HotelSearch';
 import HotelSearchDemo from './HotelSearchDemo/HotelSearchDemo';
 import UserProfile from './UserProfile/UserProfile';
+import Reservations from './Reservations/Reservations'
 import './App.css';
 
 class App extends Component {
@@ -15,6 +16,9 @@ class App extends Component {
         <div className="App">
           <NavBar />
           <Route exact path="/" component={Home} />
+          <Route exact path="/UserProfile" component={UserProfile}/>
+          <Route exact path="/Reservations" component={Reservations}/>
+          <Route exact path="/HotelSearchDemo" component={HotelSearchDemo}/>
         </div>
       </Router>
 
