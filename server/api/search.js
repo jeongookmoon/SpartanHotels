@@ -130,4 +130,74 @@ router.get('/hotels', (req,res)=>{
 }),
 
 
+
+// TODO: return appropriate error message when hotelID doesn't exist in database
+router.get('/hotels/:hotelID', (req,res)=>{
+    console.log(req.query)
+    console.log(req.params)
+
+    if ( !validator.isInt(req.params.hotelID)){
+        res.status(400).send("Error: hotelID is not a number")
+        return
+    }
+    if ( typeof(req.query.date_in) == 'undefined'){
+        res.status(400).send("Error: date_in missing")
+        return
+    }
+    if ( !validator.isISO8601(req.query.date_in)){
+        res.status(400).send("Error: invalid date_in specified")
+        return
+    }
+
+    if ( typeof(req.query.date_out) == 'undefined'){
+        res.status(400).send("Error: date_out missing")
+        return
+    }
+    if ( !validator.isISO8601(req.query.date_out)){
+        res.status(400).send("Error: invalid date_out specified")
+        return
+    }
+
+
+
+    let [query, placeholders] = Queries.hotel.rooms(req.params, req.query)
+    console.log(placeholders)
+    let fullQuery = mysql.format(query,placeholders)
+    console.log(fullQuery);
+    
+    [query, placeholders] = Queries.hotel.rooms(req.params, req.query, true)    
+    // console.log("COUNT" + query)
+    let fullQueryForCount = mysql.format(query,placeholders)
+    console.log("COUNT" + fullQueryForCount)
+
+
+    Promise.all( [Queries.run(fullQuery), Queries.run(fullQueryForCount)] )
+    .then(
+        values => {
+            console.log(values)
+            let totalResultCount = values[1][0].count
+            console.log(totalResultCount)
+
+            let results = values[0]
+            // results is array of room data
+            // ex [ {room type A}, {room type B}, {room type C} ]
+
+            // console log only when pageNumber and resultsPerPage defined
+            if( totalResultCount < (req.query.pageNumber * req.query.resultsPerPage )){
+                console.log("no results in this query for the requested page")
+            }
+            
+            res.status(200).send({results, totalResultCount})
+        }
+    )
+    .catch(
+        error =>{
+            console.log(error)
+            res.status(400).send("something went wrong")
+        }
+    )
+
+}),
+
+
 module.exports = router;
