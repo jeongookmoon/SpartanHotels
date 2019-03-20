@@ -275,6 +275,149 @@ module.exports = {
           return [query, values]
         
         },
+        rooms: function (params = {}, queryString={}, getCount=false) {
+          // Example parameter: { name: "mint", category: "baby", sortByAsc: true,  priceGreaterThan: 2, priceLessThan: 5 }
+          /*
+            from StackOverflow, Jordan Running,
+            https://stackoverflow.com/questions/31822891/how-to-build-dynamic-query-by-binding-parameters-in-node-js-sql#31823325
+            
+          */
+      
+          // 'With clause' sets up date checking for available rooms at specific hotel
+          // 'With clause' results in a table of rooms booked during the given time at the given hotel
+          var withConditions = []
+          let tempTableComponent = `with 
+          rb as (SELECT  B.*, R.hotel_id, R.room_number, R.price, R.bed_type, R.bed_number 
+          from spartanhotel.booking B join spartanhotel.room R 
+          on B.room_id = R.room_id `
+      
+           // Date Conditions
+           if (typeof queryString.date_out !== 'undefined' && queryString.date_out !== '') {
+            withConditions.push(queryString.date_out)
+          }
+           if (typeof queryString.date_in !== 'undefined' && queryString.date_in !== '') {
+            withConditions.push(queryString.date_in)
+          }
+          // Specific Hotel
+          if (typeof params.hotelID !== 'undefined' && params.hotelID !== '') {
+            withConditions.push(params.hotelID)
+          }
+                     
+          let withClause = mysql.format(tempTableComponent + "where date_in < ? and date_out > ? and hotel_id = ?) ", withConditions)
+      
+      
+          // All other query parameters
+          var conditions = [];
+          var values = [];
+      
+          // WHERE/FILTER CLAUSE
+          // TODO: filter by distance
+      
+          // Useful only if rooms have different amenities and ratings
+          // if (typeof params.amenities !== 'undefined'){
+          //   let amenities = JSON.parse(decodeURIComponent(params.amenities))
+          //   for(var i=0;i< amenities.length;i++){
+          //     conditions.push(" amenities like ? ");
+          //     values.push("%" + amenities[i] + "%");
+          //   }
+          // }
+          // if (typeof params.rating !== 'undefined'){
+          //   let rating = parseInt(params.rating)
+          //   conditions.push(" rating = ");
+          //   values.push(rating);
+          // }
+      
+      
+          if (typeof queryString.priceGTE !== 'undefined' && queryString.priceGTE !== '') {
+            conditions.push("price >= ?");
+            values.push(queryString.priceGTE);
+          }
+      
+          if (typeof queryString.priceLTE !== 'undefined' && queryString.priceLTE !== '') {
+            conditions.push("price <= ?");
+            values.push(queryString.priceLTE);
+          }
+      
+          conditions.push("hotel_id = ?")
+          values.push(params.hotelID)
+      
+      
+      
+          var whereClause = conditions.length ? conditions.join(' AND ') : '1'
+      
+          // SORT BY CLAUSE
+          // TODO: sort by distance
+          var sortByClause = ""; 
+          if (typeof queryString.sortBy !== 'undefined' && queryString.sortBy !== '') {
+            switch (queryString.sortBy) {
+              // Useful only if rooms have different amenities and ratings
+              // case ("rating_asc"):
+              //   sortByClause = " order by rating ";
+              //   break
+              // case ("rating_des"):
+              //   sortByClause = " order by rating desc "
+              //   break
+              case ("name_asc"):
+              sortByClause = " order by name ";
+              break
+              case("name_des"):
+              sortByClause = " order by name desc ";
+              break
+              case("price_asc"):
+              sortByClause = " order by price ";
+              break
+              case("price_des"):
+              sortByClause = " order by price desc ";
+              break
+              default:
+              sortByClause = " order by price desc "
+            }
+          }
+      
+          // PAGINATION
+          var pageNumber = 0;
+          var resultsPerPage = 10;
+      
+          if (typeof queryString.pageNumber !== 'undefined' && queryString.pageNumber !== '') {
+            pageNumber = queryString.pageNumber;
+          }
+          if (typeof queryString.resultsPerPage !== 'undefined' && queryString.resultsPerPage !== '') {
+            resultsPerPage = queryString.resultsPerPage;
+          }
+      
+          var paginationClause = " limit " + resultsPerPage + " offset " + (pageNumber * resultsPerPage) + " "
+      
+      
+          // PUTTING QUERY TOGETHER
+          let mainQuery = ''
+          if(getCount){
+            mainQuery = ` SELECT COUNT( * ) as count `
+          }else{
+            mainQuery = ' SELECT  * '
+          }
+          mainQuery = mainQuery +
+            `FROM
+                room
+            WHERE
+                NOT EXISTS(
+                  SELECT 
+                        *
+                    FROM
+                        rb
+                    WHERE
+                        rb.room_id = room.room_id
+                            AND rb.status != 'cancelled')
+                AND 
+            `
+        let query = ''
+      
+        if(getCount){
+          query = withClause + mainQuery + whereClause + ';'
+        }else{
+          query =  withClause + mainQuery + whereClause + sortByClause + paginationClause  + ';'
+        }
+        return [query, values]
+      },
 
     },
 
