@@ -1,5 +1,8 @@
 import React from 'react';
 import { Map, GoogleApiWrapper } from 'google-maps-react';
+import { withRouter } from 'react-router-dom'
+import axios from 'axios'
+
 
 
 
@@ -8,16 +11,63 @@ const mapStyles = {
   height: '100%'
 };
 
-class Home extends React.Component {
+
+
+class HotelSearchDemo extends React.Component {
+
+	constructor(props) {
+
+
+    super(props);
+
+    	const {data} = this.props.location;
+
+
+    this.state = {
+        hotels: [{}]
+    };
+
+   
+
+
+  }
+
+
+  async componentWillMount() {
+    const hotelSearch = (await axios.get('/api/search/hotels?state=California&date_in=2019-03-08&date_out=2019-03-21')).data;
+    this.setState({
+      hotels:hotelSearch
+    });
+    console.log(hotelSearch);
+        	  	  console.log(this.state.hotels.results[0]);
+
+  }
+
+
+  content() {
+
+
+
+  }
+
   render() {
+
+  	if(this.state.hotels.results === undefined){
+  		return <div> Loading...</div>
+  	}
+
+
     return (
+
+
+  	
       <div className="hotel-search-container">
   {/* FILTER
 
       		<div className="hotel-search-filter row">
       			<div className="col-lg-12 row">
       				<div className="col-lg-4">
-      				asd
+      				
       				</div>
       				<div className="col-lg-4">
       				asd
@@ -30,22 +80,25 @@ class Home extends React.Component {
 
   */}
 
+  		<div>
+  		</div>
+
 {/* HOTEL SEARCH TWO COLUMNS */}
   			<div className="hotel-search-columns row">
 
   				<div className="col-lg-4 hotel-demo-dummy-column">
   					<div className="hotel-search-table-container-demo">
-  						<table className="table hotel-search-table-demo">
-		  				  <tbody>
-		  				  	<tr className="hotel-search-row shadow-sm p-3 mb-5 bg-white rounded">
-		  				  		<td>
-		  				  			Search Results
-		  				  		</td>
-		  				  	</tr>
-
-		  				  	
-		  				  </tbody>
-		  				</table>
+  						<div className="hotel-search-first-column-demo col-lg-12">
+		  				  <div>
+		  				  	City {this.state.hotels.results[0].name}
+		  				  </div>
+		  				  <div>
+		  				  	Date in
+		  				  </div>
+		  				  <div>
+		  				  </div>
+		  				  	Date out
+		  				</div>
   					</div>
   				</div>
 	  			<div className="col-lg-8 hotel-search-first-column-dummy table-responsive">
@@ -449,7 +502,5 @@ class Home extends React.Component {
 
 }
 
-export default GoogleApiWrapper({
-  apiKey: 'AIzaSyDScT-hbkYMaHHMJXftylDtwehYvBkzyRk'
-})(Home);
+export default withRouter(HotelSearchDemo);
 
