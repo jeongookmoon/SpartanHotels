@@ -23,12 +23,9 @@ class Registration extends React.Component {
         repassword: '',
       },
       errors: {
-        firstname: '',
-        lastname: '',
-        email: '',
-        repassword: '',
       },
-      password_error: []
+      password_error: [],
+      email_duplicate_error: false
     };
 
     this.toggle = this.toggle.bind(this);
@@ -68,6 +65,7 @@ class Registration extends React.Component {
         if (response === 200) {
           // console.log("expected reponse 200 (registraion and login success): ")
           // console.log(response)
+          this.setState({email_duplicate_error : false})
           this.props.history.push(`/`)
           //   loginPost(temp_fields).then(loginresponse => {
           //     if(loginresponse === "S") {
@@ -80,6 +78,7 @@ class Registration extends React.Component {
         } else if (response === 400) {
           // console.log("expected reponse 400 (email already exists): ")
           // console.log(response)
+          this.setState({email_duplicate_error : true})
           this.props.history.push(`/`)
         }
       })
@@ -165,15 +164,18 @@ class Registration extends React.Component {
 
   render() {
 
-    const passworderror = (
+    const password_error = (
       <div className="text-warning">{this.state.password_error.map((each) => <div>{each}</div>
       )}</div>
     )
 
-    const noerror = (
+    const no_error = (
       <div className="text-warning"></div>
     )
 
+    const email_duplicate_error = (
+      <div className="text-warning">This email is already registered</div>
+    )
 
     return (
       <div>
@@ -205,11 +207,13 @@ class Registration extends React.Component {
                 <Label>Email</Label>
                 <Input type="email" name="email" value={this.state.fields.email} onChange={this.updateFields} placeholder="guest@spartanhotel.com" />
                 <div className="text-warning">{this.state.errors.email}</div>
+                {this.state.email_duplicate_error? email_duplicate_error : no_error}
               </FormGroup>
               <FormGroup>
                 <Label>Password</Label>
                 <Input type="password" name="password" value={this.state.fields.password} onChange={this.updateFields} placeholder="********" />
-                {this.state.errors.password? passworderror : noerror}
+                <div className="text-warning">{this.state.errors.password}</div>
+                {this.state.password_error? password_error : no_error}
               </FormGroup>
               <FormGroup>
                 <Label>Re-enter Password</Label>
