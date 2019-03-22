@@ -44,20 +44,18 @@ class NavBar extends React.Component {
         // console.log(response)
         let temp_loginerror = ''
         let empty_fields = {}
-        empty_fields["email"] = ''
         empty_fields["password"] = ''
 
         if (response === "S") {
           // console.log("login success")
-          let empty_loginerror = ''
-          this.setState({ loginerror : empty_loginerror})
+          empty_fields["email"] = ''
         } else {
           temp_loginerror = "*Please enter valid credentials (email or password)"
           this.setState({ loginerror: temp_loginerror })
           empty_fields["email"] = this.state.loginfields.email
         }
 
-        this.setState({ loginfields: empty_fields })
+        this.setState({ loginfields: empty_fields, loginerror : temp_loginerror })
         this.props.history.push(`/`)
       })
     }
