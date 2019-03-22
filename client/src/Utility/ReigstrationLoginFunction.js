@@ -29,14 +29,14 @@ export const loginPost = temp_fields => {
         email: temp_fields.email,
         password: temp_fields.password,
     }).then(response => {
-        console.log("login result status: " + response.data)
+        // console.log("login result status: " + response.data)
         // log-in possible only when server says "S"
         if (response.data === "S") {
             localStorage.setItem('accesstoken', response.data)
         } 
         return response.data
     }).catch(error => {
-        console.log("error message for login: " + error)
+        // console.log("error message for login: " + error)
     })
 
 

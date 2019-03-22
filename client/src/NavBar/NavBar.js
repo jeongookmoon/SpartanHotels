@@ -5,7 +5,7 @@ import { logoutClearSession, loginPost } from '../Utility/ReigstrationLoginFunct
 
 // import neccessary components
 import {
-  Form, FormGroup, Button, Input
+  Form, FormGroup, Input
 } from 'reactstrap'
 
 class NavBar extends React.Component {
@@ -16,7 +16,8 @@ class NavBar extends React.Component {
         email: '',
         password: '',
       },
-      emailerror: ''
+      emailerror: '',
+      loginerror: ''
     }
 
     this.updateFields = this.updateFields.bind(this)
@@ -31,29 +32,39 @@ class NavBar extends React.Component {
 
   login = (event) => {
     event.preventDefault()
-    console.log('login clicked')
-    const temp_fields = {
-      email: this.state.loginfields.email,
-      password: this.state.loginfields.password
+    // console.log('login clicked')
+    if (this.validate()) {
+      const temp_fields = {
+        email: this.state.loginfields.email,
+        password: this.state.loginfields.password
+      }
+
+      loginPost(temp_fields).then(response => {
+        // console.log("loginPost got excuted")
+        // console.log(response)
+        let temp_loginerror = ''
+        let empty_fields = {}
+        empty_fields["email"] = ''
+        empty_fields["password"] = ''
+
+        if (response === "S") {
+          // console.log("login success")
+          let empty_loginerror = ''
+          this.setState({ loginerror : empty_loginerror})
+        } else {
+          temp_loginerror = "*Please enter valid credentials (email or password)"
+          this.setState({ loginerror: temp_loginerror })
+          empty_fields["email"] = this.state.loginfields.email
+        }
+
+        this.setState({ loginfields: empty_fields })
+        this.props.history.push(`/`)
+      })
     }
-    loginPost(temp_fields).then(response => {
-      console.log("loginPost got excuted")
-      if(response === "S") {
-        console.log("login success")
-      } else if (response === "F") {
-        console.log("login fail due to input email not found on db")
-      } else if (response === "WrongPW") {
-        console.log("login fail due to WrongPW")
-      } 
-      let empty_fields = {}
-      empty_fields["email"] = ""
-      empty_fields["password"] = ""
-      this.setState({ loginfields: empty_fields })
-      this.props.history.push(`/`)
-    })
+
   }
 
-  Home(event){
+  Home(event) {
     event.preventDefault()
 
     this.props.history.push(`/`)
@@ -66,13 +77,13 @@ class NavBar extends React.Component {
     this.props.history.push(`/`)
   }
 
-  UserProfile(event){
+  UserProfile(event) {
     event.preventDefault()
 
     this.props.history.push(`/UserProfile`)
   }
 
-  Reservations(event){
+  Reservations(event) {
     event.preventDefault()
 
     this.props.history.push(`/Reservations`)
@@ -80,7 +91,7 @@ class NavBar extends React.Component {
 
   validate() {
     let temp_email = this.state.loginfields.email
-    let temp_error = this.state.emailerror
+    let temp_error = ''
     let formIsValid = true;
 
     if (temp_email !== '') {
@@ -95,29 +106,31 @@ class NavBar extends React.Component {
     this.setState({
       emailerror: temp_error
     });
+
     return formIsValid;
   }
 
   render() {
     const EmptyForm = (<div></div>)
 
-    const ProfileLink = (<div className="col-auto" onClick={this.UserProfile.bind(this)} >My Profile</div>)  
+    const ProfileLink = (<div className="col-auto" onClick={this.UserProfile.bind(this)} >My Profile</div>)
     const ReservationLink = (<div className="col-auto" onClick={this.Reservations.bind(this)} >My Reservations</div>)
 
     const LoginForm = (
       /*RIGHT SIDE*/
-      
+
       <div>
         <Form className="form-inline my-2 my-lg-0" onSubmit={this.login}>
           {/*EMAIL*/}
           <div className="col-auto pl-0">
             <div className="input-group">
+              {/*Error message for invalid login credentials (email or pw)*/}
+              <div className="form-inline my-2 my-lg-0"><div className="text-warning">{this.state.loginerror}</div></div>
               <div className="input-group-prepend">
                 <div className="email-input input-group-text"><i className="far fa-user"></i></div>
               </div>
               <FormGroup>
-                <Input type="email" name="email" value={this.state.loginfields.email} onChange={this.updateFields} placeholder="Email" />
-                <div className="text-warning">{this.state.emailerror}</div>
+                <Input type="text" name="email" value={this.state.loginfields.email} onChange={this.updateFields} placeholder="Email" />
               </FormGroup>
             </div>
           </div>
@@ -136,9 +149,12 @@ class NavBar extends React.Component {
 
           {/*LOGIN BUTTON*/}
           <div className="col-auto pl-0 pr-0">
-            <button className="btn btn-primary my-2 my-sm-0" type="submit">Login</button>
+            {/*Login button disabled until email&pw input are filled*/}
+            <button className="btn btn-primary my-2 my-sm-0" type="submit" disabled={!this.state.loginfields.email || !this.state.loginfields.password}>Login</button>
           </div>
-          </Form>
+        </Form>
+        {/*Error message for invalid email*/}
+        <div className="form-inline my-2 my-lg-0"><div className="text-warning">{this.state.emailerror}</div></div>
       </div>
     )
 
@@ -171,9 +187,9 @@ class NavBar extends React.Component {
         {/*RIGHT SIDE*/}
         <div className="navbar-right form-inline my-2 my-lg-0" >
 
-        {localStorage.accesstoken ? ProfileLink : EmptyForm}
-        {localStorage.accesstoken ? ReservationLink : EmptyForm}
-        {localStorage.accesstoken ? LogoutForm : LoginForm}
+          {localStorage.accesstoken ? ProfileLink : EmptyForm}
+          {localStorage.accesstoken ? ReservationLink : EmptyForm}
+          {localStorage.accesstoken ? LogoutForm : LoginForm}
 
         </div>
 

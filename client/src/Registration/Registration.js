@@ -7,7 +7,7 @@ import {
   Form, FormGroup, Label, Input, Row, Col
 } from 'reactstrap'
 
-import { registerPost, loginPost } from '../Utility/ReigstrationLoginFunction'
+import { registerPost } from '../Utility/ReigstrationLoginFunction'
 
 class Registration extends React.Component {
   constructor() {
@@ -53,7 +53,7 @@ class Registration extends React.Component {
 
   // when clicking register
   register = (event) => {
-    console.log('Register clicked')
+    // console.log('Register clicked')
     event.preventDefault()
     if (this.validate()) {
       const temp_fields = {
@@ -64,10 +64,10 @@ class Registration extends React.Component {
       }
 
       registerPost(temp_fields).then(response => {
-        console.log("status number(200 success, else fail): ")
+        // console.log("status number(200 success, else fail): ")
         if(response === 200) {
-          console.log("expected reponse 200 (registraion and login success): ")
-          console.log(response)
+          // console.log("expected reponse 200 (registraion and login success): ")
+          // console.log(response)
           this.props.history.push(`/`)
         //   loginPost(temp_fields).then(loginresponse => {
         //     if(loginresponse === "S") {
@@ -78,8 +78,8 @@ class Registration extends React.Component {
         //     this.props.history.push(`/`)
         // })
         } else if (response === 400) {
-          console.log("expected reponse 400 (email already exists): ")
-          console.log(response)
+          // console.log("expected reponse 400 (email already exists): ")
+          // console.log(response)
           this.props.history.push(`/`)
         }      
       })
@@ -139,7 +139,7 @@ class Registration extends React.Component {
       let checker = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})");
       if (!checker.test(temp_fields["password"])) {
         formIsValid = false;
-        temp_errors["password"] = "*Password must be at least 8 characters containing at least 1 uppercase and special characters";
+        temp_errors["password"] = "<Password Rule>/*Must be >= 8 characters/*Must have >= 1 uppercase character/*Must have >= 1 special character";
       }
     }
 
@@ -196,7 +196,10 @@ class Registration extends React.Component {
               <FormGroup>
                 <Label>Password</Label>
                 <Input type="password" name="password" value={this.state.fields.password} onChange={this.updateFields} placeholder="********" />
-                <div className="text-warning">{this.state.errors.password}</div>
+                <div className="text-warning">{this.state.errors.password.split("/")[0]}</div>
+                <div className="text-warning">{this.state.errors.password.split("/")[1]}</div>
+                <div className="text-warning">{this.state.errors.password.split("/")[2]}</div>
+                <div className="text-warning">{this.state.errors.password.split("/")[3]}</div>
               </FormGroup>
               <FormGroup>
                 <Label>Re-enter Password</Label>
