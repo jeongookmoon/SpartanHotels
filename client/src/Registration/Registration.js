@@ -26,9 +26,9 @@ class Registration extends React.Component {
         firstname: '',
         lastname: '',
         email: '',
-        password: '',
         repassword: '',
-      }
+      },
+      password_error: []
     };
 
     this.toggle = this.toggle.bind(this);
@@ -65,23 +65,23 @@ class Registration extends React.Component {
 
       registerPost(temp_fields).then(response => {
         // console.log("status number(200 success, else fail): ")
-        if(response === 200) {
+        if (response === 200) {
           // console.log("expected reponse 200 (registraion and login success): ")
           // console.log(response)
           this.props.history.push(`/`)
-        //   loginPost(temp_fields).then(loginresponse => {
-        //     if(loginresponse === "S") {
-        //       console.log("login success")
-        //     } else if (loginresponse === "F") {
-        //       console.log("login fail")
-        //     }
-        //     this.props.history.push(`/`)
-        // })
+          //   loginPost(temp_fields).then(loginresponse => {
+          //     if(loginresponse === "S") {
+          //       console.log("login success")
+          //     } else if (loginresponse === "F") {
+          //       console.log("login fail")
+          //     }
+          //     this.props.history.push(`/`)
+          // })
         } else if (response === 400) {
           // console.log("expected reponse 400 (email already exists): ")
           // console.log(response)
           this.props.history.push(`/`)
-        }      
+        }
       })
     }
   }
@@ -89,6 +89,7 @@ class Registration extends React.Component {
   validate() {
     let temp_fields = this.state.fields;
     let temp_errors = {};
+    let temp_password_error = [];
     let formIsValid = true;
 
     if (temp_fields["firstname"] === '') {
@@ -139,7 +140,7 @@ class Registration extends React.Component {
       let checker = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})");
       if (!checker.test(temp_fields["password"])) {
         formIsValid = false;
-        temp_errors["password"] = "<Password Rule>/*Must be >= 8 characters/*Must have >= 1 uppercase character/*Must have >= 1 special character";
+        temp_password_error = "<Password Rule>/*Must be >= 8 characters/*Must have >= 1 uppercase character/*Must have >= 1 special character".split("/")
       }
     }
 
@@ -156,12 +157,24 @@ class Registration extends React.Component {
     }
 
     this.setState({
-      errors: temp_errors
+      errors: temp_errors,
+      password_error : temp_password_error
     });
     return formIsValid;
   }
 
   render() {
+
+    const passworderror = (
+      <div className="text-warning">{this.state.password_error.map((each) => <div>{each}</div>
+      )}</div>
+    )
+
+    const noerror = (
+      <div className="text-warning"></div>
+    )
+
+
     return (
       <div>
         <Button color="primary-outline" onClick={this.toggle}>Register</Button>
@@ -196,10 +209,7 @@ class Registration extends React.Component {
               <FormGroup>
                 <Label>Password</Label>
                 <Input type="password" name="password" value={this.state.fields.password} onChange={this.updateFields} placeholder="********" />
-                <div className="text-warning">{this.state.errors.password.split("/")[0]}</div>
-                <div className="text-warning">{this.state.errors.password.split("/")[1]}</div>
-                <div className="text-warning">{this.state.errors.password.split("/")[2]}</div>
-                <div className="text-warning">{this.state.errors.password.split("/")[3]}</div>
+                {this.state.errors.password? passworderror : noerror}
               </FormGroup>
               <FormGroup>
                 <Label>Re-enter Password</Label>
