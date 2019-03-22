@@ -12,7 +12,7 @@ class UserProfile extends React.Component{
     email: "",
     reward: "",
     user : []
-    
+
   }
   
   change = e =>{
@@ -20,6 +20,20 @@ class UserProfile extends React.Component{
       [e.target.name]: e.target.value
     });
   };
+
+
+  onSubmit = (e) => {//able to se values once submitted
+    e.preventDefault();
+    this.props.onSubmit(this.state)//possibly delete this.state
+    console.log(this.state); 
+  };
+  fileSelectedHandler = event =>{
+      console.log(event.target.files[0]);
+  }
+  
+
+  render() {
+    return(
 
   onSubmit = (e) => {//able to se values once submitted
     e.preventDefault();
@@ -39,10 +53,10 @@ class UserProfile extends React.Component{
             reward: res.data[0].reward
           }))  
   }
-
   
   render() {
     return(
+
       <form>
         <br/>
         <br/>
@@ -50,7 +64,7 @@ class UserProfile extends React.Component{
         <br/>         
         <br/> 
         <h1 class = "display-4" > User Profile </h1>
-        
+
         <label for="firstName" class="col-sm-1 col-form-label">Name:</label>
         <input 
                
