@@ -142,7 +142,7 @@ module.exports = {
 
     booking: {
     book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, room_id, total_price, cancellation_charge, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',
-    cancel: 'UPDATE spartanhotel SET status=cancelled WHERE booking_id=?',
+    cancel: 'UPDATE booking SET status="cancelled" WHERE booking_id=?',
     modify: 'UPDATE booking SET room_id=?, date_in=?, date_out=? WHERE booking_id=?'
     },
 
