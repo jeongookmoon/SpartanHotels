@@ -63,7 +63,7 @@ module.exports = {
        * Required: date_in, date_out
        * Optional: city, state, zip, pageNumber, resultsPerPage
        * @param {boolean} getCount 
-       * When true, the function will only return COUNT(*) of all possible results w/o regard to pagination parameters
+       * When true, the resulting query will only return COUNT(*) of all possible results w/o regard to pagination parameters
        * Default: false
        */
         search: function (params={}, getCount=false) {
@@ -148,52 +148,64 @@ module.exports = {
             
             
 
-            // TODO: WHERE/FILTER CLAUSE
-            if (typeof params.searchTerm !== 'undefined' && params.searchTerm !== '') {
-              conditions.push("name like ?");
-              values.push("%" + params.searchTerm + "%");
+            // WHERE/FILTER CLAUSE
+            // TODO: filter by distance
+            if (typeof params.amenities !== 'undefined'){
+              let amenities = JSON.parse(decodeURIComponent(params.amenities))
+              for(var i=0;i< amenities.length;i++){
+                conditions.push(" amenities like ? ");
+                values.push("%" + amenities[i] + "%");
+              }
+
+
+            }
+
+            if (typeof params.rating !== 'undefined'){
+              let rating = parseInt(params.rating)
+              conditions.push(" rating = ? ");
+              values.push(rating);
+            }
+
+
+            if (typeof params.priceGTE !== 'undefined' && params.priceGTE !== '') {
+              conditions.push("price >= ?");
+              values.push(params.priceGTE);
             }
         
-            if (typeof params.category !== 'undefined' && params.category !== '') {
-              conditions.push("category like ?");
-              values.push("%" + params.category + "%");
+            if (typeof params.priceLTE !== 'undefined' && params.priceLTE !== '') {
+              conditions.push("price <= ?");
+              values.push(params.priceLTE);
             }
         
-            if (typeof params.priceGreaterThan !== 'undefined' && params.priceGreaterThan !== '') {
-              conditions.push("price > ?");
-              values.push(params.priceGreaterThan);
-            }
-        
-            if (typeof params.priceLessThan !== 'undefined' && params.priceLessThan !== '') {
-              conditions.push("price < ?");
-              values.push(params.priceLessThan);
-            }
+
         
             var whereClause = conditions.length ? conditions.join(' AND ') : '1'
 
-            // TODO: SORT BY CLAUSE
-            // default 
-            var sortByClause = " order by name "; 
+            // SORT BY CLAUSE
+            // TODO: sort by distance
+            var sortByClause = ""; 
             if (typeof params.sortBy !== 'undefined' && params.sortBy !== '') {
               switch (params.sortBy) {
-                case ("Price Ascending"):
-                  sortByClause = " order by price ";
+                case ("rating_asc"):
+                  sortByClause = " order by rating ";
                   break
-                case ("Price Descending"):
-                  sortByClause = " order by price desc "
+                case ("rating_des"):
+                  sortByClause = " order by rating desc "
                   break
-                case ("Name Ascending"):
+                case ("name_asc"):
                 sortByClause = " order by name ";
                 break
-                case("Name Descending"):
+                case("name_des"):
                 sortByClause = " order by name desc ";
                 break
-                case("Category Ascending"):
-                sortByClause = " order by category ";
+                case("price_asc"):
+                sortByClause = " order by min_price ";
                 break
-                case("Category Descending"):
-                sortByClause = " order by category desc ";
+                case("price_des"):
+                sortByClause = " order by min_price desc ";
                 break
+                default:
+                sortByClause = " order by name "
               }
             }
         
