@@ -172,6 +172,11 @@ router.get('/search/hotels', (req,res)=>{
         return
     }
 
+    if ( typeof(req.query.rating) != 'undefined' && !validator.isInt(req.query.rating,{min:0,max:5})){
+        res.status(400).send("Error: invalid rating specified")
+        return
+    }
+
     let [query, placeholders] = Queries.hotel.search(req.query)
     console.log(placeholders)
     let fullQuery = mysql.format(query,placeholders)
