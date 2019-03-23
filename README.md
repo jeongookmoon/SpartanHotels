@@ -18,4 +18,7 @@ To view express server in browser, open http://localhost:3001/
 
 **If you make any changes inside /server, you will need to restart the server**
 
+## Postman test
+The post request already saved in Spartan Hotels folder called *reservation*
+
 
