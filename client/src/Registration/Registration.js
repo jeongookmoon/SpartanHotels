@@ -126,34 +126,38 @@ class Registration extends React.Component {
       let checker = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
       if (!checker.test(temp_fields["email"])) {
         formIsValid = false;
-        temp_errors["email"] = "*Please enter valid email.";
+        temp_errors["email"] = "*Please enter a valid email";
       }
     }
 
     if (temp_fields["password"] === '') {
       formIsValid = false;
-      temp_errors["password"] = "*Please enter password";
+      temp_errors["password"] = "*Please enter a password";
     }
 
     if (temp_fields["password"] !== '') {
-      let checker = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})");
+      let checker = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$");
       if (!checker.test(temp_fields["password"])) {
         formIsValid = false;
-        temp_password_error = "<Password Rule>/*Must be >= 8 characters/*Must have >= 1 uppercase character/*Must have >= 1 special character".split("/")
+        temp_errors["password"] = "*This password does not meet the requirements"
+      }
+
+      else{
+        if (temp_fields["repassword"] === '') {
+          formIsValid = false;
+          temp_errors["repassword"] = "*Please re-enter password";
+        }
+    
+        if (temp_fields["repassword"] !== '') {
+          if (!temp_fields["repassword"].match(temp_fields["password"])) {
+            formIsValid = false;
+            temp_errors["repassword"] = "*Passwords must match";
+          }
+        }
       }
     }
 
-    if (temp_fields["repassword"] === '') {
-      formIsValid = false;
-      temp_errors["repassword"] = "*Please re-enter password";
-    }
 
-    if (temp_fields["repassword"] !== '') {
-      if (!temp_fields["repassword"].match(temp_fields["password"])) {
-        formIsValid = false;
-        temp_errors["repassword"] = "*Passwords must match";
-      }
-    }
 
     this.setState({
       errors: temp_errors,
@@ -191,33 +195,33 @@ class Registration extends React.Component {
                 <Col md={6}>
                   <FormGroup>
                     <Label>First Name</Label>
-                    <Input type="text" name="firstname" value={this.state.fields.firstname} onChange={this.updateFields} placeholder="Albert" />
+                    <Input type="text" name="firstname" value={this.state.fields.firstname} onChange={this.updateFields} placeholder="Albert" required/>
                     <div className="text-warning">{this.state.errors.firstname}</div>
                   </FormGroup>
                 </Col>
                 <Col md={6}>
                   <FormGroup>
                     <Label>Last Name</Label>
-                    <Input type="text" name="lastname" value={this.state.fields.lastname} onChange={this.updateFields} placeholder="Einstein" />
+                    <Input type="text" name="lastname" value={this.state.fields.lastname} onChange={this.updateFields} placeholder="Einstein" required />
                     <div className="text-warning">{this.state.errors.lastname}</div>
                   </FormGroup>
                 </Col>
               </Row>
               <FormGroup>
                 <Label>Email</Label>
-                <Input type="email" name="email" value={this.state.fields.email} onChange={this.updateFields} placeholder="guest@spartanhotel.com" />
+                <Input type="email" name="email" value={this.state.fields.email} onChange={this.updateFields} placeholder="guest@spartanhotel.com" required/>
                 <div className="text-warning">{this.state.errors.email}</div>
                 {this.state.email_duplicate_error? email_duplicate_error : no_error}
               </FormGroup>
               <FormGroup>
                 <Label>Password</Label>
-                <Input type="password" name="password" value={this.state.fields.password} onChange={this.updateFields} placeholder="********" />
+               -                <Input type="password" name="password" value={this.state.fields.password} onChange={this.updateFields} placeholder="********" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$" required/>
                 <div className="text-warning">{this.state.errors.password}</div>
                 {this.state.password_error? password_error : no_error}
               </FormGroup>
               <FormGroup>
                 <Label>Re-enter Password</Label>
-                <Input type="password" name="repassword" value={this.state.fields.repassword} onChange={this.updateFields} placeholder="********" />
+                <Input type="password" name="repassword" value={this.state.fields.repassword} onChange={this.updateFields} placeholder="********" required />
                 <div className="text-warning">{this.state.errors.repassword}</div>
               </FormGroup>
             </Form>
