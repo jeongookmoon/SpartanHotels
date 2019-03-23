@@ -146,6 +146,10 @@ module.exports = {
     modify: 'UPDATE booking SET room_id=?, date_in=?, date_out=? WHERE booking_id=?'
     },
 
+    rewards: {
+    book: 'INSERT INTO spartanhotel.rewards(reward_book_id, user_id, room_id, reward_points, no_cancellation, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)'
+    }
+
 
 
 }
