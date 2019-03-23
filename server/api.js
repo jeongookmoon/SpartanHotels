@@ -76,6 +76,21 @@ router.post('/reservations/cancellation', (req,res)=>{
     )
 })
 
+router.post('/reservations/modification', (req,res)=>{
+    console.log(req.body);
+    let query = mysql.format(Queries.booking.modify, [req.body.room_id, req.body.date_in, req.body.date_out, req.body.booking_id]);
+    console.log(query)
+
+    Queries.run(query).then(
+        results =>{
+            res.status(200).send(results)
+        },
+        error =>{
+            res.status(400).send(error)
+        }
+    )
+})
+
 
 
 module.exports = router;
