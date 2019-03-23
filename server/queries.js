@@ -162,7 +162,7 @@ module.exports = {
 
             if (typeof params.rating !== 'undefined'){
               let rating = parseInt(params.rating)
-              conditions.push(" rating = ");
+              conditions.push(" rating = ? ");
               values.push(rating);
             }
 
