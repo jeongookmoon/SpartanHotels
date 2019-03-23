@@ -4,10 +4,13 @@ import { withRouter } from 'react-router-dom'
 // import neccessary components
 import {
   Button, Modal, ModalHeader, ModalBody, ModalFooter,
-  Form, FormGroup, Label, Input, Row, Col
+  Form, FormGroup, Label, Input, Row, Col,
+  UncontrolledPopover, PopoverHeader, PopoverBody,
 } from 'reactstrap'
 
 import { registerPost } from '../Utility/ReigstrationLoginFunction'
+
+import './Registration.css';
 
 class Registration extends React.Component {
   constructor() {
@@ -25,19 +28,62 @@ class Registration extends React.Component {
       errors: {
       },
       password_error: [],
-      email_duplicate_error: false
+      email_duplicate_error: false,
+
+      passwordCheck: [{req:"≥ 8 characters", valid:false},
+      {req:"At least 1 uppercase letter", valid:false},
+      {req:"At least 1 lowercase letter", valid:false},
+      {req:"At least 1 special character !@#$%^&*",valid:false}]
     };
 
     this.toggle = this.toggle.bind(this);
     this.updateFields = this.updateFields.bind(this);
     this.register = this.register.bind(this);
+    this.passwordChecker = this.passwordChecker.bind(this);
   }
 
   updateFields(event) {
     let temp_fields = this.state.fields;
     temp_fields[event.target.name] = event.target.value;
     this.setState({ fields: temp_fields });
+
+    this.passwordChecker()
   }
+
+  passwordChecker(){
+    let pw = this.state.fields.password;
+    let tmp_passwordCheck = this.state.passwordCheck
+
+    // req:"≥ 8 characters"
+      tmp_passwordCheck[0].valid = (pw.length >= 8) ? true : false
+    
+    // At least 1 Uppercase letter
+    if( /(?=.*[A-Z])/.test(pw)){
+      tmp_passwordCheck[1].valid = true
+    }
+    else{
+      tmp_passwordCheck[1].valid = false
+    }
+
+    // At least 1 Lowercase letter
+    if( /(?=.*[a-z])/.test(pw)){
+      tmp_passwordCheck[2].valid = true
+    }
+    else{
+      tmp_passwordCheck[2].valid = false
+    }
+
+    // At least 1 special character !@#$%^&*
+    if( /(?=.*[!@#$%^&*])/.test(pw)){
+      tmp_passwordCheck[3].valid = true
+    }
+    else{
+      tmp_passwordCheck[3].valid = false
+    }
+
+    this.setState({ passwordCheck: tmp_passwordCheck});
+  }
+
 
   // toggle modal
   toggle() {
@@ -181,6 +227,11 @@ class Registration extends React.Component {
       <div className="text-warning">This email is already registered</div>
     )
 
+
+    var password_requirements_component = this.state.passwordCheck.map(ele=>{
+      return <div key={ele.req} className= { ele.valid ? "valid-req" : "invalid-req" }>{ele.req}</div>
+    }) 
+
     return (
       <div>
         <Button color="primary-outline" onClick={this.toggle}>Register</Button>
@@ -215,9 +266,17 @@ class Registration extends React.Component {
               </FormGroup>
               <FormGroup>
                 <Label>Password</Label>
-               -                <Input type="password" name="password" value={this.state.fields.password} onChange={this.updateFields} placeholder="********" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$" required/>
+                <Input id="PopoverFocus" type="password" name="password" value={this.state.fields.password} onChange={this.updateFields} placeholder="********" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$" required/>
                 <div className="text-warning">{this.state.errors.password}</div>
                 {this.state.password_error? password_error : no_error}
+                <UncontrolledPopover trigger="focus" placement="right" target="PopoverFocus">
+                  <PopoverHeader>Password Requirements</PopoverHeader>
+                  <PopoverBody>
+                  {password_requirements_component}
+                  </PopoverBody>
+                </UncontrolledPopover>
+
+                
               </FormGroup>
               <FormGroup>
                 <Label>Re-enter Password</Label>
