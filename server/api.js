@@ -61,6 +61,21 @@ router.post('/reservations', (req, res)=>{
     )
 })
 
+router.post('/reservations/reward', (req, res)=>{
+    console.log(req.body);
+    let query = mysql.format(Queries.rewards.book, [req.body.user_id, req.body.room_id, req.body.reward_points, req.body.no_cancellation, req.body.date_in, req.body.date_out, req.body.status])
+    console.log(query)
+
+    Queries.run(query).then(
+        results =>{
+            res.status(200).send(results)
+        },
+        error =>{
+            res.status(400).send(error)
+        }
+    )
+})
+
 router.post('/reservations/cancellation', (req,res)=>{
     console.log(req.body);
     let query = mysql.format(Queries.booking.cancel, [req.body.booking_id]);
@@ -90,6 +105,8 @@ router.post('/reservations/modification', (req,res)=>{
         }
     )
 })
+
+
 
 
 
