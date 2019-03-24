@@ -183,7 +183,7 @@ module.exports = {
 
             // SORT BY CLAUSE
             // TODO: sort by distance
-            var sortByClause = ""; 
+            var sortByClause = " order by name "; 
             if (typeof params.sortBy !== 'undefined' && params.sortBy !== '') {
               switch (params.sortBy) {
                 case ("rating_asc"):
@@ -193,19 +193,19 @@ module.exports = {
                   sortByClause = " order by rating desc "
                   break
                 case ("name_asc"):
-                sortByClause = " order by name ";
-                break
+                  sortByClause = " order by name ";
+                  break
                 case("name_des"):
-                sortByClause = " order by name desc ";
-                break
+                  sortByClause = " order by name desc ";
+                  break
                 case("price_asc"):
-                sortByClause = " order by min_price ";
-                break
+                  sortByClause = " order by min_price ";
+                  break
                 case("price_des"):
-                sortByClause = " order by min_price desc ";
-                break
+                  sortByClause = " order by min_price desc ";
+                  break
                 default:
-                sortByClause = " order by name "
+                  sortByClause = " order by name "
               }
             }
         
