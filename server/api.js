@@ -46,6 +46,7 @@ router.post('/register', (req,res)=>{
         res.end()
         return
 
+        })
 
     //    Queries.run(q2).then((results) => {
     //          //const user_id = results[0];
