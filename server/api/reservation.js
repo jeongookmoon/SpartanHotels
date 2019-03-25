@@ -139,6 +139,7 @@ router.post('/', (req, res)=>{
 })
 
 router.post('/cancellation', (req,res)=>{
+    // TODO: check for user id to match the booking
     console.log(req.body);
     let query = mysql.format(Queries.booking.cancel, [req.body.booking_id]);
     console.log(query)
@@ -154,6 +155,7 @@ router.post('/cancellation', (req,res)=>{
 })
 
 router.post('/modification', (req,res)=>{
+    // TODO: check for user id to match the booking
     console.log(req.body);
     let query = mysql.format(Queries.booking.modify, [req.body.room_id, req.body.date_in, req.body.date_out, req.body.booking_id]);
     console.log(query)
