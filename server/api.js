@@ -154,21 +154,6 @@ function authenticationMiddleware() {
 
 
 
-//Make a reservation 
-router.post('/reservations', (req, res)=>{
-    console.log(req.body);
-    let query = mysql.format(Queries.booking.book, [req.body.user_id, req.body.room_id, req.body.total_price, req.body.cancellation_charge, req.body.date_in, req.body.date_out, req.body.status])
-    console.log(query)
-
-    Queries.run(query).then(
-        results =>{
-            res.status(200).send(results)
-        },
-        error =>{
-            res.status(400).send(error)
-        }
-    )
-})
 
 router.post('/reservations/reward', (req, res)=>{
     console.log(req.body);
@@ -185,67 +170,8 @@ router.post('/reservations/reward', (req, res)=>{
     )
 })
 
-router.post('/reservations/cancellation', (req,res)=>{
-    console.log(req.body);
-    let query = mysql.format(Queries.booking.cancel, [req.body.booking_id]);
-    console.log(query)
 
-    Queries.run(query).then(
-        results =>{
-            res.status(200).send(results)
-        },
-        error =>{
-            res.status(400).send(error)
-        }
-    )
-})
-
-router.post('/reservations/modification', (req,res)=>{
-    console.log(req.body);
-    let query = mysql.format(Queries.booking.modify, [req.body.room_id, req.body.date_in, req.body.date_out, req.body.booking_id]);
-    console.log(query)
-
-    Queries.run(query).then(
-        results =>{
-            res.status(200).send(results)
-        },
-        error =>{
-            res.status(400).send(error)
-        }
-    )
-})
-
-
-router.post('/reservations/check', (req,res)=>{
-    console.log(req.body)
-    let query = Queries.booking.isBookable(req.body)
-
-    Queries.run(query)
-    .then(
-        results =>{
-            console.log(results)
-            let bookable = results[0].available;
-            console.log(bookable)
-            
-            if(bookable){
-                console.log(true)
-                res.status(200).send("This room is bookable during the selected timespan")
-            }
-            else{
-                res.status(200).send("This room is not bookable during the selected timespan")
-            }
-        }
-    )
-    .catch(
-        error =>{
-            console.log(error)
-            res.status(400).send("bad")
-        }
-    )
-
-
-})
-
+router.use('/reservations', require("./api/reservation"))
 router.use('/search', require("./api/search"))
 
 
