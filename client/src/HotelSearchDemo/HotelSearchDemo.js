@@ -13,6 +13,8 @@ const mapStyles = {
 
 
 
+
+
 class HotelSearchDemo extends React.Component {
 
 	constructor(props) {
@@ -32,6 +34,9 @@ class HotelSearchDemo extends React.Component {
 
   }
 
+  
+
+  
 
   async componentWillMount() {
     const hotelSearch = (await axios.get('/api/search/hotels?state=California&date_in=2019-03-08&date_out=2019-03-21')).data;
@@ -39,7 +44,7 @@ class HotelSearchDemo extends React.Component {
       hotels:hotelSearch
     });
     console.log(hotelSearch);
-        	  	  console.log(this.state.hotels.results[0]);
+        	  	  console.log(this.state.hotels.results.length);
 
   }
 
@@ -55,6 +60,10 @@ class HotelSearchDemo extends React.Component {
   	if(this.state.hotels.results === undefined){
   		return <div> Loading...</div>
   	}
+
+  	for (let i = 0; i < this.state.hotels.results.length; i++){
+  		}
+
 
 
     return (
