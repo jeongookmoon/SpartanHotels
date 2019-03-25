@@ -72,9 +72,10 @@ class Home extends React.Component {
           console.log("expected reponse 200  ")
           console.log(response)
           //this.props.history.push(`/HotelSearchDemo`)
-          	let queryString = "city=" + this.state.city;
+          	let queryString = "city=" + this.state.city + "&" + "date_in=" + this.state.date_in + "&" + "date_out=" + this.state.date_out;
 			this.props.history.push({
-			  pathname: `/HotelSearchDemo?${queryString}`,
+			  pathname: `/HotelSearchDemo`,
+			  search:`?${queryString}`,
 			  data: response // your data array of objects
 			})
 
@@ -160,9 +161,9 @@ class Home extends React.Component {
 					    Guest
 					  </button>
 					  <div className="guest-dropdown dropdown-menu p-2 flex-grow-1 bd-highlight">
-					    <a className="dropdown-item p-2 flex-grow-1 bd-highlight" href="#">1</a>
-					    <a className="dropdown-item p-2 flex-grow-1 bd-highlight" href="#">2</a>
-					    <a className="dropdown-item p-2 flex-grow-1 bd-highlight" href="#">3</a>
+					    <a className="dropdown-item p-2 flex-grow-1 bd-highlight">1</a>
+					    <a className="dropdown-item p-2 flex-grow-1 bd-highlight">2</a>
+					    <a className="dropdown-item p-2 flex-grow-1 bd-highlight">3</a>
 					  </div>
 					
                  	<button onClick={this.search} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Search</button>
