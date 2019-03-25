@@ -332,13 +332,15 @@ router.post('/reservations/modification', (req,res)=>{
 })
 
 
-router.get('/reservations/check', (req,res)=>{
-    console.log(req.query)
-    let query = Queries.booking.isBookable(req.query)
+router.post('/reservations/check', (req,res)=>{
+    console.log(req.body)
+    let query = Queries.booking.isBookable(req.body)
+
     Queries.run(query)
     .then(
         results =>{
-            let [bookable] = Object.values(results[0]);
+            console.log(results)
+            let bookable = results[0].available;
             console.log(bookable)
             
             if(bookable){
