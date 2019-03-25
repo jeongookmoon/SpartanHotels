@@ -303,49 +303,49 @@ module.exports = {
      * Else, returns an error message
      * 
       */
-      isBookable: function(params = {}){
-        let query = `
-        SELECT 
-        *
-        FROM
-            (SELECT 
-                NOT EXISTS( SELECT 
-                            *
-                        FROM
-                            spartanhotel.booking B
-                        JOIN spartanhotel.room R ON B.room_id = R.room_id
-                        WHERE
-                            date_in < ?
-                                AND date_out > ?
-                                AND status != 'cancelled'
-                                AND R.room_id = ?) AS available
-            ) AS availability
-                JOIN
-            spartanhotel.room
-        WHERE
-            room_id = ?
-        ;
-        
-        `
-  
-        let values = [];
-        if (typeof params.date_out !== 'undefined' && params.date_out !== '') {
-          values.push(params.date_out)
-        }
-        if (typeof params.date_in !== 'undefined' && params.date_in !== '') {
-          values.push(params.date_in)
-        }
-        if (typeof params.room_id !== 'undefined' && params.room_id !== '') {
-          values.push(params.room_id)
-          values.push(params.room_id)
-        }
-        let sql = mysql.format(query, values)
-        console.log(sql)
-  
-        return sql
-      }
+    isBookable: function(params = {}){
+      let query = `
+      SELECT 
+      *
+      FROM
+          (SELECT 
+              NOT EXISTS( SELECT 
+                          *
+                      FROM
+                          spartanhotel.booking B
+                      JOIN spartanhotel.room R ON B.room_id = R.room_id
+                      WHERE
+                          date_in < ?
+                              AND date_out > ?
+                              AND status != 'cancelled'
+                              AND R.room_id = ?) AS available
+          ) AS availability
+              JOIN
+          spartanhotel.room
+      WHERE
+          room_id = ?
+      ;
+      
+      `
 
-    },
+      let values = [];
+      if (typeof params.date_out !== 'undefined' && params.date_out !== '') {
+        values.push(params.date_out)
+      }
+      if (typeof params.date_in !== 'undefined' && params.date_in !== '') {
+        values.push(params.date_in)
+      }
+      if (typeof params.room_id !== 'undefined' && params.room_id !== '') {
+        values.push(params.room_id)
+        values.push(params.room_id)
+      }
+      let sql = mysql.format(query, values)
+      console.log(sql)
+
+      return sql
+    }
+
+  },
 
     rewards: {
     book: 'INSERT INTO spartanhotel.rewards(reward_book_id, user_id, room_id, reward_points, no_cancellation, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)'
