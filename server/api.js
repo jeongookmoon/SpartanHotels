@@ -158,6 +158,10 @@ router.get('/search/hotels', (req,res)=>{
         res.status(400).send("Error: date_in missing")
         return
     }
+    // if in mm/dd/yyyy format, convert to yyyy-mm-dd
+    if( /^\d{1,2}\/\d{1,2}\/\d{1,4}$/.test(req.query.date_in)){
+        req.query.date_in = new Date(req.query.date_in + " GMT").toISOString()
+    }
     if ( !validator.isISO8601(req.query.date_in)){
         res.status(400).send("Error: invalid date_in specified")
         return
@@ -167,13 +171,45 @@ router.get('/search/hotels', (req,res)=>{
         res.status(400).send("Error: date_out missing")
         return
     }
+    // if in mm/dd/yyyy format, convert to yyyy-mm-dd
+    if( /^\d{1,2}\/\d{1,2}\/\d{1,4}$/.test(req.query.date_out)){
+        req.query.date_out = new Date(req.query.date_out + " GMT").toISOString()
+    }
     if ( !validator.isISO8601(req.query.date_out)){
         res.status(400).send("Error: invalid date_out specified")
+        return
+    }
+    if( new Date(req.query.date_in).getTime() === new Date(req.query.date_out).getTime()){
+        res.status(400).send("Error: date_in is same as date_out")
+        return
+    }
+    if( new Date(req.query.date_in).getTime() > new Date(req.query.date_out).getTime()){
+        res.status(400).send("Error: date_in is after date_out")
+        return
+    }
+    if( typeof(req.query.zip) != 'undefined' && !validator.isPostalCode(req.query.zip,'US')){
+        res.status(400).send("Error: invalid US zip")
         return
     }
 
     if ( typeof(req.query.rating) != 'undefined' && !validator.isInt(req.query.rating,{min:0,max:5})){
         res.status(400).send("Error: invalid rating specified")
+        return
+    }
+    if ( typeof(req.query.resultsPerPage) != 'undefined' && !validator.isInt(req.query.resultsPerPage,{min:1})){
+        res.status(400).send("Error: invalid resultsPerPage specified")
+        return
+    }
+    if ( typeof(req.query.priceGTE) != 'undefined' && !validator.isFloat(req.query.priceGTE,{min:0})){
+        res.status(400).send("Error: invalid priceGTE specified")
+        return
+    }
+    if ( typeof(req.query.priceLTE) != 'undefined' && !validator.isFloat(req.query.priceLTE,{min:0})){
+        res.status(400).send("Error: invalid priceLTE specified")
+        return
+    }
+    if ( parseFloat(req.query.priceGTE) > parseFloat(req.query.priceLTE)){
+        res.status(400).send("Error: invalid priceGTE is greater than priceLTE")
         return
     }
 
