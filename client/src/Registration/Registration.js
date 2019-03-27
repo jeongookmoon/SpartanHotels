@@ -105,14 +105,6 @@ class Registration extends React.Component {
         email: this.state.fields.email,
         password: this.state.fields.password
       }
-      let empty_fields = {}
-      empty_fields["email"] = ""
-      empty_fields["firstname"] = ""
-      empty_fields["lastname"] = ""
-      empty_fields["password"] = ""
-      empty_fields["repassword"] = ""
-      // empty fields states
-      this.setState({ fields: empty_fields })
       registerPost(temp_fields).then(response => {
         // console.log("status number(200 success, else fail): ")
         if (response === 200) {
@@ -131,6 +123,14 @@ class Registration extends React.Component {
         } else if (response === 400) {
           // console.log("expected reponse 400 (email already exists): ")
           // console.log(response)
+          // let empty_fields = {}
+          // empty_fields["email"] = ""
+          // empty_fields["firstname"] = ""
+          // empty_fields["lastname"] = ""
+          // empty_fields["password"] = ""
+          // empty_fields["repassword"] = ""
+          // // empty fields states
+          // this.setState({ fields: empty_fields })
           this.setState({email_duplicate_error : true})
           this.props.history.push(`/`)
         }
