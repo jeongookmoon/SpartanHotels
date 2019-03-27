@@ -35,6 +35,11 @@ code {
     top: 0;
 }
 
+.navbar div div {
+      cursor: pointer;
+
+}
+
 .navbar-left{
 
 
@@ -122,12 +127,52 @@ code {
 	margin:0;
 }
 
+.home-guest-adult-header{
+  font-size:2em;
+}
+
+.home-guest-icon-increment{
+  padding: 1em 1em 1em 1em;
+  background-color:white;
+
+}
+
+.home-guest-icon-decrement{
+    padding: 1em 1em 1em 1em;
+
+
+}
+
+.home-guest-input{
+  -webkit-appearance: textfield;
+    background-color: none;
+    -webkit-rtl-ordering: logical;
+    border-width: 0px;
+    border-style: inset;
+    border-color: initial;
+    border-image: initial;
+    font-size:2em;
+    width:4em;
+    text-align:center;
+}
+
+.home-submit-button-container{
+  padding-top:1em;
+  padding-bottom:1em;
+
+}
+
+
 .home-image{
 	min-height:30em;
 	min-width:77em;
 	max-height:50em;
 	max-width:87em;
 	
+}
+
+.home-submit-form{
+
 }
 
 .input-group{
@@ -200,6 +245,82 @@ code {
 
 }
 
+/* ////////////HOME GUEST DROPDOWN//////////////////////////////////////////////////////////////////////////////    */
+
+
+
+ #vertical-menu {
+    background: white;
+    width: 100%;
+    color: black;
+
+    /*box-shadow: 
+    0 5px 15px 1px rgba(0, 0, 0, 0.6), 
+    0 0 200px 1px rgba(255, 255, 255, 0.5);*/
+}
+/*heading styles*/
+ #vertical-menu h3 {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: #a6a6a6;
+    font-family: mallory,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    cursor: pointer;
+    margin-bottom:0px;
+    text-align: left;
+    padding-top:.3em;
+    padding-left:2em;
+    padding-bottom:.3em;
+}
+/*heading hover effect*/
+ #vertical-menu h3:hover {
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.7);
+}
+/*iconfont styles*/
+ #vertical-menu h3 span {
+    font-size: 2rem;
+    margin-right: 10px;
+}
+/*list items*/
+ #vertical-menu li {
+    list-style-type: none;
+}
+
+#vertical-menu ul li ul li {
+    padding-top:2em;
+    padding-bottom:2em;
+}
+/*links*/
+ #vertical-menu ul ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 11px;
+    line-height: 27px;
+    display: block;
+    padding: 0 15px;
+    /*transition for smooth hover animation*/
+    transition: all 0.15s;
+}
+/*hover effect on links*/
+ #vertical-menu ul ul li a:hover {
+    background: #003545;
+    /*border-left: 5px solid lightgreen;*/
+}
+/*Lets hide the non active LIs by default*/
+ #vertical-menu ul ul {
+    display: none;
+}
+
+#vertical-menu ul {
+    padding-left:0px;
+    margin-bottom:0px;
+}
+#vertical-menu li.active ul {
+    display: block;
+}
+
+
+
+
 /* ///////////////////////////////////////////////////////////////////////////////////////////////    */
 
 /* HotelSearch CSS */
@@ -208,6 +329,8 @@ code {
  .hotel-demo-dummy-column{
  	padding-left:0px;
  	padding-right:0px;
+    background-color: #FCFEFF;
+
  }
 
  .hotel-search-columns{
@@ -222,6 +345,43 @@ code {
  	margin-top:4.5em;
  	width:100%;
  	height:100%;
+ }
+
+ .hotel-search-container-no-result{
+  background-color:white;
+  margin-top:4em;
+  font-size:2em;
+ }
+
+ .hotel-search-date-container-demo{
+
+ }
+
+ .hotel-search-date-in-demo{
+    font-weight:200;
+    font-size:0.9em;
+
+ }
+
+ .hotel-search-date-in-header-demo{
+
+ }
+
+ .hotel-search-date-out-demo{
+      font-weight:200;
+      font-size:0.9em;
+ }
+
+ .hotel-search-date-out-header-demo{
+
+ }
+
+ .hotel-search-header-demo{
+    font-weight: 600;
+    padding-bottom: .5em;
+    font-size:.9em;
+    font-family: BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;
+
  }
 
  .hotel-search-item-row{
@@ -248,6 +408,8 @@ code {
  }
 
  .hotel-search-item-name{
+  padding-right: 0em;
+  padding-left:0em;
 
  }
 
@@ -274,7 +436,7 @@ code {
  	min-width:12em;
  	width:100%;
  	height:100%;
- 	background-color: #FCFDFE;
+ 	background-color: #FCFEFF;
 
  }
 
@@ -282,21 +444,20 @@ code {
  	padding-right:0px;
  	width:100%;
  	height:100%;
- 	background-color: #FCFDFE;
+ 	background-color: #FCFEFF;
  	padding-left:0px;
 
  }
 
  .hotel-search-first-column-demo{
+
+  margin-top:0.7em;
   background-color: white;
-  padding-top:2em;
-  padding-left:2em;
-  padding-right:2em;
+  padding-top:1em;
   font-size:2em;
+  min-height:33rem;
 
 
-    min-height:38em;
-  max-height:38em;
 
  }
 
@@ -304,15 +465,33 @@ code {
 
  }
 
+ .hotel-search-guest-container-demo{
+  padding-top:1em;
 
+ }
+
+ .hotel-search-location-demo{
+    font-weight:200;
+ }
+
+ .hotel-search-location-header-demo{
+
+ }
+
+ .hotel-search-location-header-container-demo{
+  padding-top: .5em;
+  padding-bottom: 1em;
+ }
 
  .hotel-search-row{
 
  }
 
  .hotel-search-row-image{
- 	max-width:10em;
- 	max-height:10em;
+ 	min-width:12em;
+ 	min-height:10em;
+  max-width:12em;
+  max-height:10em;
  	
  }
 
@@ -395,12 +574,66 @@ code {
   .hotel-search-table-container-demo{
   	height:100%;
   	width:100%;
- 	background-color: #FCFDFE;
 
   	min-height:38em;
  	max-height:38em;
- 	padding-right:0px;
- 	padding-left:0px;
+
   }
 
- 
+/* ///////////////////////////////////////////////////////////////////////////////////////////////    */
+
+/* Room Page CSS */
+
+.room-page-container{
+  margin-top:6em;
+  width:100%;
+  height:100%;
+  background:;
+
+ }
+
+.room-page-hotel-image{
+  max-height:34rem;
+  max-width:55rem;
+  border-radius:2rem;
+
+}
+.room-page-hotel-container{
+}
+
+.room-page-hotel-image-container{
+  padding-right: 0px;
+  margin-right:0px;
+  padding-left:3rem;
+}
+
+
+.room-page-hotel-description{
+    border-radius:1rem;
+    background:#FCFEFF;
+
+}
+
+.room-page-rooms{
+    border-radius:1rem;
+
+}
+
+
+
+.room-page-rooms tbody tr td{
+    padding-top:1.5rem;
+    padding-left:3rem;
+    padding-bottom:1.5rem;
+
+}
+
+.room-page-rooms-container{
+  padding-top:2rem;
+  padding-left:3rem;
+  padding-right:3rem;
+  border-radius:2rem;
+  padding-bottom:2rem;
+
+}
+

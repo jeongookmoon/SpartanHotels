@@ -7,6 +7,8 @@ import HotelSearch from './HotelSearch/HotelSearch';
 import HotelSearchDemo from './HotelSearchDemo/HotelSearchDemo';
 import UserProfile from './UserProfile/UserProfile';
 import Reservations from './Reservations/Reservations'
+import Checkout from './Checkout/Checkout';
+import RoomPage from './RoomPage/RoomPage';
 import './App.css';
 
 class App extends Component {
@@ -19,6 +21,11 @@ class App extends Component {
           <Route exact path="/UserProfile" component={UserProfile}/>
           <Route exact path="/Reservations" component={Reservations}/>
           <Route path="/HotelSearchDemo" component={HotelSearchDemo}/>
+          <Route exact path="/Checkout" component={Checkout}/>
+          <Route path="/RoomPage" component={RoomPage}/>
+
+
+
         </div>
       </Router>
 

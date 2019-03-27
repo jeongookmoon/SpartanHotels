@@ -20,6 +20,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
     <!-- /////////////////////////////////////////-->
 
+    <!-- BOOTSTRAP FORM HELPER-->
+    <script type = "text/javascript" src="https://cdnjs.cloudflare.com/ajax/lib/bootstrap-formhelpers/2.3.0/js/bootstrap-formhelpers.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/lib/bootstrap-formhelpers/2.3.0/css/bootstrap-formhelpers.min.css"/>
+    <!--////////////////////////-->
 
     <meta
       name="viewport"
@@ -72,5 +76,33 @@
                 });
             });
         </script>
+
+<script type ="text/javascript">
+    $("#vertical-menu ul ul").slideUp();
+
+$("#vertical-menu h3").click(function () {
+
+    //slide up all the link lists
+    $("#vertical-menu ul ul").slideUp();
+    $('.plus',this).html('+');
+    //slide down the link list below the h3 clicked - only if its closed
+    if (!$(this).next().is(":visible")) {
+        $(this).next().slideDown();
+        //$(this).remove("span").append('<span class="minus">-</span>');
+        $('.plus').html('+');
+        $('.plus',this).html('-');
+    }
+})
+
+</script>
+
+<script type ="text/javascript">
+
+
+
+
+
+</script>
+
 
 
