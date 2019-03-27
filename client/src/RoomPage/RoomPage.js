@@ -94,10 +94,10 @@ class RoomPage extends React.Component {
 									Room Ammenities
 								</td>
 								<td>
-									2
+									Number of Beds
 								</td>
 								<td>
-									Room Price
+									Room Price ($)
 								</td>
 								<td>
 									
