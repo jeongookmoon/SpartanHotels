@@ -45,7 +45,7 @@ class HotelSearchDemo extends React.Component {
 			rooms_available: 0,
 			state: "",
 			zipcode: 0,
-
+			hotel_id: ""
 		};
 
 		this.roomSearch = this.roomSearch.bind(this);
@@ -57,6 +57,7 @@ class HotelSearchDemo extends React.Component {
 		this.setState({
 			hotels: hotelSearch
 		});
+		console.log("hotelSearch");
 		console.log(hotelSearch);
 		console.log(this.state.hotels.results.length);
 	}
@@ -67,6 +68,8 @@ class HotelSearchDemo extends React.Component {
 		//I WANT TO PASS THIS AS AN OBJECT
 		// this.setState({ hotel:item })
 		// but it doesn't work, so i had to do this
+		console.log("item!!!!!!!!!!!!!");
+		console.log(item);
 		this.setState({
 			address: item.address,
 			amenities: item.ammenities,
@@ -85,42 +88,40 @@ class HotelSearchDemo extends React.Component {
 			rooms_available: item.rooms_available,
 			state: item.state,
 			zipcode: item.zipcode,
+			hotel_id: item.hotel_id
 		})
-		
-	        
-      		console.log(item);
 
-        console.log("status number(200 success, else fail): ")
-          console.log("expected reponse 200  ")
-          	//we don't have a query that handles the room
-          	let queryString = this.props.location.search
-			this.props.history.push({
-			  pathname: `/RoomPage`,
-			  search:`${queryString}`,
-			  address: item.address,
-				amenities: item.ammenities,
-				city: item.city,
-				country: item.country,
-				description: item.description,
-				hotel_id: item.hotel_id,
-				images: item.images,
-				latitude: item.latitude,
-				longitude: item.longitude,
-				max_price: item.max_price,
-				min_price: item.min_price,
-				name: item.name,
-				phone_number: item.phone_number,
-				rating: item.rating,
-				rooms_available: item.rooms_available,
-				state: item.state,
-				zipcode: item.zipcode,
-			})  
- 
-      	
+		console.log("status number(200 success, else fail): ")
+		console.log("expected reponse 200  ")
+		//we don't have a query that handles the room
+		let queryString = this.props.location.search+"&zip="+item.zipcode
+		this.props.history.push({
+			pathname: `/RoomPage`,
+			search: `${queryString}`,
+			address: item.address,
+			amenities: item.ammenities,
+			city: item.city,
+			country: item.country,
+			description: item.description,
+			hotel_id: item.hotel_id,
+			images: item.images,
+			latitude: item.latitude,
+			longitude: item.longitude,
+			max_price: item.max_price,
+			min_price: item.min_price,
+			name: item.name,
+			phone_number: item.phone_number,
+			rating: item.rating,
+			rooms_available: item.rooms_available,
+			state: item.state,
+			zipcode: item.zipcode,
+		})
+
+
 	}
 
 
-	
+
 
 
 	render() {
@@ -139,9 +140,9 @@ class HotelSearchDemo extends React.Component {
 
 		/*Capitalizes the first letter of each word in a phrase*/
 		function toTitleCase(str) {
-    		return str.replace(/\w\S*/g, function(txt){
-        	return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    		});
+			return str.replace(/\w\S*/g, function (txt) {
+				return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+			});
 		}
 
 		const showResult = (
@@ -156,65 +157,65 @@ class HotelSearchDemo extends React.Component {
 							<hr></hr>
 							<div className="col-lg-12">
 
-									<div className="hotel-search-location-header-container-demo">
-										<div className="hotel-search-location-header-demo">
-											Location: 
+								<div className="hotel-search-location-header-container-demo">
+									<div className="hotel-search-location-header-demo">
+										Location:
 										</div>
 
-										<div className="hotel-search-location-demo">
-											{toTitleCase(location)}
+									<div className="hotel-search-location-demo">
+										{toTitleCase(location)}
+									</div>
+								</div>
+
+								<div className="row hotel-search-date-container-demo">
+
+									<div className="col-lg-6">
+										<div className="hotel-search-date-in-header-demo">
+											Date In:
+											</div>
+
+										<div className="hotel-search-date-in-demo">
+											{dateIn}
 										</div>
 									</div>
 
-									<div className="row hotel-search-date-container-demo">
-
-										<div className="col-lg-6">
-											<div className="hotel-search-date-in-header-demo">
-												Date In: 
+									<div className="col-lg-6">
+										<div className="hotel-search-date-out-header-demo">
+											Date Out:
 											</div>
 
-											<div className="hotel-search-date-in-demo">
-												{dateIn}
-											</div>
+										<div className="hotel-search-date-out-demo">
+											{dateOut}
 										</div>
-
-										<div className="col-lg-6">
-											<div className="hotel-search-date-out-header-demo">
-											     Date Out: 
-											</div>
-
-											<div className="hotel-search-date-out-demo">
-											     {dateOut}
-											</div>
-										</div>
-
 									</div>
 
-									<div className="row hotel-search-guest-container-demo">
+								</div>
 
-										<div className="col-lg-6">
-											<div className="hotel-search-date-in-header-demo">
-												Adults #: 
+								<div className="row hotel-search-guest-container-demo">
+
+									<div className="col-lg-6">
+										<div className="hotel-search-date-in-header-demo">
+											Adults #:
 											</div>
 
-											<div className="hotel-search-date-in-demo">
-												{adult}
-											</div>
+										<div className="hotel-search-date-in-demo">
+											{adult}
 										</div>
-
-										<div className="col-lg-6">
-											<div className="hotel-search-date-out-header-demo">
-											     Children #: 
-											</div>
-
-											<div className="hotel-search-date-out-demo">
-											     {children}
-											</div>
-										</div>
-
 									</div>
 
-									
+									<div className="col-lg-6">
+										<div className="hotel-search-date-out-header-demo">
+											Children #:
+											</div>
+
+										<div className="hotel-search-date-out-demo">
+											{children}
+										</div>
+									</div>
+
+								</div>
+
+
 
 							</div>
 						</div>
@@ -229,12 +230,13 @@ class HotelSearchDemo extends React.Component {
 							<tbody>
 								{this.state.hotels.results.map((eachHotelResult, index) => {
 									/* Each Hotel Result */
-
+									console.log("eachResult!!!")
+									console.log(eachHotelResult)
 									let imageURLS = eachHotelResult.images;
 									let imageArray = imageURLS.split(",");
 									console.log(imageArray[0]);
 
-									return(
+									return (
 										<tr className="hotel-search-row shadow-sm p-3 mb-5 bg-white rounded">
 											<td>
 												<div>
@@ -246,7 +248,7 @@ class HotelSearchDemo extends React.Component {
 												<div>
 
 													<div className="hotel-search-item-row hotel-search-item-header">
-														<div className="col-lg-1 hotel-search-item-number">{index+1}</div>
+														<div className="col-lg-1 hotel-search-item-number">{index + 1}</div>
 														<div className="">.</div>
 														{/* Hotel Name */}
 														<a href="#" className="col-lg-10 hotel-search-item-name">{eachHotelResult.name}</a>
@@ -271,7 +273,7 @@ class HotelSearchDemo extends React.Component {
 												<div>
 
 													<div className="hotel-search-item-row">
-													
+
 														{/* Min Price */}
 														<div className="hotel-search-item-min-price">
 															{eachHotelResult.min_price}
@@ -284,7 +286,7 @@ class HotelSearchDemo extends React.Component {
 														<div className="hotel-search-item-min-price">
 															{eachHotelResult.max_price}
 														</div>
-													
+
 													</div>
 
 													<br></br>
@@ -317,71 +319,71 @@ class HotelSearchDemo extends React.Component {
 							<hr></hr>
 							<div className="col-lg-12">
 
-									<div className="hotel-search-location-header-container-demo">
-										<div className="hotel-search-location-header-demo">
-											Location: 
+								<div className="hotel-search-location-header-container-demo">
+									<div className="hotel-search-location-header-demo">
+										Location:
 										</div>
 
-										<div className="hotel-search-location-demo">
-											{toTitleCase(location)}
+									<div className="hotel-search-location-demo">
+										{toTitleCase(location)}
+									</div>
+								</div>
+
+								<div className="row hotel-search-date-container-demo">
+
+									<div className="col-lg-6">
+										<div className="hotel-search-date-in-header-demo">
+											Date In:
+											</div>
+
+										<div className="hotel-search-date-in-demo">
+											{dateIn}
 										</div>
 									</div>
 
-									<div className="row hotel-search-date-container-demo">
-
-										<div className="col-lg-6">
-											<div className="hotel-search-date-in-header-demo">
-												Date In: 
+									<div className="col-lg-6">
+										<div className="hotel-search-date-out-header-demo">
+											Date Out:
 											</div>
 
-											<div className="hotel-search-date-in-demo">
-												{dateIn}
-											</div>
+										<div className="hotel-search-date-out-demo">
+											{dateOut}
 										</div>
-
-										<div className="col-lg-6">
-											<div className="hotel-search-date-out-header-demo">
-											     Date Out: 
-											</div>
-
-											<div className="hotel-search-date-out-demo">
-											     {dateOut}
-											</div>
-										</div>
-
 									</div>
 
-									<div className="row hotel-search-guest-container-demo">
+								</div>
 
-										<div className="col-lg-6">
-											<div className="hotel-search-date-in-header-demo">
-												Adults #: 
+								<div className="row hotel-search-guest-container-demo">
+
+									<div className="col-lg-6">
+										<div className="hotel-search-date-in-header-demo">
+											Adults #:
 											</div>
 
-											<div className="hotel-search-date-in-demo">
-												{adult}
-											</div>
+										<div className="hotel-search-date-in-demo">
+											{adult}
 										</div>
-
-										<div className="col-lg-6">
-											<div className="hotel-search-date-out-header-demo">
-											     Children #: 
-											</div>
-
-											<div className="hotel-search-date-out-demo">
-											     {children}
-											</div>
-										</div>
-
 									</div>
+
+									<div className="col-lg-6">
+										<div className="hotel-search-date-out-header-demo">
+											Children #:
+											</div>
+
+										<div className="hotel-search-date-out-demo">
+											{children}
+										</div>
+									</div>
+
+								</div>
 
 							</div>
 						</div>
 					</div>
 				</div>
 				<div className="col-lg-8 hotel-search-first-column-dummy table-responsive">
-					<div className="hotel-search-container-no-result"> 
-					Sorry, unable to find any hotels. 
+					<div className="hotel-search-container-no-result">
+						Sorry, unable to find any hotels.
 					</div>
 				</div>
 
@@ -390,14 +392,20 @@ class HotelSearchDemo extends React.Component {
 
 		if (this.state.hotels.results.length === 0) {
 			return (
+<<<<<<< HEAD
 			<div className="" style={topSectionStyle}>
 			<div className="hotel-search-container"> {showNoResult} </div>
 			</div>
+=======
+
+				<div className="hotel-search-container"> {showNoResult} </div>
+>>>>>>> room page retrieve data using query url
 			);
 		}
 
-		else{
+		else {
 
+<<<<<<< HEAD
 		return (
 					<div className="" style={topSectionStyle}>
 
@@ -408,6 +416,15 @@ class HotelSearchDemo extends React.Component {
 			</div>
 			</div>
 		);
+=======
+			return (
+				<div className="hotel-search-container">
+
+
+					{showResult}
+				</div>
+			);
+>>>>>>> room page retrieve data using query url
 
 		}
 	}
