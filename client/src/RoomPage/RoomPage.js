@@ -22,8 +22,11 @@ class RoomPage extends React.Component {
 
 	Checkout(event) {
     event.preventDefault()
-
-    this.props.history.push(`/Checkout`)
+		let queryString = this.props.location.search
+    this.props.history.push({
+			pathname: `/Checkout`,
+			search: `${queryString}`,
+		})
   }
 
 	async componentWillMount() {
@@ -44,7 +47,7 @@ class RoomPage extends React.Component {
 		}
 		else {
 			console.log("Result!!!");
-			console.log(this.state.hotels.results[0].images);
+			console.log(this.state.hotels.results[0]);
 			let imageURLS = this.state.hotels.results[0].images;
 			let imageArray = []
 			if(imageURLS) {
