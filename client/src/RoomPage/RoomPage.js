@@ -97,7 +97,7 @@ class RoomPage extends React.Component {
 									Room Price
 								</td>
 								<td>
-									<button onClick={this.Checkout.bind(this)} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Check Out</button>
+									
 	
 								</td>
 							</tr>
