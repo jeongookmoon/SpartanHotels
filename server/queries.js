@@ -283,8 +283,73 @@ module.exports = {
     },
 
     booking: {
+    book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, room_id, total_price, cancellation_charge, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',
+    cancel: 'UPDATE booking SET status="cancelled" WHERE booking_id=?',
+    modify: 'UPDATE booking SET room_id=?, date_in=?, date_out=? WHERE booking_id=?',
 
-    },
+      /**
+     * 
+     * @param {*} params 
+     * {date_in, date_out, room_id}
+     * @returns {*} 
+     * 
+     * This returns a query, that when run, will:
+     * 
+     * Return an array containing an object
+     * eg
+     * [{"available":1,"room_id":9,"hotel_id":5,"room_number":210,"price":138.46,"bed_type":"King","bed_number":1}]
+     * available is false if = 0
+     * 
+     * Else, returns an error message
+     * 
+      */
+    isBookable: function(params = {}){
+      let query = `
+      SELECT 
+      *
+      FROM
+          (SELECT 
+              NOT EXISTS( SELECT 
+                          *
+                      FROM
+                          spartanhotel.booking B
+                      JOIN spartanhotel.room R ON B.room_id = R.room_id
+                      WHERE
+                          date_in < ?
+                              AND date_out > ?
+                              AND status != 'cancelled'
+                              AND R.room_id = ?) AS available
+          ) AS availability
+              JOIN
+          spartanhotel.room
+      WHERE
+          room_id = ?
+      ;
+      
+      `
+
+      let values = [];
+      if (typeof params.date_out !== 'undefined' && params.date_out !== '') {
+        values.push(params.date_out)
+      }
+      if (typeof params.date_in !== 'undefined' && params.date_in !== '') {
+        values.push(params.date_in)
+      }
+      if (typeof params.room_id !== 'undefined' && params.room_id !== '') {
+        values.push(params.room_id)
+        values.push(params.room_id)
+      }
+      let sql = mysql.format(query, values)
+      console.log(sql)
+
+      return sql
+    }
+
+  },
+
+    rewards: {
+    book: 'INSERT INTO spartanhotel.rewards(reward_book_id, user_id, room_id, reward_points, no_cancellation, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)'
+    }
 
 
 
