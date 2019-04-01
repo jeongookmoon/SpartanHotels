@@ -258,7 +258,7 @@ module.exports = {
               withClause + mainQuery + whereClause + groupByClause + 
               `
                 ) as rh
-                join
+                left join
                 hotel_image
                 on hotel_image.hotel_id = rh.hotel_id
                 group by
@@ -311,11 +311,10 @@ module.exports = {
           var values = [];
       
           // WHERE/FILTER CLAUSE
-          // TODO: filter by distance
       
           // Useful only if rooms have different amenities and ratings
-          // if (typeof params.amenities !== 'undefined'){
-          //   let amenities = JSON.parse(decodeURIComponent(params.amenities))
+          // if (typeof queryString.amenities !== 'undefined'){
+          //   let amenities = JSON.parse(decodeURIComponent(queryString.amenities))
           //   for(var i=0;i< amenities.length;i++){
           //     conditions.push(" amenities like ? ");
           //     values.push("%" + amenities[i] + "%");
@@ -323,7 +322,7 @@ module.exports = {
           // }
           // if (typeof params.rating !== 'undefined'){
           //   let rating = parseInt(params.rating)
-          //   conditions.push(" rating = ");
+          //   conditions.push(" rating = ? ");
           //   values.push(rating);
           // }
       
@@ -344,12 +343,12 @@ module.exports = {
       
       
           var whereClause = conditions.length ? conditions.join(' AND ') : '1'
-      
+             
           // SORT BY CLAUSE
-          // TODO: sort by distance
-          var sortByClause = ""; 
-          if (typeof queryString.sortBy !== 'undefined' && queryString.sortBy !== '') {
-            switch (queryString.sortBy) {
+            // TODO: sort by distance
+            var sortByClause = ""; 
+            if (typeof queryString.sortBy !== 'undefined' && queryString.sortBy !== '') {
+              switch (queryString.sortBy) {
               // Useful only if rooms have different amenities and ratings
               // case ("rating_asc"):
               //   sortByClause = " order by rating ";
@@ -357,22 +356,22 @@ module.exports = {
               // case ("rating_des"):
               //   sortByClause = " order by rating desc "
               //   break
-              case ("name_asc"):
-              sortByClause = " order by name ";
-              break
-              case("name_des"):
-              sortByClause = " order by name desc ";
-              break
-              case("price_asc"):
-              sortByClause = " order by price ";
-              break
-              case("price_des"):
-              sortByClause = " order by price desc ";
-              break
-              default:
-              sortByClause = " order by price desc "
+                case ("name_asc"):
+                  sortByClause = " order by name ";
+                  break
+                case("name_des"):
+                  sortByClause = " order by name desc ";
+                  break
+                case("price_asc"):
+                  sortByClause = " order by price ";
+                  break
+                case("price_des"):
+                  sortByClause = " order by price desc ";
+                  break
+                default:
+                  sortByClause = " order by price desc "
+              }
             }
-          }
       
           // PAGINATION
           var pageNumber = 0;
@@ -414,7 +413,19 @@ module.exports = {
         if(getCount){
           query = withClause + mainQuery + whereClause + ';'
         }else{
-          query =  withClause + mainQuery + whereClause + sortByClause + paginationClause  + ';'
+          // wrap query inside a select so we can join the results with hotel images
+          query = ` select rh.*, group_concat(url) as images from ( ` + 
+          withClause + mainQuery + whereClause + 
+          `
+            ) as rh
+            left join
+            room_image
+            on room_image.room_id = rh.room_id
+            group by
+            rh.room_id
+          `
+          + sortByClause + paginationClause  + 
+          ';'
         }
         return [query, values]
       },
