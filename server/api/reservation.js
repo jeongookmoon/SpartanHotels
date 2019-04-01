@@ -10,6 +10,8 @@ const bodyParser = require('body-parser')
 
 var validator = require('validator');
 
+const dateChecker = require("./_checks")
+
 
 //Make a reservation 
 router.post('/', (req, res)=>{
@@ -90,39 +92,11 @@ router.post('/', (req, res)=>{
 
     // Check values
     console.log(req.body);
-    if ( typeof(req.body.date_in) == 'undefined'){
-        res.status(400).send("Error: date_in missing")
-        return
-    }
-    // if in mm/dd/yyyy format, convert to yyyy-mm-dd
-    if( /^\d{1,2}\/\d{1,2}\/\d{1,4}$/.test(req.body.date_in)){
-        req.body.date_in = new Date(req.body.date_in + " GMT").toISOString()
-    }
-    if ( !validator.isISO8601(req.body.date_in)){
-        res.status(400).send("Error: invalid date_in specified")
-        return
-    }
 
-    if ( typeof(req.body.date_out) == 'undefined'){
-        res.status(400).send("Error: date_out missing")
+    if (! dateChecker(req.body, res)){
         return
     }
-    // if in mm/dd/yyyy format, convert to yyyy-mm-dd
-    if( /^\d{1,2}\/\d{1,2}\/\d{1,4}$/.test(req.body.date_out)){
-        req.body.date_out = new Date(req.body.date_out + " GMT").toISOString()
-    }
-    if ( !validator.isISO8601(req.body.date_out)){
-        res.status(400).send("Error: invalid date_out specified")
-        return
-    }
-    if( new Date(req.body.date_in).getTime() === new Date(req.body.date_out).getTime()){
-        res.status(400).send("Error: date_in is same as date_out")
-        return
-    }
-    if( new Date(req.body.date_in).getTime() > new Date(req.body.date_out).getTime()){
-        res.status(400).send("Error: date_in is after date_out")
-        return
-    }
+    
 
     let requestedBooking = {}
     requestedBooking.room_id = req.body.room_id
@@ -174,39 +148,11 @@ router.post('/modification', (req,res)=>{
 router.post('/check', (req,res)=>{
     // Check values
     console.log(req.body);
-    if ( typeof(req.body.date_in) == 'undefined'){
-        res.status(400).send("Error: date_in missing")
-        return
-    }
-    // if in mm/dd/yyyy format, convert to yyyy-mm-dd
-    if( /^\d{1,2}\/\d{1,2}\/\d{1,4}$/.test(req.body.date_in)){
-        req.body.date_in = new Date(req.body.date_in + " GMT").toISOString()
-    }
-    if ( !validator.isISO8601(req.body.date_in)){
-        res.status(400).send("Error: invalid date_in specified")
+    
+    if (! dateChecker(req.body, res)){
         return
     }
 
-    if ( typeof(req.body.date_out) == 'undefined'){
-        res.status(400).send("Error: date_out missing")
-        return
-    }
-    // if in mm/dd/yyyy format, convert to yyyy-mm-dd
-    if( /^\d{1,2}\/\d{1,2}\/\d{1,4}$/.test(req.body.date_out)){
-        req.body.date_out = new Date(req.body.date_out + " GMT").toISOString()
-    }
-    if ( !validator.isISO8601(req.body.date_out)){
-        res.status(400).send("Error: invalid date_out specified")
-        return
-    }
-    if( new Date(req.body.date_in).getTime() === new Date(req.body.date_out).getTime()){
-        res.status(400).send("Error: date_in is same as date_out")
-        return
-    }
-    if( new Date(req.body.date_in).getTime() > new Date(req.body.date_out).getTime()){
-        res.status(400).send("Error: date_in is after date_out")
-        return
-    }
     let query = Queries.booking.isBookable(req.body)
 
     Queries.run(query)

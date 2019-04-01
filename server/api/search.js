@@ -10,42 +10,15 @@ const bodyParser = require('body-parser')
 
 var validator = require('validator');
 
+const dateChecker = require("./_checks")
+
 router.get('/hotels', (req,res)=>{
     console.log(req.query)
 
-    if ( typeof(req.query.date_in) == 'undefined'){
-        res.status(400).send("Error: date_in missing")
-        return
-    }
-    // if in mm/dd/yyyy format, convert to yyyy-mm-dd
-    if( /^\d{1,2}\/\d{1,2}\/\d{1,4}$/.test(req.query.date_in)){
-        req.query.date_in = new Date(req.query.date_in + " GMT").toISOString()
-    }
-    if ( !validator.isISO8601(req.query.date_in)){
-        res.status(400).send("Error: invalid date_in specified")
+    if (! dateChecker(req.query, res)){
         return
     }
 
-    if ( typeof(req.query.date_out) == 'undefined'){
-        res.status(400).send("Error: date_out missing")
-        return
-    }
-    // if in mm/dd/yyyy format, convert to yyyy-mm-dd
-    if( /^\d{1,2}\/\d{1,2}\/\d{1,4}$/.test(req.query.date_out)){
-        req.query.date_out = new Date(req.query.date_out + " GMT").toISOString()
-    }
-    if ( !validator.isISO8601(req.query.date_out)){
-        res.status(400).send("Error: invalid date_out specified")
-        return
-    }
-    if( new Date(req.query.date_in).getTime() === new Date(req.query.date_out).getTime()){
-        res.status(400).send("Error: date_in is same as date_out")
-        return
-    }
-    if( new Date(req.query.date_in).getTime() > new Date(req.query.date_out).getTime()){
-        res.status(400).send("Error: date_in is after date_out")
-        return
-    }
     if( typeof(req.query.zip) != 'undefined' && !validator.isPostalCode(req.query.zip,'US')){
         res.status(400).send("Error: invalid US zip")
         return
@@ -140,21 +113,7 @@ router.get('/hotels/:hotelID', (req,res)=>{
         res.status(400).send("Error: hotelID is not a number")
         return
     }
-    if ( typeof(req.query.date_in) == 'undefined'){
-        res.status(400).send("Error: date_in missing")
-        return
-    }
-    if ( !validator.isISO8601(req.query.date_in)){
-        res.status(400).send("Error: invalid date_in specified")
-        return
-    }
-
-    if ( typeof(req.query.date_out) == 'undefined'){
-        res.status(400).send("Error: date_out missing")
-        return
-    }
-    if ( !validator.isISO8601(req.query.date_out)){
-        res.status(400).send("Error: invalid date_out specified")
+    if (! dateChecker(req.query, res)){
         return
     }
 
