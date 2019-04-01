@@ -275,7 +275,7 @@ module.exports = {
           return [query, values]
         
         },
-        rooms: function (params = {}, queryString={}, getCount=false) {
+        room: function (params = {}, queryString={}, getCount=false) {
           // Example parameter: { name: "mint", category: "baby", sortByAsc: true,  priceGreaterThan: 2, priceLessThan: 5 }
           /*
             from StackOverflow, Jordan Running,
@@ -432,9 +432,6 @@ module.exports = {
 
     },
 
-    room: {
-
-    },
 
     booking: {
     book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, room_id, total_price, cancellation_charge, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',

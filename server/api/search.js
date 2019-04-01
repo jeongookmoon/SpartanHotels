@@ -119,12 +119,12 @@ router.get('/hotels/:hotelID', (req,res)=>{
 
 
 
-    let [query, placeholders] = Queries.hotel.rooms(req.params, req.query)
+    let [query, placeholders] = Queries.hotel.room(req.params, req.query)
     console.log(placeholders)
     let fullQuery = mysql.format(query,placeholders)
     console.log(fullQuery);
     
-    [query, placeholders] = Queries.hotel.rooms(req.params, req.query, true)    
+    [query, placeholders] = Queries.hotel.room(req.params, req.query, true)    
     // console.log("COUNT" + query)
     let fullQueryForCount = mysql.format(query,placeholders)
     console.log("COUNT" + fullQueryForCount)
