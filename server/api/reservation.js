@@ -86,7 +86,7 @@ router.post('/', (req, res)=>{
         }
         console.log(insertResult)
         let bookingID = insertResult.insertId
-        res.status(200).send(`created booking #${bookingID}`)
+        res.status(200).send({message:`created booking #${bookingID}`, data: bookingID})
 
     }
 
