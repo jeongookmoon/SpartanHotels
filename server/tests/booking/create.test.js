@@ -8,10 +8,11 @@ const qs = require("querystring");
 const baseURL = "http://localhost:3001/api";
 
 const makeReservation = baseURL + "/reservations";
+const cancelReservation = baseURL + "/reservations/cancellation";
 
 describe("reservations", () => {
     test("make reservation w/ invalid submitted data", () => {
-      expect.assertions(1);
+        expect.assertions(1);
         return axios
             .post(makeReservation, {
                 user_id: 9,
@@ -24,7 +25,7 @@ describe("reservations", () => {
             })
             .then(
                 response => {
-                    // console.log(response)
+                    throw "response should be 400"
                 },
                 error => {
                     // let err = error.response.data
@@ -34,9 +35,9 @@ describe("reservations", () => {
                 }
             );
     });
-    test("make 1-day reservation w/ valid data", () => {
-      expect.assertions(1);
-        return axios
+    test("make and remove 1-day reservation w/ valid data", async () => {
+        expect.assertions(2);
+        let result = await axios
             .post(makeReservation, {
                 user_id: 9,
                 room_id: 7,
@@ -48,90 +49,29 @@ describe("reservations", () => {
             })
             .then(
                 response => {
-                    console.log(response.data);
+                    // console.log(response.data);
+                    expect(response.status).toEqual(200);
+                    return response.data
+                },
+                err => {
+                    throw "failed to create booking"
+                }
+            );
+            console.log(result)
+        let booking_id = result.data
+        await axios
+            .post(cancelReservation, {
+                booking_id: booking_id
+            })
+            .then(
+                response => {
+                    // console.log(response.data);
                     expect(response.status).toEqual(200);
                 },
-                err => {}
-            );
-    });
-    test("attempt reservation multiple booking identical", () => {
-      expect.assertions(1);
-        return axios
-            .post(makeReservation, {
-                user_id: 9,
-                room_id: 7,
-                total_price: 225.5,
-                cancellation_charge: 41,
-                date_in: "2019-03-20",
-                date_out: "2019-03-21",
-                status: "booked"
-            })
-            .then(
-                response => {},
                 err => {
-                    console.log(err.response.data);
-                    expect(err.response.status).toEqual(400);
+                    throw "failed to delete booking"
                 }
             );
     });
-    test("attempt reservation multiple booking (diff room, same date)", () => {
-      expect.assertions(1);
-        return axios
-            .post(makeReservation, {
-                user_id: 9,
-                room_id: 2,
-                total_price: 71.5,
-                cancellation_charge: 13,
-                date_in: "2019-03-20",
-                date_out: "2019-03-21",
-                status: "booked"
-            })
-            .then(
-                response => {},
-                err => {
-                    console.log(err.response.data);
-                    expect(err.response.status).toEqual(400);
-                }
-            );
-    });
-    test("attempt reservation multiple booking (same room, overlapping date)", () => {
-      expect.assertions(1);
-        return axios
-            .post(makeReservation, {
-                user_id: 9,
-                room_id: 7,
-                total_price: 225.5 * 3,
-                cancellation_charge: 41,
-                date_in: "2019-03-18",
-                date_out: "2019-03-21",
-                status: "booked"
-            })
-            .then(
-                response => {},
-                err => {
-                    console.log(err.response.data);
-                    expect(err.response.status).toEqual(400);
-                }
-            );
-    });
-    test("attempt reservation multiple booking (diff room, overlapping date)", () => {
-      expect.assertions(1);
-        return axios
-            .post(makeReservation, {
-                user_id: 9,
-                room_id: 2,
-                total_price: 71.5 * 3,
-                cancellation_charge: 13,
-                date_in: "2019-03-18",
-                date_out: "2019-03-21",
-                status: "booked"
-            })
-            .then(
-                response => {},
-                err => {
-                    console.log(err.response.data);
-                    expect(err.response.status).toEqual(400);
-                }
-            );
-    });
+    
 });
