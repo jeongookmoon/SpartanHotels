@@ -54,7 +54,7 @@ describe("reservations - as guest", () => {
                     throw "failed to create booking"
                 }
             );
-            console.log(result)
+            // console.log(result)
         let booking_id = result.data
         await axios
             .post(cancelReservation, {

@@ -29,7 +29,7 @@ afterAll( () => {
         .get(logout,
             { withCredentials:true,
             headers: {
-                cookie: loginResponse.headers["set-cookie"] // need this bc not this is browser-less; normally browser would send the cookie received from login
+                cookie: loginResponse.headers["set-cookie"] // need this bc not this env is browser-less; normally browser would send the cookie received from login
               }})
 })
 
@@ -46,7 +46,10 @@ describe("reservations - as user", () => {
                 status: "booked",
             },
             {
-                withCredentials:true
+                withCredentials:true,
+                headers: {
+                    cookie: loginResponse.headers["set-cookie"] // need this bc not this is browser-less; normally browser would send the cookie received from login
+                  }   
             })
             .then(
                 response => {
@@ -81,12 +84,12 @@ describe("reservations - as user", () => {
             
              .then(
                 response => {
-                    console.log(response);
+                    // console.log(response);
                     expect(response.status).toEqual(200);
                     return response.data
                 },
                 err => {
-                    throw "failed to create booking"
+                    throw `failed to create booking ${err}`
                 }
             );
             console.log(result)
@@ -110,7 +113,7 @@ describe("reservations - as user", () => {
                     expect(response.status).toEqual(200);
                 },
                 err => {
-                    throw "failed to delete booking"
+                    throw `failed to delete booking ${err}`
                 }
             );
     });
