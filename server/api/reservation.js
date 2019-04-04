@@ -37,6 +37,32 @@ router.post('/', (req, res)=>{
             return
         }
         // else is bookable
+
+
+        // Check for multiple booking under same id
+        if (requestedBooking.user){
+            let query = Queries.booking.duplicateBookingCheck(requestedBooking)
+            let queryResults;
+            try{
+                queryResults = await Queries.run(query)
+            } catch(e){
+                // query failed for some reason
+                console.log(e)
+                res.status(400).send("bad")
+                return
+            }
+            console.log(queryResults)
+            let isMultipleBooking = (Array.isArray(queryResults) && queryResults.length) ? true : false
+
+            if(isMultipleBooking){
+                console.log("multiple booking")
+                res.status(400).send("This room is not bookable during the selected timespan due to multiple booking")   
+                return
+            }
+        }
+
+
+
         
         // check client-submitted pricing is correct
         const TAX_RATE = 10
