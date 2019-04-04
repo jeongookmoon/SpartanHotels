@@ -11,7 +11,7 @@ const session = require('express-session')
 const MySQLStore = require('express-mysql-session')(session)
 const config = require('./sql/config.js')
 const passport = require('./auth.js')
-
+const cors = require('cors')
 var app = express();
 
 const sessionStore = new MySQLStore(config)
@@ -37,6 +37,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// CORS HANDLING
+app.use(cors({ credentials: true , origin: "http://localhost:3000"}))
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
