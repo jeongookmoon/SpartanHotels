@@ -10,12 +10,11 @@ const baseURL = "http://localhost:3001/api";
 const makeReservation = baseURL + "/reservations";
 const cancelReservation = baseURL + "/reservations/cancellation";
 
-describe("reservations", () => {
+describe("reservations - as guest", () => {
     test("make reservation w/ invalid submitted data", () => {
         expect.assertions(1);
         return axios
             .post(makeReservation, {
-                user_id: 9,
                 room_id: 7,
                 total_price: 88.0,
                 cancellation_charge: 8.8,
@@ -31,7 +30,6 @@ describe("reservations", () => {
                     // let err = error.response.data
                     // console.log(error.response)
                     expect(error.response.status).toEqual(400);
-                    // expect(err).toEqual(expect.stringContaining("date_in missing"))
                 }
             );
     });
@@ -39,7 +37,6 @@ describe("reservations", () => {
         expect.assertions(2);
         let result = await axios
             .post(makeReservation, {
-                user_id: 9,
                 room_id: 7,
                 total_price: 225.5,
                 cancellation_charge: 41,
