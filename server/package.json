@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "db": "cd sql && node ./script.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
