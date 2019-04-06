@@ -1,8 +1,8 @@
 use spartanhotel;
 
-truncate table hotel;
-truncate table room;
 truncate table booking;
+truncate table guest;
+truncate table hotel;
 truncate table hotel_image;
 truncate table room;
 truncate table room_image;
