@@ -21,15 +21,26 @@ function askQuestion(query) {
 
 
 async function main(){
-    process.argv.forEach(function (val, index, array) {
-        console.log(index + ': ' + val);
-    });
+    // process.argv.forEach(function (val, index, array) {
+    //     console.log(index + ': ' + val);
+    // });
 
-    console.log( process.argv[2])
-    console.log( process.argv[3])
+    // console.log( process.argv[2])
+    // console.log( process.argv[3])
+
+    if( process.argv.length < 4){
+        console.log("insufficient args")
+        return
+    }
 
     let command = process.argv[2]
     let db_version = process.argv[3]
+    if(! /v\d+(\.\d+)?/.test(db_version)){
+        console.log(`${db_version} is not a valid version format. Should be v<#>[.#] ie v0 or v0.1`)
+        return
+      }
+
+
     let shellResult
 
     await askQuestion("When you are prompted for a mysql password, please use the password for root user\nPress enter to proceed");
