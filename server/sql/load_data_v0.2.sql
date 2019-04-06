@@ -48,15 +48,25 @@ ignore 1 rows
 set hotel_id=@hotel_id, url=@url
 ;
 
-load data infile "./data/Rewards_v0.2.csv" into table rewards 
+load data infile "./data/Reward_v0.2.csv" into table reward 
 character set utf8mb4
 fields terminated by "," enclosed by '"' 
 lines terminated by "\r\n" 
 ignore 1 rows
-(@user_id, @reason, @booking_id, @date_active, @change)
+(@user_id, @reward_reason_id, @booking_id, @date_active, @change)
 
-set user_id=@user_id, booking_id=@booking_id, reason=@reason,
+set user_id=@user_id, booking_id=@booking_id, reward_reason_id=@reward_reason_id,
  date_active=@date_active, `change`=@change
+;
+
+load data infile "./data/Reward_Reason_v0.2.csv" into table reward_reason
+character set utf8mb4
+fields terminated by "," enclosed by '"' 
+lines terminated by "\r\n" 
+ignore 1 rows
+(@reason)
+
+set reason=@reason
 ;
 
 load data infile "./data/Rooms_v0.2.csv" into table room 
