@@ -88,7 +88,8 @@ ignore 1 rows
 (@name, @password, @email, @reward, @access_code, @access_code_expiration)
 
 set name=@name, password=@password, email=@email, reward=@reward,
- access_code=@access_code, access_code_expiration=@access_code_expiration
+ access_code=@access_code,
+  access_code_expiration= IF(@access_code_expiration='',CURRENT_TIMESTAMP,@access_code_expiration)
 ;
 
 
