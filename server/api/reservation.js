@@ -140,34 +140,84 @@ router.post('/', (req, res)=>{
 
 router.post('/cancellation', (req,res)=>{
     // TODO: check for user id to match the booking
+    // Currently checks for valid user first then runs the cancel query
     console.log(req.body);
-    let query = mysql.format(Queries.booking.cancel, [req.body.booking_id]);
-    console.log(query)
 
+    let query = mysql.format(Queries.booking.user_id, [req.body.booking_id])
     Queries.run(query).then(
-        results =>{
-            res.status(200).send(results)
+        results => {
+            console.log(JSON.stringify(results[0]))
+            console.log(JSON.stringify(req.user))
+            if(JSON.stringify(results[0]) == JSON.stringify(req.user)) {
+                console.log("Id matches")
+                let query2 = mysql.format(Queries.booking.cancel, [req.body.booking_id]);
+                console.log(query2)
+
+                Queries.run(query2).then(
+                    results =>{
+                        res.status(200).send(results)
+                    },
+                    error =>{
+                        res.status(400).send(error)
+                    }
+                )        
+            }
+            else {
+                console.log("Id does not match")
+            }
         },
-        error =>{
-            res.status(400).send(error)
+        error => {
+            console.log("Error")
         }
     )
+
 })
 
 router.post('/modification', (req,res)=>{
     // TODO: check for user id to match the booking
+    // Currently checks for valid user first then runs the modify query
     console.log(req.body);
-    let query = mysql.format(Queries.booking.modify, [req.body.room_id, req.body.date_in, req.body.date_out, req.body.booking_id]);
-    console.log(query)
+    //console.log(req.session.passport.user.user_id)
+    let query = mysql.format(Queries.booking.user_id, [req.body.booking_id])
 
     Queries.run(query).then(
-        results =>{
-            res.status(200).send(results)
+        results => {
+            console.log(results[0].user_id)
+            console.log(req.user.user_id)
+            console.log(results[0].status)
+            if(results[0].user_id == req.user.user_id) {
+                console.log("Id matches")
+                //Can only modify a booking once
+                if(results[0].status != 'modified') {
+                    console.log("Booking has not been modified before")
+                    let query2 = mysql.format(Queries.booking.modify, 
+                    [req.body.room_id, req.body.date_in, req.body.date_out, req.body.booking_id]);
+                    console.log(query2)
+                    Queries.run(query2).then(
+                        results =>{
+                            res.status(200).send(results)
+                        },
+                        error =>{
+                            res.status(400).send(error)
+                        }
+                    )   
+                }
+                else {
+                    console.log("Booking can only be modified once.")
+                }
+                
+                
+            }
+            else {
+                console.log("Id does not match")
+            }
         },
-        error =>{
-            res.status(400).send(error)
+        error => {
+            console.log("Error")
         }
+
     )
+
 })
 
 
