@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS `spartanhotel`.`booking` (
   `date_in` DATE NOT NULL,
   `date_out` DATE NOT NULL,
   `status` VARCHAR(255) NOT NULL,
-  `amount_paid` INT NOT NULL DEFAULT 0,
+  `amount_paid` DECIMAL(13,2) NOT NULL DEFAULT 0,
   PRIMARY KEY (`booking_id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
