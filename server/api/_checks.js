@@ -11,14 +11,14 @@ var validator = require('validator');
  * 
  * dates are in yyyy-mm-dd OR mm/dd/yyyy format
  * 
- * Input dates may be modified so that they are in ISO8601 format (yyyy-mm-dd).
+ * Input dates may be modified so that they are in ISO8601 format (yyyy-mm-dd) AS A STRING.
  * It is possible that only one date is modified while the other is not. This can happen if an another check fails before ISO8601 conversion is done for both dates.
  * 
  * @param {*} params 
  * Object containing date_in and date_out
  * @param {*} res 
  * Express response object
- * @returns When conditions met, input params dates are converted to ISO8601 and true is returned
+ * @returns When conditions met, input params dates are converted to ISO8601 STRING and true is returned
  * 
  * Else: an appropriate response message is sent in a status 400 response and false is returned
  */
