@@ -69,7 +69,7 @@ router.post('/', (req, res)=>{
 
 
 
-        
+    
         // check client-submitted pricing is correct
         const TAX_RATE = 10
         const CANCELLATION_CHARGE_RATE = 20
@@ -94,18 +94,51 @@ router.post('/', (req, res)=>{
             return
         }
         
-        let insertQuery;
+        let insertBookingQuery;
         if (requestedBooking.user){
             // if user is member
-                // get user id
-                // TODO: check if user has enough rewards if user used rewards
+            
+            // check if user has enough rewards if user used rewards
+            if( requestedBooking.rewards_applied > 0){
+                let rewardQuery = mysql.format(Queries.user.getAvailableRewards, [requestedBooking.user])
+                console.log(`query is ${rewardQuery}`)
 
-            insertQuery = mysql.format(Queries.booking.book, [requestedBooking.user, req.body.room_id, req.body.total_price, req.body.cancellation_charge, req.body.date_in, req.body.date_out, "booked"])
+                try{
+                    queryResults = await Queries.run(rewardQuery)
+                } catch(e){
+                    // query failed for some reason
+                    console.log(e)
+                    res.status(400).send("bad")
+                    return
+                }
+                let availableRewards = queryResults[0].sum
+                console.log(`availableRewards is ${availableRewards}`)
+                if(availableRewards < requestedBooking.rewards_applied){
+                    res.status(400).send("User doesn't have enough reward points")
+                    return
+                }
+            }
+
+            // check that total_price = amount_paid + rewards_applied
+            // TODO: reward conversion rate
+            if( total_price != requestedBooking.amount_paid + requestedBooking.rewards_applied){
+                res.status(400).send(`Amount due ${total_price} doesnt match ${requestedBooking.amount_paid + requestedBooking.rewards_applied}`)
+                return
+            }
+
+            // make query to insert as user
+            insertBookingQuery = mysql.format(Queries.booking.book, [requestedBooking.user, null, req.body.room_id, req.body.total_price, req.body.cancellation_charge, req.body.date_in, req.body.date_out, "booked", req.body.amount_paid])
         }
-        else{
-            insertQuery = mysql.format(Queries.booking.book, [null, req.body.room_id, req.body.total_price, req.body.cancellation_charge, req.body.date_in, req.body.date_out, "booked"])
+        else{   // is guest
+            // Insert guest into guest table
+            let insertGuestQuery = mysql.format(Queries.guest.insert, [requestedBooking.guest_email, requestedBooking.guest_name])
+            let insertGuestResult = await Queries.run(insertGuestQuery)
+            let guestID = insertGuestResult.insertId
+
+            // make query to insert as guest
+            insertBookingQuery = mysql.format(Queries.booking.book, [null, guestID, req.body.room_id, req.body.total_price, req.body.cancellation_charge, req.body.date_in, req.body.date_out, "booked", req.body.amount_paid])
         }
-        console.log(insertQuery)
+        console.log(insertBookingQuery)
 
 
         // Check if payment valid?
@@ -114,15 +147,45 @@ router.post('/', (req, res)=>{
         // Make booking
         let insertResult;
         try{
-            insertResult = await Queries.run(insertQuery)
+            insertResult = await Queries.run(insertBookingQuery)
         } catch(error){
             res.status(400).send(error)
             return
         }
         console.log(insertResult)
         let bookingID = insertResult.insertId
-        res.status(200).send({message:`created booking #${bookingID}`, data: bookingID})
 
+        if(! requestedBooking.user){
+            res.status(200).send({message:`created booking #${bookingID}`, data: bookingID})
+        }
+        else{
+            // update rewards applied
+            if( requestedBooking.rewards_applied > 0){
+                let rewardAppliedQuery = mysql.format(Queries.rewards.useOnBooking,[requestedBooking.user, bookingID, (-1) * requestedBooking.rewards_applied])
+                let rewardAppliedResult;
+                try{
+                    rewardAppliedResult = await Queries.run(rewardAppliedQuery)
+                } catch(error){
+                    res.status(400).send(error)
+                    return
+                }
+            }
+            
+            // update rewards gained from this booking
+            let rewardsGained = parseInt(requestedBooking.amount_paid * 0.10)
+
+            let rewardGainedQuery = mysql.format(Queries.rewards.gainFromBooking,[requestedBooking.user, bookingID, requestedBooking.date_out,rewardsGained])
+            let rewardGainedResult;
+            try{
+                rewardGainedResult = await Queries.run(rewardGainedQuery)
+            } catch(error){
+                res.status(400).send(error)
+                return
+            }
+
+            res.status(200).send({message:`created booking #${bookingID}`, data: bookingID})
+        }
+        
     }
 
     // Check values
@@ -131,7 +194,6 @@ router.post('/', (req, res)=>{
     if (! dateChecker(req.body, res)){
         return
     }
-    console.log(req.body)
     
 
     let requestedBooking = {}
@@ -140,14 +202,31 @@ router.post('/', (req, res)=>{
     requestedBooking.date_out = req.body.date_out
     requestedBooking.total_price = req.body.total_price
     requestedBooking.cancellation_charge = req.body.cancellation_charge
-    requestedBooking.user = req.user ? req.user.user_id : null
+    if(req.user){
+        requestedBooking.user = req.user.user_id
+    }
+    else{
+        // is guest
+        requestedBooking.user = null
+        requestedBooking.guest_email = req.body.guest_email ? req.body.guest_email : ''
+        requestedBooking.guest_name = req.body.guest_name ? req.body.guest_name : "GUEST"
+        if (! ( requestedBooking.guest_email && validator.isEmail(requestedBooking.guest_email))){
+            res.status(400).send("Invalid email")
+            return
+        }
+    }
+    
+    requestedBooking.amount_paid = parseFloat(req.body.amount_paid)
+    requestedBooking.rewards_applied = req.body.rewards_applied ? parseInt(req.body.rewards_applied) : 0
 
     console.log(req.user)
+    /
 
     makeRes(requestedBooking)
 
 })
 
+// TODO: Update to v0.2; rewards
 router.post('/cancellation', (req,res)=>{
     // TODO: check for user id to match the booking
     console.log(req.body);
@@ -164,6 +243,7 @@ router.post('/cancellation', (req,res)=>{
     )
 })
 
+// TODO: Update to v0.2
 router.post('/modification', (req,res)=>{
     // TODO: check for user id to match the booking
     console.log(req.body);
