@@ -12,68 +12,31 @@ var validator = require('validator');
 
 const dateChecker = require("./_checks")
 
+const TAX_RATE = 10
+const CANCELLATION_CHARGE_RATE = 20
+
 
 //Make a reservation 
 router.post('/', (req, res)=>{
 
     async function makeRes(requestedBooking={}){
-        // Check if this booking is possible
-        let query = Queries.booking.isBookable(requestedBooking)
-        let bookingAvailableResults;
-        try{
-            bookingAvailableResults = await Queries.run(query)
-        } catch(e){
-            // query failed for some reason
-            console.log(e)
-            res.status(400).send("bad")
+
+        let checkPassed = false
+
+        checkPassed = await availabilityCheck(requestedBooking)
+        if(!checkPassed){
             return
         }
-        console.log(bookingAvailableResults)
-        let bookable = bookingAvailableResults[0].available;
-            
-        if(! bookable){
-            console.log(false)
-            res.status(400).send("This room is not bookable during the selected timespan")   
+
+        checkPassed = await multipleBookingCheck(requestedBooking)
+        if(!checkPassed){
             return
-        }
-        // else is bookable
-
-
-        // Check for multiple booking under same id
-        if (requestedBooking.user){
-            console.log("checking for multiple bookings for user")
-            let query = Queries.booking.duplicateBookingCheck({
-                user_id: requestedBooking.user,
-                date_in: requestedBooking.date_in,
-                date_out: requestedBooking.date_out
-            })
-            console.log(query)
-            let queryResults;
-            try{
-                queryResults = await Queries.run(query)
-            } catch(e){
-                // query failed for some reason
-                console.log(e)
-                res.status(400).send("bad")
-                return
-            }
-            console.log(queryResults)
-            let isMultipleBooking = (Array.isArray(queryResults) && queryResults.length) ? true : false
-
-            if(isMultipleBooking){
-                console.log("multiple booking")
-                res.status(400).send("This room is not bookable during the selected timespan due to multiple booking")   
-                return
-            }
         }
 
 
 
     
         // check client-submitted pricing is correct
-        const TAX_RATE = 10
-        const CANCELLATION_CHARGE_RATE = 20
-
         const nights_stayed = ((new Date(requestedBooking.date_out) - new Date(requestedBooking.date_in))/(24*60*60*1000))
         console.log(nights_stayed)
             // check total price
@@ -94,38 +57,22 @@ router.post('/', (req, res)=>{
             return
         }
         
+
         let insertBookingQuery;
         if (requestedBooking.user){
             // if user is member
             
             // check if user has enough rewards if user used rewards
-            if( requestedBooking.rewards_applied > 0){
-                let rewardQuery = mysql.format(Queries.user.getAvailableRewards, [requestedBooking.user])
-                console.log(`query is ${rewardQuery}`)
-
-                try{
-                    queryResults = await Queries.run(rewardQuery)
-                } catch(e){
-                    // query failed for some reason
-                    console.log(e)
-                    res.status(400).send("bad")
-                    return
-                }
-                let availableRewards = queryResults[0].sum
-                console.log(`availableRewards is ${availableRewards}`)
-                if(availableRewards < requestedBooking.rewards_applied){
-                    res.status(400).send("User doesn't have enough reward points")
-                    return
-                }
+            checkPassed = await sufficientRewardsCheck(requestedBooking)
+            if(!checkPassed){
+                return
             }
-
             // check that total_price = amount_paid + rewards_applied
             // TODO: reward conversion rate
             if( total_price != requestedBooking.amount_paid + requestedBooking.rewards_applied){
                 res.status(400).send(`Amount due ${total_price} doesnt match ${requestedBooking.amount_paid + requestedBooking.rewards_applied}`)
                 return
             }
-
             // make query to insert as user
             insertBookingQuery = mysql.format(Queries.booking.book, [requestedBooking.user, null, req.body.room_id, req.body.total_price, req.body.cancellation_charge, req.body.date_in, req.body.date_out, "booked", req.body.amount_paid])
         }
@@ -134,7 +81,6 @@ router.post('/', (req, res)=>{
             let insertGuestQuery = mysql.format(Queries.guest.insert, [requestedBooking.guest_email, requestedBooking.guest_name])
             let insertGuestResult = await Queries.run(insertGuestQuery)
             let guestID = insertGuestResult.insertId
-
             // make query to insert as guest
             insertBookingQuery = mysql.format(Queries.booking.book, [null, guestID, req.body.room_id, req.body.total_price, req.body.cancellation_charge, req.body.date_in, req.body.date_out, "booked", req.body.amount_paid])
         }
@@ -297,4 +243,81 @@ router.post('/check', (req,res)=>{
 
 })
 
+async function multipleBookingCheck(requestedBooking){
+            // Check for multiple booking under same id
+            if (requestedBooking.user){
+                console.log("checking for multiple bookings for user")
+                let query = Queries.booking.duplicateBookingCheck({
+                    user_id: requestedBooking.user,
+                    date_in: requestedBooking.date_in,
+                    date_out: requestedBooking.date_out
+                })
+                console.log(query)
+                let queryResults;
+                try{
+                    queryResults = await Queries.run(query)
+                } catch(e){
+                    // query failed for some reason
+                    console.log(e)
+                    res.status(400).send("bad")
+                    return false
+                }
+                console.log(queryResults)
+                let isMultipleBooking = (Array.isArray(queryResults) && queryResults.length) ? true : false
+    
+                if(isMultipleBooking){
+                    console.log("multiple booking")
+                    res.status(400).send("This room is not bookable during the selected timespan due to multiple booking")   
+                    return false
+                }
+            }
+            return true
+}
+async function availabilityCheck(requestedBooking){
+    // Check if this booking is possible
+    let query = Queries.booking.isBookable(requestedBooking)
+    let bookingAvailableResults;
+    try{
+        bookingAvailableResults = await Queries.run(query)
+    } catch(e){
+        // query failed for some reason
+        console.log(e)
+        res.status(400).send("bad")
+        return false
+    }
+    console.log(bookingAvailableResults)
+    let bookable = bookingAvailableResults[0].available;
+        
+    if(! bookable){
+        console.log(false)
+        res.status(400).send("This room is not bookable during the selected timespan")   
+        return false
+    }
+    return true
+}
+
+// This is only for users not guests
+async function sufficientRewardsCheck(requestedBooking){
+    // check if user has enough rewards if user used rewards
+    if( requestedBooking.rewards_applied > 0){
+        let rewardQuery = mysql.format(Queries.user.getAvailableRewards, [requestedBooking.user])
+        console.log(`query is ${rewardQuery}`)
+
+        try{
+            queryResults = await Queries.run(rewardQuery)
+        } catch(e){
+            // query failed for some reason
+            console.log(e)
+            res.status(400).send("bad")
+            return false
+        }
+        let availableRewards = queryResults[0].sum
+        console.log(`availableRewards is ${availableRewards}`)
+        if(availableRewards < requestedBooking.rewards_applied){
+            res.status(400).send("User doesn't have enough reward points")
+            return false
+        }
+    }
+    return true
+}
 module.exports = router;
