@@ -56,6 +56,7 @@ router.post('/', (req, res)=>{
 
             // check that total_price = amount_paid + rewards_applied
             // TODO: reward conversion rate
+            // console.log(` total ${requestedBooking.amount_paid + requestedBooking.rewards_applied}`)
             if( requestedBooking.total_price != requestedBooking.amount_paid + requestedBooking.rewards_applied){
                 res.status(400).send(`Amount due ${requestedBooking.total_price} doesnt match ${requestedBooking.amount_paid + requestedBooking.rewards_applied}`)
                 return
@@ -161,9 +162,19 @@ router.post('/', (req, res)=>{
         res.status(400).send("Invalid amount_paid")
             return
     }
-
     requestedBooking.amount_paid = parseFloat(req.body.amount_paid)
-    requestedBooking.rewards_applied = req.body.rewards_applied ? parseInt(req.body.rewards_applied) : 0
+
+    if( typeof(req.body.rewards_applied) == 'undefined'){
+        requestedBooking.rewards_applied = 0
+    }
+    else{
+        if (!validator.isFloat(req.body.rewards_applied + '',{min:0})){
+            res.status(400).send("Invalid rewards_applied")
+                return
+        }
+        requestedBooking.rewards_applied = parseFloat(req.body.rewards_applied)
+    }
+    
 
     console.log(req.user)
 
