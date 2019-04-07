@@ -164,7 +164,7 @@ describe("reservations - as user", () => {
                     return response.data
                 },
                 err => {
-                    throw `failed to create booking ${err}`
+                    throw `failed to create booking ${err.response.data}`
                 }
             );
         // console.log(result)
@@ -192,6 +192,109 @@ describe("reservations - as user", () => {
                 }
             );
     });
+    test("redeem free reservation w/ rewards", async () => {
+        expect.assertions(2);
+
+
+        let result = await axios
+            .post(makeReservation, {
+                room_id: 5,
+                total_price: 54.56,
+                cancellation_charge: 9.92,
+                date_in: "2019-03-28",
+                date_out: "2019-03-29",
+                amount_paid: 0,
+                rewards_applied: 54.56
+            }, {
+                    withCredentials: true,
+                    headers: {
+                        cookie: loginResponse.headers["set-cookie"] // need this bc not this is browser-less; normally browser would send the cookie received from login
+                    }
+
+                })
+
+            .then(
+                response => {
+                    // console.log(response);
+                    expect(response.status).toEqual(200);
+                    return response.data
+                },
+                err => {
+                    throw `failed to create booking ${err.response.data}`
+                }
+            );
+        // console.log(result)
+        let booking_id = result.data
+        await axios
+            .post(
+                cancelReservation,
+                {
+                    booking_id: booking_id
+                },
+                {
+                    withCredentials: true,
+                    headers: {
+                        cookie: loginResponse.headers["set-cookie"] // need this bc not this is browser-less; normally browser would send the cookie received from login
+                    }
+                }
+            )
+            .then(
+                response => {
+                    // console.log(response.data);
+                    expect(response.status).toEqual(200);
+                },
+                err => {
+                    throw `failed to delete booking ${err}`
+                }
+            );
+    });
+    test("user submits negative rewards", () => {
+        expect.assertions(1);
+        return axios
+            .post(makeReservation, {
+                room_id: 5,
+                total_price: 54.56,
+                cancellation_charge: 9.92,
+                date_in: "2019-03-28",
+                date_out: "2019-03-29",
+                amount_paid: 55.56,
+                rewards_applied: -1
+            },
+                {
+                    withCredentials: true,
+                    headers: {
+                        cookie: loginResponse.headers["set-cookie"] // need this bc not this is browser-less; normally browser would send the cookie received from login
+                    }
+                })
+            .then(
+                response => {
+                    let booking_id = response.data.data
+                    return axios
+                        .post(
+                            cancelReservation,
+                            {
+                                booking_id: booking_id
+                            },
+                            {
+                                withCredentials: true,
+                                headers: {
+                                    cookie: loginResponse.headers["set-cookie"] // need this bc not this is browser-less; normally browser would send the cookie received from login
+                                }
+                            }
+                        ).then(
+                            (res) => { throw "make reservation should have failed" },
+                            (err) => { throw "failed to delete booking" }
+                        )
+                },
+                error => {
+                    // let err = error.response.data
+                    // console.log(error.response)
+                    expect(error.response.status).toEqual(400);
+                    // expect(err).toEqual(expect.stringContaining("date_in missing"))
+                }
+            );
+    });
+    
     test("extra guest_email data", async () => {
         expect.assertions(2);
 
