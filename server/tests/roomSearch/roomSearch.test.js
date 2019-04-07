@@ -113,7 +113,7 @@ describe('room search',()=>{
         return axios.get(urlForRoomsAtHotel(2), {params:{date_in:"2019-03-08", date_out:"2019-03-10"}})
         .then( response=>{
             // console.log(response.data)
-            throw "cant test default # of results returned until there are more than 10 results to return"
+            throw "cant test default # of results returned until there are more than 10 rooms at one hotel to return"
             expect(response.status).toEqual(200)
             expect(response.data.totalResultCount).toEqual(10)
         })
