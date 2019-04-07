@@ -26,6 +26,18 @@ describe("reservations - as guest", () => {
             })
             .then(
                 response => {
+                    return axios
+                        .post(cancelReservation, {
+                            booking_id: booking_id
+                        })
+                        .then(
+                            response => {
+                                throw "make reservation should have failed"
+                            },
+                            err => {
+                                throw "failed to delete booking"
+                            }
+                        );
                     throw "response should be 400"
                 },
                 error => {
@@ -329,7 +341,7 @@ describe("reservations - as guest", () => {
                         })
                         .then(
                             response => {
-                                throw "response should be 400"
+                                throw "make reservation should have failed"
                             },
                             err => {
                                 throw "failed to delete booking"

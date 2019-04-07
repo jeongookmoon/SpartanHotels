@@ -71,7 +71,20 @@ describe("reservations - guest multiple booking", () => {
             })
             .then(
                 response => {
-                    throw "multiple/duplicate booking succeeded"
+                    let booking_id = response.data.data
+                    axios
+                        .post(cancelReservation, {
+                            booking_id: booking_id
+                        })
+                        .then(
+                            response => {
+                                throw "multiple/duplicate booking succeeded"
+                            },
+                            err => {
+                                throw "failed to delete booking"
+                            }
+                        );  
+                    
                 },
                 err => {
                     // console.log(err.response.data);
