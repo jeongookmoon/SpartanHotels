@@ -19,6 +19,56 @@ const CANCELLATION_CHARGE_RATE = 20
 //Make a reservation 
 router.post('/', (req, res)=>{
 
+    // Check values
+    console.log(req.body);
+
+    if (! dateChecker(req.body, res)){
+        return
+    }
+    
+    let requestedBooking = {}
+    requestedBooking.room_id = req.body.room_id
+    requestedBooking.date_in = req.body.date_in
+    requestedBooking.date_out = req.body.date_out
+    requestedBooking.total_price = req.body.total_price
+    requestedBooking.cancellation_charge = req.body.cancellation_charge
+    if(req.user){
+        requestedBooking.user = req.user.user_id
+    }
+    else{
+        // is guest
+        requestedBooking.user = null
+        requestedBooking.guest_email = req.body.guest_email ? req.body.guest_email : ''
+        requestedBooking.guest_name = req.body.guest_name ? req.body.guest_name : "GUEST"
+
+        if (  typeof(requestedBooking.guest_email) == 'undefined' || !validator.isEmail(requestedBooking.guest_email)){
+            res.status(400).send("Invalid email")
+            return
+        }
+    }
+    
+    if( typeof(req.body.amount_paid) == 'undefined' || !validator.isFloat(req.body.amount_paid + '')){
+        res.status(400).send("Invalid amount_paid")
+            return
+    }
+    requestedBooking.amount_paid = parseFloat(req.body.amount_paid)
+
+    if( typeof(req.body.rewards_applied) == 'undefined'){
+        requestedBooking.rewards_applied = 0
+    }
+    else{
+        if (!validator.isFloat(req.body.rewards_applied + '',{min:0})){
+            res.status(400).send("Invalid rewards_applied")
+                return
+        }
+        requestedBooking.rewards_applied = parseFloat(req.body.rewards_applied)
+    }
+    
+
+    console.log(req.user)
+
+    makeRes(requestedBooking)
+
     async function makeRes(requestedBooking={}){
 
         let checkPassed = false
@@ -32,12 +82,6 @@ router.post('/', (req, res)=>{
         if(!checkPassed){
             return
         }
-
-
-
-    
-
-        
 
         let insertBookingQuery;
         if (requestedBooking.user){
@@ -129,57 +173,6 @@ router.post('/', (req, res)=>{
         
     }
 
-    // Check values
-    console.log(req.body);
-
-    if (! dateChecker(req.body, res)){
-        return
-    }
-    
-
-    let requestedBooking = {}
-    requestedBooking.room_id = req.body.room_id
-    requestedBooking.date_in = req.body.date_in
-    requestedBooking.date_out = req.body.date_out
-    requestedBooking.total_price = req.body.total_price
-    requestedBooking.cancellation_charge = req.body.cancellation_charge
-    if(req.user){
-        requestedBooking.user = req.user.user_id
-    }
-    else{
-        // is guest
-        requestedBooking.user = null
-        requestedBooking.guest_email = req.body.guest_email ? req.body.guest_email : ''
-        requestedBooking.guest_name = req.body.guest_name ? req.body.guest_name : "GUEST"
-
-        if (  typeof(requestedBooking.guest_email) == 'undefined' || !validator.isEmail(requestedBooking.guest_email)){
-            res.status(400).send("Invalid email")
-            return
-        }
-    }
-    
-    if( typeof(req.body.amount_paid) == 'undefined' || !validator.isFloat(req.body.amount_paid + '')){
-        res.status(400).send("Invalid amount_paid")
-            return
-    }
-    requestedBooking.amount_paid = parseFloat(req.body.amount_paid)
-
-    if( typeof(req.body.rewards_applied) == 'undefined'){
-        requestedBooking.rewards_applied = 0
-    }
-    else{
-        if (!validator.isFloat(req.body.rewards_applied + '',{min:0})){
-            res.status(400).send("Invalid rewards_applied")
-                return
-        }
-        requestedBooking.rewards_applied = parseFloat(req.body.rewards_applied)
-    }
-    
-
-    console.log(req.user)
-
-    makeRes(requestedBooking)
-
 })
 
 // TODO: Update to v0.2; rewards
@@ -253,6 +246,12 @@ router.post('/check', (req,res)=>{
 
 })
 
+/**
+ * Checks that the requestedBooking is not a multiple booking for users
+ * @param {*} requestedBooking 
+ * @param {*} res Express response object
+ * @returns True if passes checks, else sends http response containing an error msg and returns false
+ */
 async function multipleBookingCheck(requestedBooking,res){
             // Check for multiple booking under same id
             if (requestedBooking.user){
@@ -283,6 +282,13 @@ async function multipleBookingCheck(requestedBooking,res){
             }
             return true
 }
+
+/**
+ * Checks that the requestedBooking is bookable and that the total_price, cancellation_charge in requestedBooking are correct
+ * @param {*} requestedBooking 
+ * @param {*} res Express response object
+ * @returns True if passes checks, else sends http response containing an error msg and returns false
+ */
 async function availabilityAndPriceCheck(requestedBooking, res){
     // Check if this booking is possible
     let query = Queries.booking.isBookable(requestedBooking)
@@ -327,7 +333,13 @@ async function availabilityAndPriceCheck(requestedBooking, res){
     return true
 }
 
-// This is only for users not guests
+/**
+ * Assumes requestedBooking is made by user
+ * Checks that the user has enough reward points to apply to their requestedBooking
+ * @param {*} requestedBooking 
+ * @param {*} res Express response object
+ * True if passes checks, else sends http response containing an error msg and returns false
+ */
 async function sufficientRewardsCheck(requestedBooking,res){
     // check if user has enough rewards if user used rewards
     if( requestedBooking.rewards_applied > 0){
