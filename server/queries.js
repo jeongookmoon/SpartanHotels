@@ -438,6 +438,36 @@ module.exports = {
     cancel: 'UPDATE booking SET status="cancelled" WHERE booking_id=?',
     modify: 'UPDATE booking SET room_id=?, date_in=?, date_out=? WHERE booking_id=?',
 
+    /**
+     * 
+     * @param {*} user_id 
+     * @param {*} date_in 
+     * @param {*} date_out 
+     * @returns A query, which when run -> returns an array of bookings which conflict with the given inputs, else returns empty array
+     */
+      duplicateBookingCheck: function({user_id, date_in, date_out}){
+        let query = `
+        SELECT 
+          B.*,
+          R.hotel_id,
+          R.room_number,
+          R.price,
+          R.bed_type,
+          R.bed_number
+        FROM
+            spartanhotel.booking B
+                JOIN
+            spartanhotel.room R ON B.room_id = R.room_id
+        WHERE
+            date_in < ?
+                AND date_out > ?
+                AND user_id = ?
+                AND status != 'cancelled'          
+        ;
+        `
+        return mysql.format(query, [date_out, date_in, user_id])
+      },
+
       /**
      * 
      * @param {*} params 
