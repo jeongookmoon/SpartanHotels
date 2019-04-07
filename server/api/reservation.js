@@ -23,12 +23,12 @@ router.post('/', (req, res)=>{
 
         let checkPassed = false
 
-        checkPassed = await availabilityCheck(requestedBooking)
+        checkPassed = await availabilityAndPriceCheck(requestedBooking, res)
         if(!checkPassed){
             return
         }
 
-        checkPassed = await multipleBookingCheck(requestedBooking)
+        checkPassed = await multipleBookingCheck(requestedBooking, res)
         if(!checkPassed){
             return
         }
@@ -36,26 +36,7 @@ router.post('/', (req, res)=>{
 
 
     
-        // check client-submitted pricing is correct
-        const nights_stayed = ((new Date(requestedBooking.date_out) - new Date(requestedBooking.date_in))/(24*60*60*1000))
-        console.log(nights_stayed)
-            // check total price
-        let total_price = (bookingAvailableResults[0].price * nights_stayed * (1 + (TAX_RATE/100))).toFixed(2)
-        total_price = parseFloat(total_price)
-        console.log(total_price)
-        console.log(requestedBooking.total_price)
-        if ( requestedBooking.total_price != total_price){
-            res.status(400).send("Total price does not match price on server")   
-            return
-        }
-            // check cancellation charge
-        let cancellation_charge = (bookingAvailableResults[0].price * nights_stayed * (CANCELLATION_CHARGE_RATE/100)).toFixed(2)
-        cancellation_charge = parseFloat(cancellation_charge)
-        console.log(cancellation_charge)
-        if (requestedBooking.cancellation_charge != cancellation_charge){
-            res.status(400).send("Cancellation charge does not match server")   
-            return
-        }
+
         
 
         let insertBookingQuery;
@@ -63,20 +44,33 @@ router.post('/', (req, res)=>{
             // if user is member
             
             // check if user has enough rewards if user used rewards
-            checkPassed = await sufficientRewardsCheck(requestedBooking)
+            checkPassed = await sufficientRewardsCheck(requestedBooking, res)
             if(!checkPassed){
                 return
             }
+
+            if(requestedBooking.rewards_applied > requestedBooking.total_price){
+                res.status(400).send(`Rewards applied ${requestedBooking.rewards_applied} is more than ${requestedBooking.total_price}`)
+                return
+            }
+
             // check that total_price = amount_paid + rewards_applied
             // TODO: reward conversion rate
-            if( total_price != requestedBooking.amount_paid + requestedBooking.rewards_applied){
-                res.status(400).send(`Amount due ${total_price} doesnt match ${requestedBooking.amount_paid + requestedBooking.rewards_applied}`)
+            if( requestedBooking.total_price != requestedBooking.amount_paid + requestedBooking.rewards_applied){
+                res.status(400).send(`Amount due ${requestedBooking.total_price} doesnt match ${requestedBooking.amount_paid + requestedBooking.rewards_applied}`)
                 return
             }
             // make query to insert as user
             insertBookingQuery = mysql.format(Queries.booking.book, [requestedBooking.user, null, req.body.room_id, req.body.total_price, req.body.cancellation_charge, req.body.date_in, req.body.date_out, "booked", req.body.amount_paid])
         }
         else{   // is guest
+            // check that total_price = amount_paid
+            // TODO: reward conversion rate
+            if( requestedBooking.total_price != requestedBooking.amount_paid){
+                res.status(400).send(`Amount due ${requestedBooking.total_price} doesnt match ${requestedBooking.amount_paid}`)
+                return
+            }
+
             // Insert guest into guest table
             let insertGuestQuery = mysql.format(Queries.guest.insert, [requestedBooking.guest_email, requestedBooking.guest_name])
             let insertGuestResult = await Queries.run(insertGuestQuery)
@@ -156,17 +150,22 @@ router.post('/', (req, res)=>{
         requestedBooking.user = null
         requestedBooking.guest_email = req.body.guest_email ? req.body.guest_email : ''
         requestedBooking.guest_name = req.body.guest_name ? req.body.guest_name : "GUEST"
-        if (! ( requestedBooking.guest_email && validator.isEmail(requestedBooking.guest_email))){
+
+        if (  typeof(requestedBooking.guest_email) == 'undefined' || !validator.isEmail(requestedBooking.guest_email)){
             res.status(400).send("Invalid email")
             return
         }
     }
     
+    if( typeof(req.body.amount_paid) == 'undefined' || !validator.isFloat(req.body.amount_paid + '')){
+        res.status(400).send("Invalid amount_paid")
+            return
+    }
+
     requestedBooking.amount_paid = parseFloat(req.body.amount_paid)
     requestedBooking.rewards_applied = req.body.rewards_applied ? parseInt(req.body.rewards_applied) : 0
 
     console.log(req.user)
-    /
 
     makeRes(requestedBooking)
 
@@ -243,7 +242,7 @@ router.post('/check', (req,res)=>{
 
 })
 
-async function multipleBookingCheck(requestedBooking){
+async function multipleBookingCheck(requestedBooking,res){
             // Check for multiple booking under same id
             if (requestedBooking.user){
                 console.log("checking for multiple bookings for user")
@@ -273,7 +272,7 @@ async function multipleBookingCheck(requestedBooking){
             }
             return true
 }
-async function availabilityCheck(requestedBooking){
+async function availabilityAndPriceCheck(requestedBooking, res){
     // Check if this booking is possible
     let query = Queries.booking.isBookable(requestedBooking)
     let bookingAvailableResults;
@@ -293,11 +292,32 @@ async function availabilityCheck(requestedBooking){
         res.status(400).send("This room is not bookable during the selected timespan")   
         return false
     }
+        // check client-submitted pricing is correct
+        const nights_stayed = ((new Date(requestedBooking.date_out) - new Date(requestedBooking.date_in))/(24*60*60*1000))
+        console.log(nights_stayed)
+            // check total price
+        let total_price = (bookingAvailableResults[0].price * nights_stayed * (1 + (TAX_RATE/100))).toFixed(2)
+        total_price = parseFloat(total_price)
+        console.log(total_price)
+        console.log(requestedBooking.total_price)
+        if ( requestedBooking.total_price != total_price){
+            res.status(400).send("Total price does not match price on server")   
+            return false
+        }
+            // check cancellation charge
+        let cancellation_charge = (bookingAvailableResults[0].price * nights_stayed * (CANCELLATION_CHARGE_RATE/100)).toFixed(2)
+        cancellation_charge = parseFloat(cancellation_charge)
+        console.log(cancellation_charge)
+        if (requestedBooking.cancellation_charge != cancellation_charge){
+            res.status(400).send("Cancellation charge does not match server")   
+            return false
+        }
+
     return true
 }
 
 // This is only for users not guests
-async function sufficientRewardsCheck(requestedBooking){
+async function sufficientRewardsCheck(requestedBooking,res){
     // check if user has enough rewards if user used rewards
     if( requestedBooking.rewards_applied > 0){
         let rewardQuery = mysql.format(Queries.user.getAvailableRewards, [requestedBooking.user])
