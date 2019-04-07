@@ -44,7 +44,7 @@ describe("reservations - user multiple booking", () => {
                 cancellation_charge: 41,
                 date_in: "2019-03-20",
                 date_out: "2019-03-21",
-                status: "booked"},
+                amount_paid: 225.5},
                 {
                     withCredentials:true,
                     headers: {
@@ -94,7 +94,7 @@ describe("reservations - user multiple booking", () => {
                 cancellation_charge: 41,
                 date_in: "2019-03-20",
                 date_out: "2019-03-21",
-                status: "booked"
+                amount_paid: 225.5
             },
             {
                 withCredentials:true,
@@ -121,7 +121,7 @@ describe("reservations - user multiple booking", () => {
                 cancellation_charge: 13,
                 date_in: "2019-03-20",
                 date_out: "2019-03-21",
-                status: "booked"
+                amount_paid: 71.5,
             },
             {
                 withCredentials:true,
@@ -147,9 +147,11 @@ describe("reservations - user multiple booking", () => {
                 room_id: 7,
                 total_price: 225.5 * 3,
                 cancellation_charge: 41,
+                date_in: "2019-03-20",
+                date_out: "2019-03-21",
                 date_in: "2019-03-18",
                 date_out: "2019-03-21",
-                status: "booked"
+                amount_paid: 225.5 * 3
             },
             {
                 withCredentials:true,
@@ -176,7 +178,7 @@ describe("reservations - user multiple booking", () => {
                 cancellation_charge: 13,
                 date_in: "2019-03-18",
                 date_out: "2019-03-21",
-                status: "booked"
+                total_price: 71.5 * 3
             },
             {
                 withCredentials:true,
