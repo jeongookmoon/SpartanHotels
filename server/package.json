@@ -10,6 +10,7 @@
     "axios": "^0.18.0",
     "bcrypt": "^3.0.4",
     "cookie-parser": "~1.4.3",
+    "db": "^1.1.1",
     "debug": "~2.6.9",
     "express": "~4.16.0",
     "express-mysql-session": "^2.1.0",
@@ -18,9 +19,12 @@
     "jest": "^24.5.0",
     "morgan": "~1.9.0",
     "mysql": "^2.16.0",
+    "nodemailer": "^6.0.0",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pug": "^2.0.3",
+    "randomstring": "^1.1.5",
+    "shelljs": "^0.8.3",
     "validator": "^10.11.0"
   }
 }

@@ -53,7 +53,8 @@ module.exports = {
         checkUserNameExists: 'select user_id from spartanhotel.user where name=?',
         create: 'insert into spartanhotel.user (user_id,name,password,email) values (null,?,?,?)',
         session: 'select LAST_INSERT_ID() as user_id ',
-        authenticate: 'select user_id, password from spartanhotel.user where email=?'
+        authenticate: 'select user_id, password from spartanhotel.user where email=?',
+        edit: 'UPDATE user SET name=?, password=? WHERE user_id=?'
     },
 
     hotel: {
@@ -286,6 +287,10 @@ module.exports = {
     book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, room_id, total_price, cancellation_charge, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',
     cancel: 'UPDATE booking SET status="cancelled" WHERE booking_id=?',
     modify: 'UPDATE booking SET room_id=?, date_in=?, date_out=? WHERE booking_id=?',
+    view: `SELECT Booking.*, Room.room_number, Hotel.name FROM Booking 
+    INNER JOIN Room ON Booking.room_id = Room.room_id 
+    LEFT JOIN Hotel ON Room.hotel_id = Hotel.hotel_id 
+    WHERE Booking.user_id = ?`,
 
       /**
      * 

@@ -2,7 +2,9 @@ var express = require('express');
 var router = express.Router();
 const passport = require('./auth.js')
 var Queries = require('./queries')
+var Email = require('./api/email.js')
 var mysql = require('mysql')
+var randomstring = require('randomstring')
 
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -32,6 +34,16 @@ router.post('/register', (req,res)=>{
                  res.sendStatus(200).end("Login Successful")
                  });
             //res.status(200).send(results)
+
+            //Send an email to registered user.
+            console.log('wtf')
+            var registerEmailParams = {}
+            registerEmailParams.to = req.body.email
+            registerEmailParams.subject = 'Welcome to Spartan Hotels!'
+            registerEmailParams.text = 'Thank you for registering an account to Spartan Hotels! Start booking reservations now!'
+            var sendRegisterEmail = Email.email(registerEmailParams)
+            console.log(registerEmailParams)
+            res.end()
         },
         (error) => {
           console.log("User could not be created.")
@@ -43,7 +55,7 @@ router.post('/register', (req,res)=>{
             res.end()
           }
 
-        res.end()
+        
         return
 
         })
@@ -132,6 +144,51 @@ router.get('/profile', authenticationMiddleware(), (req, res) =>{
     })
 })
 
+//edit account information. Change name and password.
+router.post('/edit_account', (req, res) => {
+    console.log(req.headers)
+    if (req.body.password === req.body.confirmpassword) {
+        bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+            const name = req.body.firstname + " " + req.body.lastname
+            let editq = mysql.format(Queries.user.edit, [name, hash, req.user.user_id])
+            Queries.run(editq).then((results) => {
+                console.log(results)
+                res.status(200).send(results)
+                console.log('Account updated')
+            },
+            (error) => {
+                console.log('An error as occurred')
+            })
+            res.end()
+        })
+    }
+    else {
+        res.write("Passwords do not match")
+        res.end()
+    }
+
+})
+
+//Initiate password recovery
+router.post('/recovery', (req,res) => {
+    console.log(req.body.email)
+    var recoveryEmailParams = {};
+    var accessCode = randomstring.generate(7);
+    recoveryEmailParams.to = req.body.email
+    recoveryEmailParams.subject = 'Password Recovery'
+    recoveryEmailParams.text = 'Put in this access code to change your password: ' + accessCode;
+    var sendRecoveryEmail = Email.email(recoveryEmailParams)
+    console.log(JSON.stringify(recoveryEmailParams))
+
+    //TODO: Query an UPDATE statement to update the access code into database.
+    res.end()
+})
+
+
+//User puts in access code.
+router.post('/checkcode', (req,res) => {
+    
+})
 //Function is used to allow certain users to access features
 //Example. If not logged in, user cannot access his account page or logout.
 function authenticationMiddleware() {

@@ -3,13 +3,13 @@ var router = express.Router({mergeParams: true});
 const passport = require('../auth.js')
 var Queries = require('../queries')
 var mysql = require('mysql')
+var Email = require('./email.js')
 
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const bodyParser = require('body-parser')
 
 var validator = require('validator');
-
 
 //Make a reservation 
 router.post('/', (req, res)=>{
@@ -136,6 +136,68 @@ router.post('/', (req, res)=>{
 
     makeRes(requestedBooking)
 
+    //Send order confirmation email
+    var emailParams = {};
+    /*
+    Queries.run(emailQuery).then((results) => {
+        console.log(results)
+        sendEmail = results;
+        res.status(200).send(results)
+        console.log("Email set")
+    },
+    (error) => {
+        console.log("Nope.avi")
+    })
+    */
+    async function getEmail(userid) {
+        let emailquery = mysql.format('SELECT email FROM user WHERE user_id = ?', userid)
+        let sendEmail;
+        try{
+            sendEmail = await Queries.run(emailquery).then(function(results) {
+                console.log('Email sent to: ' + results[0].email)
+                return results[0].email
+            })
+        } catch(e){
+            // query failed for some reason
+            console.log(e)
+            res.status(400).send("bad")
+            return
+        }
+        console.log('This is a statement')
+        return sendEmail
+    }
+
+    let email = getEmail(requestedBooking.user)
+    console.log(email)
+    email.then(function(results) {
+        emailParams.to = results
+        console.log('Email being set to: ' + results)
+        emailParams.subject = 'Order Confirmation'
+        emailParams.text = 'Hello. Thank you for booking a reservation using Spartan Hotels. This is an email to confirm you order for: \n' + JSON.stringify(requestedBooking);
+        var email = Email.email(emailParams)
+    })
+    /*
+    emailParams.to = thisemail
+    console.log('Email being set to: ' + thisemail)
+    emailParams.subject = 'Order Confirmation'
+    emailParams.text = 'Hello. Thank you for booking a reservation using Spartan Hotels. This is an email to confirm you order for: \n' + JSON.stringify(requestedBooking);
+    var email = Email.email(emailParams)
+    */
+})
+
+router.get('/viewres', (req, res) => {
+    console.log(req.user.user_id)
+    const userid = req.user.user_id
+    let viewquery = mysql.format(Queries.booking.view, [userid])
+
+    Queries.run(viewquery).then((results) => {
+        console.log(results)
+        res.status(200).send(results)
+        console.log("Reservations viewed")
+    },
+    (error) => {
+        console.log("Can't get reservations")
+    })
 })
 
 router.post('/cancellation', (req,res)=>{
