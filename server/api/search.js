@@ -103,7 +103,7 @@ router.get('/hotels', (req,res)=>{
 }),
 
 
-
+// AKA room search
 // TODO: return appropriate error message when hotelID doesn't exist in database
 router.get('/hotels/:hotelID', (req,res)=>{
     console.log(req.query)
