@@ -1,7 +1,9 @@
 import React from 'react';
+
+
 import { withRouter } from 'react-router-dom'
 
-import homeImage from './Images/homeImage2.jpg';
+import homeImage from './Images/homeImage7.jpg';
 import {
   Button,
   Form, FormGroup, Label, Input, Row, Col
@@ -12,12 +14,11 @@ import { HotelSearchFunction } from '../Utility/HotelSearchFunction'
 
 
 var topSectionStyle = {
-    marginTop:"4.5em",
   width:"100%",
   backgroundRepeat:"no-repeat",
-  backgroundPosition: "center center",
   backgroundSize:"cover",
-  backgroundImage: `url(${homeImage})`
+  backgroundPosition:"center center",
+  backgroundImage: `url(${homeImage})`,
 };
 
 
@@ -33,6 +34,7 @@ class Home extends React.Component {
    		date_out: '',
    		adult: 0,
    		children: 0,
+   		guest_number: 0,
     	
      
     };
@@ -43,10 +45,7 @@ class Home extends React.Component {
     this.childrenIncrement = this.childrenIncrement.bind(this);
     this.childrenDecrement = this.childrenDecrement.bind(this);
 
-
-
 	}
-
 
 
   	handleChange(event) {
@@ -67,9 +66,13 @@ class Home extends React.Component {
     console.log(value);
 
     document.getElementById('adult').value = value;
+    var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
+
 
     this.setState({
-    	adult:value
+    	adult:value,
+    	guest_number:guest_number
+
     })
 
 	}
@@ -84,9 +87,13 @@ class Home extends React.Component {
     console.log(value);
 
     document.getElementById('adult').value = value;
+    var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
+
 
     this.setState({
-    	adult:value
+    	adult:value,
+    	guest_number:guest_number
+
     })
 
 	}
@@ -99,9 +106,13 @@ class Home extends React.Component {
     console.log(value);
 
     document.getElementById('children').value = value;
+    var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
+
 
     this.setState({
-    	children:value
+    	children:value,
+    	guest_number:guest_number
+
     })
 
 	}
@@ -116,9 +127,12 @@ class Home extends React.Component {
     console.log(value);
 
     document.getElementById('children').value = value;
+    var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
+
 
     this.setState({
-    	children:value
+    	children:value,
+    	guest_number:guest_number
     })
 
 	}
@@ -137,6 +151,7 @@ class Home extends React.Component {
 		        date_out: this.state.date_out,
 		        adult: this.state.adult,
 		        children: this.state.children,
+		        guest_number:this.state.guest_number,
       		}
 
    	    HotelSearchFunction(temp_fields).then(response => {
@@ -145,9 +160,9 @@ class Home extends React.Component {
           console.log("expected reponse 200  ")
           console.log(response)
           //this.props.history.push(`/HotelSearchDemo`)
-          	let queryString = "city=" + this.state.city + "&" + "date_in=" + this.state.date_in + "&" + "date_out=" + this.state.date_out + "&" + "adult=" + this.state.adult + "&" + "children=" + this.state.children;
+          	let queryString = "city=" + this.state.city + "&" + "date_in=" + this.state.date_in + "&" + "date_out=" + this.state.date_out + "&" + "adult=" + this.state.adult + "&" + "children=" + this.state.children + "&" + "guest_number=" + this.state.guest_number;
 			this.props.history.push({
-			  pathname: `/HotelSearchDemo`,
+			  pathname: `/HotelSearch`,
 			  search:`?${queryString}`,
 			  data: response, // your data array of objects
 			  city: this.state.city,
@@ -181,107 +196,99 @@ class Home extends React.Component {
 
   return (
 
-  	<div className="home-container col-auto">
+  	<div className="col-lg-12 home-container col-auto" style={topSectionStyle}>
 
-	  	<div className="top-section col-auto d-flex align-content-center justify-content-center flex-wrap" style={topSectionStyle}>
-	  	  		
-
-		  	<Form className="home-submit-form" onSubmit={this.search} method="get">
-			{/*LOCATION*/} 
-		  		<div className="top-header d-flex justify-content-start">
-		  		Plan your next trip 
-		  		</div>
-		  		
-	  			<FormGroup>
-	  			  <div className="input-group">
-	  			    <div className="input-group-prepend">
-	  			      <div className="location-input-icon input-group-text"><i className="fa fa-search"></i></div>
-	  			    </div>
-	  			    	<Input name="city" value={this.state.city} onChange={this.handleChange} type="text" className="location-input form-control" placeholder="Where are you going?"></Input>
-	  			  </div>
-	  			</FormGroup>
-
-		  	{/*INPUT DATE*/} 
-
-		  		<div className="d-inline-flex flex-fill  ">
-
-		  			<FormGroup>
-			  			<div className=" flex-fill">
-			  			    <div className="input-group date">
-			  			    	<div className="input-group-append">
-			  			            <div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
-			  			        </div>
-			  			        <input name="date_in" type="text" value={this.state.date_in} onChange={this.handleChange} className="check-in-input form-control" placeholder="Check In"/>
-			  			    </div>
-			  			</div>
-		  			</FormGroup>
-
-		  			<FormGroup>
-			  			<div className=" flex-fill">
-			  			    <div className="input-group date">
-			  			        <div className="input-group-append">
-			  			                <div className="check-out-icon input-group-text"><i className="fa fa-calendar"></i></div>
-			  			        </div>
-			  			        <input name="date_out" value={this.state.date_out} onChange={this.handleChange} type="text" className="check-out-input form-control" placeholder="Check Out"/>
-			  			           
-			  			    </div>
-			  			</div>
-		  			</FormGroup>
+  		<div className="home-form-container col-lg-12">
+  		
+	  		<Form className="home-form col-lg-12">
+	  			<div className="top-header ">
+		  			Plan your next trip 
 		  		</div>
 
+		  		<FormGroup className="form-inline home-form-inputs">
+
+		  			  <div className="col-lg-1"></div>
+
+		  			  <div className="col-lg-3 input-group home-location">
+		  			    <div className="input-group-append">
+		  			      <div className="location-input-icon input-group-text"><i className="fa fa-search"></i></div>
+		  			    </div>
+		  			    	<input name="city" ref={this.autocompleteInput} id="autocomplete" value={this.state.city} onChange={this.handleChange} type="text" className="location-input form-control" placeholder="Where?"></input>
+		  			  </div>
+
+	  			      <div className="col-lg-2 input-group home-date">
+	  			      	  <div className="input-group-append">
+	  			              <div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
+	  			          </div>
+	  			          <input name="date_in" type="text" value={this.state.date_in} onChange={this.handleChange} className="check-in-input form-control" placeholder="Check In"/>
+	  			      </div>
+
+	  			      <div className="col-lg-2 input-group home-date">
+	  			      	  <div className="input-group-append">
+	  			              <div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
+	  			          </div>
+	  			          <input name="date_out" type="text" value={this.state.date_out} onChange={this.handleChange} className="check-in-input form-control" placeholder="Check Out"/>
+	  			      </div>
+
+	  		
 
 
+			  		<div className=" col-lg-2 input-group menu-container">
 
-		  		<div className=" d-flex justify-content-start">
-					<div id="vertical-menu">
-					    <ul>
-					        <li className="active">
-					            	<h3><span className="plus">+</span>Guests</h3>
 
-					            <ul>
-					                <li>
-					                	<div className="row">
-						                	<div className="col-lg-4 home-guest-adult-header">
+						<div className="col-lg-12 menu-item">
+							<div className="home-guest-dropdown">{this.state.guest_number === 0 ? null : this.state.guest_number}&nbsp;Guests</div>
+							<ul>
+								<li>
+					                	<div className="form-inline home-adults-container">
+						                	<div className="col-lg-3 home-adults">
 						                		Adults
 						                	</div>
 
-						                	<div className="col-lg-8">
+						                	<div className="col-lg-9 home-increments">
 					  			                <i className="fa fa-minus home-guest-icon-increment" type="button" value="Decrement Value" onClick={this.adultDecrement}></i>
-							                	<input readonly className="home-guest-input" name="adult" type="text" id="adult" value={this.state.adult} onChange={this.handleChange} />
+							                	<input readOnly className="home-guest-input" name="adult" type="text" id="adult" value={this.state.adult} onChange={this.handleChange} />
 							  				 	<i className="fa fa-plus home-guest-icon-decrement" type="button" value="Increment Value" onClick={this.adultIncrement} />
 						                	</div>
 					                	</div>
 
-					                	<div className="row">
-						                	<div className="col-lg-4 home-guest-adult-header">
+					                	<div className="form-inline home-children-container">
+						                	<div className="col-lg-3 home-children">
 						                		Children
 						                	</div>
 
-						                	<div className="col-lg-8">
+						                	<div className="col-lg-9 home-increments">
 					  			                <i className="fa fa-minus home-guest-icon-increment" type="button" value="Decrement Value" onClick={this.childrenDecrement}></i>
-							                	<input readonly className="home-guest-input" name="children" type="text" id="children" value={this.state.children} onChange={this.handleChange} />
+							                	<input readOnly className="home-guest-input" name="children" type="text" id="children" value={this.state.children} onChange={this.handleChange} />
 							  				 	<i className="fa fa-plus home-guest-icon-decrement" type="button" value="Increment Value" onClick={this.childrenIncrement} />
 						                	</div>
 					                	</div>
 
 
 					                </li>
-					                
-					            </ul>
-					        </li>
-					   
-					    </ul>
-					</div>		  		
-					
-		  		</div>
+							</ul>
+						</div>			  		
 
-		  		<div class="home-submit-button-container">
+
+						  		
+					
+		  			</div>
+
+		  		<div className="col-lg-1 home-submit-button-container">
 		  		<button onClick={this.search} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Search</button>
 		  		</div>
 
-		  	</Form>	
 
-	  	</div>
+	  			</FormGroup>
+
+	  			
+
+	  		</Form>
+  		
+  		</div>
+  		
+  		
+	  	
 
   	</div>
   	  );

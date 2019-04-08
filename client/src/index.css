@@ -19,20 +19,44 @@ code {
 
 
 
-.email-input{
+.email-icon{
 	font-size: 0.75rem;
+	background:none;
+	border:none;
+	color:white;
+	cursor:none;
 	
 }
 
-.password-input{
+.password-icon{
 	font-size: .75rem;
+	background:none;
+	border:none;
+	color:white;
+	cursor:none;
+
 }
 
-.navbar {
+.navbar-home {
 	min-height:3em;
 	position: fixed;
     width: 100%;
     top: 0;
+    	color:white;
+	background:transparent;
+
+
+}
+
+.navbar-pages {
+	min-height:3em;
+	position: fixed;
+    width: 100%;
+    top: 0;
+    	color:white;
+	background:#e60000;
+
+
 }
 
 .navbar div div {
@@ -44,6 +68,10 @@ code {
 
 
 
+}
+
+.navbar-register-button {
+	color:white;
 }
 
 /* ///////////////////////////////////////////////////////////////////////////////////////////////    */
@@ -59,7 +87,7 @@ code {
 	font-size: 1em;
 	background-color:white;
 	border:none;
-	padding-left:1.5em;
+	padding-left:1em;
 
 }
 
@@ -122,14 +150,72 @@ code {
 	
 }
 
+.home-adults-container{
+	padding-top:2em;
+	padding-bottom:2em;
+}
+
+.home-adults{
+	font-size:1em;
+	font-weight: 500;
+    font-family: mallory,"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.home-children-container{
+	padding-top:1em;
+	padding-bottom:1em;
+}
+
+.home-children{
+	font-size:1em;
+	font-weight: 500;
+    font-family: mallory,"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
 .home-container{
 	padding:0;
 	margin:0;
+	height:100%;
+	width:100%;
 }
 
-.home-guest-adult-header{
-  font-size:2em;
+.home-date{
+	padding-left:0;
+
 }
+
+.home-form{
+	padding-top: 11rem;
+}
+
+.home-form-container{
+	height:100%;
+	width:100%;
+	min-height:41.6rem;
+}
+
+.home-form-inputs{
+	padding-top:2em;
+
+
+}
+
+.home-guest-dropdown{
+		text-align: center;
+	padding: 10px 10px 10px 10px;
+	font-size: 1.7em;
+	text-decoration: none;
+	font-weight: bold;
+	display: block;
+
+
+    font-weight: 300;
+    color: #a6a6a6;
+    font-family: mallory,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    cursor: pointer;
+
+}
+
 
 .home-guest-icon-increment{
   padding: 1em 1em 1em 1em;
@@ -156,6 +242,13 @@ code {
     text-align:center;
 }
 
+.home-increments{
+	font-size:0.5em;
+
+}
+
+
+
 .home-submit-button-container{
   padding-top:1em;
   padding-bottom:1em;
@@ -175,11 +268,7 @@ code {
 
 }
 
-.input-group{
-	padding-top: 0.3em;
-	padding-bottom: 0.3em;
 
-}
 
 .location-input-icon{
 	font-size: 1em;
@@ -215,9 +304,7 @@ code {
 
 .submit-button{
 
-	padding-left:1em;
-	padding-right:1em;
-	font-size:1.3em;
+	font-size: 1.8em;
 }
 
 
@@ -242,80 +329,76 @@ code {
 	font-weight: 500;
 	line-height:1.42857;
 	letter-spacing:0;
+	padding-bottom:0.3em;
 
 }
 
 /* ////////////HOME GUEST DROPDOWN//////////////////////////////////////////////////////////////////////////////    */
 
+.menu-container {
+	background-color:white;
+	padding-left:0px;
+	padding-right:0px;
 
 
- #vertical-menu {
-    background: white;
-    width: 100%;
-    color: black;
-
-    /*box-shadow: 
-    0 5px 15px 1px rgba(0, 0, 0, 0.6), 
-    0 0 200px 1px rgba(255, 255, 255, 0.5);*/
 }
-/*heading styles*/
- #vertical-menu h3 {
-    font-size: 1.5rem;
+
+.menu-item {
+	width: 100%;
+    position: relative;
+    padding-right:20em;
+
+  
+}
+
+.menu-item a {
+	text-align: center;
+	padding: 10px 10px 10px 10px;
+	font-size: 25px;
+	text-decoration: none;
+	font-weight: bold;
+	display: block;
+
+
     font-weight: 300;
     color: #a6a6a6;
     font-family: mallory,"Helvetica Neue",Helvetica,Arial,sans-serif;
     cursor: pointer;
-    margin-bottom:0px;
-    text-align: left;
-    padding-top:.3em;
-    padding-left:2em;
-    padding-bottom:.3em;
-}
-/*heading hover effect*/
- #vertical-menu h3:hover {
-    text-shadow: 0 0 1px rgba(255, 255, 255, 0.7);
-}
-/*iconfont styles*/
- #vertical-menu h3 span {
-    font-size: 2rem;
-    margin-right: 10px;
-}
-/*list items*/
- #vertical-menu li {
-    list-style-type: none;
 }
 
-#vertical-menu ul li ul li {
-    padding-top:2em;
-    padding-bottom:2em;
-}
-/*links*/
- #vertical-menu ul ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 11px;
-    line-height: 27px;
-    display: block;
-    padding: 0 15px;
-    /*transition for smooth hover animation*/
-    transition: all 0.15s;
-}
-/*hover effect on links*/
- #vertical-menu ul ul li a:hover {
-    background: #003545;
-    /*border-left: 5px solid lightgreen;*/
-}
-/*Lets hide the non active LIs by default*/
- #vertical-menu ul ul {
-    display: none;
+
+
+
+
+.menu-item ul {
+	margin-top: 5px;
+	list-style-type: none;
+	height: 0px;
+	overflow: hidden;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    width: 100%;
+    background:white;
+	
+	-webkit-transition: height 1s ease;
+    -moz-transition: height 1s ease;
+    -o-transition: height 1s ease;
+    -ms-transition: height 1s ease;
+    transition: height 1s ease;
+    z-index: 100;
 }
 
-#vertical-menu ul {
-    padding-left:0px;
-    margin-bottom:0px;
+.menu-item:hover ul {
+	height: 12em;
+	    z-index: 100;
+
 }
-#vertical-menu li.active ul {
-    display: block;
+
+.menu-item ul li div {
+	width: 100%;
+
+
 }
 
 
@@ -329,7 +412,6 @@ code {
  .hotel-demo-dummy-column{
  	padding-left:0px;
  	padding-right:0px;
-    background-color: #FCFEFF;
 
  }
 
@@ -341,14 +423,22 @@ code {
  	margin-left:0px;
 
  }
+
+ .hotel-search-columns-container{
+ 	background:#f9fbfc;
+ 	margin-right:0px;
+ 	margin-left:0px;
+
+ }
+
+
  .hotel-search-container{
- 	margin-top:4.5em;
+ 	margin-top:4.7em;
  	width:100%;
  	height:100%;
  }
 
  .hotel-search-container-no-result{
-  background-color:white;
   margin-top:4em;
   font-size:2em;
  }
@@ -384,6 +474,18 @@ code {
 
  }
 
+ .hotel-search-inputs{
+ 	font-size:0.7em;
+ 	font-weight:400;
+ 	margin-bottom:0px;
+
+
+ }
+
+ .hotel-search-inputs-container{
+ 	padding-top:1em;
+ }
+
  .hotel-search-item-row{
  	display: -webkit-box;
     display: -ms-flexbox;
@@ -392,39 +494,55 @@ code {
     flex-wrap: wrap;
     text-align:center;
 
+
  }
 
+ .hotel-search-item-address{
+ 	font-size:0.7em;
+ }
  .hotel-search-item-button{
+ 	margin-left:1em;
+ 	margin-bottom:5em;
  	padding-left: 1em;
     padding-right: 1em;
-    font-size: 1.3em;
+    font-size: .7em;
  	color: #fff;
     background-color: #54B2E8;
     border-color: #54B2E8;
  }
 
  .hotel-search-item-header{
- 	font-size: 1.3em;
+ 	font-size: .9em;
+ 	text-align:left;
+ }
+
+ .hotel-search-item-image{
+ 	max-width:11.4em;
+ 	max-height:14em;
+ 	
  }
 
  .hotel-search-item-name{
   padding-right: 0em;
-  padding-left:0em;
+  padding-left:.4em;
 
  }
+
+
 
  .hotel-search-item-number{
 
  }
 
- .hotel-search-item-min-price{
+ .hotel-search-item-price{
  	color:#d32f2f;
- 	font-size: 1.9em;
+ 	font-size: 1em;
  }
 
  .hotel-search-item-rating{
  	padding-top:0.3em;
  	padding-bottom:0.3em;
+ 	font-size:0.3em;
  }
 
  .hotel-search-item-rating-checked{
@@ -436,7 +554,7 @@ code {
  	min-width:12em;
  	width:100%;
  	height:100%;
- 	background-color: #FCFEFF;
+ 	background: #f9fbfc;
 
  }
 
@@ -444,7 +562,6 @@ code {
  	padding-right:0px;
  	width:100%;
  	height:100%;
- 	background-color: #FCFEFF;
  	padding-left:0px;
 
  }
@@ -461,9 +578,16 @@ code {
 
  }
 
- .hotel-search-filter{
-
+ hr.hotel-search-hr-top{
+ 	margin-top: 0px;
  }
+
+ hr.hotel-search-hr-bottom{
+ 	margin-top:0px;
+ 	margin-bottom: 0px;
+ }
+
+ 
 
  .hotel-search-guest-container-demo{
   padding-top:1em;
@@ -484,25 +608,36 @@ code {
  }
 
  .hotel-search-row{
+ 	border-radius:1em;
+ 	background:white;
 
  }
 
- .hotel-search-row-image{
- 	min-width:12em;
- 	min-height:10em;
-  max-width:12em;
-  max-height:10em;
- 	
- }
 
- .hotel-search-second-column{
+ .hotel-search-map-column{
 
- 	min-height:39em;
- 	max-height:38.9em;
+ 	min-height:25em;
+ 	max-height:30em;
  	height:100%;
  	width:100%;
  	padding-right: 0px;
  	padding-left:0px;
+ 	padding-top:1.3em;
+
+ }
+
+ .hotel-search-results-header{
+ 	color:black;
+ 	background:white;
+ 	font-size:2em;
+ 	padding-top:.7em;
+ 	padding-bottom:.3em;
+ }
+
+ .hotel-search-sort-container{
+ 	padding-top:1em;
+ 	padding-bottom:1em;
+ 	font-size:0.9em;
  }
 
  .hotel-search-table{
@@ -511,9 +646,10 @@ code {
  	padding-left:1em;
  	padding-right:1em;
  	border-spacing: 0 10px;
- 	padding-top:10px;
     border-collapse: separate;
     table-layout:fixed;
+    direction:ltr;
+
 
  }
 
@@ -564,11 +700,11 @@ code {
   .hotel-search-table-container{
   	height:100%;
   	width:100%;
-  	overflow-y: scroll;
   	overflow-x:hidden;
-  	min-height:38em;
- 	max-height:38em;
+  	direction:ltr;
+ 	max-height:29em;
  	padding-right:10px;
+
   }
 
   .hotel-search-table-container-demo{

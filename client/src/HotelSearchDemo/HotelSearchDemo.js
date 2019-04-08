@@ -1,11 +1,20 @@
 import React from 'react';
 import { Map, GoogleApiWrapper } from 'google-maps-react';
 import { withRouter } from 'react-router-dom'
+import homeImage from './Images/homeImage7.jpg';
+
 import axios from 'axios'
 import { HotelSearchFunction } from '../Utility/HotelSearchFunction'
 
 
-
+var topSectionStyle = {
+  width:"100%",
+  backgroundRepeat:"no-repeat",
+  backgroundSize:"cover",
+  backgroundPosition:"center center",
+  backgroundImage: `url(${homeImage})`,
+  position:"absolute",
+};
 
 const mapStyles = {
 	width: '100%',
@@ -137,7 +146,7 @@ class HotelSearchDemo extends React.Component {
 
 		const showResult = (
 			/* HOTEL SEARCH TWO COLUMNS, First Column */
-			< div className="hotel-search-columns hotel-search-item-row" >
+			< div className="hotel-search-columns hotel-search-item-row">
 
 				<div className="col-lg-4 hotel-demo-dummy-column ">
 					<div className="col-lg-12 hotel-search-table-container-demo">
@@ -228,7 +237,9 @@ class HotelSearchDemo extends React.Component {
 									return(
 										<tr className="hotel-search-row shadow-sm p-3 mb-5 bg-white rounded">
 											<td>
+												<div>
 												<img className="hotel-search-row-image" src={imageArray[0]} alt="logo" />
+												</div>
 											</td>
 
 											<td>
@@ -379,18 +390,22 @@ class HotelSearchDemo extends React.Component {
 
 		if (this.state.hotels.results.length === 0) {
 			return (
-
+			<div className="" style={topSectionStyle}>
 			<div className="hotel-search-container"> {showNoResult} </div>
+			</div>
 			);
 		}
 
 		else{
 
 		return (
+					<div className="" style={topSectionStyle}>
+
 			<div className="hotel-search-container">
 			
 
 				{showResult}
+			</div>
 			</div>
 		);
 

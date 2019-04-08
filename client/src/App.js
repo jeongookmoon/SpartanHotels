@@ -21,6 +21,7 @@ class App extends Component {
           <Route exact path="/UserProfile" component={UserProfile}/>
           <Route exact path="/Reservations" component={Reservations}/>
           <Route path="/HotelSearchDemo" component={HotelSearchDemo}/>
+          <Route path="/HotelSearch" component={HotelSearch}/>
           <Route exact path="/Checkout" component={Checkout}/>
           <Route path="/RoomPage" component={RoomPage}/>
 
