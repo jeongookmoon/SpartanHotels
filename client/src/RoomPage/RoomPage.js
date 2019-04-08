@@ -11,12 +11,16 @@ class RoomPage extends React.Component {
 		console.log("this.props.location.search");
 		console.log(this.props.location.search);
 		let params = new URLSearchParams(this.props.location.search);
-		let zipcode_value = params.get('zip')
+		let hotel_id_value = params.get('hotel_id')
+		let date_in_value = params.get('date_in')
+		let date_out_value = params.get('date_out')
 		console.log("hotel_id");
-		console.log(zipcode_value);
+		console.log(hotel_id_value);
 		this.state = {
 			hotels: {},
-			zipcode: zipcode_value
+			hotel_id: hotel_id_value,
+			date_in: date_in_value,
+			date_out: date_out_value
 		};
 	}
 
@@ -30,7 +34,7 @@ class RoomPage extends React.Component {
   }
 
 	async componentWillMount() {
-		let queryCall = '/api/search/hotels'+ this.props.location.search + '&zip=' + this.zipcode
+		let queryCall = '/api/search/hotels/'+this.state.hotel_id+"?date_in="+this.state.date_in+"&date_out="+this.state.date_in
 		const hotelSearch = (await axios.get(queryCall)).data;
 		this.setState({
 			hotels: hotelSearch
