@@ -141,7 +141,7 @@ class HotelSearchDemo extends React.Component {
 		console.log("status number(200 success, else fail): ")
 		console.log("expected reponse 200  ")
 		//we don't have a query that handles the room
-		let queryString = this.props.location.search + "&zip=" + item.zipcode
+		let queryString = this.props.location.search + "&hotel_id=" + item.hotel_id
 		this.props.history.push({
 			pathname: `/RoomPage`,
 			search: `${queryString}`,
