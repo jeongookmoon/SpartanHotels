@@ -61,7 +61,7 @@ class UserProfile extends React.Component{
            <br/>
            <br/>
            <label for="email" class="col-sm-1 col-form-label">Email:</label>  
-           <input value={this.state.email} onChange={e => this.change(e)}  size="30"/>
+           <input value={this.state.email} onChange={e => this.change(e)} size="30"/>
            <br/>           
            <br/>
            <br/>
@@ -69,8 +69,8 @@ class UserProfile extends React.Component{
            <h1 class = "display-4" > Rewards </h1>
            <br/>
            <br/>
-           <label for="reward"  ></label>  
-           <input placeholder="0"
+           <label for="reward" ></label>  
+           <input 
         
            value={this.state.reward} 
            //onChange={e => this.change(e)} 
