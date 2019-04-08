@@ -128,7 +128,7 @@ router.post('/', (req, res)=>{
     // Check values
     console.log(req.body);
 
-    if (! dateChecker(req.body, res)){
+    if (!dateChecker(req.body, res)){
         return
     }
     console.log(req.body)
@@ -214,6 +214,9 @@ router.post('/modification', (req,res)=>{
                 }
                 else {
                     console.log("Booking can only be modified once.")
+                    // TODO: Make proper error message for client when can't modify a 
+                    // previously modified booking
+                    res.status(400).send(error)
                 }
                 
                 
