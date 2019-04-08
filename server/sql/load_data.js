@@ -1,6 +1,8 @@
 var shell = require("shelljs")
 var path = require("path")
 
+let pwd = shell.pwd()
+shell.echo(`Running load_data.js from ${pwd}`)
 
 // Get the location of secure_file_priv
 let shellResult = shell.exec(
@@ -103,7 +105,7 @@ function processLoadInstruction(csvLocation, script) {
 
     // Check valid csv file location
     if (!shell.test('-f', csvLocation)) {
-        shell.echo("invalid src file")
+        shell.echo(`invalid src file ${csvLocation}`)
         shell.exit(1)
         return
     }
