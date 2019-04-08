@@ -241,7 +241,7 @@ class Registration extends React.Component {
 
     return (
       <div>
-        <Button color="primary-outline" onClick={this.toggle}>Register</Button>
+        <Button className="navbar-register-button" color="primary-outline" onClick={this.toggle}>Register</Button>
 
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
           <ModalHeader toggle={this.toggle}>Registration</ModalHeader>
