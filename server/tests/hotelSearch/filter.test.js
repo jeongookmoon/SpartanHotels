@@ -20,7 +20,7 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", amenities: JSON.stringify(encodeURIComponent(amenities))}})
             .then( response=>{
                 expect(response.status).toEqual(200)
-                expect(response.data.totalResultCount).toEqual(10)
+                expect(response.data.totalResultCount).toEqual(11)
                 },
                 err=>{
                 }
@@ -44,7 +44,7 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", amenities: JSON.stringify(encodeURIComponent(amenities))}})
             .then( response=>{
                 expect(response.status).toEqual(200)
-                expect(response.data.totalResultCount).toEqual(4)
+                expect(response.data.totalResultCount).toEqual(5)
                 },
                 err=>{
                 }
@@ -56,7 +56,7 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", amenities: JSON.stringify(encodeURIComponent(amenities))}})
             .then( response=>{
                 expect(response.status).toEqual(200)
-                expect(response.data.totalResultCount).toEqual(1)
+                expect(response.data.totalResultCount).toEqual(2)
                 },
                 err=>{
                 }
@@ -80,7 +80,7 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", priceGTE:100}})
             .then( response=>{
                 expect(response.status).toEqual(200)
-                expect(response.data.totalResultCount).toEqual(5)
+                expect(response.data.totalResultCount).toEqual(6)
                 },
                 err=>{
                 }
@@ -91,7 +91,7 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", priceLTE:100}})
             .then( response=>{
                 expect(response.status).toEqual(200)
-                expect(response.data.totalResultCount).toEqual(6)
+                expect(response.data.totalResultCount).toEqual(7)
                 },
                 err=>{
                 }
@@ -102,7 +102,7 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", priceGTE:79.01}})
             .then( response=>{
                 expect(response.status).toEqual(200)
-                expect(response.data.totalResultCount).toEqual(6)
+                expect(response.data.totalResultCount).toEqual(7)
                 },
                 err=>{
                 }
@@ -135,7 +135,7 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", priceGTE:0}})
             .then( response=>{
                 expect(response.status).toEqual(200)
-                expect(response.data.totalResultCount).toEqual(10)
+                expect(response.data.totalResultCount).toEqual(11)
                 },
                 err=>{
                 }
@@ -190,7 +190,7 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", priceLTE:120, priceGTE:70}})
             .then( response=>{
                 expect(response.status).toEqual(200)
-                expect(response.data.totalResultCount).toEqual(4)
+                expect(response.data.totalResultCount).toEqual(5)
                 },
                 err=>{
                 }
@@ -252,6 +252,7 @@ describe('hotel search',()=>{
             )
         })
         test('rating filter 0 stars', ()=>{
+            throw "cant test bc no 0 star hotels; should there even be?"
             return axios.get(hotelSearch, 
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", rating: 0}})
             .then( 
@@ -268,9 +269,8 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", rating: 3}})
             .then( 
                 response=>{
-                    throw "cant test properly until there are 3-star hotels in db"
                     expect(response.status).toEqual(200)
-                    expect(response.data.totalResultCount).toEqual(10)
+                    expect(response.data.totalResultCount).toEqual(5)
                 },
                 err=>{
                 }
@@ -281,9 +281,8 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", rating: 5}})
             .then( 
                 response=>{
-                    throw "cant test properly until there are 5-star hotels in db"
                     expect(response.status).toEqual(200)
-                    expect(response.data.totalResultCount).toEqual(10)
+                    expect(response.data.totalResultCount).toEqual(1)
                 },
                 err=>{
                 }
