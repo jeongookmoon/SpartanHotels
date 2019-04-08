@@ -82,3 +82,13 @@
 .checkoutPayButton{
   width:45%;
 }
+
+#map {
+  height: 100vh;
+}
+
+html, body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
