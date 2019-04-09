@@ -14,14 +14,16 @@ class RoomPage extends React.Component {
 		let hotel_id_value = params.get('hotel_id')
 		let date_in_value = params.get('date_in')
 		let date_out_value = params.get('date_out')
-		console.log("hotel_id");
-		console.log(hotel_id_value);
 		this.state = {
 			hotels: {},
 			hotel_id: hotel_id_value,
 			date_in: date_in_value,
 			date_out: date_out_value
 		};
+
+		console.log("hotel_id", hotel_id_value);
+		console.log("date_in", date_in_value);
+		console.log("date_out", date_out_value);
 	}
 
 	Checkout(event) {
@@ -34,7 +36,8 @@ class RoomPage extends React.Component {
   }
 
 	async componentWillMount() {
-		let queryCall = '/api/search/hotels/'+this.state.hotel_id+"?date_in="+this.state.date_in+"&date_out="+this.state.date_in
+		let queryCall = '/api/search/hotels/'+this.state.hotel_id+"/?date_in="+this.state.date_in+"&date_out="+this.state.date_out
+		console.log("queryCall", queryCall);
 		const hotelSearch = (await axios.get(queryCall)).data;
 		this.setState({
 			hotels: hotelSearch
