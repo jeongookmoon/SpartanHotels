@@ -259,7 +259,7 @@ class Home extends React.Component {
 							</div>
 
 							<div className="col-lg-1 home-submit-button-container">
-								<button disabled={!this.state.city || !this.state.date_in || !this.state.date_out} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Search</button>
+								<button disabled={!this.state.city || !this.state.date_in || !this.state.date_out || this.state.guest_number === 0} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Search</button>
 							</div>
 
 
