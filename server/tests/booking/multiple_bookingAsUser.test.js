@@ -44,7 +44,7 @@ describe("reservations - user multiple booking", () => {
                 cancellation_charge: 41,
                 date_in: "2019-03-20",
                 date_out: "2019-03-21",
-                status: "booked"},
+                amount_paid: 225.5},
                 {
                     withCredentials:true,
                     headers: {
@@ -94,7 +94,7 @@ describe("reservations - user multiple booking", () => {
                 cancellation_charge: 41,
                 date_in: "2019-03-20",
                 date_out: "2019-03-21",
-                status: "booked"
+                amount_paid: 225.5
             },
             {
                 withCredentials:true,
@@ -104,7 +104,23 @@ describe("reservations - user multiple booking", () => {
             })
             .then(
                 response => {
-                    throw "multiple booking succeeded"
+                    let booking_id = response.data.data
+                    return axios
+                        .post(
+                            cancelReservation,
+                            {
+                                booking_id: booking_id
+                            },
+                            {
+                                withCredentials: true,
+                                headers: {
+                                    cookie: loginResponse.headers["set-cookie"] // need this bc not this is browser-less; normally browser would send the cookie received from login
+                                }
+                            }
+                        ).then(
+                            (res) => { throw "make reservation should have failed" },
+                            (err) => { throw "failed to delete booking" }
+                        )
                 },
                 err => {
                     // console.log(err.response.data);
@@ -121,7 +137,7 @@ describe("reservations - user multiple booking", () => {
                 cancellation_charge: 13,
                 date_in: "2019-03-20",
                 date_out: "2019-03-21",
-                status: "booked"
+                amount_paid: 71.5,
             },
             {
                 withCredentials:true,
@@ -131,8 +147,23 @@ describe("reservations - user multiple booking", () => {
             })
             .then(
                 response => {
-                    console.log(response.data)
-                    throw "multiple booking succeeded"
+                    let booking_id = response.data.data
+                    return axios
+                        .post(
+                            cancelReservation,
+                            {
+                                booking_id: booking_id
+                            },
+                            {
+                                withCredentials: true,
+                                headers: {
+                                    cookie: loginResponse.headers["set-cookie"] // need this bc not this is browser-less; normally browser would send the cookie received from login
+                                }
+                            }
+                        ).then(
+                            (res) => { throw "make reservation should have failed" },
+                            (err) => { throw "failed to delete booking" }
+                        )
                 },
                 err => {
                     // console.log(err.response.data);
@@ -147,9 +178,11 @@ describe("reservations - user multiple booking", () => {
                 room_id: 7,
                 total_price: 225.5 * 3,
                 cancellation_charge: 41,
+                date_in: "2019-03-20",
+                date_out: "2019-03-21",
                 date_in: "2019-03-18",
                 date_out: "2019-03-21",
-                status: "booked"
+                amount_paid: 225.5 * 3
             },
             {
                 withCredentials:true,
@@ -159,7 +192,23 @@ describe("reservations - user multiple booking", () => {
             })
             .then(
                 response => {
-                    throw "multiple booking succeeded"
+                    let booking_id = response.data.data
+                    return axios
+                        .post(
+                            cancelReservation,
+                            {
+                                booking_id: booking_id
+                            },
+                            {
+                                withCredentials: true,
+                                headers: {
+                                    cookie: loginResponse.headers["set-cookie"] // need this bc not this is browser-less; normally browser would send the cookie received from login
+                                }
+                            }
+                        ).then(
+                            (res) => { throw "make reservation should have failed" },
+                            (err) => { throw "failed to delete booking" }
+                        )
                 },
                 err => {
                     // console.log(err.response.data);
@@ -176,7 +225,7 @@ describe("reservations - user multiple booking", () => {
                 cancellation_charge: 13,
                 date_in: "2019-03-18",
                 date_out: "2019-03-21",
-                status: "booked"
+                total_price: 71.5 * 3
             },
             {
                 withCredentials:true,
@@ -186,7 +235,23 @@ describe("reservations - user multiple booking", () => {
             })
             .then(
                 response => {
-                    throw "multiple booking succeeded"
+                    let booking_id = response.data.data
+                    return axios
+                        .post(
+                            cancelReservation,
+                            {
+                                booking_id: booking_id
+                            },
+                            {
+                                withCredentials: true,
+                                headers: {
+                                    cookie: loginResponse.headers["set-cookie"] // need this bc not this is browser-less; normally browser would send the cookie received from login
+                                }
+                            }
+                        ).then(
+                            (res) => { throw "make reservation should have failed" },
+                            (err) => { throw "failed to delete booking" }
+                        )
                 },
                 err => {
                     // console.log(err.response.data);

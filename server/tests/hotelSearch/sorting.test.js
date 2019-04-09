@@ -17,7 +17,7 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12"}})
             .then( response=>{
                 expect(response.status).toEqual(200)
-                expect(response.data.totalResultCount).toEqual(10)
+                expect(response.data.totalResultCount).toEqual(11)
                 expect(response.data.results.length).toEqual(10)
                 let hotel_names = response.data.results.map(ele=>ele.name)
                 let isAtoZ = hotel_names.every((currentValue, currentIndex, arr) => {
@@ -36,7 +36,7 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", sortBy:"price_asc"}})
             .then( response=>{
                 expect(response.status).toEqual(200)
-                expect(response.data.totalResultCount).toEqual(10)
+                expect(response.data.totalResultCount).toEqual(11)
                 expect(response.data.results.length).toEqual(10)
                 let hotel_min_prices = response.data.results.map(ele=>ele.min_price)
                 // console.log(hotel_min_prices)
@@ -56,7 +56,7 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", sortBy:"price_des"}})
             .then( response=>{
                 expect(response.status).toEqual(200)
-                expect(response.data.totalResultCount).toEqual(10)
+                expect(response.data.totalResultCount).toEqual(11)
                 expect(response.data.results.length).toEqual(10)
                 let hotel_min_prices = response.data.results.map(ele=>ele.min_price)
                 // console.log(hotel_min_prices)
@@ -76,7 +76,7 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", sortBy:"name_asc"}})
             .then( response=>{
                 expect(response.status).toEqual(200)
-                expect(response.data.totalResultCount).toEqual(10)
+                expect(response.data.totalResultCount).toEqual(11)
                 expect(response.data.results.length).toEqual(10)
                 let hotel_names = response.data.results.map(ele=>ele.name)
                 let isAtoZ = hotel_names.every((currentValue, currentIndex, arr) => {
@@ -95,7 +95,7 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", sortBy:"name_des"}})
             .then( response=>{
                 expect(response.status).toEqual(200)
-                expect(response.data.totalResultCount).toEqual(10)
+                expect(response.data.totalResultCount).toEqual(11)
                 expect(response.data.results.length).toEqual(10)
                 let hotel_names = response.data.results.map(ele=>ele.name)
                 let isZtoA = hotel_names.every((currentValue, currentIndex, arr) => {
@@ -114,7 +114,7 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", sortBy:"rating_asc"}})
             .then( response=>{
                 expect(response.status).toEqual(200)
-                expect(response.data.totalResultCount).toEqual(10)
+                expect(response.data.totalResultCount).toEqual(11)
                 expect(response.data.results.length).toEqual(10)
                 let hotel_ratings = response.data.results.map(ele=>ele.rating)
                 // console.log(hotel_ratings)
@@ -134,7 +134,7 @@ describe('hotel search',()=>{
                 {params:{date_in:"2019-03-10", date_out:"2019-03-12", sortBy:"rating_des"}})
             .then( response=>{
                 expect(response.status).toEqual(200)
-                expect(response.data.totalResultCount).toEqual(10)
+                expect(response.data.totalResultCount).toEqual(11)
                 expect(response.data.results.length).toEqual(10)
                 let hotel_ratings = response.data.results.map(ele=>ele.rating)
                 // console.log(hotel_ratings)
