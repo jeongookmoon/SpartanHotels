@@ -1,7 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom'
 import homeImage from './Images/homeImage10.jpg';
-
 import axios from 'axios'
 import { HotelSearchFunction } from '../Utility/HotelSearchFunction'
 import {
@@ -619,7 +618,6 @@ constructor(props) {
 										</div>
 									</div>
 
-<<<<<<< HEAD
 									<div className="row hotel-search-guest-container-demo">
 
 										<div className="col-lg-6">
@@ -678,41 +676,8 @@ constructor(props) {
 			</div>
 		);
 		}
-  }
-=======
-								</div>
-
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="col-lg-8 hotel-search-first-column-dummy table-responsive">
-					<div className="hotel-search-container-no-result">
-						Sorry, unable to find any hotels.
-					</div>
-				</div>
-
-			</div>
-		)
-
-		if (this.state.hotels.results.length === 0) {
-			return (
-				<div className="hotel-search-container"> {showNoResult} </div>
-			);
-		}
-
-		else {
-			return (
-				<div className="hotel-search-container">
-					{showResult}
-				</div>
-			);
-
-		}
 	}
-
 }
->>>>>>> move hotelsearchdemo to hotelsearch
 
 function loadGoogleMapScript(src) {
 	let index = window.document.getElementsByTagName("script")[0]
@@ -723,11 +688,5 @@ function loadGoogleMapScript(src) {
 	index.parentNode.insertBefore(script, index) // insert google map script before any script in index html
 }
 
-<<<<<<< HEAD
-export default GoogleApiWrapper({
-  apiKey: 'AIzaSyDScT-hbkYMaHHMJXftylDtwehYvBkzyRk'
-})(HotelSearch);
-=======
 export default withRouter(HotelSearch);
->>>>>>> move hotelsearchdemo to hotelsearch
 

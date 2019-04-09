@@ -1,6 +1,4 @@
 import React from 'react';
-
-
 import { withRouter } from 'react-router-dom'
 import 'react-dates/initialize';
 import { DateRangePicker } from 'react-dates';
