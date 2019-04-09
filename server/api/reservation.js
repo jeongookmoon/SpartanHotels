@@ -156,28 +156,29 @@ router.post('/cancellation', (req,res)=>{
     let query = mysql.format(Queries.booking.user_id, [req.body.booking_id])
     Queries.run(query).then(
         results => {
-            console.log(JSON.stringify(results[0]))
-            console.log(JSON.stringify(req.user))
-            if(JSON.stringify(results[0]) == JSON.stringify(req.user)) {
+            console.log(results[0].user_id)
+            console.log(req.user)
+            if(results[0].user_id == req.user) {
                 console.log("Id matches")
-                let query2 = mysql.format(Queries.booking.cancel, [req.body.booking_id]);
-                console.log(query2)
-
-                Queries.run(query2).then(
-                    results =>{
-                        res.status(200).send(results)
-                    },
-                    error =>{
-                        res.status(400).send(error)
-                    }
-                )        
+                console.log(results[0].date_in)
+                console.log(results[0].date_out)
+                console.log(new Date().toISOString)
+                if(results[0].date_in <= new Date().toISOString && 
+                    results[0].date_out >= new Date().toISOString) {
+                    console.log("Cannot cancel")
+                }
+                else {
+                    console.log("Booking can be cancelled")
+                }            
             }
             else {
                 console.log("Id does not match")
+                res.status(400).send("User Id does not match")
             }
         },
         error => {
             console.log("Error")
+            res.status(400).send(error)
         }
     )
 
