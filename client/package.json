@@ -9,6 +9,7 @@
     "react": "^16.8.5",
     "react-axios": "^2.0.3",
     "react-country-region-selector": "^1.4.3",
+    "react-dates": "^20.1.0",
     "react-dom": "^16.8.5",
     "react-number-format": "^4.0.7",
     "react-router-dom": "^4.3.1",

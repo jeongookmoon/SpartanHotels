@@ -1,6 +1,5 @@
-/* global google */
-
 import React from "react";
+
 class Autocomplete extends React.Component {
   constructor(props) {
     super(props);
@@ -10,7 +9,7 @@ class Autocomplete extends React.Component {
   }
 
   componentDidMount() {
-    this.autocomplete = new google.maps.places.Autocomplete(
+    this.autocomplete = new window.google.maps.places.Autocomplete(
       this.autocompleteInput.current,
       { types: ["geocode"] }
     );
@@ -25,10 +24,12 @@ class Autocomplete extends React.Component {
   render() {
     return (
       <input
-        ref={this.autocompleteInput}
-        id="autocomplete"
-        placeholder="Enter your address"
         type="text"
+        className="location-input form-control"
+        ref={this.autocompleteInput}
+        id="search_bar"
+        placeholder="Where are you going?"
+
       />
     );
   }

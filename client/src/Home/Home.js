@@ -1,17 +1,14 @@
 import React from 'react';
-
-
 import { withRouter } from 'react-router-dom'
-
-import homeImage from './Images/homeImage7.jpg';
+import 'react-dates/initialize';
+import { DateRangePicker } from 'react-dates';
+import 'react-dates/lib/css/_datepicker.css';
+import Autocomplete from "./Autocomplete";
+import homeImage from './Images/homeImage2.jpg';
 import {
-  Button,
-  Form, FormGroup, Label, Input, Row, Col
+	Form, FormGroup
 } from 'reactstrap'
-
 import { HotelSearchFunction } from '../Utility/HotelSearchFunction'
-
-
 
 var topSectionStyle = {
   width:"100%",
@@ -21,49 +18,59 @@ var topSectionStyle = {
   backgroundImage: `url(${homeImage})`,
 };
 
-
-
 class Home extends React.Component {
 
 	constructor() {
-    super();
-    // initial modal state : false
-    this.state = {
-   		city: '',
-   		date_in: '',
-   		date_out: '',
-   		adult: 0,
-   		children: 0,
-   		guest_number: 0,
-    	
-     
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.search = this.search.bind(this);
-    this.adultIncrement = this.adultIncrement.bind(this);
-    this.adultDecrement = this.adultDecrement.bind(this);
-    this.childrenIncrement = this.childrenIncrement.bind(this);
-    this.childrenDecrement = this.childrenDecrement.bind(this);
-
+		super();
+		this.state = {
+			city: '',
+			date_in: null,
+			date_out: null,
+			adult: 0,
+			children: 0,
+			focusedInput: null,
+			guest_number: 0,
+			place: {}
+		};
+		this.handleChange = this.handleChange.bind(this);
+		this.search = this.search.bind(this);
+		this.adultIncrement = this.adultIncrement.bind(this);
+		this.adultDecrement = this.adultDecrement.bind(this);
+		this.childrenIncrement = this.childrenIncrement.bind(this);
+		this.childrenDecrement = this.childrenDecrement.bind(this);
 	}
 
+	showPlaceDetails(place) {
+		//console.log('formatted address in json: ', JSON.stringify(place, null, 2))
+		let address = JSON.stringify(place.formatted_address, null, 2).replace(/['"]+/g, '')
+		let cityName = address.substr(0,address.indexOf(','))
+		let stateAbbreviation = address.substring(
+			address.lastIndexOf(cityName+",") + cityName.length+2, 
+			address.lastIndexOf(",")
+		);
+		
+		console.log('address: ', address)
+		console.log('cityName: ', cityName)
+		console.log('stateAbbreviation: ', stateAbbreviation)
+		this.setState({ city: cityName, place})
+		// console.log('cityName in state: ', this.state.city)
+	}
 
-  	handleChange(event) {
+	handleChange(event) {
 		const target = event.target;
-    	const value = target.type === 'checkbox' ? target.checked : target.value;
-    	const name = target.name;
-
-    	this.setState({
-      	[name]: value
-    	});  
+		const value = target.type === 'checkbox' ? target.checked : target.value;
+		const name = target.name;
+		this.setState({
+			[name]: value
+		});
 	}
 
-	adultIncrement(){
+	adultIncrement() {
 		console.log("yay");
-    var value = parseInt(document.getElementById('adult').value, 10);
-    
-    value++;
-    console.log(value);
+		var value = parseInt(document.getElementById('adult').value, 10);
+
+		value++;
+		console.log(value);
 
     document.getElementById('adult').value = value;
     var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
@@ -77,14 +84,14 @@ class Home extends React.Component {
 
 	}
 
-	adultDecrement(){
+	adultDecrement() {
 		console.log("yay");
-    var value = parseInt(document.getElementById('adult').value, 10);
-    
-    if (value != 0){
-    value--;
-	}
-    console.log(value);
+		var value = parseInt(document.getElementById('adult').value, 10);
+
+		if (value != 0) {
+			value--;
+		}
+		console.log(value);
 
     document.getElementById('adult').value = value;
     var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
@@ -98,12 +105,9 @@ class Home extends React.Component {
 
 	}
 
-	childrenIncrement(){
+	childrenIncrement() {
 		console.log("yay");
-    var value = parseInt(document.getElementById('children').value, 10);
-    
-    value++;
-    console.log(value);
+		var value = parseInt(document.getElementById('children').value, 10);
 
     document.getElementById('children').value = value;
     var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
@@ -117,14 +121,9 @@ class Home extends React.Component {
 
 	}
 
-	childrenDecrement(){
+	childrenDecrement() {
 		console.log("yay");
-    var value = parseInt(document.getElementById('children').value, 10);
-    
-    if (value != 0){
-    value--;
-	}
-    console.log(value);
+		var value = parseInt(document.getElementById('children').value, 10);
 
     document.getElementById('children').value = value;
     var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
@@ -135,58 +134,46 @@ class Home extends React.Component {
     	guest_number:guest_number
     })
 
-	}
+		this.setState({
+			children: value
+		})
 
+	}
 
 
 	search = (event) => {
 		console.log('Search clicked')
-
     	event.preventDefault()
 
 		
 	        const temp_fields = {
 		        city: this.state.city,
-		        date_in: this.state.date_in,
-		        date_out: this.state.date_out,
+		        date_in: this.state.date_in.format('YYYY-MM-DD'),
+						date_out: this.state.date_out.format('YYYY-MM-DD'),
 		        adult: this.state.adult,
 		        children: this.state.children,
 		        guest_number:this.state.guest_number,
       		}
 
    	    HotelSearchFunction(temp_fields).then(response => {
-        console.log("status number(200 success, else fail): ")
-       // if(response === 200) {
+        	console.log("status number(200 success, else fail): ")
+       		// if(response === 200) {
           console.log("expected reponse 200  ")
           console.log(response)
           //this.props.history.push(`/HotelSearchDemo`)
-          	let queryString = "city=" + this.state.city + "&" + "date_in=" + this.state.date_in + "&" + "date_out=" + this.state.date_out + "&" + "adult=" + this.state.adult + "&" + "children=" + this.state.children + "&" + "guest_number=" + this.state.guest_number;
-			this.props.history.push({
-			  pathname: `/HotelSearch`,
-			  search:`?${queryString}`,
-			  data: response, // your data array of objects
-			  city: this.state.city,
+          let queryString = "city=" + this.state.city + "&" + "date_in=" + temp_fields.date_in + "&" + "date_out=" + temp_fields.date_out + "&" + "adult=" + this.state.adult + "&" + "children=" + this.state.children + "&" + "guest_number=" + this.state.guest_number;
+					this.props.history.push({
+			  		pathname: `/HotelSearch`,
+			  		search:`?${queryString}`,
+			  		data: response, // your data array of objects
+			  		city: this.state.city,
 		        date_in: this.state.date_in,
 		        date_out: this.state.date_out,
 		        adult: this.state.adult,
-		        children: this.state.children,
-			})
-
-        //   loginPost(temp_fields).then(loginresponse => {
-        //     if(loginresponse === "S") {
-        //       console.log("login success")
-        //     } else if (loginresponse === "F") {
-        //       console.log("login fail")
-        //     }
-        //     this.props.history.push(`/`)
-        // })
-      //  } else if (response === 400) {
-      //    console.log("expected reponse 400 ")
-        //  console.log(response)
-        //  this.props.history.push(`/`)
-        //}  
-    })
-      	
+						children: this.state.children,
+						guest_number:this.state.guest_number,
+				})
+		})
 	}
 
   render() {
@@ -213,24 +200,23 @@ class Home extends React.Component {
 		  			    <div className="input-group-append">
 		  			      <div className="location-input-icon input-group-text"><i className="fa fa-search"></i></div>
 		  			    </div>
-		  			    	<input name="city" ref={this.autocompleteInput} id="autocomplete" value={this.state.city} onChange={this.handleChange} type="text" className="location-input form-control" placeholder="Where?"></input>
+								<Autocomplete onPlaceChanged={this.showPlaceDetails.bind(this)} />
 		  			  </div>
 
 	  			      <div className="col-lg-2 input-group home-date">
 	  			      	  <div className="input-group-append">
 	  			              <div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
 	  			          </div>
-	  			          <input name="date_in" type="text" value={this.state.date_in} onChange={this.handleChange} className="check-in-input form-control" placeholder="Check In"/>
-	  			      </div>
-
-	  			      <div className="col-lg-2 input-group home-date">
-	  			      	  <div className="input-group-append">
-	  			              <div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
-	  			          </div>
-	  			          <input name="date_out" type="text" value={this.state.date_out} onChange={this.handleChange} className="check-in-input form-control" placeholder="Check Out"/>
-	  			      </div>
-
-	  		
+	  			          <DateRangePicker
+											startDate={this.state.date_in} // momentPropTypes.momentObj or null,
+											startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
+											endDate={this.state.date_out} // momentPropTypes.momentObj or null,
+											endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
+											onDatesChange={({ startDate, endDate }) => this.setState({ date_in: startDate, date_out: endDate })} // PropTypes.func.isRequired,
+											focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+											onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
+										/>
+	  			      </div>	  		
 
 
 			  		<div className=" col-lg-2 input-group menu-container">
@@ -286,14 +272,9 @@ class Home extends React.Component {
 	  		</Form>
   		
   		</div>
-  		
-  		
-	  	
-
-  	</div>
-  	  );
-
-
+			</div>
+		);
+	}
 }
-}
+
 export default withRouter(Home);

@@ -1,8 +1,6 @@
 import React from 'react';
-import { Map, GoogleApiWrapper } from 'google-maps-react';
 import { withRouter } from 'react-router-dom'
 import homeImage from './Images/homeImage10.jpg';
-
 import axios from 'axios'
 import { HotelSearchFunction } from '../Utility/HotelSearchFunction'
 import {
@@ -18,11 +16,6 @@ var topSectionStyle = {
   backgroundImage: `url()`,
   position:"absolute",
   minHeight:"38px",
-};
-
-const mapStyles = {
-  width: '100%',
-  height: '100%',
 };
 
 class HotelSearch extends React.Component {
@@ -60,11 +53,11 @@ constructor(props) {
 			rooms_available: 0,
 			state: "",
 			zipcode: 0,
-	   		date_in: dateIn,
-	   		date_out: dateOut,
-	   		adult: adult,
-	   		children: children,
-	   		guest_number: guest_number,
+			date_in: dateIn,
+			date_out: dateOut,
+			adult: adult,
+			children: children,
+			guest_number: guest_number,
 
 		};
 
@@ -84,11 +77,58 @@ constructor(props) {
 		const hotelSearch = (await axios.get(queryCall)).data;
 		this.setState({
 			hotels: hotelSearch
-		});
-		console.log(hotelSearch);
-		console.log(this.state.hotels.results.length);
+		}, this.renderMap());
 	}
 
+	initializeMap = () => {
+		let geocoder = new window.google.maps.Geocoder();
+
+		let googleMap = new window.google.maps.Map(document.getElementById('map'), {
+			center: { lat: 0, lng: 0 },
+			zoom: 11
+		});
+
+		let params = new URLSearchParams(this.props.location.search);
+		let city_name = params.get('city')
+
+		// display the center of the map by city name
+		geocoder.geocode({ 'address': city_name }, function (results, status) {
+			if (status === 'OK') {
+				googleMap.setCenter(results[0].geometry.location);
+			} else {
+				alert('Geocode was not successful for the following reason: ' + status);
+			}
+		});
+
+		// display each hotel's information window when clicking the marker	
+		let infoWindow = new window.google.maps.InfoWindow()
+
+		this.state.hotels.results.map((eachHotel, index) => {
+
+			let hotelInfo = `<h6>${eachHotel.name}</h6>
+											 <p>${eachHotel.address}</p>`
+
+			// display each hotel's marker along with index number
+			let marker = new window.google.maps.Marker({
+				position: { lat: parseFloat(eachHotel.latitude), lng: parseFloat(eachHotel.longitude) },
+				map: googleMap,
+				label: (index + 1).toString(),
+				title: eachHotel.name
+			})
+
+			// action listener to open information window when clicking marker
+			marker.addListener('click', function () {
+				infoWindow.setContent(hotelInfo)
+				infoWindow.open(googleMap, marker);
+			});
+		})
+	}
+
+	renderMap() {
+		const CALLBACK_URL = "https://maps.googleapis.com/maps/api/js?key="+process.env.REACT_APP_GOOGLE_MAP_API_KEY+"&callback=initMap" 
+		loadGoogleMapScript(CALLBACK_URL)
+		window.initMap = this.initializeMap
+	}
 
 
 	roomSearch = item => event => {
@@ -121,7 +161,7 @@ constructor(props) {
         console.log("status number(200 success, else fail): ")
           console.log("expected reponse 200  ")
           	//we don't have a query that handles the room
-          	let queryString = this.props.location.search
+          	let queryString = this.props.location.search + "&hotel_id=" + item.hotel_id
 			this.props.history.push({
 			  pathname: `/RoomPage`,
 			  search:`${queryString}`,
@@ -403,15 +443,7 @@ constructor(props) {
   				<div className="hotel-search-columns-container col-lg-12 row">
 
 	  				<div className="hotel-search-map-column col-lg-6">
-			  			<Map className="shadow-sm "
-			  			  google={this.props.google}
-			  			  zoom={14}
-			  			  style={mapStyles}
-			  			  initialCenter={{
-			  			   lat: -1.2884,
-			  			   lng: 36.8233
-			  			  }}
-			  			/>
+						<div id="map"></div>
 		  			</div>
 
 		  			<div className="col-lg-6 hotel-search-first-column">
@@ -581,6 +613,9 @@ constructor(props) {
 											</div>
 										</div>
 
+										<div className="hotel-search-date-out-demo">
+											{children}
+										</div>
 									</div>
 
 									<div className="row hotel-search-guest-container-demo">
@@ -641,11 +676,17 @@ constructor(props) {
 			</div>
 		);
 		}
-  }
-
+	}
 }
 
-export default GoogleApiWrapper({
-  apiKey: 'AIzaSyDScT-hbkYMaHHMJXftylDtwehYvBkzyRk'
-})(HotelSearch);
+function loadGoogleMapScript(src) {
+	let index = window.document.getElementsByTagName("script")[0]
+	let script = window.document.createElement("script")
+	script.src = src
+	script.async = true
+	script.defer = true
+	index.parentNode.insertBefore(script, index) // insert google map script before any script in index html
+}
+
+export default withRouter(HotelSearch);
 
