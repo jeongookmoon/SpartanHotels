@@ -107,11 +107,11 @@ class Home extends React.Component {
 	}
 
 	childrenIncrement(){
-		console.log("yay");
+		// console.log("yay");
 	    var value = parseInt(document.getElementById('children').value, 10);
 	    
 	    value++;
-	    console.log(value);
+	    // console.log(value);
 
 	    document.getElementById('children').value = value;
 	    var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
@@ -126,13 +126,13 @@ class Home extends React.Component {
 	}
 
 	childrenDecrement(){
-		console.log("yay");
+		// console.log("yay");
 	    var value = parseInt(document.getElementById('children').value, 10);
 	    
-	    if (value != 0){
+	    if (value !== 0){
 	    value--;
 		}
-	    console.log(value);
+	    // console.log(value);
 
 
 	    document.getElementById('children').value = value;
