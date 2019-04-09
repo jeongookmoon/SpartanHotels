@@ -1,5 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom'
+<<<<<<< HEAD
 import homeImage from './Images/homeImage7.jpg';
 
 import axios from 'axios'
@@ -414,6 +415,11 @@ function loadGoogleMapScript(src) {
 	script.async = true
 	script.defer = true
 	index.parentNode.insertBefore(script, index) // insert google map script before any script in index html
+=======
+
+class HotelSearchDemo extends React.Component {
+
+>>>>>>> move hotelsearchdemo to hotelsearch
 }
 
 export default withRouter(HotelSearchDemo);
