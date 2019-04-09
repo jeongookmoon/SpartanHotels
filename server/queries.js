@@ -54,7 +54,8 @@ module.exports = {
         create: 'insert into spartanhotel.user (user_id,name,password,email) values (null,?,?,?)',
         session: 'select LAST_INSERT_ID() as user_id ',
         authenticate: 'select user_id, password from spartanhotel.user where email=?',
-        edit: 'UPDATE user SET name=?, password=? WHERE user_id=?'
+        edit: 'UPDATE user SET name=?, password=? WHERE user_id=?',
+        getAvailableRewards: 'SELECT sum(R.change) as sum FROM spartanhotel.reward R where user_id=? and date_active <= curdate();'
     },
 
     hotel: {
@@ -259,7 +260,7 @@ module.exports = {
               withClause + mainQuery + whereClause + groupByClause + 
               `
                 ) as rh
-                join
+                left join
                 hotel_image
                 on hotel_image.hotel_id = rh.hotel_id
                 group by
@@ -276,21 +277,202 @@ module.exports = {
           return [query, values]
         
         },
+        room: function (params = {}, queryString={}, getCount=false) {
+          // Example parameter: { name: "mint", category: "baby", sortByAsc: true,  priceGreaterThan: 2, priceLessThan: 5 }
+          /*
+            from StackOverflow, Jordan Running,
+            https://stackoverflow.com/questions/31822891/how-to-build-dynamic-query-by-binding-parameters-in-node-js-sql#31823325
+            
+          */
+      
+          // 'With clause' sets up date checking for available rooms at specific hotel
+          // 'With clause' results in a table of rooms booked during the given time at the given hotel
+          var withConditions = []
+          let tempTableComponent = `with 
+          rb as (SELECT  B.*, R.hotel_id, R.room_number, R.price, R.bed_type, R.bed_number 
+          from spartanhotel.booking B join spartanhotel.room R 
+          on B.room_id = R.room_id `
+      
+           // Date Conditions
+           if (typeof queryString.date_out !== 'undefined' && queryString.date_out !== '') {
+            withConditions.push(queryString.date_out)
+          }
+           if (typeof queryString.date_in !== 'undefined' && queryString.date_in !== '') {
+            withConditions.push(queryString.date_in)
+          }
+          // Specific Hotel
+          if (typeof params.hotelID !== 'undefined' && params.hotelID !== '') {
+            withConditions.push(params.hotelID)
+          }
+                     
+          let withClause = mysql.format(tempTableComponent + "where date_in < ? and date_out > ? and hotel_id = ?) ", withConditions)
+      
+      
+          // All other query parameters
+          var conditions = [];
+          var values = [];
+      
+          // WHERE/FILTER CLAUSE
+      
+          // Useful only if rooms have different amenities and ratings
+          // if (typeof queryString.amenities !== 'undefined'){
+          //   let amenities = JSON.parse(decodeURIComponent(queryString.amenities))
+          //   for(var i=0;i< amenities.length;i++){
+          //     conditions.push(" amenities like ? ");
+          //     values.push("%" + amenities[i] + "%");
+          //   }
+          // }
+          // if (typeof params.rating !== 'undefined'){
+          //   let rating = parseInt(params.rating)
+          //   conditions.push(" rating = ? ");
+          //   values.push(rating);
+          // }
+      
+      
+          if (typeof queryString.priceGTE !== 'undefined' && queryString.priceGTE !== '') {
+            conditions.push("price >= ?");
+            values.push(queryString.priceGTE);
+          }
+      
+          if (typeof queryString.priceLTE !== 'undefined' && queryString.priceLTE !== '') {
+            conditions.push("price <= ?");
+            values.push(queryString.priceLTE);
+          }
+      
+          conditions.push("hotel_id = ?")
+          values.push(params.hotelID)
+      
+      
+      
+          var whereClause = conditions.length ? conditions.join(' AND ') : '1'
+             
+          // SORT BY CLAUSE
+            // TODO: sort by distance
+            var sortByClause = ""; 
+            if (typeof queryString.sortBy !== 'undefined' && queryString.sortBy !== '') {
+              switch (queryString.sortBy) {
+              // Useful only if rooms have different amenities and ratings
+              // case ("rating_asc"):
+              //   sortByClause = " order by rating ";
+              //   break
+              // case ("rating_des"):
+              //   sortByClause = " order by rating desc "
+              //   break
+                case ("name_asc"):
+                  sortByClause = " order by name ";
+                  break
+                case("name_des"):
+                  sortByClause = " order by name desc ";
+                  break
+                case("price_asc"):
+                  sortByClause = " order by price ";
+                  break
+                case("price_des"):
+                  sortByClause = " order by price desc ";
+                  break
+                default:
+                  sortByClause = " order by price desc "
+              }
+            }
+      
+          // PAGINATION
+          var pageNumber = 0;
+          var resultsPerPage = 10;
+      
+          if (typeof queryString.pageNumber !== 'undefined' && queryString.pageNumber !== '') {
+            pageNumber = queryString.pageNumber;
+          }
+          if (typeof queryString.resultsPerPage !== 'undefined' && queryString.resultsPerPage !== '') {
+            resultsPerPage = queryString.resultsPerPage;
+          }
+      
+          var paginationClause = " limit " + resultsPerPage + " offset " + (pageNumber * resultsPerPage) + " "
+      
+      
+          // PUTTING QUERY TOGETHER
+          let mainQuery = ''
+          if(getCount){
+            mainQuery = ` SELECT COUNT( * ) as count `
+          }else{
+            mainQuery = ' SELECT  * '
+          }
+          mainQuery = mainQuery +
+            `FROM
+                room
+            WHERE
+                NOT EXISTS(
+                  SELECT 
+                        *
+                    FROM
+                        rb
+                    WHERE
+                        rb.room_id = room.room_id
+                            AND rb.status != 'cancelled')
+                AND 
+            `
+        let query = ''
+      
+        if(getCount){
+          query = withClause + mainQuery + whereClause + ';'
+        }else{
+          // wrap query inside a select so we can join the results with hotel images
+          query = ` select rh.*, group_concat(url) as images from ( ` + 
+          withClause + mainQuery + whereClause + 
+          `
+            ) as rh
+            left join
+            room_image
+            on room_image.hotel_id = rh.hotel_id and room_image.bed_type = rh.bed_type and room_image.bed_number = rh.bed_number
+            group by
+            rh.room_id
+          `
+          + sortByClause + paginationClause  + 
+          ';'
+        }
+        return [query, values]
+      },
 
     },
 
-    room: {
-
-    },
 
     booking: {
-    book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, room_id, total_price, cancellation_charge, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',
+    book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, guest_id, room_id, total_price, cancellation_charge, date_in, date_out, status, amount_paid) values (null, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     cancel: 'UPDATE booking SET status="cancelled" WHERE booking_id=?',
     modify: 'UPDATE booking SET room_id=?, date_in=?, date_out=? WHERE booking_id=?',
     view: `SELECT Booking.*, Room.room_number, Hotel.name FROM Booking 
     INNER JOIN Room ON Booking.room_id = Room.room_id 
     LEFT JOIN Hotel ON Room.hotel_id = Hotel.hotel_id 
     WHERE Booking.user_id = ?`,
+
+    /**
+     * 
+     * @param {*} user_id 
+     * @param {*} date_in 
+     * @param {*} date_out 
+     * @returns A query, which when run -> returns an array of bookings which conflict with the given inputs, else returns empty array
+     */
+      duplicateBookingCheck: function({user_id, date_in, date_out}){
+        let query = `
+        SELECT 
+          B.*,
+          R.hotel_id,
+          R.room_number,
+          R.price,
+          R.bed_type,
+          R.bed_number
+        FROM
+            spartanhotel.booking B
+                JOIN
+            spartanhotel.room R ON B.room_id = R.room_id
+        WHERE
+            date_in < ?
+                AND date_out > ?
+                AND user_id = ?
+                AND status != 'cancelled'          
+        ;
+        `
+        return mysql.format(query, [date_out, date_in, user_id])
+      },
 
       /**
      * 
@@ -353,7 +535,15 @@ module.exports = {
   },
 
     rewards: {
-    book: 'INSERT INTO spartanhotel.rewards(reward_book_id, user_id, room_id, reward_points, no_cancellation, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)'
+      book: 'INSERT INTO spartanhotel.rewards (reward_book_id, user_id, room_id, reward_points, no_cancellation, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',
+      useOnBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, booking_id, date_active, `change`) values (null, ?, 1, ?, curdate(), ?)',
+      gainFromBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, booking_id, date_active, `change`) values (null, ?, 2, ?, ?, ?)',
+      getUserRecords: 'SELECT R.*,RR.reason FROM spartanhotel.reward R join spartanhotel.reward_reason RR on R.reward_reason_id = RR.reward_reason_id WHERE user_id=?',
+      cancelBooking: 'DELETE from spartanhotel.reward where booking_id=?'
+    },
+
+    guest: {
+      insert: 'INSERT INTO spartanhotel.guest(guest_id, email, name) values (null, ?, ?)'
     }
 
 

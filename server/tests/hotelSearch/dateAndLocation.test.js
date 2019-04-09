@@ -17,7 +17,7 @@ describe('hotel search',()=>{
             .then( response=>{
                 // console.log(response.data)
                 expect(response.status).toEqual(200)
-                expect(response.data.totalResultCount).toEqual(10)
+                expect(response.data.totalResultCount).toEqual(11)
             })
         })
         test('same date_in as date_out', ()=>{
@@ -109,7 +109,7 @@ describe('hotel search',()=>{
         .then( response=>{
             // console.log(response.data)
             expect(response.status).toEqual(200)
-            expect(response.data.totalResultCount).toEqual(10)
+            expect(response.data.totalResultCount).toEqual(11)
         })
     })
 
