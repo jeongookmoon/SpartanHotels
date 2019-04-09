@@ -4,13 +4,14 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "jest"
+    "test": "jest --runInBand",
+    "db": "cd sql && node ./script.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
     "bcrypt": "^3.0.4",
     "cookie-parser": "~1.4.3",
-    "db": "^1.1.1",
+    "cors": "^2.8.5",
     "debug": "~2.6.9",
     "express": "~4.16.0",
     "express-mysql-session": "^2.1.0",
