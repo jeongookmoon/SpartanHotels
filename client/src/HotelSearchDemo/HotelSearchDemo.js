@@ -4,5 +4,5 @@ class HotelSearchDemo extends React.Component {
 
 }
 
-export default withRouter(HotelSearchDemo);
+export default HotelSearchDemo;
 

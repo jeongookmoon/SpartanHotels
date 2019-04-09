@@ -161,7 +161,7 @@ class Home extends React.Component {
           console.log("expected reponse 200  ")
           console.log(response)
           //this.props.history.push(`/HotelSearchDemo`)
-          let queryString = "city=" + this.state.city + "&" + "date_in=" + this.state.date_in + "&" + "date_out=" + this.state.date_out + "&" + "adult=" + this.state.adult + "&" + "children=" + this.state.children + "&" + "guest_number=" + this.state.guest_number;
+          let queryString = "city=" + this.state.city + "&" + "date_in=" + temp_fields.date_in + "&" + "date_out=" + temp_fields.date_out + "&" + "adult=" + this.state.adult + "&" + "children=" + this.state.children + "&" + "guest_number=" + this.state.guest_number;
 					this.props.history.push({
 			  		pathname: `/HotelSearch`,
 			  		search:`?${queryString}`,
