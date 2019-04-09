@@ -1,15 +1,15 @@
 import React, { Component } from "react";
-import NavBar from "./../NavBar/NavBar";
-import { CountryDropdown, RegionDropdown, CountryRegionData } from 'react-country-region-selector';
+// import NavBar from "./../NavBar/NavBar";
+import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
 import "./../App.css";
 
-var firstName;
-var lastName;
-var address;
-var city;
-var zip;
-var country;
-var state;
+// var firstName;
+// var lastName;
+// var address;
+// var city;
+// var zip;
+// var country;
+// var state;
 
 
 
