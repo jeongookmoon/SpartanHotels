@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import NavBar from "./../NavBar/NavBar";
+// import NavBar from "./../NavBar/NavBar";
 import "./../App.css";
 import axios from 'axios'
 import { withRouter } from 'react-router-dom'

@@ -3,7 +3,7 @@ import axios from 'axios'
 export const logoutClearSession = () => {
     return axios.get('/api/logout')
         .then(res => {
-            console.log(res)
+            // console.log(res)
         })
 }
 

@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import NavBar from "./../NavBar/NavBar";
+// import NavBar from "./../NavBar/NavBar";
 import "./../App.css";
 
-var cardNumber;
-var cardName;
-var cardMonth;
-var cardYear;
-var cardCVV;
+// var cardNumber;
+// var cardName;
+// var cardMonth;
+// var cardYear;
+// var cardCVV;
 
 
 class CheckoutPayment extends Component {
@@ -33,7 +33,7 @@ class CheckoutPayment extends Component {
           <div class="col-md-11">
           <form>
             <div class="form-group-demo"> 
-             <img src="https://images-na.ssl-images-amazon.com/images/I/61cL%2BM-SN%2BL._SL1283_.jpg"  width="405.5" height="153.5"/>{" "}
+             <img src="https://images-na.ssl-images-amazon.com/images/I/61cL%2BM-SN%2BL._SL1283_.jpg"  alt="image1" width="405.5" height="153.5"/>{" "}
             </div>
             <div class="form-group-demo">
               <input

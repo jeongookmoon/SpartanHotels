@@ -1,34 +1,34 @@
 import React, { Component } from "react";
 import { Button, Collapse} from "reactstrap";
 import NumberFormat from 'react-number-format';
-import ReactDOM from "react-dom";
+// import ReactDOM from "react-dom";
 import "./../App.css";
 
 /////// Local Testing //////////////
 
 var rewardPoint = "1000";
 var cost = "59.99";
-var discount;
-var rewardPointUsed = "1000";
-var total;
-var tempTotal;
-var tempReward;
-window.onload = function () {
-  document.getElementById("testPayID").innerHTML = "$" + cost;
+// var discount;
+// var rewardPointUsed = "1000";
+// var total;
+// var tempTotal;
+// var tempReward;
+// window.onload = function () {
+//   document.getElementById("testPayID").innerHTML = "$" + cost;
 
-  document.getElementById("discountID").innerHTML = "$" + rewardPointUsed/100+".00";
+//   document.getElementById("discountID").innerHTML = "$" + rewardPointUsed/100+".00";
 
-  document.getElementById("rewardPoint").innerHTML = " "+rewardPoint + " Reward Points.";
-};
+//   document.getElementById("rewardPoint").innerHTML = " "+rewardPoint + " Reward Points.";
+// };
 
-function validateRP(rewardPoint,discount)
-{
-  if(discount > rewardPoint)
-  {
-    return false;
-  }
-  return true;
-}
+// function validateRP(rewardPoint,discount)
+// {
+//   if(discount > rewardPoint)
+//   {
+//     return false;
+//   }
+//   return true;
+// }
 
 
 //////////////////////////////////////////////////
@@ -43,7 +43,6 @@ class CheckoutCheck extends Component {
     total: '0',
     testPay:'59.99',
     tempTotal:'0',
-    total: '0',
     rewardPoint: "1000",
     tempReward: '0'
   }
@@ -76,7 +75,7 @@ class CheckoutCheck extends Component {
 
 
   render(){
-    const error= validateRP(this.state.rewardPoint,this.state.discount);
+    // const error= validateRP(this.state.rewardPoint,this.state.discount);
   return (
     <div class="card text-left h-50">
       <h5 class="card-header">Payment Summary</h5>
