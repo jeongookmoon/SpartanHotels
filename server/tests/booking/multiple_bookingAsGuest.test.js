@@ -25,7 +25,9 @@ describe("reservations - guest multiple booking", () => {
                 cancellation_charge: 41,
                 date_in: "2019-03-20",
                 date_out: "2019-03-21",
-                status: "booked"
+                guest_email: 'test@test.com',
+                guest_name: 'Test Tester',
+                amount_paid: 225.5
             })
             .then(
                 response => {
@@ -63,11 +65,26 @@ describe("reservations - guest multiple booking", () => {
                 cancellation_charge: 41,
                 date_in: "2019-03-20",
                 date_out: "2019-03-21",
-                status: "booked"
+                guest_email: 'test@test.com',
+                guest_name: 'Test Tester',
+                amount_paid: 225.5
             })
             .then(
                 response => {
-                    throw "multiple/duplicate booking succeeded"
+                    let booking_id = response.data.data
+                    axios
+                        .post(cancelReservation, {
+                            booking_id: booking_id
+                        })
+                        .then(
+                            response => {
+                                throw "multiple/duplicate booking succeeded"
+                            },
+                            err => {
+                                throw "failed to delete booking"
+                            }
+                        );  
+                    
                 },
                 err => {
                     // console.log(err.response.data);
@@ -84,7 +101,9 @@ describe("reservations - guest multiple booking", () => {
                 cancellation_charge: 13,
                 date_in: "2019-03-20",
                 date_out: "2019-03-21",
-                status: "booked"
+                guest_email: 'test@test.com',
+                guest_name: 'Test Tester',
+                amount_paid: 71.5
             })
             .then(
                 response => {
@@ -119,7 +138,9 @@ describe("reservations - guest multiple booking", () => {
                 cancellation_charge: 41,
                 date_in: "2019-03-18",
                 date_out: "2019-03-21",
-                status: "booked"
+                guest_email: 'test@test.com',
+                guest_name: 'Test Tester',
+                amount_paid: 225.5 * 3
             })
             .then(
                 response => {
@@ -140,7 +161,9 @@ describe("reservations - guest multiple booking", () => {
                 cancellation_charge: 13 * 3,
                 date_in: "2019-03-18",
                 date_out: "2019-03-21",
-                status: "booked"
+                guest_email: 'test@test.com',
+                guest_name: 'Test Tester',
+                amount_paid: 71.5 * 3
             })
             .then(
                 response => {

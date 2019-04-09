@@ -117,6 +117,7 @@ router.get('/logout', authenticationMiddleware(), (req,res)=>{
     
 })
 
+// TODO: Update to v0.2
 router.get('/profile', authenticationMiddleware(), (req, res) =>{
     console.log(req.session.passport.user.user_id)
     const profile = req.session.passport.user.user_id
@@ -154,7 +155,7 @@ function authenticationMiddleware() {
 
 
 
-
+// TODO: Update to v0.2
 router.post('/reservations/reward', (req, res)=>{
     console.log(req.body);
     let query = mysql.format(Queries.rewards.book, [req.body.user_id, req.body.room_id, req.body.reward_points, req.body.no_cancellation, req.body.date_in, req.body.date_out, req.body.status])

@@ -53,7 +53,8 @@ module.exports = {
         checkUserNameExists: 'select user_id from spartanhotel.user where name=?',
         create: 'insert into spartanhotel.user (user_id,name,password,email) values (null,?,?,?)',
         session: 'select LAST_INSERT_ID() as user_id ',
-        authenticate: 'select user_id, password from spartanhotel.user where email=?'
+        authenticate: 'select user_id, password from spartanhotel.user where email=?',
+        getAvailableRewards: 'SELECT sum(R.change) as sum FROM spartanhotel.reward R where user_id=? and date_active <= curdate();'
     },
 
     hotel: {
@@ -420,7 +421,7 @@ module.exports = {
             ) as rh
             left join
             room_image
-            on room_image.room_id = rh.room_id
+            on room_image.hotel_id = rh.hotel_id and room_image.bed_type = rh.bed_type and room_image.bed_number = rh.bed_number
             group by
             rh.room_id
           `
@@ -434,7 +435,7 @@ module.exports = {
 
 
     booking: {
-    book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, room_id, total_price, cancellation_charge, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',
+    book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, guest_id, room_id, total_price, cancellation_charge, date_in, date_out, status, amount_paid) values (null, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     cancel: 'UPDATE booking SET status="cancelled" WHERE booking_id=?',
     modify: 'UPDATE booking SET status="modified" room_id=?, date_in=?, date_out=? WHERE booking_id=?',
     user_id: 'SELECT user_id, status, date_in, date_out FROM booking WHERE booking_id=?',
@@ -531,8 +532,19 @@ module.exports = {
   },
 
     rewards: {
+
     book: 'INSERT INTO spartanhotel.rewards(reward_book_id, user_id, room_id, reward_points, no_cancellation, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',
-    cancel_rewards: 'UPDATE reward SET change = 0 WHERE booking_id = ?'
+    cancel_rewards: 'UPDATE reward SET change = 0 WHERE booking_id = ?',
+      book: 'INSERT INTO spartanhotel.rewards (reward_book_id, user_id, room_id, reward_points, no_cancellation, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',
+      useOnBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, booking_id, date_active, `change`) values (null, ?, 1, ?, curdate(), ?)',
+      gainFromBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, booking_id, date_active, `change`) values (null, ?, 2, ?, ?, ?)',
+      getUserRecords: 'SELECT R.*,RR.reason FROM spartanhotel.reward R join spartanhotel.reward_reason RR on R.reward_reason_id = RR.reward_reason_id WHERE user_id=?',
+      cancelBooking: 'DELETE from spartanhotel.reward where booking_id=?'
+    },
+
+    guest: {
+      insert: 'INSERT INTO spartanhotel.guest(guest_id, email, name) values (null, ?, ?)'
+
     }
 
 
