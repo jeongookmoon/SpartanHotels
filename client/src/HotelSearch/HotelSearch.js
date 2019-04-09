@@ -88,7 +88,7 @@ class HotelSearch extends React.Component {
 		const hotelSearch = (await axios.get(queryCall)).data;
 		this.setState({
 			hotels: hotelSearch
-		}, window.initMap = this.initializeMap);
+		}, this.renderMap());
 	}
 
 	componentWillUnmount() {
@@ -139,6 +139,12 @@ class HotelSearch extends React.Component {
 				infoWindow.open(googleMap, marker);
 			});
 		})
+	}
+
+	renderMap() {
+		const CALLBACK_URL = "https://maps.googleapis.com/maps/api/js?key="+process.env.REACT_APP_GOOGLE_MAP_API_KEY+"&callback=initMap" 
+		loadGoogleMapScript(CALLBACK_URL)
+		window.initMap = this.initializeMap
 	}
 
 	roomSearch = item => event => {
@@ -681,5 +687,13 @@ class HotelSearch extends React.Component {
 	}
 }
 
-export default withRouter(HotelSearch);
+function loadGoogleMapScript(src) {
+	let index = window.document.getElementsByTagName("script")[0]
+	let script = window.document.createElement("script")
+	script.src = src
+	script.async = true
+	script.defer = true
+	index.parentNode.insertBefore(script, index) // insert google map script before any script in index html
+}
 
+export default withRouter(HotelSearch);
