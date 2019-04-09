@@ -215,13 +215,11 @@ class HotelSearch extends React.Component {
 		document.getElementById('adult').value = value;
 		var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
 
-
 		this.setState({
 			adult: value,
 			guest_number: guest_number
 
 		})
-
 	}
 
 	adultDecrement() {
@@ -259,7 +257,6 @@ class HotelSearch extends React.Component {
 		this.setState({
 			children: value,
 			guest_number: guest_number
-
 		})
 
 	}
@@ -275,7 +272,6 @@ class HotelSearch extends React.Component {
 
 		document.getElementById('children').value = value;
 		var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
-
 
 		this.setState({
 			children: value,
@@ -364,7 +360,6 @@ class HotelSearch extends React.Component {
 
 			<div className="hotel-search-container">
 
-
 				<FormGroup className="form-inline hotel-search-inputs">
 
 					<div className="col-lg-1"></div>
@@ -436,7 +431,7 @@ class HotelSearch extends React.Component {
 					</div>
 
 					<div className="col-lg-1 home-submit-button-container">
-						<button onClick={this.search} className="p-2 hotel-search-submit-button btn my-2 my-sm-0" type="submit">Search</button>
+						<button onClick={this.search} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Search</button>
 					</div>
 
 
@@ -444,7 +439,6 @@ class HotelSearch extends React.Component {
 
 
 				<hr className="hotel-search-hr-bottom"></hr>
-
 
 				{/* HOTEL SEARCH TWO COLUMNS */}
 
@@ -572,7 +566,6 @@ class HotelSearch extends React.Component {
 
 
 				</div>
-
 
 
 
