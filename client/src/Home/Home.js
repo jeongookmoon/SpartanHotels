@@ -24,7 +24,11 @@ class Home extends React.Component {
 	constructor() {
 		super();
 		this.state = {
+			streetAddress: '',
 			city: '',
+			state: '',
+			latitude: '',
+			longitude: '',
 			date_in: null,
 			date_out: null,
 			adult: 0,
@@ -41,20 +45,40 @@ class Home extends React.Component {
 		this.childrenDecrement = this.childrenDecrement.bind(this);
 	}
 
-	showPlaceDetails(place) {
-		//console.log('formatted address in json: ', JSON.stringify(place, null, 2))
-		let address = JSON.stringify(place.formatted_address, null, 2).replace(/['"]+/g, '')
-		let cityName = address.substr(0, address.indexOf(','))
-		// let stateAbbreviation = address.substring(
-		// 	address.lastIndexOf(cityName+",") + cityName.length+2, 
-		// 	address.lastIndexOf(",")
-		// );
+	extractFromAddress = (address, type) => {
+		switch (type) {
+			case 'city':
+				type = "locality"
+				break;
+			case 'state':
+				type = "region"
+				break;
+			default:
+				type = "street-address" // default street address
+		}
 
-		// console.log('address: ', address)
-		// console.log('cityName: ', cityName)
-		// console.log('stateAbbreviation: ', stateAbbreviation)
-		this.setState({ city: cityName, place })
-		// console.log('cityName in state: ', this.state.city)
+		let addressComponent = ''
+		if (address.includes(type)) {
+			addressComponent = address.substring(address.lastIndexOf(type) + type.length + 2)
+			addressComponent = addressComponent.substr(0, addressComponent.indexOf('<'))
+		}
+		return addressComponent // returns empty string when there's no street address
+
+	}
+
+	showPlaceDetails(place) {
+		let geoDetail = JSON.stringify(place.geometry.location, null, 2).replace(/['"]+/g, '')
+		const latitude = geoDetail.substring(geoDetail.lastIndexOf("lat:") + "lat: ".length, geoDetail.lastIndexOf(","))
+		const longitude = geoDetail.substring(geoDetail.lastIndexOf("lng:") + "lng: ".length, geoDetail.lastIndexOf("}"))
+
+		let address = JSON.stringify(place.adr_address, null, 2).replace(/['"]+/g, '')
+		address = address.replace(/(\r\n|\n|\r)/gm, "")
+
+		const streetAddress = this.extractFromAddress(address)
+		const city = this.extractFromAddress(address, 'city')
+		const state = this.extractFromAddress(address, 'state')
+
+		this.setState({ latitude, longitude, streetAddress, city, state, place })
 	}
 
 	handleChange(event) {
@@ -106,52 +130,56 @@ class Home extends React.Component {
 
 	}
 
-	childrenIncrement(){
+	childrenIncrement() {
 		// console.log("yay");
-	    var value = parseInt(document.getElementById('children').value, 10);
-	    
-	    value++;
-	    // console.log(value);
+		var value = parseInt(document.getElementById('children').value, 10);
 
-	    document.getElementById('children').value = value;
-	    var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
+		value++;
+		// console.log(value);
+
+		document.getElementById('children').value = value;
+		var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
 
 
-	    this.setState({
-	    	children:value,
-	    	guest_number:guest_number
+		this.setState({
+			children: value,
+			guest_number: guest_number
 
-	    })
+		})
 
 	}
 
-	childrenDecrement(){
+	childrenDecrement() {
 		// console.log("yay");
-	    var value = parseInt(document.getElementById('children').value, 10);
-	    
-	    if (value !== 0){
-	    value--;
+		var value = parseInt(document.getElementById('children').value, 10);
+
+		if (value !== 0) {
+			value--;
 		}
-	    // console.log(value);
+		// console.log(value);
 
 
-	    document.getElementById('children').value = value;
-	    var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
+		document.getElementById('children').value = value;
+		var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
 
 
-	    this.setState({
-	    	children:value,
-	    	guest_number:guest_number
-	    })
+		this.setState({
+			children: value,
+			guest_number: guest_number
+		})
 
 	}
 
 
 	search = (event) => {
-		// console.log('Search clicked')
 		event.preventDefault()
+
 		const temp_fields = {
+			streetAddress: this.state.streetAddress,
 			city: this.state.city,
+			state: this.state.state,
+			latitude: this.state.latitude,
+			longitude: this.state.longitude,
 			date_in: this.state.date_in.format('YYYY-MM-DD'),
 			date_out: this.state.date_out.format('YYYY-MM-DD'),
 			adult: this.state.adult,
@@ -160,16 +188,16 @@ class Home extends React.Component {
 		}
 
 		HotelSearchFunction(temp_fields).then(response => {
-			// console.log("status number(200 success, else fail): ")
-			// // if(response === 200) {
-			// console.log("expected reponse 200  ")
-			// console.log(response)
-			//this.props.history.push(`/HotelSearchDemo`)
-			let queryString = `city=${temp_fields.city}&date_in=${temp_fields.date_in}&date_out=${temp_fields.date_out}&adult=${this.state.adult}&children=${this.state.children}&guest_number=${this.state.guest_number}`
+
+			let queryString = `latitude=${temp_fields.latitude}&longitude=${temp_fields.longitude}
+								&date_in=${temp_fields.date_in}&date_out=${temp_fields.date_out}
+								&adult=${this.state.adult}&children=${this.state.children}
+								&guest_number=${this.state.guest_number}&city=${temp_fields.city}
+								&street_address=${temp_fields.streetAddress}`
+
 			this.props.history.push({
 				pathname: `/HotelSearch`,
 				search: `?${queryString}`,
-
 			})
 		})
 	}
@@ -221,7 +249,7 @@ class Home extends React.Component {
 
 
 								<div className="col-lg-12 menu-item">
-									<div className={this.state.guest_number === 0  ? "home-guest-dropdown" : "home-guest-dropdown-filled" }>{this.state.guest_number === 0 ? null : this.state.guest_number}&nbsp;Guests</div>
+									<div className={this.state.guest_number === 0 ? "home-guest-dropdown" : "home-guest-dropdown-filled"}>{this.state.guest_number === 0 ? null : this.state.guest_number}&nbsp;Guests</div>
 									<ul>
 										<li>
 											<div className="form-inline home-adults-container">

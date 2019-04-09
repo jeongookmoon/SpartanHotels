@@ -98,24 +98,26 @@ class HotelSearch extends React.Component {
 	}
 
 	initializeMap = () => {
-		let geocoder = new window.google.maps.Geocoder();
-
+		
+		const params = new URLSearchParams(this.props.location.search);
+		const latitude = parseFloat(params.get('latitude'))
+		const longitude = parseFloat(params.get('longitude'))
+		const city_name = params.get('city')
+		
 		let googleMap = new window.google.maps.Map(document.getElementById('map'), {
-			center: { lat: 0, lng: 0 },
+			center: { lat: latitude, lng: longitude },
 			zoom: 11
 		});
 
-		let params = new URLSearchParams(this.props.location.search);
-		let city_name = params.get('city')
-
-		// display the center of the map by city name
-		geocoder.geocode({ 'address': city_name }, function (results, status) {
-			if (status === 'OK') {
-				googleMap.setCenter(results[0].geometry.location);
-			} else {
-				alert('Geocode was not successful for the following reason: ' + status);
-			}
-		});
+		// let geocoder = new window.google.maps.Geocoder();
+		// // display the center of the map by city name
+		// geocoder.geocode({ 'address': city_name }, function (results, status) {
+		// 	if (status === 'OK') {
+		// 		googleMap.setCenter(results[0].geometry.location);
+		// 	} else {
+		// 		alert('Geocode was not successful for the following reason: ' + status);
+		// 	}
+		// });
 
 		// display each hotel's information window when clicking the marker	
 		let infoWindow = new window.google.maps.InfoWindow()
