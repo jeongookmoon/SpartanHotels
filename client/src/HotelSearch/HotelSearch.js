@@ -62,7 +62,7 @@ class HotelSearch extends React.Component {
 
 		let googleMap = new window.google.maps.Map(document.getElementById('map'), {
 			center: { lat: latitude, lng: longitude },
-			zoom: 11
+			zoom: 13
 		});
 
 		// const city_name = params.get('city')
