@@ -11,3 +11,24 @@ export const HotelSearchFunction = temp_fields => {
         return response.data
     })
 }
+
+export const extractFromAddress = (address, type) => {
+    switch (type) {
+        case 'city':
+            type = "locality"
+            break;
+        case 'state':
+            type = "region"
+            break;
+        default:
+            type = "street-address" // default street address
+    }
+
+    let addressComponent = ''
+    if (address.includes(type)) {
+        addressComponent = address.substring(address.lastIndexOf(type) + type.length + 2)
+        addressComponent = addressComponent.substr(0, addressComponent.indexOf('<'))
+    }
+    return addressComponent // returns empty string when there's no street address
+
+}
