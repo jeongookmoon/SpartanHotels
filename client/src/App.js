@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 import NavBar from './NavBar/NavBar';
+import SearchBar from './SearchBar/SearchBar';
 import Home from './Home/Home';
 import HotelSearch from './HotelSearch/HotelSearch';
 import HotelSearchDemo from './HotelSearchDemo/HotelSearchDemo';
@@ -17,6 +18,7 @@ class App extends Component {
       <Router>
         <div className="App">
           <NavBar />
+          <SearchBar />
           <Route exact path="/" component={Home} />
           <Route exact path="/UserProfile" component={UserProfile}/>
           <Route exact path="/Reservations" component={Reservations}/>
@@ -24,12 +26,8 @@ class App extends Component {
           <Route path="/HotelSearch" component={HotelSearch}/>
           <Route exact path="/Checkout" component={Checkout}/>
           <Route path="/RoomPage" component={RoomPage}/>
-
-
-
         </div>
       </Router>
-
     );
   }
 }
