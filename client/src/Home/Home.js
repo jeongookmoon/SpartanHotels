@@ -41,15 +41,22 @@ class Home extends React.Component {
 			guest_number: 0,
 			place: {}
 		};
-		
+
 		this.handleChange = this.handleChange.bind(this);
 		this.search = this.search.bind(this);
 		this.adultIncrement = this.adultIncrement.bind(this);
 		this.adultDecrement = this.adultDecrement.bind(this);
 		this.childrenIncrement = this.childrenIncrement.bind(this);
 		this.childrenDecrement = this.childrenDecrement.bind(this);
+		this.googleMap = null;
 	}
 
+	componentDidMount() {
+		this.googleMap = new window.google.maps.Map(document.getElementById('map'), {
+			center: { lat: 37.3382082, lng: -121.88632860000001 },
+			zoom: 13
+		});
+	}
 	handleChange(event) {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -153,7 +160,20 @@ class Home extends React.Component {
 		const city = extractFromAddress(address, 'city')
 		const state = extractFromAddress(address, 'state')
 
-		this.setState({ latitude, longitude, fullAddress, streetAddress, city, state, place })
+		this.setState(
+			{
+				latitude, longitude,
+				fullAddress, streetAddress,
+				city, state, place
+			}, this.googleMap.setCenter(
+					new window.google.maps.LatLng(latitude, longitude)
+				)
+		)
+
+		new window.google.maps.Marker({
+			position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
+			map: this.googleMap,
+		})
 	}
 
 	search = (event) => {
@@ -188,14 +208,8 @@ class Home extends React.Component {
 	}
 
 	render() {
-
-
-
-
 		return (
-
 			<div className="col-lg-12 home-container col-auto" style={topSectionStyle}>
-
 				<div className="home-form-container col-lg-12">
 
 					<Form className="home-form col-lg-12" onSubmit={this.search}>
@@ -204,9 +218,7 @@ class Home extends React.Component {
 		  		</div>
 
 						<FormGroup className="form-inline home-form-inputs">
-
 							<div className="col-lg-1"></div>
-
 							<div className="col-lg-3 input-group home-location">
 								<div className="input-group-append">
 									<div className="location-input-icon input-group-text"><i className="fa fa-search"></i></div>
@@ -231,7 +243,6 @@ class Home extends React.Component {
 
 
 							<div className=" col-lg-2 input-group menu-container">
-
 
 								<div className="col-lg-12 menu-item">
 									<div className={this.state.guest_number === 0 ? "home-guest-dropdown" : "home-guest-dropdown-filled"}>{this.state.guest_number === 0 ? null : this.state.guest_number}&nbsp;Guests</div>
@@ -261,13 +272,9 @@ class Home extends React.Component {
 												</div>
 											</div>
 
-
 										</li>
 									</ul>
 								</div>
-
-
-
 
 							</div>
 
@@ -275,13 +282,11 @@ class Home extends React.Component {
 								<button disabled={!this.state.city || !this.state.date_in || !this.state.date_out || this.state.guest_number === 0} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Search</button>
 							</div>
 
-
 						</FormGroup>
-
-
-
 					</Form>
-
+				</div>
+				<div>
+					<div style={{ width: 800, height: 480 }} id="map" />
 				</div>
 			</div>
 		);
