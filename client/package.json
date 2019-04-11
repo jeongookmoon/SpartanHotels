@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
-    "google-maps-react": "^2.0.2",
     "prop-types": "^15.7.2",
     "react": "^16.8.5",
     "react-axios": "^2.0.3",
