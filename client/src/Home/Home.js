@@ -49,6 +49,7 @@ class Home extends React.Component {
 		this.childrenIncrement = this.childrenIncrement.bind(this);
 		this.childrenDecrement = this.childrenDecrement.bind(this);
 		this.googleMap = null;
+		this.googleMapMarker = null;
 	}
 
 	componentDidMount() {
@@ -146,6 +147,13 @@ class Home extends React.Component {
 
 	}
 
+	putGoogleMapMarker = (latitude, longitude) => {
+		this.googleMapMarker ? this.googleMapMarker.setPosition({ lat: parseFloat(latitude), lng: parseFloat(longitude)}) : this.googleMapMarker = new window.google.maps.Marker({
+      position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
+      map: this.googleMap
+    })
+	}
+
 	showPlaceDetails(place) {
 		let geoDetail = JSON.stringify(place.geometry.location, null, 2).replace(/['"]+/g, '')
 		const latitude = geoDetail.substring(geoDetail.lastIndexOf("lat:") + "lat: ".length, geoDetail.lastIndexOf(","))
@@ -170,10 +178,7 @@ class Home extends React.Component {
 				)
 		)
 
-		new window.google.maps.Marker({
-			position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
-			map: this.googleMap,
-		})
+		this.putGoogleMapMarker(latitude, longitude)
 	}
 
 	search = (event) => {
