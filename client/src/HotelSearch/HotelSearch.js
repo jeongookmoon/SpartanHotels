@@ -25,7 +25,7 @@ class HotelSearch extends React.Component {
 
 		const search = window.location.search;
 		const params = new URLSearchParams(search);
-		const location = params.get('city')
+		const city = params.get('city')
 		const dateIn = params.get('date_in')
 		const dateOut = params.get('date_out')
 		const adult = params.get('adult')
@@ -37,22 +37,12 @@ class HotelSearch extends React.Component {
 			hotels: [{}],
 			fullAddress: '',
 			address: "",
-			amenities: "",
-			city: location,
-			country: "",
-			description: "",
+			city,
 			hotel_id: 0,
 			images: "",
 			latitude: "",
 			longitude: "",
-			max_price: 0,
-			min_price: 0,
-			name: "",
-			phone_number: "",
-			rating: 0,
-			rooms_available: 0,
 			state: "",
-			zipcode: 0,
 			date_in: moment(dateIn, ('YYYY-MM-DD')),
 			date_out: moment(dateOut, ('YYYY-MM-DD')),
 			adult: adult,
@@ -60,7 +50,6 @@ class HotelSearch extends React.Component {
 			guest_number: guest_number,
 			focusedInput: null,
 			place: {}
-
 		};
 
 		this.roomSearch = this.roomSearch.bind(this);
@@ -94,8 +83,9 @@ class HotelSearch extends React.Component {
 		axios.get(queryCall).then(result => {
 			this.setState({
 				hotels: result.data
-			})})
-			.then( () => {
+			})
+		})
+			.then(() => {
 				const params = new URLSearchParams(this.props.location.search);
 				const latitude = parseFloat(params.get('latitude'))
 				const longitude = parseFloat(params.get('longitude'))
@@ -141,58 +131,23 @@ class HotelSearch extends React.Component {
 			})
 
 	}
-	
+
 	roomSearch = item => event => {
-		//I WANT TO PASS THIS AS AN OBJECT
-		// this.setState({ hotel:item })
-		// but it doesn't work, so i had to do this
-		this.setState({
-			address: item.address,
-			amenities: item.ammenities,
-			city: item.city,
-			country: item.country,
-			description: item.description,
-			hotel_id: item.hotel_id,
-			images: item.images,
-			latitude: item.latitude,
-			longitude: item.longitude,
-			max_price: item.max_price,
-			min_price: item.min_price,
-			name: item.name,
-			phone_number: item.phone_number,
-			rating: item.rating,
-			rooms_available: item.rooms_available,
-			state: item.state,
-			zipcode: item.zipcode,
-		})
 
+		const search = window.location.search;
+		const params = new URLSearchParams(search);
+		const date_in = params.get('date_in')
+		const date_out = params.get('date_out')
+		const guest_number = params.get('guest_number')
+		const city = params.get('city')
 
-		// console.log(item);
-
-		// console.log("status number(200 success, else fail): ")
-		// console.log("expected reponse 200  ")
-		//we don't have a query that handles the room
-		let queryString = this.props.location.search + "&hotel_id=" + item.hotel_id
+		const queryString = `?date_in=${date_in}&date_out=${date_out}
+			&guest_number=${guest_number}&hotel_id=${item.hotel_id}
+			&city=${city}`
+			
 		this.props.history.push({
 			pathname: `/RoomPage`,
 			search: `${queryString}`,
-			address: item.address,
-			amenities: item.ammenities,
-			city: item.city,
-			country: item.country,
-			description: item.description,
-			hotel_id: item.hotel_id,
-			images: item.images,
-			latitude: item.latitude,
-			longitude: item.longitude,
-			max_price: item.max_price,
-			min_price: item.min_price,
-			name: item.name,
-			phone_number: item.phone_number,
-			rating: item.rating,
-			rooms_available: item.rooms_available,
-			state: item.state,
-			zipcode: item.zipcode,
 		})
 	}
 
@@ -338,7 +293,6 @@ class HotelSearch extends React.Component {
 				return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 			});
 		}
-
 
 		const showResult = (
 
