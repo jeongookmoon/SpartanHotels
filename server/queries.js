@@ -86,7 +86,7 @@ module.exports = {
             
             select * from room 
             join hotel
-            on room.hotel_id = hotel.hotel_id
+            on room.hotel_id = hotel.hotel_id {AND hotel.hotel_id = ?}
             where not
             exists (select * from rb where rb.room_id = room.room_id AND rb.status != 'cancelled')
             ;
@@ -232,11 +232,23 @@ module.exports = {
             }else{
               mainQuery = ' SELECT  distinct hotel.*, min(price) as min_price, max(price) as max_price, count(room_id) as rooms_available '
             }
+
+            if (typeof params.priceLTE !== 'undefined' && params.priceLTE !== '') {
+              conditions.push("price <= ?");
+              values.push(params.priceLTE);
+            }
+
+            let hotelIDClause = ""
+            if (typeof params.hotel_id !== 'undefined' && params.hotel_id !== '') {
+              let hotelIDComponent = " AND hotel.hotel_id = ?"
+              hotelIDClause = mysql.format(hotelIDComponent, params.hotel_id)
+            }
+
             mainQuery = mainQuery +
               `FROM
                   room
                       JOIN
-                  hotel ON room.hotel_id = hotel.hotel_id
+                  hotel ON room.hotel_id = hotel.hotel_id` + hotelIDClause + `
               
               WHERE
                   NOT EXISTS(

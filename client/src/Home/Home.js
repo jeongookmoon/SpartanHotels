@@ -48,15 +48,14 @@ class Home extends React.Component {
 		this.adultDecrement = this.adultDecrement.bind(this);
 		this.childrenIncrement = this.childrenIncrement.bind(this);
 		this.childrenDecrement = this.childrenDecrement.bind(this);
-		this.googleMap = null;
-		this.googleMapMarker = null;
 	}
 
 	componentDidMount() {
-		this.googleMap = new window.google.maps.Map(document.getElementById('map'), {
+		const googleMap = new window.google.maps.Map(document.getElementById('map'), {
 			center: { lat: 37.3382082, lng: -121.88632860000001 },
 			zoom: 13
-		});
+		})
+		window.googleMap = googleMap
 	}
 	handleChange(event) {
 		const target = event.target;
@@ -148,10 +147,10 @@ class Home extends React.Component {
 	}
 
 	putGoogleMapMarker = (latitude, longitude) => {
-		this.googleMapMarker ? this.googleMapMarker.setPosition({ lat: parseFloat(latitude), lng: parseFloat(longitude)}) : this.googleMapMarker = new window.google.maps.Marker({
-      position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
-      map: this.googleMap
-    })
+		window.googleMapMarker ? window.googleMapMarker.setPosition({ lat: parseFloat(latitude), lng: parseFloat(longitude) }) : window.googleMapMarker = new window.google.maps.Marker({
+			position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
+			map: window.googleMap
+		})
 	}
 
 	showPlaceDetails(place) {
@@ -173,11 +172,11 @@ class Home extends React.Component {
 				latitude, longitude,
 				fullAddress, streetAddress,
 				city, state, place
-			}, this.googleMap.setCenter(
-					new window.google.maps.LatLng(latitude, longitude)
-				)
+			},
+			window.googleMap.setCenter(
+				new window.google.maps.LatLng(latitude, longitude)
+			)
 		)
-
 		this.putGoogleMapMarker(latitude, longitude)
 	}
 
@@ -290,9 +289,11 @@ class Home extends React.Component {
 						</FormGroup>
 					</Form>
 				</div>
+				{/* need css on below div which is where google map is */}
 				<div>
 					<div style={{ width: 800, height: 480 }} id="map" />
 				</div>
+
 			</div>
 		);
 	}
