@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom'
 import axios from 'axios'
 
 import { HotelSearchFunction, extractFromAddress } from '../Utility/HotelSearchFunction'
-import Autocomplete from "./Autocomplete"
+import Autocomplete from "../Utility/Autocomplete"
 
 import {
 	FormGroup
@@ -89,72 +89,59 @@ class HotelSearch extends React.Component {
 		this.setState({ latitude, longitude, fullAddress, streetAddress, city, state, place })
 	}
 
-	async componentWillMount() {
-		let queryCall = '/api/search/hotels' + this.props.location.search
-		const hotelSearch = (await axios.get(queryCall)).data;
-		this.setState({
-			hotels: hotelSearch
-		}, this.renderMap());
-	}
+	componentDidMount() {
+		const queryCall = '/api/search/hotels' + this.props.location.search
+		axios.get(queryCall).then(result => {
+			this.setState({
+				hotels: result.data
+			})})
+			.then( () => {
+				const params = new URLSearchParams(this.props.location.search);
+				const latitude = parseFloat(params.get('latitude'))
+				const longitude = parseFloat(params.get('longitude'))
 
-	componentWillUnmount() {
-		this.setState({
-			hotels: [{}]
-		})
-	}
+				let googleMap = new window.google.maps.Map(document.getElementById('map'), {
+					center: { lat: latitude, lng: longitude },
+					zoom: 13
+				});
 
-	initializeMap = () => {
-		
-		const params = new URLSearchParams(this.props.location.search);
-		const latitude = parseFloat(params.get('latitude'))
-		const longitude = parseFloat(params.get('longitude'))
-		const city_name = params.get('city')
-		
-		let googleMap = new window.google.maps.Map(document.getElementById('map'), {
-			center: { lat: latitude, lng: longitude },
-			zoom: 11
-		});
+				// const city_name = params.get('city')
+				// let geocoder = new window.google.maps.Geocoder();
+				// // display the center of the map by city name
+				// geocoder.geocode({ 'address': city_name }, function (results, status) {
+				// 	if (status === 'OK') {
+				// 		googleMap.setCenter(results[0].geometry.location);
+				// 	} else {
+				// 		alert('Geocode was not successful for the following reason: ' + status);
+				// 	}
+				// });
 
-		// let geocoder = new window.google.maps.Geocoder();
-		// // display the center of the map by city name
-		// geocoder.geocode({ 'address': city_name }, function (results, status) {
-		// 	if (status === 'OK') {
-		// 		googleMap.setCenter(results[0].geometry.location);
-		// 	} else {
-		// 		alert('Geocode was not successful for the following reason: ' + status);
-		// 	}
-		// });
+				// display each hotel's information window when clicking the marker	
+				let infoWindow = new window.google.maps.InfoWindow()
 
-		// display each hotel's information window when clicking the marker	
-		let infoWindow = new window.google.maps.InfoWindow()
+				this.state.hotels.results.forEach((eachHotel, index) => {
 
-		this.state.hotels.results.forEach((eachHotel, index) => {
+					let hotelInfo = `<h6>${eachHotel.name}</h6>
+													 <p>${eachHotel.address}</p>`
 
-			let hotelInfo = `<h6>${eachHotel.name}</h6>
-											 <p>${eachHotel.address}</p>`
+					// display each hotel's marker along with index number
+					let marker = new window.google.maps.Marker({
+						position: { lat: parseFloat(eachHotel.latitude), lng: parseFloat(eachHotel.longitude) },
+						map: googleMap,
+						label: (index + 1).toString(),
+						title: eachHotel.name
+					})
 
-			// display each hotel's marker along with index number
-			let marker = new window.google.maps.Marker({
-				position: { lat: parseFloat(eachHotel.latitude), lng: parseFloat(eachHotel.longitude) },
-				map: googleMap,
-				label: (index + 1).toString(),
-				title: eachHotel.name
+					// action listener to open information window when clicking marker
+					marker.addListener('click', function () {
+						infoWindow.setContent(hotelInfo)
+						infoWindow.open(googleMap, marker);
+					});
+				})
 			})
 
-			// action listener to open information window when clicking marker
-			marker.addListener('click', function () {
-				infoWindow.setContent(hotelInfo)
-				infoWindow.open(googleMap, marker);
-			});
-		})
 	}
-
-	renderMap() {
-		const CALLBACK_URL = "https://maps.googleapis.com/maps/api/js?key="+process.env.REACT_APP_GOOGLE_MAP_API_KEY+"&callback=initMap" 
-		loadGoogleMapScript(CALLBACK_URL)
-		window.initMap = this.initializeMap
-	}
-
+	
 	roomSearch = item => event => {
 		//I WANT TO PASS THIS AS AN OBJECT
 		// this.setState({ hotel:item })
@@ -369,19 +356,19 @@ class HotelSearch extends React.Component {
 					</div>
 
 					<div className="col-lg-4 input-group home-date">
-								<div className="input-group-append">
-									<div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
-								</div>
-								<DateRangePicker
-									startDate={this.state.date_in} // momentPropTypes.momentObj or null,
-									startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
-									endDate={this.state.date_out} // momentPropTypes.momentObj or null,
-									endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
-									onDatesChange={({ startDate, endDate }) => this.setState({ date_in: startDate, date_out: endDate })} // PropTypes.func.isRequired,
-									focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
-									onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
-								/>
-							</div>
+						<div className="input-group-append">
+							<div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
+						</div>
+						<DateRangePicker
+							startDate={this.state.date_in} // momentPropTypes.momentObj or null,
+							startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
+							endDate={this.state.date_out} // momentPropTypes.momentObj or null,
+							endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
+							onDatesChange={({ startDate, endDate }) => this.setState({ date_in: startDate, date_out: endDate })} // PropTypes.func.isRequired,
+							focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+							onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
+						/>
+					</div>
 
 
 
@@ -472,7 +459,7 @@ class HotelSearch extends React.Component {
 											// console.log(imageArray[0]);
 											return (
 
-												<tr className="hotel-search-row shadow-sm p-3 mb-5">
+												<tr key={index} className="hotel-search-row shadow-sm p-3 mb-5">
 
 
 													<td className="col-lg-6">
@@ -659,8 +646,8 @@ class HotelSearch extends React.Component {
 		if (this.state.hotels.results.length === 0) {
 			return (
 				<div className="">
-					<div className="hotel-search-container"> 
-						{showNoResult} 
+					<div className="hotel-search-container">
+						{showNoResult}
 					</div>
 				</div>
 			);
@@ -676,15 +663,6 @@ class HotelSearch extends React.Component {
 			);
 		}
 	}
-}
-
-function loadGoogleMapScript(src) {
-	let index = window.document.getElementsByTagName("script")[0]
-	let script = window.document.createElement("script")
-	script.src = src
-	script.async = true
-	script.defer = true
-	index.parentNode.insertBefore(script, index) // insert google map script before any script in index html
 }
 
 export default withRouter(HotelSearch);
