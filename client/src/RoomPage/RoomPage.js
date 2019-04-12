@@ -1,11 +1,10 @@
 import React from 'react';
 import axios from 'axios'
 import { withRouter } from 'react-router-dom'
+import { Table } from 'reactstrap';
 
 
 class RoomPage extends React.Component {
-
-
 	constructor(props) {
 		super(props);
 
@@ -25,7 +24,7 @@ class RoomPage extends React.Component {
 		};
 	}
 
-	Checkout(event) {
+	Checkout = (event) => {
 		event.preventDefault()
 		let queryString = this.props.location.search
 		this.props.history.push({
@@ -34,25 +33,16 @@ class RoomPage extends React.Component {
 		})
 	}
 
-	componentDidMount() {
-
+	async componentDidMount() {
 		const roomSearchQuery = `/api/search/hotels/${this.state.hotel_id}/?date_in=${this.state.date_in}&date_out=${this.state.date_out}`
 		const hotelSearchQuery = `/api/search/hotels?city=${this.state.city}&date_in=${this.state.date_in}&date_out=${this.state.date_out}&hotel_id=${this.state.hotel_id}`
 
-		axios.get(roomSearchQuery)
-			.then(result =>
-				this.setState({
-					rooms: result.data
-				})
-			)
-			.then(() => {
-				axios.get(hotelSearchQuery)
-					.then(result => {
-						this.setState({
-							hotel: result.data
-						})
-					})
-			})
+		const rooms = (await axios.get(roomSearchQuery)).data
+		const hotel = (await axios.get(hotelSearchQuery)).data
+		
+		this.setState({
+			rooms, hotel
+		})
 	}
 
 	render() {
@@ -62,13 +52,11 @@ class RoomPage extends React.Component {
 			);
 		}
 		else {
-
 			const imageURLS = this.state.hotel.results[0].images;
 			let imageArray = []
 			if (imageURLS) {
 				imageArray = imageURLS.split(",");
 			}
-
 
 			return (
 				<div className="room-page-container">
@@ -92,112 +80,40 @@ class RoomPage extends React.Component {
 
 					<div className="room-page-rooms-container">
 						<div className="col-lg-12 shadow-lg room-page-rooms">
-							<tbody>
 
-								<tr>
-									<td>
-										Room Type
-								</td>
-									<td>
-										Room Image
-								</td>
-									<td>
-										Room Description
-								</td>
-									<td>
-										Room Ammenities
-								</td>
-									<td>
-										Number of Beds
-								</td>
-									<td>
-										Room Price ($)
-								</td>
-									<td>
+							<Table hover>
+								<thead>
+									<tr>
+										<th>Room #</th>
+										<th>Bed #</th>
+										<th>Bed Type</th>
+										<th>Price</th>
+									</tr>
+								</thead>
 
-
-									</td>
-								</tr>
-
-								<tr>
-									<td>
-										Room A
-								</td>
-									<td>
-										Room Image
-								</td>
-									<td>
-										Room Description
-								</td>
-
-									<td>
-										Room Ammenities
-								</td>
-									<td>
-										2
-								</td>
-									<td>
-										{this.state.hotel.results[0].min_price}
-									</td>
-									<td>
-										<button onClick={this.Checkout.bind(this)} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Check Out</button>
-
-									</td>
-								</tr>
-
-								<tr>
-									<td>
-										Room B
-								</td>
-									<td>
-										Room Image
-								</td>
-									<td>
-										Room Description
-								</td>
-									<td>
-										Room Ammenities
-								</td>
-									<td>
-										2
-								</td>
-									<td>
-										{this.state.hotel.results[0].min_price}
-									</td>
-									<td>
-										<button onClick={this.Checkout.bind(this)} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Check Out</button>
-
-									</td>
-								</tr>
-
-								<tr>
-									<td>
-										Room C
-								</td>
-									<td>
-										Room Image
-								</td>
-									<td>
-										Room Description
-								</td>
-									<td>
-										Room Ammenities
-
-								</td>
-									<td>
-										2
-								</td>
-									<td>
-										{this.state.hotel.results[0].max_price}
-									</td>
-									<td>
-										<button onClick={this.Checkout.bind(this)} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Check Out</button>
-
-									</td>
-								</tr>
-							</tbody>
+								{
+									this.state.rooms.results.length > 0 ?
+										<tbody>
+											{
+												this.state.rooms.results.map((eachRoomResult, index) => {
+													console.log("eachRoomResult", eachRoomResult)
+													console.log("index", index)
+													return (
+														<tr onClick={this.Checkout.bind(this)}>
+															<th scope="row">{eachRoomResult.room_number}</th>
+															<td>{eachRoomResult.bed_number}</td>
+															<td>{eachRoomResult.bed_type}</td>
+															<td>${eachRoomResult.price}</td>
+														</tr>
+													)
+												})
+											}
+										</tbody> :
+										<tbody><tr>no result</tr></tbody>
+								}
+								
+							</Table>
 						</div>
-
 					</div>
 
 
