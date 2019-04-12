@@ -382,7 +382,7 @@ module.exports = {
                   sortByClause = " order by price desc ";
                   break
                 default:
-                  sortByClause = " order by price desc "
+                  sortByClause = " order by price "
               }
             }
       

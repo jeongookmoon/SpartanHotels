@@ -51,10 +51,9 @@ class RoomPage extends React.Component {
 				<div className="container">
 					<div className="row">
 						<div className="col">
-
 							<div className="card-columns">
 
-								<div className="card">
+								<div className="card" onClick={this.Checkout.bind(this)} style={{ cursor: "pointer" }}>
 									<img className="card-img-top" src="https://colorlib.com/preview/theme/marimar/images/room_1.jpg" alt="Room image description" />
 									<div className="card-body">
 										<div className="rooms_title"><h2>Luxury Double Suite</h2></div>
@@ -78,7 +77,6 @@ class RoomPage extends React.Component {
 											</ul>
 										</div>
 										<div className="rooms_price">$129/<span>Night</span></div>
-										<div className="button rooms_button"><a href="#">book now</a></div>
 									</div>
 								</div>
 
@@ -107,7 +105,33 @@ class RoomPage extends React.Component {
 											</ul>
 										</div>
 										<div className="rooms_price">$129/<span>Night</span></div>
-										<div className="button rooms_button"><a href="#">book now</a></div>
+									</div>
+								</div>
+
+								<div className="card">
+									<img className="card-img-top" src="https://colorlib.com/preview/theme/marimar/images/room_2.jpg" alt="Room image description" />
+									<div className="card-body">
+										<div className="rooms_title"><h2>Luxury Single Room</h2></div>
+										<div className="rooms_text">
+											<p>Maecenas sollicitudin tincidunt maximus. Morbi tempus malesuada erat sed pellentesque. Donec pharetra mattis nulla, id laoreet neque scelerisque at.</p>
+										</div>
+										<div className="rooms_list">
+											<ul>
+												<li className="d-flex flex-row align-items-center justify-content-start">
+													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
+													<span>Morbi tempus malesuada erat sed</span>
+												</li>
+												<li className="d-flex flex-row align-items-center justify-content-start">
+													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
+													<span>Tempus malesuada erat sed</span>
+												</li>
+												<li className="d-flex flex-row align-items-center justify-content-start">
+													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
+													<span>Pellentesque vel neque finibus elit</span>
+												</li>
+											</ul>
+										</div>
+										<div className="rooms_price">$129/<span>Night</span></div>
 									</div>
 								</div>
 
@@ -154,7 +178,7 @@ class RoomPage extends React.Component {
 						<div className="col-lg-12 shadow-lg room-page-rooms">
 							{something}
 
-							<Table hover>
+							<Table hover borderless>
 								<thead>
 									<tr>
 										<th>Room #</th>
@@ -172,8 +196,8 @@ class RoomPage extends React.Component {
 													console.log("eachRoomResult", eachRoomResult)
 													console.log("index", index)
 													return (
-														<tr onClick={this.Checkout.bind(this)} key={index}>
-															<th scope="row">{eachRoomResult.room_number}</th>
+														<tr onClick={this.Checkout.bind(this)} style={{ cursor: "pointer" }} key={index}>
+															<th scope="row"><a href="#child4">{eachRoomResult.room_number}</a></th>
 															<td>{eachRoomResult.bed_number}</td>
 															<td>{eachRoomResult.bed_type}</td>
 															<td>${eachRoomResult.price}</td>

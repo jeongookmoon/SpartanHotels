@@ -7,7 +7,7 @@ import { HotelSearchFunction, extractFromAddress } from '../Utility/HotelSearchF
 import Autocomplete from "../Utility/Autocomplete"
 
 import {
-	FormGroup
+	FormGroup, Table
 } from 'reactstrap'
 
 import './CSS/map_autocomplete_overrides.css'
@@ -22,7 +22,7 @@ class HotelSearch extends React.Component {
 	constructor(props) {
 		super(props);
 
-
+		console.log('this.props', this.props)
 		const search = window.location.search;
 		const params = new URLSearchParams(search);
 		const city = params.get('city')
@@ -49,7 +49,8 @@ class HotelSearch extends React.Component {
 			children: children,
 			guest_number: guest_number,
 			focusedInput: null,
-			place: {}
+			place: {},
+			sortBy: ''
 		};
 
 		this.roomSearch = this.roomSearch.bind(this);
@@ -144,7 +145,7 @@ class HotelSearch extends React.Component {
 		const queryString = `?date_in=${date_in}&date_out=${date_out}
 			&guest_number=${guest_number}&hotel_id=${item.hotel_id}
 			&city=${city}`
-			
+
 		this.props.history.push({
 			pathname: `/RoomPage`,
 			search: `${queryString}`,
@@ -236,8 +237,6 @@ class HotelSearch extends React.Component {
 
 	}
 
-
-
 	search = (event) => {
 		event.preventDefault()
 
@@ -254,7 +253,7 @@ class HotelSearch extends React.Component {
 			guest_number: this.state.guest_number,
 		}
 
-		HotelSearchFunction(temp_fields).then(response => {
+		HotelSearchFunction(temp_fields).then(() => {
 
 			let queryString = `latitude=${temp_fields.latitude}&longitude=${temp_fields.longitude}
 								&date_in=${temp_fields.date_in}&date_out=${temp_fields.date_out}
@@ -268,6 +267,16 @@ class HotelSearch extends React.Component {
 				search: `?${queryString}`,
 			})
 		})
+	}
+
+	sortBy = (event) => {
+		event.preventDefault()
+
+		this.setState({ orderBy: event.target.value })
+
+
+
+		this.props.history.push(`/`)
 	}
 
 	render() {
@@ -394,16 +403,16 @@ class HotelSearch extends React.Component {
 								<div className="col-lg-1"> </div>
 								<div className="col-lg-2"> Sort by: </div>
 								<div className="col-lg-2">
-									<select>
-										<option value="Price (High to Low)">Price (High to Low)</option>
-										<option value="Price (Low to High)">Price (Low to High)</option>
-										<option value="Rating">Rating</option>
-										<option value="Distance">Distance</option>
+									<select onChange={this.sortBy.bind(this)} value={this.state.value}>
+										<option value="price_asc">Prce(Low to High)</option>
+										<option value="price_des">Prce(High to Low)</option>
+										<option value="name_asc">Name(A to Z)</option>
+										<option value="name_des">Name(Z to A)</option>
 									</select>
 								</div>
 							</div>
 							<div className="hotel-search-table-container">
-								<table className="table hotel-search-table">
+								<Table hover borderless>
 									<tbody>
 										{this.state.hotels.results.map((eachHotelResult, index) => {
 											/* Each Hotel Result */
@@ -413,7 +422,7 @@ class HotelSearch extends React.Component {
 											// console.log(imageArray[0]);
 											return (
 
-												<tr key={index} className="hotel-search-row shadow-sm p-3 mb-5">
+												<tr key={index} className="hotel-search-row shadow-sm p-3 mb-5" tag="a" onClick={this.roomSearch(eachHotelResult)} style={{ cursor: "pointer" }}>
 
 
 													<td className="col-lg-6">
@@ -458,11 +467,6 @@ class HotelSearch extends React.Component {
 																</div>
 															</div>
 
-															<br></br>
-
-															<div className="">
-																<button onClick={this.roomSearch(eachHotelResult)} value={eachHotelResult} className="p-2 hotel-search-item-button btn my-2 my-sm-0 hotel-search-item-row" type="submit">Choose Room</button>
-															</div>
 														</div>
 
 
@@ -471,25 +475,8 @@ class HotelSearch extends React.Component {
 												</tr>
 											);
 										})}
-
-										<tr>
-											<td>
-												a
-									</td>
-										</tr>
-										<tr>
-											<td>
-												a
-									</td>
-										</tr>
-										<tr>
-											<td>
-												a
-									</td>
-										</tr>
-
 									</tbody>
-								</table>
+								</Table>
 							</div>
 							<div className="hotel-search-pagination">
 								1 2 3 4 5 6
