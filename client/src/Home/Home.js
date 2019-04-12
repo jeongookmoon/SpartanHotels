@@ -240,6 +240,7 @@ class Home extends React.Component {
 									<div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
 								</div>
 								<DateRangePicker
+									startDatePlaceholderText="Check-IN"
 									startDate={this.state.date_in} // momentPropTypes.momentObj or null,
 									startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
 									endDate={this.state.date_out} // momentPropTypes.momentObj or null,
