@@ -174,18 +174,6 @@ router.post('/', (req, res)=>{
         
     }
 
-    let requestedBooking = {}
-    requestedBooking.room_id = req.body.room_id
-    requestedBooking.date_in = req.body.date_in
-    requestedBooking.date_out = req.body.date_out
-    requestedBooking.total_price = req.body.total_price
-    requestedBooking.cancellation_charge = req.body.cancellation_charge
-    requestedBooking.user = req.user ? req.user.user_id : null
-
-    console.log(req.user)
-
-    makeRes(requestedBooking)
-
     //Send order confirmation email
     var emailParams = {};
     /*

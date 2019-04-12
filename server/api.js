@@ -156,16 +156,16 @@ router.post('/edit_account', (req, res) => {
                 console.log(results)
                 res.status(200).send(results)
                 console.log('Account updated')
+                res.end("Accounted Updated")
             },
             (error) => {
                 console.log('An error as occurred')
+                res.end("Error in the query")
             })
-            res.end()
         })
     }
     else {
-        res.write("Passwords do not match")
-        res.end()
+        res.end('Passwords do not match')
     }
 
 })
@@ -173,23 +173,88 @@ router.post('/edit_account', (req, res) => {
 //Initiate password recovery
 router.post('/recovery', (req,res) => {
     console.log(req.body.email)
+    
+    //Send an email generating a random string that contains the access code.
     var recoveryEmailParams = {};
     var accessCode = randomstring.generate(7);
     recoveryEmailParams.to = req.body.email
     recoveryEmailParams.subject = 'Password Recovery'
     recoveryEmailParams.text = 'Put in this access code to change your password: ' + accessCode;
-    var sendRecoveryEmail = Email.email(recoveryEmailParams)
+
+    //Search if the email exists
+    let emailSearch = mysql.format(Queries.user.searchEmail, [req.body.email])
+    Queries.run(emailSearch).then((results) => {
+        if (results == '') {
+            res.end('Email not registered. Please try again')
+        }
+        else {
+            var sendRecoveryEmail = Email.email(recoveryEmailParams)
+            res.end('Recovery Email Sent')
+        }
+    },
+    (error) => {
+        console.log('Query failed')
+    })
     console.log(JSON.stringify(recoveryEmailParams))
 
-    //TODO: Query an UPDATE statement to update the access code into database.
-    res.end()
+    //Query an UPDATE statement to update the access code into database.
+    let updateAccessCode = mysql.format(Queries.user.setAccessCode, [accessCode, req.body.email])
+    Queries.run(updateAccessCode).then((results) => {
+        console.log(results)
+        res.status(200).send(results)
+        console.log('Access Code Updated')
+    },
+    (error) => {
+        console.log('An Error has occurred')
+    })
+    //res.end('Recovery Email Sent')
 })
 
 
 //User puts in access code.
 router.post('/checkcode', (req,res) => {
+    console.log(req.body.access_code)
+    let getCodeQuery = mysql.format(Queries.user.getAccessCode, [req.body.email])
+    Queries.run(getCodeQuery).then((results) => {
+        console.log(results)
+        res.status(200).send(results)
+        if (req.body.access_code == results) {
+            res.end('Code Accepted')
+        }
+        else {
+            res.end('Invalid Code')
+        }
+    },
+    (error) => {
+        console.log('An Error has occurred')
+    })
     
 })
+
+//Different logic for editing account. This request gets sent after user enters their access code and needs to change their password. System knows
+//which row to update based user's email.
+router.post('/changepass', (req,res) => {
+    console.log(req.body.email)
+    if (req.body.password === req.body.confirmpassword) {
+        bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+            let change_pass_query = mysql.format(Queries.user.changepass, [hash, req.body.email])
+            Queries.run(change_pass_query).then((results) => {
+                console.log(results)
+                res.status(200).send(results)
+                console.log('Password Changed')
+                res.end('Password Changed')
+            },
+            (error) => {
+                console.log('An error as occurred')
+                res.end("Error in the query")
+            })
+        })
+    }
+    else {
+        res.end('Passwords do not match')
+    }
+})
+
 //Function is used to allow certain users to access features
 //Example. If not logged in, user cannot access his account page or logout.
 function authenticationMiddleware() {
