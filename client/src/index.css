@@ -185,7 +185,7 @@ code {
 }
 
 .home-form{
-  padding-top: 10rem;
+  padding-top: 5rem;
 }
 
 .home-form-container{
@@ -261,11 +261,21 @@ code {
 
 }
 
+.home-map{
+
+}
+
+.home-map-container{
+  height:3em;
+  padding-bottom:20em;
+}
+
 
 
 .home-submit-button-container{
   padding-top:1em;
   padding-bottom:1em;
+  height:100%;
 
 }
 
