@@ -55,6 +55,10 @@ module.exports = {
         session: 'select LAST_INSERT_ID() as user_id ',
         authenticate: 'select user_id, password from spartanhotel.user where email=?',
         edit: 'UPDATE user SET name=?, password=? WHERE user_id=?',
+        changepass: 'UPDATE user SET password = ? WHERE email = ?',
+        searchEmail: 'SELECT * FROM user WHERE email = ?',
+        getAccessCode: 'SELECT access_code FROM user WHERE email = ?',
+        setAccessCode: 'UPDATE user SET access_code = ? WHERE email = ?',
         getAvailableRewards: 'SELECT sum(R.change) as sum FROM spartanhotel.reward R where user_id=? and date_active <= curdate();'
     },
 

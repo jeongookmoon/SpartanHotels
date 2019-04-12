@@ -62,7 +62,7 @@ async function main(){
         case 'load':
             shellResult = shell.exec(
                 "node load_data.js load_data_" + db_version + ".sql",
-                { silent: true }
+                { silent: false }
             );
             if (shellResult.stderr){
                 console.log(shellResult.stderr)
