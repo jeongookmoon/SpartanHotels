@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios'
 import { withRouter } from 'react-router-dom'
 import { Table } from 'reactstrap';
-
+import './css/RoomPage.css'
 
 class RoomPage extends React.Component {
 	constructor(props) {
@@ -39,13 +39,85 @@ class RoomPage extends React.Component {
 
 		const rooms = (await axios.get(roomSearchQuery)).data
 		const hotel = (await axios.get(hotelSearchQuery)).data
-		
+
 		this.setState({
 			rooms, hotel
 		})
 	}
 
 	render() {
+		const something = (
+			<div className="rooms">
+				<div className="container">
+					<div className="row">
+						<div className="col">
+
+							<div className="card-columns">
+
+								<div className="card">
+									<img className="card-img-top" src="https://colorlib.com/preview/theme/marimar/images/room_1.jpg" alt="Room image description" />
+									<div className="card-body">
+										<div className="rooms_title"><h2>Luxury Double Suite</h2></div>
+										<div className="rooms_text">
+											<p>Maecenas sollicitudin tincidunt maximus. Morbi tempus malesuada erat sed pellentesque. Donec pharetra mattis nulla, id laoreet neque scelerisque at. Quisque eget sem non ligula consectetur ultrices in quis augue. Donec imperd iet leo eget tortor dictum, eget varius eros sagittis. Curabitur tempor dignissim massa ut faucibus sollicitudin tinci dunt maximus. Morbi tempus malesuada erat sed pellentesque.</p>
+										</div>
+										<div className="rooms_list">
+											<ul>
+												<li className="d-flex flex-row align-items-center justify-content-start">
+													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
+													<span>Morbi tempus malesuada erat sed</span>
+												</li>
+												<li className="d-flex flex-row align-items-center justify-content-start">
+													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
+													<span>Tempus malesuada erat sed</span>
+												</li>
+												<li className="d-flex flex-row align-items-center justify-content-start">
+													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
+													<span>Pellentesque vel neque finibus elit</span>
+												</li>
+											</ul>
+										</div>
+										<div className="rooms_price">$129/<span>Night</span></div>
+										<div className="button rooms_button"><a href="#">book now</a></div>
+									</div>
+								</div>
+
+								<div className="card card-special">
+									<img className="card-img-top" src="https://colorlib.com/preview/theme/marimar/images/room_4.jpg" alt="Room image description" />
+									<div className="card-special-panel">special offer</div>
+									<div className="card-body">
+										<div className="rooms_title"><h2>Budget Suite</h2></div>
+										<div className="rooms_text">
+											<p>Maecenas sollicitudin tincidunt maximus. Morbi tempus malesuada erat sed pellentesque. Donec pharetra mattis nulla, id laoreet neque scelerisque at.</p>
+										</div>
+										<div className="rooms_list">
+											<ul>
+												<li className="d-flex flex-row align-items-center justify-content-start">
+													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
+													<span>Morbi tempus malesuada erat sed</span>
+												</li>
+												<li className="d-flex flex-row align-items-center justify-content-start">
+													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
+													<span>Tempus malesuada erat sed</span>
+												</li>
+												<li className="d-flex flex-row align-items-center justify-content-start">
+													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
+													<span>Pellentesque vel neque finibus elit</span>
+												</li>
+											</ul>
+										</div>
+										<div className="rooms_price">$129/<span>Night</span></div>
+										<div className="button rooms_button"><a href="#">book now</a></div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		)
+
 		if (!this.state.hotel.results) {
 			return (
 				<div className="hotel-search-container"> Loading </div>
@@ -80,6 +152,7 @@ class RoomPage extends React.Component {
 
 					<div className="room-page-rooms-container">
 						<div className="col-lg-12 shadow-lg room-page-rooms">
+							{something}
 
 							<Table hover>
 								<thead>
@@ -99,7 +172,7 @@ class RoomPage extends React.Component {
 													console.log("eachRoomResult", eachRoomResult)
 													console.log("index", index)
 													return (
-														<tr onClick={this.Checkout.bind(this)}>
+														<tr onClick={this.Checkout.bind(this)} key={index}>
 															<th scope="row">{eachRoomResult.room_number}</th>
 															<td>{eachRoomResult.bed_number}</td>
 															<td>{eachRoomResult.bed_type}</td>
@@ -111,7 +184,7 @@ class RoomPage extends React.Component {
 										</tbody> :
 										<tbody><tr>no result</tr></tbody>
 								}
-								
+
 							</Table>
 						</div>
 					</div>
