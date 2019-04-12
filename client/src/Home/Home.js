@@ -216,15 +216,10 @@ class Home extends React.Component {
 			<div className="col-lg-12 home-container col-auto" style={topSectionStyle}>
 				<div className="home-form-container col-lg-12">
 
-					
-
 					<Form className="home-form col-lg-12" onSubmit={this.search}>
-						
 						<div className="top-header ">
 							Plan your next trip
-		  				</div>
-
-		  				
+		  		</div>
 
 						<FormGroup className="form-inline home-form-inputs">
 							<div className="col-lg-1"></div>
@@ -293,21 +288,11 @@ class Home extends React.Component {
 
 						</FormGroup>
 					</Form>
-
-					<div className="col-lg-12 home-map-container row">
-
-						<div className="col-lg-3">
-						</div>
-						<div className="col-lg-6 home-map ">
-								<div className="" style={{width:580, height:350}} id="map">
-						</div>
-						</div>
-						<div className="col-lg-3">
-						</div>
-
-					</div>
 				</div>
-				
+				{/* need css on below div which is where google map is */}
+				<div>
+					<div style={{ width: 800, height: 480 }} id="map" />
+				</div>
 
 			</div>
 		);
