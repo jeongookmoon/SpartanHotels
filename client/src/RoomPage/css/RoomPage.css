@@ -1,0 +1,503 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:300,400,700,900|Playfair+Display:400,400i,700,700i');
+
+/*********************************
+2. Body and some general stuff
+*********************************/
+
+*
+{
+	margin: 0;
+	padding: 0;
+	-webkit-font-smoothing: antialiased;
+	-webkit-text-shadow: rgba(0,0,0,.01) 0 0 1px;
+	text-shadow: rgba(0,0,0,.01) 0 0 1px;
+}
+body
+{
+	font-family: 'Lato', sans-serif;
+	font-size: 15px;
+	font-weight: 400;
+	background: #FFFFFF;
+	color: #a5a5a5;
+}
+div
+{
+	display: block;
+	position: relative;
+	-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+ul
+{
+	list-style: none;
+	margin-bottom: 0px;
+}
+p
+{
+	font-family: 'Lato', sans-serif;
+	font-size: 15px;
+	line-height: 1.86666666;
+	font-weight: 400;
+	color: #4a4f59;
+	-webkit-font-smoothing: antialiased;
+	-webkit-text-shadow: rgba(0,0,0,.01) 0 0 1px;
+	text-shadow: rgba(0,0,0,.01) 0 0 1px;
+}
+p a
+{
+	display: inline;
+	position: relative;
+	color: inherit;
+	border-bottom: solid 1px #ffa07f;
+	-webkit-transition: all 200ms ease;
+	-moz-transition: all 200ms ease;
+	-ms-transition: all 200ms ease;
+	-o-transition: all 200ms ease;
+	transition: all 200ms ease;
+}
+p:last-of-type
+{
+	margin-bottom: 0;
+}
+a
+{
+	-webkit-transition: all 200ms ease;
+	-moz-transition: all 200ms ease;
+	-ms-transition: all 200ms ease;
+	-o-transition: all 200ms ease;
+	transition: all 200ms ease;
+}
+a, a:hover, a:visited, a:active, a:link
+{
+	text-decoration: none;
+	-webkit-font-smoothing: antialiased;
+	-webkit-text-shadow: rgba(0,0,0,.01) 0 0 1px;
+	text-shadow: rgba(0,0,0,.01) 0 0 1px;
+}
+p a:active
+{
+	position: relative;
+	color: #FF6347;
+}
+p a:hover
+{
+	color: #FFFFFF;
+	background: #ffa07f;
+}
+p a:hover::after
+{
+	opacity: 0.2;
+}
+::selection
+{
+	background: #d9d9d9;
+	color: #ffffff;
+}
+p::selection
+{
+	
+}
+h1{font-size: 48px;}
+h2{font-size: 36px;}
+h3{font-size: 24px;}
+h4{font-size: 18px;}
+h5{font-size: 14px;}
+h1, h2, h3, h4, h5, h6
+{
+	font-family: 'Lato', sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-webkit-text-shadow: rgba(0,0,0,.01) 0 0 1px;
+	text-shadow: rgba(0,0,0,.01) 0 0 1px;
+	line-height: 1.2;
+	margin-bottom: 0;
+}
+h1::selection, 
+h2::selection, 
+h3::selection, 
+h4::selection, 
+h5::selection, 
+h6::selection
+{
+	
+}
+img
+{
+	max-width: 100%;
+}
+button:active
+{
+	outline: none;
+}
+.form-control
+{
+	color: #db5246;
+}
+section
+{
+	display: block;
+	position: relative;
+	box-sizing: border-box;
+}
+.clear
+{
+	clear: both;
+}
+.clearfix::before, .clearfix::after
+{
+	content: "";
+	display: table;
+}
+.clearfix::after
+{
+	clear: both;
+}
+.clearfix
+{
+	zoom: 1;
+}
+.float_left
+{
+	float: left;
+}
+.float_right
+{
+	float: right;
+}
+.trans_200
+{
+	-webkit-transition: all 200ms ease;
+	-moz-transition: all 200ms ease;
+	-ms-transition: all 200ms ease;
+	-o-transition: all 200ms ease;
+	transition: all 200ms ease;
+}
+.trans_300
+{
+	-webkit-transition: all 300ms ease;
+	-moz-transition: all 300ms ease;
+	-ms-transition: all 300ms ease;
+	-o-transition: all 300ms ease;
+	transition: all 300ms ease;
+}
+.trans_400
+{
+	-webkit-transition: all 400ms ease;
+	-moz-transition: all 400ms ease;
+	-ms-transition: all 400ms ease;
+	-o-transition: all 400ms ease;
+	transition: all 400ms ease;
+}
+.trans_500
+{
+	-webkit-transition: all 500ms ease;
+	-moz-transition: all 500ms ease;
+	-ms-transition: all 500ms ease;
+	-o-transition: all 500ms ease;
+	transition: all 500ms ease;
+}
+.fill_height
+{
+	height: 100%;
+}
+.super_container
+{
+	width: 100%;
+	overflow: hidden;
+}
+.prlx_parent
+{
+	overflow: hidden;
+}
+.prlx
+{
+	height: 130% !important;
+}
+.parallax-window
+{
+    min-height: 400px;
+    background: transparent;
+}
+.parallax_background
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+.background_image
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center center;
+}
+.nopadding
+{
+	padding: 0px !important;
+}
+.owl-carousel,
+.owl-carousel .owl-stage-outer,
+.owl-carousel .owl-stage,
+.owl-carousel .owl-item
+{
+	height: 100%;
+}
+.slide
+{
+	height: 100%;
+}
+.button
+{
+	width: 186px;
+	height: 65px;
+	background: #ff9000;
+	text-align: center;
+	border: solid 2px #ff9000;
+	-webkit-transition: all 200ms ease;
+	-moz-transition: all 200ms ease;
+	-ms-transition: all 200ms ease;
+	-o-transition: all 200ms ease;
+	transition: all 200ms ease;
+}
+.button:hover
+{
+	background: transparent;
+}
+.button a
+{
+	display: block;
+	height: 100%;
+	width: 100%;
+	font-size: 14px;
+	font-weight: 700;
+	color: #ffffff;
+	text-transform: uppercase;
+	letter-spacing: 0.075em;
+	line-height: 61px;
+}
+.button:hover a
+{
+	color: #ff9000;
+}
+.section_title h1
+{
+	position: relative;
+	font-size: 36px;
+	font-weight: 400;
+	color: #150f24;
+	z-index: 1;
+	margin-top: -20px;
+}
+.section_title > div
+{
+	font-family: 'Playfair Display', serif;
+	font-style: italic;
+	font-size: 136px;
+	font-weight: 700;
+	color: #f4f5fa;
+	line-height: 0.75;
+	z-index: 0;
+}
+.container_wrapper > .container
+{
+	max-width: 100%;
+	padding-left: 0;
+	padding-right: 0;
+}
+.container_wrapper > .container > .row
+{
+	margin-left: 0;
+	margin-right: 0;
+}
+.container_wrapper > .container > .row > div[class^='col']
+{
+	padding-left: 0;
+	padding-right: 0;
+}
+.rooms
+{
+	background: #ffffff;
+	padding-top: 100px;
+	padding-bottom: 110px;
+}
+.card-columns
+{
+	-webkit-column-count: 2;
+	column-count: 2;
+	-webkit-column-gap: 30px;
+	column-gap: 30px;
+}
+.card-columns .card
+{
+	margin-bottom: 35px;
+}
+.card
+{
+	border: none;
+	border-radius: 0px;
+}
+.card-img-top
+{
+	border-radius: 0px;
+}
+.card-body
+{
+	background: #f4f5fa;
+	padding-left: 80px;
+	padding-top: 71px;
+	padding-right: 50px;
+	padding-bottom: 101px;
+	-webkit-transition: all 200ms ease;
+	-moz-transition: all 200ms ease;
+	-ms-transition: all 200ms ease;
+	-o-transition: all 200ms ease;
+	transition: all 200ms ease;
+}
+.card-special .card-body
+{
+	background: #171126;
+}
+.rooms_title h2
+{
+	color: #150f24;
+	-webkit-transition: all 200ms ease;
+	-moz-transition: all 200ms ease;
+	-ms-transition: all 200ms ease;
+	-o-transition: all 200ms ease;
+	transition: all 200ms ease;
+}
+.card-special .rooms_title h2
+{
+	color: #ffffff;
+}
+.rooms_text
+{
+	margin-top: 30px;
+}
+.rooms_text p
+{
+	-webkit-transition: all 200ms ease;
+	-moz-transition: all 200ms ease;
+	-ms-transition: all 200ms ease;
+	-o-transition: all 200ms ease;
+	transition: all 200ms ease;
+}
+.card-special .rooms_text p
+{
+	color: #ffffff;
+}
+.rooms_list
+{
+	margin-top: 36px;
+}
+.rooms_list ul li:not(:last-of-type)
+{
+	margin-bottom: 14px;
+}
+.rooms_list ul li img
+{
+	margin-right: 22px;
+}
+.rooms_list ul li span
+{
+	font-size: 15px;
+	font-weight: 400;
+	color: #4a4f59;
+	-webkit-transition: all 200ms ease;
+	-moz-transition: all 200ms ease;
+	-ms-transition: all 200ms ease;
+	-o-transition: all 200ms ease;
+	transition: all 200ms ease;
+}
+.card-special .rooms_list ul li span
+{
+	color: #ffffff;
+}
+.rooms_price
+{
+	margin-top: 33px;
+	font-size: 36px;
+	font-weight: 700;
+	color: #ff9000;
+	-webkit-transition: all 200ms ease;
+	-moz-transition: all 200ms ease;
+	-ms-transition: all 200ms ease;
+	-o-transition: all 200ms ease;
+	transition: all 200ms ease;
+}
+.card-special .rooms_price,
+.card-special .rooms_price span
+{
+	color: #ffffff;
+}
+.rooms_price span
+{
+	font-size: 18px;
+	font-weight: 700;
+	color: #4a4f59;
+	margin-left: 5px;
+}
+.rooms_button
+{
+	margin-top: 41px;
+}
+.card-special-panel
+{
+	position: absolute;
+	top: 27px;
+	right: -78px;
+	width: 181px;
+	height: 71px;
+	text-align: center;
+	font-size: 14px;
+	font-weight: 700;
+	color: #ffffff;
+	text-transform: uppercase;
+	letter-spacing: 0.075em;
+	line-height: 71px;
+	background: #443586;
+}
+.load_more_container
+{
+	margin-top: 75px;
+}
+.load_more_button
+{
+	width: 282px;
+	height: 65px;
+	background: #171126;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+	border: solid 2px #171126;
+	-webkit-transition: all 200ms ease;
+	-moz-transition: all 200ms ease;
+	-ms-transition: all 200ms ease;
+	-o-transition: all 200ms ease;
+	transition: all 200ms ease;
+}
+.load_more_button:hover
+{
+	background: transparent;
+}
+.load_more_button a
+{
+	display: block;
+	height: 100%;
+	line-height: 61px;
+	font-size: 14px;
+	font-weight: 700;
+	color: #ffffff;
+	text-transform: uppercase;
+	letter-spacing: 0.075em;
+}
+.load_more_button:hover a
+{
+	color: #171126;
+}
