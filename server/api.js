@@ -217,8 +217,9 @@ router.post('/checkcode', (req,res) => {
     let getCodeQuery = mysql.format(Queries.user.getAccessCode, [req.body.email])
     Queries.run(getCodeQuery).then((results) => {
         console.log(results)
-        res.status(200).send(results)
-        if (req.body.access_code == results) {
+        //res.status(200).send(results)
+        console.log('This is the access code: '+ results[0].access_code.toString())
+        if (req.body.access_code == results[0].access_code.toString()) {
             res.end('Code Accepted')
         }
         else {
