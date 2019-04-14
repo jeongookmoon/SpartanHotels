@@ -107,7 +107,7 @@ module.exports = {
             // 'With clause' sets up date checking
             var dateConditions = []
             let tempTableComponent = `with 
-            rb as (SELECT  B.*, R.hotel_id, R.room_number, R.price, R.bed_type, R.bed_number 
+            rb as (SELECT  B.*, R.hotel_id, R.room_number, R.price, R.bed_type
             from spartanhotel.booking B join spartanhotel.room R 
             on B.room_id = R.room_id `
 
@@ -300,7 +300,7 @@ module.exports = {
           // 'With clause' results in a table of rooms booked during the given time at the given hotel
           var withConditions = []
           let tempTableComponent = `with 
-          rb as (SELECT  B.*, R.hotel_id, R.room_number, R.price, R.bed_type, R.bed_number 
+          rb as (SELECT  B.*, R.hotel_id, R.room_number, R.price, R.bed_type
           from spartanhotel.booking B join spartanhotel.room R 
           on B.room_id = R.room_id `
       
@@ -433,7 +433,7 @@ module.exports = {
             ) as rh
             left join
             room_image
-            on room_image.hotel_id = rh.hotel_id and room_image.bed_type = rh.bed_type and room_image.bed_number = rh.bed_number
+            on room_image.hotel_id = rh.hotel_id and room_image.bed_type = rh.bed_type
             group by
             rh.room_id
           `
@@ -465,8 +465,7 @@ module.exports = {
           R.hotel_id,
           R.room_number,
           R.price,
-          R.bed_type,
-          R.bed_number
+          R.bed_type
         FROM
             spartanhotel.booking B
                 JOIN
@@ -491,7 +490,7 @@ module.exports = {
      * 
      * Return an array containing an object
      * eg
-     * [{"available":1,"room_id":9,"hotel_id":5,"room_number":210,"price":138.46,"bed_type":"King","bed_number":1}]
+     * [{"available":1,"room_id":9,"hotel_id":5,"room_number":210,"price":138.46,"bed_type":"King"}]
      * available is false if = 0
      * 
      * Else, returns an error message
