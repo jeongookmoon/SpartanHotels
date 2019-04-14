@@ -1,12 +1,10 @@
+
 {
   "name": "server",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    //For when deployed on heroku
-    //"start": "cd server && npm install && node ./bin/www",
-    //"heroku-postbuild": "cd client && npm install && run build or (npm start)",
     "test": "jest --runInBand",
     "db": "cd sql && node ./script.js"
   },
