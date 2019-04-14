@@ -6,10 +6,6 @@
   "dependencies": {},
   "devDependencies": {},
   "scripts": {
-    //TODO: For when deployed on heroku
-    //Reference: https://daveceddia.com/deploy-react-express-app-heroku/
-    //"start": "cd server && npm install && node ./bin/www",
-    //"heroku-postbuild": "cd ~/client or (cd ../client) && npm install && run build or (npm start)",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

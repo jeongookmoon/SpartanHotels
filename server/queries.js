@@ -3,6 +3,31 @@ const config = require('./sql/config.js')
 
 var connection = mysql.createConnection(config)
 
+//TODO: Might be necessary when hosting on Heroku, if not can delete
+/*
+var connection;
+function handleDisconnect() {
+    connection = mysql.createConnection(config);  // Recreate the connection, since the old one cannot be reused.
+    connection.connect( function onConnect(err) {   // The server is either down
+        if (err) {                                  // or restarting (takes a while sometimes).
+            console.log('error when connecting to db:', err);
+            setTimeout(handleDisconnect, 10000);    // We introduce a delay before attempting to reconnect,
+        }                                           // to avoid a hot loop, and to allow our node script to
+    });                                             // process asynchronous requests in the meantime.
+                                                    // If you're also serving http, display a 503 error.
+    connection.on('error', function onError(err) {
+        console.log('Connection lost. :(');
+        if (err.code === 'PROTOCOL_CONNECTION_LOST') {   // Connection to the MySQL server is usually
+            handleDisconnect();    
+            console.log('Another connection is created. :)')                     // lost due to either server restart, or a
+        } else {                                        // connnection idle timeout (the wait_timeout
+            throw err;                                  // server variable configures this)
+        }
+    });
+}
+handleDisconnect();
+*/
+
 module.exports = {
 
     /**
