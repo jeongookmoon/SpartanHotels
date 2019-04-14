@@ -54,7 +54,7 @@ class RoomPage extends React.Component {
 							<div className="card-columns">
 
 								<div className="card" onClick={this.Checkout.bind(this)} style={{ cursor: "pointer" }}>
-									<img className="card-img-top" src="https://colorlib.com/preview/theme/marimar/images/room_1.jpg" alt="Room image description" />
+									<img className="card-img-top" src="https://colorlib.com/preview/theme/marimar/images/room_1.jpg" alt="Room" />
 									<div className="card-body">
 										<div className="rooms_title"><h2>Luxury Double Suite</h2></div>
 										<div className="rooms_text">
@@ -63,11 +63,11 @@ class RoomPage extends React.Component {
 										<div className="rooms_list">
 											<ul>
 												<li className="d-flex flex-row align-items-center justify-content-start">
-													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
+													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="1" />
 													<span>Morbi tempus malesuada erat sed</span>
 												</li>
 												<li className="d-flex flex-row align-items-center justify-content-start">
-													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
+													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="2" />
 													<span>Tempus malesuada erat sed</span>
 												</li>
 												<li className="d-flex flex-row align-items-center justify-content-start">
@@ -81,7 +81,7 @@ class RoomPage extends React.Component {
 								</div>
 
 								<div className="card card-special">
-									<img className="card-img-top" src="https://colorlib.com/preview/theme/marimar/images/room_4.jpg" alt="Room image description" />
+									<img className="card-img-top" src="https://colorlib.com/preview/theme/marimar/images/room_4.jpg" alt="description" />
 									<div className="card-special-panel">special offer</div>
 									<div className="card-body">
 										<div className="rooms_title"><h2>Budget Suite</h2></div>
@@ -109,7 +109,7 @@ class RoomPage extends React.Component {
 								</div>
 
 								<div className="card">
-									<img className="card-img-top" src="https://colorlib.com/preview/theme/marimar/images/room_2.jpg" alt="Room image description" />
+									<img className="card-img-top" src="https://colorlib.com/preview/theme/marimar/images/room_2.jpg" alt="Roomimage" />
 									<div className="card-body">
 										<div className="rooms_title"><h2>Luxury Single Room</h2></div>
 										<div className="rooms_text">
@@ -193,8 +193,6 @@ class RoomPage extends React.Component {
 										<tbody>
 											{
 												this.state.rooms.results.map((eachRoomResult, index) => {
-													console.log("eachRoomResult", eachRoomResult)
-													console.log("index", index)
 													return (
 														<tr onClick={this.Checkout.bind(this)} style={{ cursor: "pointer" }} key={index}>
 															<th scope="row"><a href="#child4">{eachRoomResult.room_number}</a></th>

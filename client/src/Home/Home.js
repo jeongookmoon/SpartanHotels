@@ -57,6 +57,7 @@ class Home extends React.Component {
 		})
 		window.googleMap = googleMap
 	}
+
 	handleChange(event) {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -101,7 +102,6 @@ class Home extends React.Component {
 		this.setState({
 			adult: value,
 			guest_number: guest_number
-
 		})
 
 	}
@@ -240,9 +240,10 @@ class Home extends React.Component {
 									<div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
 								</div>
 								<DateRangePicker
-									startDatePlaceholderText="Check-IN"
+									startDatePlaceholderText="Check-In"
 									startDate={this.state.date_in} // momentPropTypes.momentObj or null,
 									startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
+									endDatePlaceholderText="Check-Out"
 									endDate={this.state.date_out} // momentPropTypes.momentObj or null,
 									endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
 									onDatesChange={({ startDate, endDate }) => this.setState({ date_in: startDate, date_out: endDate })} // PropTypes.func.isRequired,
@@ -300,8 +301,7 @@ class Home extends React.Component {
 						<div className="col-lg-3">
 						</div>
 						<div className="col-lg-6 home-map ">
-								<div className="" style={{width:580, height:350}} id="map">
-						</div>
+								<div className="" style={{width:580, height:350}} id="map"></div>
 						</div>
 						<div className="col-lg-3">
 						</div>
