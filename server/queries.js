@@ -447,6 +447,31 @@ module.exports = {
 
 
     booking: {
+      /**
+       * 
+       * @returns placeholder query to insert into transaction table
+       */
+      makeTransaction: 'INSERT INTO spartanhotel.transaction(transaction_id, user_id, guest_id, total_price, cancellation_charge, date_in, date_out, status, amount_paid, stripe_id) values (null, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      
+      /**
+       * Insert into transaction_room table
+       * @param {*} transaction_id 
+       * @param {[{}]} rooms_booked [{room:19, price:200},{room:20, price:400}]
+       * @returns A formatted query ie "INSERT INTO spartanhotel.transaction_room(transaction_id, room_id, room_price) VALUES (39,10,20),(39,11,65)"
+       */
+      makeTransactionDetails: function(transaction_id, rooms_booked){
+        let insertStatement = "INSERT INTO spartanhotel.transaction_room(transaction_id, room_id, room_price) VALUES "
+        let placeholders = []
+        let values = []
+        for(i=0;i<rooms_booked.length;i++){
+          placeholders.push("(?,?,?)")
+          values.push(transaction_id)
+          values.push(rooms_booked[i].room)
+          values.push(rooms_booked[i].price)
+        }
+        let placeholderComponent = placeholders.join(",")
+        return mysql.format(insertStatement + placeholderComponent,values)
+      },
     book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, guest_id, room_id, total_price, cancellation_charge, date_in, date_out, status, amount_paid) values (null, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     cancel: 'UPDATE booking SET status="cancelled" WHERE booking_id=?',
     modify: 'UPDATE booking SET room_id=?, date_in=?, date_out=? WHERE booking_id=?',
@@ -542,8 +567,8 @@ module.exports = {
 
     rewards: {
       book: 'INSERT INTO spartanhotel.rewards (reward_book_id, user_id, room_id, reward_points, no_cancellation, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',
-      useOnBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, booking_id, date_active, `change`) values (null, ?, 1, ?, curdate(), ?)',
-      gainFromBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, booking_id, date_active, `change`) values (null, ?, 2, ?, ?, ?)',
+      useOnBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, transaction_id, date_active, `change`) values (null, ?, 1, ?, curdate(), ?)',
+      gainFromBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, transaction_id, date_active, `change`) values (null, ?, 2, ?, ?, ?)',
       getUserRecords: 'SELECT R.*,RR.reason FROM spartanhotel.reward R join spartanhotel.reward_reason RR on R.reward_reason_id = RR.reward_reason_id WHERE user_id=?',
       cancelBooking: 'DELETE from spartanhotel.reward where booking_id=?'
     },

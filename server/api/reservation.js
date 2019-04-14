@@ -63,6 +63,11 @@ router.post('/', (req, res)=>{
         }
         requestedBooking.rewards_applied = parseFloat(req.body.rewards_applied)
     }
+
+    // TODO: validation
+    requestedBooking.stripe_id = req.body.stripe_id
+    requestedBooking.rooms =  JSON.parse(req.body.rooms)
+//    console.log(requestedBooking.rooms[0])
     
 
     console.log(req.user)
@@ -83,56 +88,39 @@ router.post('/', (req, res)=>{
             return
         }
 
-        let insertBookingQuery;
+        let insertTransactionQuery; // store query to insert into transaction table
+        let insertTransactionRoomDataQuery; // store query to insert into transaction_room table
+
+        checkPassed = await paymentCheck(requestedBooking, res)
+        if(!checkPassed){
+            return
+        }
+
         if (requestedBooking.user){
-            // if user is member
-            
-            // check if user has enough rewards if user used rewards
-            checkPassed = await sufficientRewardsCheck(requestedBooking, res)
-            if(!checkPassed){
-                return
-            }
-
-            if(requestedBooking.rewards_applied > requestedBooking.total_price){
-                res.status(400).send(`Rewards applied ${requestedBooking.rewards_applied} is more than ${requestedBooking.total_price}`)
-                return
-            }
-
-            // check that total_price = amount_paid + rewards_applied
-            // TODO: reward conversion rate
-            // console.log(` total ${requestedBooking.amount_paid + requestedBooking.rewards_applied}`)
-            if( requestedBooking.total_price != requestedBooking.amount_paid + requestedBooking.rewards_applied){
-                res.status(400).send(`Amount due ${requestedBooking.total_price} doesnt match ${requestedBooking.amount_paid + requestedBooking.rewards_applied}`)
-                return
-            }
             // make query to insert as user
-            insertBookingQuery = mysql.format(Queries.booking.book, [requestedBooking.user, null, req.body.room_id, req.body.total_price, req.body.cancellation_charge, req.body.date_in, req.body.date_out, "booked", req.body.amount_paid])
+            insertTransactionQuery = mysql.format(Queries.booking.makeTransaction, [requestedBooking.user, null, req.body.total_price, req.body.cancellation_charge, req.body.date_in, req.body.date_out, "booked", req.body.amount_paid, req.stripe_id])
+            
         }
         else{   // is guest
-            // check that total_price = amount_paid
-            // TODO: reward conversion rate
-            if( requestedBooking.total_price != requestedBooking.amount_paid){
-                res.status(400).send(`Amount due ${requestedBooking.total_price} doesnt match ${requestedBooking.amount_paid}`)
-                return
-            }
-
             // Insert guest into guest table
             let insertGuestQuery = mysql.format(Queries.guest.insert, [requestedBooking.guest_email, requestedBooking.guest_name])
             let insertGuestResult = await Queries.run(insertGuestQuery)
             let guestID = insertGuestResult.insertId
             // make query to insert as guest
-            insertBookingQuery = mysql.format(Queries.booking.book, [null, guestID, req.body.room_id, req.body.total_price, req.body.cancellation_charge, req.body.date_in, req.body.date_out, "booked", req.body.amount_paid])
+            insertTransactionQuery = mysql.format(Queries.booking.makeTransaction, [null, guestID, req.body.total_price, req.body.cancellation_charge, req.body.date_in, req.body.date_out, "booked", req.body.amount_paid, req.stripe_id])
         }
-        console.log(insertBookingQuery)
+        console.log(insertTransactionQuery)
 
 
-        // Check if payment valid?
+        // Check if stripe payment valid?
 
 
         // Make booking
+
+        // insert transaction
         let insertResult;
         try{
-            insertResult = await Queries.run(insertBookingQuery)
+            insertResult = await Queries.run(insertTransactionQuery)
         } catch(error){
             res.status(400).send(error)
             return
@@ -140,8 +128,21 @@ router.post('/', (req, res)=>{
         console.log(insertResult)
         let bookingID = insertResult.insertId
 
+        // insert transaction rooms
+        insertTransactionRoomDataQuery = mysql.format(Queries.booking.makeTransactionDetails(bookingID,requestedBooking.rooms))
+        console.log(`hello ${insertTransactionRoomDataQuery}`)
+
+        try{
+            await Queries.run(insertTransactionRoomDataQuery)
+        } catch(error){
+            res.status(400).send(error)
+            return
+        }
+
+
+
         if(! requestedBooking.user){
-            res.status(200).send({message:`created booking #${bookingID}`, data: bookingID})
+            res.status(200).send({message:`created transaction #${bookingID}`, data: bookingID})
         }
         else{
             // update rewards applied
@@ -360,6 +361,49 @@ async function sufficientRewardsCheck(requestedBooking,res){
             res.status(400).send("User doesn't have enough reward points")
             return false
         }
+    }
+    return true
+}
+
+/**
+ * Checks that the payment is sufficient; takes rewards into account if used
+ * @param {*} requestedBooking 
+ * @param {*} res Express response object
+ * True if passes checks, else sends http response containing an error msg and returns false
+ */
+async function paymentCheck(requestedBooking,res){
+    
+    if (requestedBooking.user){
+        // if user is member
+        
+        // check if member has enough rewards if they used rewards
+        checkPassed = await sufficientRewardsCheck(requestedBooking, res)
+        if(!checkPassed){
+            return false
+        }
+
+        if(requestedBooking.rewards_applied > requestedBooking.total_price){
+            res.status(400).send(`Rewards applied ${requestedBooking.rewards_applied} is more than ${requestedBooking.total_price}`)
+            return false
+        }
+
+        // check that total_price = amount_paid + rewards_applied
+        // TODO: reward conversion rate
+        // console.log(` total ${requestedBooking.amount_paid + requestedBooking.rewards_applied}`)
+        if( requestedBooking.total_price != requestedBooking.amount_paid + requestedBooking.rewards_applied){
+            res.status(400).send(`Amount due ${requestedBooking.total_price} doesnt match amount paid (including rewards) ${requestedBooking.amount_paid + requestedBooking.rewards_applied}`)
+            return false
+        }
+        
+    }
+    else{   // is guest
+        // check that total_price = amount_paid
+        // TODO: reward conversion rate
+        if( requestedBooking.total_price != requestedBooking.amount_paid){
+            res.status(400).send(`Amount due ${requestedBooking.total_price} doesnt match amount paid ${requestedBooking.amount_paid}`)
+            return false
+        }
+
     }
     return true
 }
