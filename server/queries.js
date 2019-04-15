@@ -680,6 +680,131 @@ module.exports = {
       console.log(sql)
       return sql
   },
+
+     /**
+     * The same as BookableAndPriceCheck, ignoring the given transaction_id
+     * @param {*} params 
+     * {date_in, date_out, rooms:[room_ids], transaction_id}
+     * @returns [{}] An array of {room_id, hotel_id, room_number, price, bed_type, capacity, booked}
+     * booked = 0 means not booked
+     * 
+     * This returns a query, that when run, will:
+     * 
+     * Return an array containing the booked status and pricing info of each requested room
+     * eg
+     * 
+     * params: {date_in: '2019-03-10', date_out: '2019-03-12', rooms:[1,2,3], transaction_id: 1}
+     * 
+     * transaction #1 has
+     * rooms 1 and 2 are booked during this time
+     * 
+     * the query ignores those because we might replace those rooms
+     * 
+     * then
+     * returns [{room_id:1, hotel_id, room_number, price, bed_type, capacity, 0},
+     * {room_id:2, hotel_id, room_number, price, bed_type, capacity, 0},
+     * {room_id:3, hotel_id, room_number, price, bed_type, capacity, 0}]
+     * 
+     * Else, returns an error message
+     * 
+      */
+  modify_BookableAndPriceCheck: function(params = {}){
+
+    // let q = `
+    // SELECT 
+    // A.*, (case when B_room_id IS NULL then FALSE else TRUE end)  as booked
+    // FROM
+    //     (SELECT 
+    //         *
+    //     FROM
+    //         room R
+    //     WHERE
+    //         (R.room_id = 9 OR R.room_id = 11
+    //             OR R.room_id = 8)) AS A
+    // LEFT JOIN
+    //     (SELECT DISTINCT
+    //         (room_id) AS B_room_id
+    //     FROM
+    //         spartanhotel.booking B
+    //     WHERE
+    //         date_in < '2019-03-21'
+    //             AND date_out > '2019-03-02'
+    //             AND status != 'cancelled'
+    //             AND (room_id = 9 OR room_id = 11
+    //             OR room_id = 8)
+    //            and transaction_id != 43
+    //      ) 
+    // AS AB ON A.room_id = B_room_id                                                              
+    // `
+    
+    let q1 = `
+    SELECT 
+    A.*, (case when B_room_id IS NULL then FALSE else TRUE end)  as booked
+    FROM
+        (SELECT 
+            *
+        FROM
+            room R
+        WHERE
+            
+    `
+    // (R.room_id = 9 OR R.room_id = 11
+    //   OR R.room_id = 8))
+    let placeholderComponentForRooms = []
+    let placeholderValues = []
+    let rooms = []
+    for(i=0;i<params.rooms.length;i++){
+      placeholderComponentForRooms.push("room_id = ?")
+      rooms.push(params.rooms[i])
+    }
+    console.log(`AAA ${rooms}`)
+    let roomIdCondition = "(" + placeholderComponentForRooms.join(" or ") + ")"
+
+    q1 = q1 + " " + roomIdCondition +")"
+    placeholderValues.push.apply(placeholderValues, rooms)
+    console.log(placeholderValues)
+
+
+    let q2 = `
+    AS A
+    LEFT JOIN
+        (SELECT DISTINCT
+            (room_id) AS B_room_id
+        FROM
+            spartanhotel.booking B
+        WHERE
+            date_in < ?
+                AND date_out > ?
+                AND status != 'cancelled'
+                AND 
+    `
+    // (room_id = 9 OR room_id = 11
+    //   OR room_id = 8)
+    
+    
+    placeholderValues.push(params.date_out)
+    placeholderValues.push(params.date_in)
+
+    q2 = q2 + " " + roomIdCondition 
+    placeholderValues.push.apply(placeholderValues, rooms)
+
+    // and transaction_id != 43)
+    let q3 = ` and transaction_id != ?) `
+    placeholderValues.push(params.transaction_id)
+
+    let q4 = `
+    AS AB ON A.room_id = B_room_id                                                              
+    `
+
+    let q = q1 + q2 + q3 + q4
+
+    console.log(q)
+
+    
+    let sql = mysql.format(q, placeholderValues)
+    console.log(sql)
+    return sql
+},
       
 
 
