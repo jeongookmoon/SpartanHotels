@@ -62,4 +62,6 @@ function date_checker(params, res ){
 
 }
 
-module.exports = date_checker;
+module.exports = {
+    date_checker
+};

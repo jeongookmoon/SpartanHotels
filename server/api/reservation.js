@@ -10,7 +10,8 @@ const bodyParser = require('body-parser')
 
 var validator = require('validator');
 
-const dateChecker = require("./_checks")
+var checks = require("./_checks")
+
 
 const TAX_RATE = 10
 const CANCELLATION_CHARGE_RATE = 20
@@ -22,7 +23,7 @@ router.post('/', (req, res)=>{
     // Check values
     console.log(req.body);
 
-    if (! dateChecker(req.body, res)){
+    if (! checks.date_checker(req.body, res)){
         return
     }
     
@@ -30,8 +31,7 @@ router.post('/', (req, res)=>{
     requestedBooking.room_id = req.body.room_id
     requestedBooking.date_in = req.body.date_in
     requestedBooking.date_out = req.body.date_out
-    requestedBooking.total_price = req.body.total_price
-    requestedBooking.cancellation_charge = req.body.cancellation_charge
+    
     if(req.user){
         requestedBooking.user = req.user.user_id
     }
@@ -64,11 +64,29 @@ router.post('/', (req, res)=>{
         requestedBooking.rewards_applied = parseFloat(req.body.rewards_applied)
     }
 
+    if (! room_format_checker(req.body.rooms, res)){
+        return
+    }
+    requestedBooking.rooms =  req.body.rooms
+
+    if( typeof(req.body.hotel_id) == 'undefined' || !validator.isInt(req.body.hotel_id + '',{min:0})){
+        res.status(400).send("Invalid hotel_id")
+            return
+    }
+    requestedBooking.hotel_id = req.body.hotel_id
+    if( typeof(req.body.total_price) == 'undefined' || !validator.isFloat(req.body.total_price + '')){
+        res.status(400).send("Invalid total_price")
+            return
+    }
+    requestedBooking.total_price = req.body.total_price
+    if( typeof(req.body.cancellation_charge) == 'undefined' || !validator.isFloat(req.body.cancellation_charge + '')){
+        res.status(400).send("Invalid cancellation_charge")
+            return
+    }
+    requestedBooking.cancellation_charge = req.body.cancellation_charge
+
     // TODO: validation
     requestedBooking.stripe_id = req.body.stripe_id
-    requestedBooking.rooms =  req.body.rooms
-    requestedBooking.hotel_id = req.body.hotel_id
-//    console.log(requestedBooking.rooms[0])
     
 
     console.log(req.user)
@@ -231,7 +249,7 @@ router.post('/check', (req,res)=>{
     // Check values
     console.log(req.body);
     
-    if (! dateChecker(req.body, res)){
+    if (! _checks.date_checker(req.body, res)){
         return
     }
 
@@ -580,4 +598,29 @@ async function paymentCheck(requestedBooking,res){
     }
     return true
 }
+
+
+/**
+ * Checks if rooms is object with format [{room:#, price:#}, {room:#,price:#}]
+ * @param {*} rooms 
+ * @param {*} res 
+ * Express response object
+ * @returns True if all elements in rooms follow correct format and possible values
+ */
+function room_format_checker(rooms, res){
+    for(i=0;i<rooms.length;i++){
+        let room = rooms[i].room + ''
+        let price = rooms[i].price + ''
+        if( typeof(room) == 'undefined' || !validator.isInt(room,{min:0})){
+            res.status(400).send("Error: Encountered an invalid room value inside rooms")
+            return false
+        }
+        if( typeof(price) == 'undefined' || !validator.isFloat(price,{min:0})){
+            res.status(400).send("Error: Encountered an invalid room price value inside rooms")
+            return false
+        }
+    }
+    return true
+}
+
 module.exports = router;
