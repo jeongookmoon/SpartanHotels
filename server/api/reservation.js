@@ -215,33 +215,211 @@ router.post('/cancellation', (req,res)=>{
 // TODO: Update to v0.2
 router.post('/modification', (req,res)=>{
 
-    let requestedBooking = {
-        "total_price":9634.9,
-        "cancellation_charge":1751.8,
-        "date_in":"2019-03-02",
-        "date_out":"2019-03-21",
-        "amount_paid":9624.9,
-        "rewards_applied":10,
-        "guest_email":"a@a.com",
-        "rooms": [{"room":8,"price":256},{"room":7,"price":205}],
-        "hotel_id": 4,
-        "user_id":2
-        }
-    let transactionToChange = 43
-
-    // TODO: check for user id to match the booking
+    // Check values
     console.log(req.body);
-    let query = modify_Availability_SameHotel_AndPriceCheck(requestedBooking,transactionToChange,res)
-    console.log(query)
 
-    // Queries.run(query).then(
-    //     results =>{
-    //         res.status(200).send(results)
-    //     },
-    //     error =>{
-    //         res.status(400).send(error)
+    if (! checks.date_checker(req.body, res)){
+        return
+    }
+    
+    let requestedBooking = {}
+    requestedBooking.room_id = req.body.room_id
+    requestedBooking.date_in = req.body.date_in
+    requestedBooking.date_out = req.body.date_out
+    
+    if(req.user){
+        requestedBooking.user = req.user.user_id
+    }
+    else{
+        // is guest
+        requestedBooking.user = null
+        requestedBooking.guest_email = req.body.guest_email ? req.body.guest_email : ''
+        requestedBooking.guest_name = req.body.guest_name ? req.body.guest_name : "GUEST"
+
+        if (  typeof(requestedBooking.guest_email) == 'undefined' || !validator.isEmail(requestedBooking.guest_email)){
+            res.status(400).send("Invalid email")
+            return
+        }
+    }
+    
+    if( typeof(req.body.amount_paid) == 'undefined' || !validator.isFloat(req.body.amount_paid + '')){
+        res.status(400).send("Invalid amount_paid")
+            return
+    }
+    requestedBooking.amount_paid = parseFloat(req.body.amount_paid)
+
+    if( typeof(req.body.rewards_applied) == 'undefined'){
+        requestedBooking.rewards_applied = 0
+    }
+    else{
+        if (!validator.isFloat(req.body.rewards_applied + '',{min:0})){
+            res.status(400).send("Invalid rewards_applied")
+                return
+        }
+        requestedBooking.rewards_applied = parseFloat(req.body.rewards_applied)
+    }
+
+    if (! room_format_checker(req.body.rooms, res)){
+        return
+    }
+    requestedBooking.rooms =  req.body.rooms
+
+    if( typeof(req.body.hotel_id) == 'undefined' || !validator.isInt(req.body.hotel_id + '',{min:0})){
+        res.status(400).send("Invalid hotel_id")
+            return
+    }
+    requestedBooking.hotel_id = req.body.hotel_id
+    if( typeof(req.body.total_price) == 'undefined' || !validator.isFloat(req.body.total_price + '')){
+        res.status(400).send("Invalid total_price")
+            return
+    }
+    requestedBooking.total_price = req.body.total_price
+    if( typeof(req.body.cancellation_charge) == 'undefined' || !validator.isFloat(req.body.cancellation_charge + '')){
+        res.status(400).send("Invalid cancellation_charge")
+            return
+    }
+    requestedBooking.cancellation_charge = req.body.cancellation_charge
+
+    // TODO: validation
+    requestedBooking.stripe_id = req.body.stripe_id
+    let transaction_id = req.body.transaction_id
+    
+    console.log(req.user)
+
+
+    //
+    // let requestedBooking = {
+    //     "total_price":9634.9,
+    //     "cancellation_charge":1751.8,
+    //     "date_in":"2019-03-02",
+    //     "date_out":"2019-03-21",
+    //     "amount_paid":9624.9,
+    //     "rewards_applied":10,
+    //     "guest_email":"a@a.com",
+    //     "rooms": [{"room":8,"price":256},{"room":7,"price":205}],
+    //     "hotel_id": 4,
+    //     "user_id":2
     //     }
-    // )
+    // let transactionToChange = 43
+
+    modifyRes(requestedBooking, transaction_id)
+
+    async function modifyRes(requestedBooking={}, transaction_id){
+        let checkPassed = false
+
+        checkPassed = await modify_Availability_SameHotel_AndPriceCheck(requestedBooking,transaction_id,res)
+        if(!checkPassed){
+            return
+        }
+        checkPassed = await bookingConflictWithAnotherHotelCheck(requestedBooking, res)
+        if(!checkPassed){
+            return
+        }
+
+
+
+        
+        let {checkFailed:checkResult, oldTransactionData, amountDueFromUser} = await paymentCheckOnModify(requestedBooking, transaction_id, res)
+        checkPassed = !checkResult
+        if(!checkPassed){
+            return
+        }
+
+        console.log(amountDueFromUser)
+        console.log(oldTransactionData)
+
+        // issue refund or take payment? or check if stripe transaction valid ?
+
+
+        // query to remove old transaction_room data
+        let removeOldTRDataQuery;
+        // query to insert new transaction_room data
+        let insertNewTRDataQuery;
+        // query to update transaction table
+        let updateTransactionTableQuery
+        // query to remove old reward data
+        let removeOldRewardDataQuery;
+        // query to insert reward data
+        let insertNewRewardsAppliedDataQuery;
+        let insertNewRewardsGainedDataQuery;
+
+        let queryToRemoveOldTRDataAndOldRewardData = mysql.format(Queries.modify.removeTransactionRoomDataAndRewardsForTransaction,transaction_id)
+        console.log(queryToRemoveOldTRDataAndOldRewardData)
+
+        if( requestedBooking.rewards_applied > 0){
+            insertNewRewardsAppliedDataQuery = mysql.format(Queries.rewards.useOnBooking,[requestedBooking.user, transaction_id, (-1) * requestedBooking.rewards_applied])
+        }
+        
+        // update rewards gained from this booking
+        let rewardsGained = parseInt(requestedBooking.amount_paid * 0.10)
+        insertNewRewardsGainedDataQuery = mysql.format(Queries.rewards.gainFromBooking,[requestedBooking.user, transaction_id, requestedBooking.date_out,rewardsGained])
+
+        insertNewTRDataQuery = Queries.booking.makeTransactionDetails(transaction_id,requestedBooking.rooms)
+
+        updateTransactionTableQuery = mysql.format(Queries.modify.updateTransaction,
+            [requestedBooking.total_price,
+             requestedBooking.cancellation_charge,
+             requestedBooking.date_in,
+             requestedBooking.date_out,
+             "booked",
+             requestedBooking.amount_paid,
+             null,
+             transaction_id
+            ])
+
+        let connection = Queries.connection
+
+        connection.beginTransaction(function(err) {
+            if (err) { throw err; }
+            connection.query(queryToRemoveOldTRDataAndOldRewardData, function (error, results, fields) {
+              if (error) {
+                return connection.rollback(function() {
+                  throw error;
+                });
+              }
+          
+              connection.query(insertNewRewardsAppliedDataQuery, function (error, results, fields) {
+                if (error) {
+                  return connection.rollback(function() {
+                    throw error;
+                  });
+                }
+                connection.query(insertNewRewardsGainedDataQuery, function (error, results, fields){
+                    if (error) {
+                        return connection.rollback(function() {
+                          throw error;
+                        });
+                      }
+                      connection.query(insertNewTRDataQuery, function (error, results, fields){
+                        if (error) {
+                            return connection.rollback(function() {
+                              throw error;
+                            });
+                          }
+                          connection.query(updateTransactionTableQuery, function (error, results, fields){
+                            if (error) {
+                                return connection.rollback(function() {
+                                  throw error;
+                                });
+                              }
+                              connection.commit(function(err) {
+                                if (err) {
+                                  return connection.rollback(function() {
+                                    throw err;
+                                  });
+                                }
+                                console.log('success!');
+                              });
+                        })
+                    })
+                })
+              });
+            });
+          });
+
+    }
+
+
 })
 
 
@@ -462,7 +640,7 @@ async function modify_Availability_SameHotel_AndPriceCheck(newBooking, transacti
         return false
     }
     if( distinctRequestedHotels[0] != newBooking.hotel_id){
-        res.status(400).send(`Submitted hotel_id and room_ids mismatch`) 
+        res.status(400).send(`Submitted hotel_id ${newBooking.hotel_id} and hotel of submitted room_ids ${distinctRequestedHotels[0]} mismatch`) 
         return false
     }
 
@@ -597,6 +775,82 @@ async function paymentCheck(requestedBooking,res){
 
     }
     return true
+}
+
+/**
+ * Checks that the payment is sufficient; takes rewards into account if used
+ * ie checks amount_paid and rewards_applied
+ * @param {*} requestedBooking 
+ * @param {*} transaction_id
+ * @param {*} res Express response object
+ * @returns {} {checkFailed:true, amountDueFromUser, oldTransactionData}
+ * If any check fails, sends an http response containing an error msg and returns {checkFailed:true, amountDueFromUser, oldTransactionData}
+ * 
+ * Note: amountDueFromUser, oldTransactionData may be NULL
+ * 
+ * If all checks pass, returns {checkFailed:false, amountDueFromUser, oldTransactionData}
+ */
+async function paymentCheckOnModify(requestedBooking, transaction_id, res){
+    let returnValue = {checkFailed:true, amountDueFromUser:null, oldTransactionData:null}
+
+    if (requestedBooking.user){
+        // if user is member
+
+        // get user's applicable rewards, ie available rewards, but ignoring transction being modified
+        let userApplicableRewardsQuery = mysql.format(Queries.user.getAvailableRewardsIgnoringTransaction,[requestedBooking.user, transaction_id])
+        
+        let userApplicableRewards
+        try{
+            userApplicableRewards = await Queries.run(userApplicableRewardsQuery)
+        } catch(e){
+            // query failed for some reason
+            console.log(e)
+            res.status(400).send("bad")
+            return returnValue
+        }
+        let availableRewards = userApplicableRewards[0].sum
+        console.log(`availableRewards is ${availableRewards}`)
+        if(availableRewards < requestedBooking.rewards_applied){
+            res.status(400).send("User doesn't have enough reward points")
+            return returnValue
+        }
+
+        if(requestedBooking.rewards_applied > requestedBooking.total_price){
+            res.status(400).send(`Rewards applied ${requestedBooking.rewards_applied} is more than ${requestedBooking.total_price}`)
+            return returnValue
+        }
+
+        // get old transation data
+        let oldBookingQuery = mysql.format(Queries.user.getBookingForTransaction,[transaction_id])
+        let oldBookingData
+        try{
+            oldBookingData = await Queries.run(oldBookingQuery)
+        } catch(e){
+            // query failed for some reason
+            console.log(e)
+            res.status(400).send("bad")
+            return returnValue
+        }
+        console.log(oldBookingData)
+        oldBookingData = oldBookingData[0]
+        returnValue.oldTransactionData = oldBookingData
+
+        // TODO: reward conversion rate
+        let amountDueFromUser = requestedBooking.total_price - oldBookingData.amount_paid - requestedBooking.rewards_applied
+        console.log(amountDueFromUser)  
+        returnValue.amountDueFromUser = amountDueFromUser
+        
+        if(amountDueFromUser > 0){
+            // check that total_price = amount_paid + rewards_applied
+            if( amountDueFromUser != requestedBooking.amount_paid){
+                res.status(400).send(`Amount due ${amountDueFromUser} doesnt match amount paid (including taking rewards and refunds into account) ${requestedBooking.amount_paid}`)
+                return returnValue
+            }
+        }
+        
+    }
+    returnValue.checkFailed = false
+    return returnValue
 }
 
 
