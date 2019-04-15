@@ -1,0 +1,13 @@
+#map{
+
+	max-height:32em;
+
+	
+}
+
+#autocomplete{
+	border:none;
+	font-size:1.5em;
+	font-weight:300;
+	padding: 10px 10px 10px 10px;
+}
