@@ -6,7 +6,7 @@ import { HotelSearchFunction, extractFromAddress } from '../Utility/HotelSearchF
 import Autocomplete from "../Utility/Autocomplete"
 
 import {
-	FormGroup, Table, Pagination, PaginationLink
+	FormGroup, Table, Pagination, PaginationLink, PaginationItem
 } from 'reactstrap'
 
 import './CSS/map_autocomplete_overrides.css'
@@ -104,11 +104,11 @@ class HotelSearch extends React.Component {
 
 	fetchSearchResult() {
 		const queryCall = '/api/search/hotels' + this.props.location.search
-		
+
 		const params = new URLSearchParams(this.props.location.search)
 		const sortBy = params.get("sortBy")
-		if(!sortBy){
-			this.setState({sortBy: ''})
+		if (!sortBy) {
+			this.setState({ sortBy: '' })
 		}
 
 		axios.get(queryCall).then(result => {
@@ -269,11 +269,11 @@ class HotelSearch extends React.Component {
 		let additionalClause = ''
 		if (event.target.name && event.target.name === 'sortBy') {
 			additionalClause = `&sortBy=${event.target.value}`
-			this.setState({[event.target.name]: event.target.value})
+			this.setState({ [event.target.name]: event.target.value })
 		}
 		if (event.target.name && event.target.name === 'pagination') {
 			additionalClause = `&pageNumber=${event.target.value}`
-			if(sortBy && sortBy !== '') {
+			if (sortBy && sortBy !== '') {
 				additionalClause = additionalClause + `&sortBy=${sortBy}`
 			}
 		}
@@ -316,9 +316,21 @@ class HotelSearch extends React.Component {
 
 	generatePageNumbers() {
 		let pageNumbers = []
+		const params = new URLSearchParams(this.props.location.search)
+		let pageNumber = parseInt(params.get('pageNumber'))
+		if(!pageNumber) {
+			pageNumber = 0;
+		}
+		let activeFlag = false
+
 		if (this.state.hotels.results && this.state.hotels.results.length > 0) {
 			for (let i = 0; i < this.state.hotels.totalResultCount / 10; i++) {
-				pageNumbers.push(<PaginationLink name="pagination" onClick={this.getHotelSearchResult} key={i} value={i}>{i+1}</PaginationLink>)
+				activeFlag = (pageNumber === i) ? true : false
+				pageNumbers.push(
+					<PaginationItem active={activeFlag} key={i}>
+						<PaginationLink name="pagination" onClick={this.getHotelSearchResult} key={i} value={i}>{i + 1}
+						</PaginationLink>
+					</PaginationItem>)
 			}
 		}
 		return pageNumbers
