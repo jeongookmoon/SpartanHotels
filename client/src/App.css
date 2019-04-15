@@ -31,3 +31,64 @@
     transform: rotate(360deg);
   }
 }
+
+.container-demo{
+  min-height: 100%;
+  height:100%;
+  margin:100px auto;
+  background: rgb(233,233,233);
+  padding:0;
+
+}
+
+.dimScreen{
+  position:fixed;
+  padding:0;
+  margin:0;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgb(255,255,255);
+  overflow-y:scroll;
+}
+.form-group-demo{
+  position:relative;
+  margin-bottom:1.5rem;
+
+}
+.form-control-placeholder{
+  position:absolute;
+  top:0;
+  padding:7px 0 0 13px;
+  transition:all 200ms;
+  opacity: 0.5;
+}
+
+.form-control:focus+ .form-control-placeholder,
+.form-control:valid+.form-control-placeholder{
+  font-size:75%;
+  transform: translate3d(0,-100%,0);
+  opacity:1;
+
+}
+
+.dottedLine{
+  border-top:dotted 2px;
+  color:gray;
+  width:100%;
+
+}
+.checkoutPayButton{
+  width:45%;
+}
+
+#map {
+  height: 100vh;
+}
+
+html, body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
