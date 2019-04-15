@@ -4,6 +4,7 @@ const config = require('./sql/config.js')
 var connection = mysql.createConnection(config)
 
 module.exports = {
+    connection:connection,
 
     /**
     * Returns the result of a sql query as a promise.
@@ -54,7 +55,9 @@ module.exports = {
         create: 'insert into spartanhotel.user (user_id,name,password,email) values (null,?,?,?)',
         session: 'select LAST_INSERT_ID() as user_id ',
         authenticate: 'select user_id, password from spartanhotel.user where email=?',
-        getAvailableRewards: 'SELECT sum(R.change) as sum FROM spartanhotel.reward R where user_id=? and date_active <= curdate();'
+        getAvailableRewards: 'SELECT sum(R.change) as sum FROM spartanhotel.reward R where user_id=? and date_active <= curdate();',
+        getAvailableRewardsIgnoringTransaction: 'SELECT sum(R.change) as sum FROM spartanhotel.reward R where user_id=? and date_active <= curdate() and transaction_id != ?;',
+        getBookingForTransaction:'SELECT * FROM spartanhotel.booking WHERE transaction_id=?'
     },
 
     hotel: {
@@ -475,6 +478,7 @@ module.exports = {
     book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, guest_id, room_id, total_price, cancellation_charge, date_in, date_out, status, amount_paid) values (null, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     cancel: 'UPDATE booking SET status="cancelled" WHERE booking_id=?',
     modify: 'UPDATE booking SET room_id=?, date_in=?, date_out=? WHERE booking_id=?',
+    removeTransactionRoomDataForTransaction:'',
 
     /**
      * 
@@ -881,6 +885,17 @@ module.exports = {
 
     guest: {
       insert: 'INSERT INTO spartanhotel.guest(guest_id, email, name) values (null, ?, ?)'
+    },
+    modify:{
+      removeTransactionRoomDataAndRewardsForTransaction: `
+      DELETE TR,R FROM transaction_room TR
+        LEFT JOIN
+        reward R
+      ON TR.transaction_id = R.transaction_id
+      WHERE
+      TR.transaction_id = ?
+      `,
+      updateTransaction: 'UPDATE spartanhotel.transaction SET total_price=?, cancellation_charge=?, date_in=?, date_out=?, status=?, amount_paid=?, stripe_id=? WHERE transaction_id=?',
     }
 
 
