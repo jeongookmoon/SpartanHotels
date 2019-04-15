@@ -497,41 +497,48 @@ module.exports = {
         let placeholderComponent = placeholders.join(",")
         return mysql.format(insertStatement + placeholderComponent,values)
       },
-    book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, guest_id, room_id, total_price, cancellation_charge, date_in, date_out, status, amount_paid) values (null, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    cancel: 'UPDATE booking SET status="cancelled" WHERE booking_id=?',
-    modify: 'UPDATE booking SET status="modified" room_id=?, date_in=?, date_out=? WHERE booking_id=?',
-    user_id: 'SELECT * FROM booking WHERE booking_id=?',
+    
+    //For when the user cancels the entire transaction
+    cancel_transaction: 'UPDATE spartanhotel.transaction SET status="cancelled" WHERE transaction_id=?',
+    cancel_all: 'DELETE from spartanhotel.transaction_room where transaction_id=?',
+    // For when the user cancels only a single room
+    cancel_one: 'DELETE from spartanhotel.transaction_room where transaction_id=? AND room_id=?',
+    cancel_one_room: 'UPDATE spartanhotel.transaction SET total_price=?, cancellation_charge=?, amount_paid=? WHERE transaction_id=?',
+
+    modify: 'UPDATE booking SET status="modified", room_id=?, date_in=?, date_out=? WHERE booking_id=?',
+    user_id: 'SELECT * FROM transaction WHERE transaction_id=?',
+    room_price: 'SELECT * FROM transaction_room WHERE transaction_id=? AND room_id=?',
 
     //When query is ran -> returns an array that cannot be cancelled, else returns an empty array which means can be cancelled
-    isCancellable: function({booking_id}) {
-      let query = `SELECT * FROM spartanhotel.booking WHERE
-                    booking_id = ? AND date_in <= CURDATE() AND date_out >= CURDATE() AND status != 'cancelled';`
+    isCancellable: function({transaction_id}) {
+      let query = `SELECT * FROM spartanhotel.transaction WHERE
+                    transaction_id = ? AND date_in <= CURDATE() AND date_out >= CURDATE() AND status != 'cancelled';`
 
-      return mysql.format(query, [booking_id])
+      return mysql.format(query, [transaction_id])
     },
 
     //When ran -> returns an array that cannot be MODIFIED, else returns an empty array 
     //meaning the booking can be modified
     isModifiable: function({booking_id}) {
-      let query = `SELECT * FROM spartanhotel.booking WHERE
+      let query = `SELECT * FROM spartanhotel.transaction WHERE
                     booking_id = ? 
                     AND date_in <= CURDATE() 
                     AND date_out >= CURDATE() 
                     AND status != 'cancelled'
                     AND status != 'modified';`
 
-      return mysql.format(query, [booking_id])
+      return mysql.format(query, [transaction_id])
     },
 
     // When ran -> returns an array with the selected result(s), else array is empty and isBookable is
     // ran for modifyAvailabilityCheck in reservation.js
-    isOldBookingIdAndRoomId: function({booking_id, room_id}) {
-      let query = `SELECT * FROM spartanhotel.booking WHERE
+    isOldBookingIdAndRoomId: function({transaction_id, room_id}) {
+      let query = `SELECT * FROM spartanhotel.transaction WHERE
                     booking_id = ? 
                     AND room_id = ?  
                     AND status = 'booked';`
 
-      return mysql.format(query, [booking_id, room_id])
+      return mysql.format(query, [transaction_id, room_id])
     },
 
     /**
@@ -811,8 +818,8 @@ module.exports = {
       useOnBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, transaction_id, date_active, `change`) values (null, ?, 1, ?, curdate(), ?)',
       gainFromBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, transaction_id, date_active, `change`) values (null, ?, 2, ?, ?, ?)',
       getUserRecords: 'SELECT R.*,RR.reason FROM spartanhotel.reward R join spartanhotel.reward_reason RR on R.reward_reason_id = RR.reward_reason_id WHERE user_id=?',
-      cancelBooking: 'DELETE from spartanhotel.reward where booking_id=?',
-      getOldBookingAppliedRewards: 'SELECT R.change FROM spartanhotel.reward R WHERE booking_id = ? AND SIGN(change) = -1'
+      cancelBooking: 'DELETE from spartanhotel.reward where transaction_id=?',
+      getOldBookingAppliedRewards: 'SELECT R.change FROM spartanhotel.reward R WHERE transaction_id = ? AND SIGN(change) = -1'
     },
 
     guest: {

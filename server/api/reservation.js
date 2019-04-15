@@ -182,7 +182,7 @@ router.post('/', (req, res)=>{
 // TODO: Check if it is valid and it works
 router.post('/cancellation', (req,res)=>{
     console.log(req.body);
-    let query = mysql.format(Queries.booking.user_id, [req.body.booking_id])
+    let query = mysql.format(Queries.booking.user_id, [req.body.transaction_id])
     Queries.run(query).then(
         results => {
             //console.log(results)
@@ -192,7 +192,7 @@ router.post('/cancellation', (req,res)=>{
                 console.log("Id matches")
                 //Checks if the date_in and date_out is acceptable to cancel
                 let query2 = mysql.format(Queries.booking.isCancellable({
-                    booking_id: req.body.booking_id
+                    transaction_id: req.body.transaction_id
                 }))
                 //console.log(query2)
                 Queries.run(query2).then(
@@ -203,28 +203,78 @@ router.post('/cancellation', (req,res)=>{
                                 res.status(400).send("Cannot cancel because current date is in conflict with booking dates")   
                             }
                             else {
-                                let query3 = mysql.format(Queries.booking.cancel, [req.body.booking_id]);
-                                //console.log(query3)
-                                Queries.run(query3).then(
-                                    results3 =>{
-                                        let query4 = mysql.format(Queries.rewards.cancelBooking, [req.body.booking_id]);
-                                        //console.log(query4)
-                                        Queries.run(query4).then(
-                                            results4 =>{
-                                                let refund = results[0].amount_paid - results[0].cancellation_charge
-                                                res.status(200).send({message: "Booking cancelled & Rewards were refunded",
-                                                                      booking_id: req.body.booking_id,
-                                                                      amount_refunded: refund})                                    
-                                            },
-                                            error4 =>{
-                                                res.status(400).send(error4)
-                                            }
-                                        )  
-                                    },
-                                    error3 =>{
-                                        res.status(400).send(error3)
-                                    }
-                                )  
+                                console.log(req.body.room_id)
+                                if(typeof(req.body.room_id) || req.body.room_id == 'undefined' ||
+                                    req.body.room_id == null) {
+                                    //Cancels the entire transaction
+                                    let query3 = mysql.format(Queries.booking.cancel_transaction, [req.body.transaction_id]);
+                                    //console.log(query3)
+                                    Queries.run(query3).then(
+                                        results3 =>{
+                                            let query4 = mysql.format(Queries.rewards.cancelBooking, [req.body.transaction_id]);
+                                            //console.log(query4)
+                                            Queries.run(query4).then(
+                                                results4 =>{
+                                                    //Will delete all the transaction_room_id rows that contain that transaction_id
+                                                    let query5 = mysql.format(Queries.booking.cancel_all, [req.body.transaction_id])
+                                                    Queries.run(query5).then(
+                                                        results5 => {
+                                                        console.log(query5)
+                                                        //Refund is the amount paid - cancellation charge
+                                                        let refund = results[0].amount_paid - results[0].cancellation_charge
+                                                        res.status(200).send({message: "Booking cancelled & Rewards were refunded",
+                                                                              booking_id: req.body.booking_id,
+                                                                              amount_refunded: refund.toFixed(2)}) 
+                                                        },
+                                                        error5 => {
+                                                            res.status(400).send(error5)
+                                                        }
+                                                    )                                   
+                                                },
+                                                error4 =>{
+                                                    res.status(400).send(error4)
+                                                }
+                                            )  
+                                        },
+                                        error3 =>{
+                                            res.status(400).send(error3)
+                                        }
+                                    )
+                                }
+                                /*
+                                else {
+                                    //Delete one room from transaction
+                                    let query6 = mysql.format(Queries.booking.room_price, [req.body.transaction_id, req.body.room_id])
+                                    Queries.run(query6).then(
+                                       results6 => {
+                                            let newTotalPrice = results[0].total_price - results6[0].room_price - (results6[0].room_price*(TAX_RATE/100)
+                                            let newAmountPaid = results[0].amount_paid - results6[0].room_price - (results6[0].room_price*(TAX_RATE/100)
+                                            let newCancellationCharge = results[0].cancellation_charge - (results6[0].room_price*(CANCELLATION_CHARGE_RATE/100)
+                                            let query7 = mysql.format(Queries.booking.cancel_one_room, [parseFloat(newTotalPrice), parseFloat(newCancellationCharge), 
+                                                parseFloat(newAmountPaid), req.body.transaction_id])
+                                            Queries.run(query7).then(
+                                               results7 => {
+                                                   //Another query8 for cancel_one which deletes it from the table
+                                                   //Another query9 to subtract reward points from the cancelled booking
+
+                                               },
+                                               error7 => {
+                                                   res.status(400).send(error6)
+                                               } 
+
+
+                                            )
+
+                                       },
+                                       error6 => {
+                                           res.status(400).send(error6)
+                                       } 
+
+
+                                    )
+                                    
+                                } 
+                                 */
                             }
                         },
                         error2 =>{
@@ -246,7 +296,7 @@ router.post('/cancellation', (req,res)=>{
 
 })
 
-// TODO: Update to v0.2
+// TODO: Does not work
 router.post('/modification', (req,res)=>{
     // TODO: check for user id to match the booking
     // Currently checks for valid user first then runs the modify query
@@ -468,6 +518,7 @@ router.post('/check', (req,res)=>{
 
 */
 
+
 /**
  * This check is to see if the selected booking id 
  * can be modified by checking if the date_ins and date_out 
@@ -477,9 +528,10 @@ router.post('/check', (req,res)=>{
  * @param  {[type]} res              [description]
  * @return true                Check passes
  */
+
 async function modifyCheck(requestedBooking,res){
                 let query = Queries.booking.isModifiable({
-                    booking_id: requestedBooking.booking_id
+                    transaction_id: requestedBooking.transaction_id
                 })
                 console.log(query)
                 let queryResults;
@@ -503,6 +555,7 @@ async function modifyCheck(requestedBooking,res){
             return true
 }
 
+/*
 async function modifyAvailabilityAndPriceCheck(requestedBooking, res){
     // Check if this booking is possible
     // TODO: Run another query to check if requestedBooking.booking_id and
@@ -567,6 +620,9 @@ async function modifyAvailabilityAndPriceCheck(requestedBooking, res){
 
     return true
 }
+*/
+
+/*
 
 //TODO: TBD, need to know how to edit this to fit new idea
 async function modifyMultipleBookingCheck(requestedBooking,res){
@@ -599,7 +655,9 @@ async function modifyMultipleBookingCheck(requestedBooking,res){
             }
             return true
 }
+*/
 
+/*
 async function modifySufficientRewardsCheck(requestedBooking,res){
     // check if user has enough rewards if user used rewards
     if( requestedBooking.rewards_applied > 0){
@@ -649,6 +707,7 @@ async function modifySufficientRewardsCheck(requestedBooking,res){
     }
     return true
 }
+*/
 
 /**
  * Checks that the requestedBooking doesnt conflict with existing bookings at other hotels
