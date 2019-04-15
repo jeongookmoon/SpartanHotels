@@ -115,7 +115,7 @@ function processLoadInstruction(csvLocation, script) {
     // console.log(shellResult)
 
     // Make modified copy of sql script with the correct csv file data location
-    let csvName = csvLocation.replace("./data/", "")
+    let csvName = path.basename(csvLocation)
     console.log(csvName)
 
     let modifiedScript = script.replace(csvLocation,
