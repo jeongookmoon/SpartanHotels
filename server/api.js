@@ -245,6 +245,8 @@ router.post('/checkcode', (req,res) => {
 //which row to update based user's email.
 router.post('/changepass', (req,res) => {
     console.log(req.body.email)
+    console.log(req.body.password)
+    console.log(req.body.comfirmpassword)
     if (req.body.password === req.body.confirmpassword) {
         bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
             let change_pass_query = mysql.format(Queries.user.changepass, [hash, req.body.email])
@@ -261,7 +263,12 @@ router.post('/changepass', (req,res) => {
         })
     }
     else {
+<<<<<<< HEAD
         res.status(400).send('Passwords do not match')
+=======
+        console.log('Query wrong!')
+        res.end('Passwords do not match')
+>>>>>>> 493448d... function done, need repuire pull
     }
 }) 
   

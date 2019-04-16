@@ -33,6 +33,7 @@ export const checkCodePost = temp_fields => {
 
 export const changePost = temp_fields => {
     return axios.post('/api/changepass', {
+        email: temp_fields.email,
         password: temp_fields.password,
         confirmpassword: temp_fields.repassword
     }).then(response => {
