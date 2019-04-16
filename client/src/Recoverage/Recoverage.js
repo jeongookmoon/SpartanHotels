@@ -52,7 +52,7 @@ class Recoverage extends Component {
     } 
     else{
         sendcodePost(email).then(response=>{
-            if(response === 200) 
+            if(response === "S1") 
             {
                 this.setState({
                     showError: false,

@@ -194,29 +194,27 @@ router.post('/recovery', (req,res) => {
     let emailSearch = mysql.format(Queries.user.searchEmail, [req.body.email])
     Queries.run(emailSearch).then((results) => {
         if (results == '') {
-            res.status(400).send('Email not registered')
+            res.end("F")
+            console.log('No database to update')
+
         }
         else {
             var sendRecoveryEmail = Email.email(recoveryEmailParams)
-            res.status(200).send('Recovery email sent')
+            let updateAccessCode = mysql.format(Queries.user.setAccessCode, [accessCode, req.body.email])
+            Queries.run(updateAccessCode).then((results) => {
+            console.log(results)
+            console.log('Access Code Updated')
+            res.end("S1")
+        },(error) => {
+            console.log('An Error has occurred')
+        })
         }
     },
     (error) => {
         console.log('Query failed')
         res.status(400).send(error)
     })
-    console.log(JSON.stringify(recoveryEmailParams))
-
-    //Query an UPDATE statement to update the access code into database.
-    let updateAccessCode = mysql.format(Queries.user.setAccessCode, [accessCode, req.body.email])
-    Queries.run(updateAccessCode).then((results) => {
-        console.log(results)
-        console.log('Access Code Updated')
-    },
-    (error) => {
-        console.log('An Error has occurred')
-        res.status(400).send(error)
-    })
+    // console.log(JSON.stringify(recoveryEmailParams))
     //res.end('Recovery Email Sent')
 })
 
@@ -229,8 +227,8 @@ router.post('/checkcode', (req,res) => {
         console.log(results)
         //res.status(200).send(results)
         console.log('This is the access code: '+ results[0].access_code.toString())
-        if (req.body.access_code == results[0].access_code.toString()) {
-            res.status(200).send('Code Accepted')
+        if (req.body.access_code === results[0].access_code.toString()) {
+            res.end("S")
         }
         else {
             res.status(400).send('Invalid Code')
@@ -252,7 +250,9 @@ router.post('/changepass', (req,res) => {
             let change_pass_query = mysql.format(Queries.user.changepass, [hash, req.body.email])
             Queries.run(change_pass_query).then((results) => {
                 console.log(results)
-                res.status(200).send('Password changed')
+                res.status(200).send(results)
+                console.log('Password Changed')
+                res.end("S")
             },
             (error) => {
                 console.log('An error as occurred')
@@ -263,8 +263,8 @@ router.post('/changepass', (req,res) => {
     else {
         res.status(400).send('Passwords do not match')
     }
-})
-    
+}) 
+  
 // Retrieves the user's total amount of rewards for checkout to check
 router.get('/rewards', authenticationMiddleware(), (req, res) =>{
     console.log(req.session.passport.user.user_id)
