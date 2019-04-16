@@ -4,6 +4,7 @@ const passport = require('../auth.js')
 var Queries = require('../queries')
 var mysql = require('mysql')
 var Email = require('./email.js')
+var userapi = require('../api.js')
 
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -15,7 +16,6 @@ const dateChecker = require("./_checks")
 
 const TAX_RATE = 10
 const CANCELLATION_CHARGE_RATE = 20
-
 
 //Make a reservation 
 router.post('/', (req, res)=>{
@@ -224,8 +224,12 @@ router.post('/', (req, res)=>{
 })
 
 router.get('/viewres', (req, res) => {
-    console.log(req.user.user_id)
+    if (typeof(req.user) == 'undefined') {
+        res.status(400).send('Not signed in')
+        return
+    }
     const userid = req.user.user_id
+    console.log(userid)
     let viewquery = mysql.format(Queries.booking.view, [userid])
 
     Queries.run(viewquery).then((results) => {

@@ -5,6 +5,7 @@ var Queries = require('./queries')
 var Email = require('./api/email.js')
 var mysql = require('mysql')
 var randomstring = require('randomstring')
+var reservationapi = require('./api/reservation.js')
 
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -146,12 +147,12 @@ router.get('/profile', authenticationMiddleware(), (req, res) =>{
 })
 
 //edit account information. Change name and password.
-router.post('/edit_account', (req, res) => {
+router.post('/edit_account', authenticationMiddleware(), (req, res) => {
     console.log(req.headers)
     if (req.body.password === req.body.confirmpassword) {
         bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
             const name = req.body.firstname + " " + req.body.lastname
-            let editq = mysql.format(Queries.user.edit, [name, hash, req.user.user_id])
+            let editq = mysql.format(Queries.user.edit, [name, hash, req.session.passport.user.user_id])
             Queries.run(editq).then((results) => {
                 console.log(results)
                 res.status(200).send(results)
