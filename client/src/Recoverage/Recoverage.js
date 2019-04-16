@@ -1,14 +1,10 @@
-import React, { Component, Fragment} from 'react';
-import axios from 'axios';
+import React, { Component} from 'react';
 import { withRouter } from 'react-router-dom'; 
 import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { sendcodePost } from '../Utility/RecoverageFunction';
 
-const title = {
-    pageTitle: 'Forget Password Reset'
-}
 
 let card ={
     width: '275px'
@@ -16,9 +12,9 @@ let card ={
    let container = {
     marginLeft: "45%"
    }
-   var topSectionStyle = {
-    marginTop:"10%",
-  };
+//    var topSectionStyle = {
+//     marginTop:"10%",
+//   };
 
 class Recoverage extends Component {
     constructor(props) {
@@ -60,8 +56,8 @@ class Recoverage extends Component {
                     showNullError: false,
                 },
                 () => {
-                    const whatever = { ... this.state}
-                    console.log('whatever', whatever)
+                    // const whatever = { ... this.state}
+                    // console.log('whatever', whatever)
                     this.props.history.push({
                         pathname: '/Accesscode',
                         state: email
@@ -117,9 +113,9 @@ class Recoverage extends Component {
     		marginTop:"6.5em",
 		};
 
-		var midSectionStyle = {
-			marginTop: "2em",
-		};
+		// var midSectionStyle = {
+		// 	marginTop: "2em",
+		// };
         return(
             <div style={container}>
             <div className="topheader" style={topSectionStyle}>
