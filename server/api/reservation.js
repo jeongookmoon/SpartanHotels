@@ -279,10 +279,20 @@ router.post('/modification', (req,res)=>{
             return
     }
     requestedBooking.cancellation_charge = req.body.cancellation_charge
+    if( typeof(req.body.transaction_id) == 'undefined' || !validator.isInt(req.body.transaction_id + '',{min:0})){
+        res.status(400).send("Invalid transaction_id")
+            return
+    }
+    let transaction_id = req.body.transaction_id
+    if( typeof(req.body.amount_due_from_user) == 'undefined' || !validator.isFloat(req.body.amount_due_from_user + '')){
+        res.status(400).send("Invalid amount_due_from_user")
+            return
+    }
+    requestedBooking.amount_due_from_user = req.body.amount_due_from_user
 
     // TODO: validation
     requestedBooking.stripe_id = req.body.stripe_id
-    let transaction_id = req.body.transaction_id
+    
     
     console.log(req.user)
 
@@ -324,9 +334,15 @@ router.post('/modification', (req,res)=>{
         if(!checkPassed){
             return
         }
-
-        console.log(amountDueFromUser)
         console.log(oldTransactionData)
+
+        let final_cancellation_charge = (oldTransactionData.cancellation_charge > requestedBooking.cancellation_charge) ? oldTransactionData.cancellation_charge : requestedBooking.cancellation_charge
+
+        console.log(`amountduefromuser ${amountDueFromUser}`)
+        console.log(`oldTransactionData ${oldTransactionData}`)
+        console.log(`oldTransactionData cancellation charge ${oldTransactionData.cancellation_charge }`)
+        console.log(`cancellation_charge ${final_cancellation_charge}`)
+        
 
         // issue refund or take payment? or check if stripe transaction valid ?
 
@@ -344,7 +360,7 @@ router.post('/modification', (req,res)=>{
         let insertNewRewardsGainedDataQuery;
 
         let queryToRemoveOldTRDataAndOldRewardData = mysql.format(Queries.modify.removeTransactionRoomDataAndRewardsForTransaction,transaction_id)
-        console.log(queryToRemoveOldTRDataAndOldRewardData)
+        console.log(`queryToRemoveOldTRDataAndOldRewardData ${queryToRemoveOldTRDataAndOldRewardData}`)
 
         if( requestedBooking.rewards_applied > 0){
             insertNewRewardsAppliedDataQuery = mysql.format(Queries.rewards.useOnBooking,[requestedBooking.user, transaction_id, (-1) * requestedBooking.rewards_applied])
@@ -358,7 +374,7 @@ router.post('/modification', (req,res)=>{
 
         updateTransactionTableQuery = mysql.format(Queries.modify.updateTransaction,
             [requestedBooking.total_price,
-             requestedBooking.cancellation_charge,
+             final_cancellation_charge,
              requestedBooking.date_in,
              requestedBooking.date_out,
              "booked",
@@ -369,57 +385,79 @@ router.post('/modification', (req,res)=>{
 
         let connection = Queries.connection
 
-        connection.beginTransaction(function(err) {
+        connection.beginTransaction( async function(err) {
             if (err) { throw err; }
-            connection.query(queryToRemoveOldTRDataAndOldRewardData, function (error, results, fields) {
-              if (error) {
-                return connection.rollback(function() {
-                  throw error;
-                });
-              }
-          
-              connection.query(insertNewRewardsAppliedDataQuery, function (error, results, fields) {
-                if (error) {
-                  return connection.rollback(function() {
-                    throw error;
-                  });
+
+                try{
+                if( typeof(queryToRemoveOldTRDataAndOldRewardData) != "undefined"){
+                    try{
+                        await Queries.run(queryToRemoveOldTRDataAndOldRewardData)
+                    } catch(error){
+                        // query failed for some reason
+                        console.log(error)
+                            throw error;
+                    }
                 }
-                connection.query(insertNewRewardsGainedDataQuery, function (error, results, fields){
-                    if (error) {
-                        return connection.rollback(function() {
-                          throw error;
-                        });
-                      }
-                      connection.query(insertNewTRDataQuery, function (error, results, fields){
-                        if (error) {
-                            return connection.rollback(function() {
-                              throw error;
-                            });
-                          }
-                          connection.query(updateTransactionTableQuery, function (error, results, fields){
-                            if (error) {
-                                return connection.rollback(function() {
-                                  throw error;
-                                });
-                              }
-                              connection.commit(function(err) {
-                                if (err) {
-                                  return connection.rollback(function() {
-                                    throw err;
-                                  });
-                                }
-                                console.log('success!');
-                              });
-                        })
-                    })
-                })
-              });
-            });
-          });
+                
+                if( typeof(insertNewRewardsAppliedDataQuery) != "undefined"){
+                    try{
+                        await Queries.run(insertNewRewardsAppliedDataQuery)
+                    } catch(error){
+                        // query failed for some reason
+                        console.log(error)
+                            throw error;
+                    }
+                }
 
+                if( typeof(insertNewRewardsGainedDataQuery) != "undefined"){
+                    try{
+                        await Queries.run(insertNewRewardsGainedDataQuery)
+                    } catch(error){
+                        // query failed for some reason
+                        console.log(error)
+                            throw error;
+                    }
+                }
+
+
+                if( typeof(insertNewTRDataQuery) != "undefined"){
+                    try{
+                        await Queries.run(insertNewTRDataQuery)
+                    } catch(error){
+                        // query failed for some reason
+                        console.log(error)
+                            throw error;
+                    }
+                }
+                
+
+                if( typeof(updateTransactionTableQuery) != "undefined"){
+                    try{
+                        await Queries.run(updateTransactionTableQuery)
+                    } catch(error){
+                        // query failed for some reason
+                        console.log(error)
+                            throw error;
+                    }
+                }
+
+
+                connection.commit(function(err) {
+                    if (err) {
+                        throw err;
+                    }
+                    console.log('success!');
+                    res.status(200).send("Transaction succeeded!")
+                });
+            }
+            catch(error){
+                console.log(error)
+                connection.rollback()
+                res.status(400).send("update transaction failed")
+            }
+            
+        })
     }
-
-
 })
 
 
@@ -837,19 +875,24 @@ async function paymentCheckOnModify(requestedBooking, transaction_id, res){
 
         // TODO: reward conversion rate
         let amountDueFromUser = requestedBooking.total_price - oldBookingData.amount_paid - requestedBooking.rewards_applied
-        console.log(amountDueFromUser)  
-        returnValue.amountDueFromUser = amountDueFromUser
+        console.log(`amountDueFromUser ${amountDueFromUser}`)  
+        returnValue.amountDueFromUser = amountDueFromUser.toFixed(2)
         
         if(amountDueFromUser > 0){
-            // check that total_price = amount_paid + rewards_applied
-            if( amountDueFromUser != requestedBooking.amount_paid){
-                res.status(400).send(`Amount due ${amountDueFromUser} doesnt match amount paid (including taking rewards and refunds into account) ${requestedBooking.amount_paid}`)
+            // check additional amount_paid 
+            if( amountDueFromUser != requestedBooking.amount_due_from_user){
+                res.status(400).send(`Amount due from user ${amountDueFromUser} doesnt match amount_due_from_user ${requestedBooking.amount_due_from_user}`)
                 return returnValue
             }
         }
         
     }
+    else{
+        res.status(400).send(`Guest not allowed in modify reservation`)
+        return returnValue    
+    }
     returnValue.checkFailed = false
+    console.log(returnValue)
     return returnValue
 }
 
