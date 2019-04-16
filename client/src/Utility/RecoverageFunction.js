@@ -4,11 +4,13 @@ export const sendcodePost = email_value => {
     return axios.post('/api/recovery',{
         email: email_value
     }).then(response => {
-        if(response.stastu === 200) {
+        if(response.data === "S1") {
+            console.log(response.data)
             localStorage.setItem('accesstoken', response.data)
         }
-        return response.status
+        return response.data
     }).catch(error => {
+        console.log(error.response.status)
         return error.response.status
     })
 }
@@ -19,12 +21,27 @@ export const checkCodePost = temp_fields => {
         access_code: temp_fields.access_code,
         email: temp_fields.email
     }).then(response => {
-        if(response.status === 200) {
+        if(response.data === "S") {
             localStorage.setItem('accesstoken', response.data)
         }
-        return response.status
+        return response.data
     }).catch(error => {
         //console.log(error.response.status)
-        return error.response.status
+        return error.response.data
+    })
+}
+
+export const changePost = temp_fields => {
+    return axios.post('/api/changepass', {
+        password: temp_fields.password,
+        confirmpassword: temp_fields.repassword
+    }).then(response => {
+        if(response.data === "S") {
+            localStorage.setItem('accesstoken', response.data)
+        }
+        return response.data
+    }).catch(error => {
+        //console.log(error.response.status)
+        return error.response.data
     })
 }

@@ -5,7 +5,7 @@ import ListItem from '@material-ui/core/ListItem';
 import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import { checkCodePost } from '../Utility/RecoverageFunction'
+import { checkCodePost, changePost } from '../Utility/RecoverageFunction'
 
 let card ={
   width: '275px'
@@ -97,9 +97,14 @@ class Accesscode extends Component {
       console.log('email:',temp_fields.email)
       console.log('code:', temp_fields.access_code)
       checkCodePost(temp_fields).then(response =>{
-        if (response === 200) {
-            const whatever = { ... this.state}
-            console.log('whatever', whatever)
+        if (response === "S") {
+            // const whatever = { ... this.state}
+            // console.log('whatever1', whatever)
+            alert("Code is valid, please set your new password!");
+        }
+        else {
+            alert("Code is invalid or expired. Please go back to get a new code!");
+            window.location.assign("/Recoverage")
         }
       })
     }
@@ -107,9 +112,10 @@ class Accesscode extends Component {
     reset = (event) => {
         // alert("Email sent!");
         event.preventDefault();
-        const { code } = this.state;
-        const { password } = this.state;
-        const { repassword } = this.state;
+        const temp_fields = {
+            password: this.state.fields.password,
+            repassword: this.props.location.repassword,
+          }
         // if (this.validate()) {
         //   const temp_fields = {
         //   code: this.state.fields.code,
@@ -128,8 +134,8 @@ class Accesscode extends Component {
         //     }
         //   })
         // }
-
-        if(code === '' || password==='' || repassword==='')
+        changePost(temp_fields.password).then(resopnse=>{
+            if(temp_fields.code === '' || temp_fields.password==='' || temp_fields.repassword==='')
         {
           this.setState({
             password_error: false,
@@ -142,6 +148,8 @@ class Accesscode extends Component {
         {
           // console.log('hello!');
         }
+        })
+        
     }
 
 
