@@ -1,129 +1,318 @@
 import React from 'react';
-import homeImage from './Images/homeImage2.jpg';
+import { withRouter } from 'react-router-dom'
+
+import 'react-dates/initialize';
+import { DateRangePicker } from 'react-dates';
+import 'react-dates/lib/css/_datepicker.css';
+import './CSS/react_dates_overrides.css'; //NEEDED in order to OVERRIDE css styling of _datepicker.css
+
+import { HotelSearchFunction, extractFromAddress } from '../Utility/HotelSearchFunction'
+import Autocomplete from "../Utility/Autocomplete";
+
+import homeImage from './Images/homeImage7.jpg';
+import {
+	Form, FormGroup
+} from 'reactstrap'
 
 var topSectionStyle = {
-    marginTop:"4.5em",
-  width:"100%",
-  backgroundRepeat:"no-repeat",
-  backgroundPosition: "center center",
-  backgroundSize:"cover",
-  backgroundImage: `url(${homeImage})`
+	width: "100%",
+	backgroundRepeat: "no-repeat",
+	backgroundSize: "cover",
+	backgroundPosition: "center center",
+	backgroundImage: `url(${homeImage})`,
 };
 
-function Home(props) {
-  return (
+class Home extends React.Component {
 
-  	<div className="home-container col-auto">
+	constructor() {
+		super();
+		this.state = {
+			fullAddress: '',
+			streetAddress: '',
+			city: '',
+			state: '',
+			latitude: '',
+			longitude: '',
+			date_in: null,
+			date_out: null,
+			adult: 0,
+			children: 0,
+			focusedInput: null,
+			guest_number: 0,
+			place: {}
+		};
 
-	  	<div className="top-section col-auto d-flex align-content-center justify-content-center flex-wrap" style={topSectionStyle}>
-	  	  		
+		this.handleChange = this.handleChange.bind(this);
+		this.search = this.search.bind(this);
+		this.adultIncrement = this.adultIncrement.bind(this);
+		this.adultDecrement = this.adultDecrement.bind(this);
+		this.childrenIncrement = this.childrenIncrement.bind(this);
+		this.childrenDecrement = this.childrenDecrement.bind(this);
+	}
 
-		  	<form>
-			{/*LOCATION*/} 
-		  		<div className="top-header d-flex justify-content-start">Plan your next trip </div>
-		  		
+	componentDidMount() {
+		const googleMap = new window.google.maps.Map(document.getElementById('map'), {
+			center: { lat: 37.3382082, lng: -121.88632860000001 },
+			zoom: 13
+		})
+		window.googleMap = googleMap
+	}
 
-		  	
+	handleChange(event) {
+		const target = event.target;
+		const value = target.type === 'checkbox' ? target.checked : target.value;
+		const name = target.name;
+		this.setState({
+			[name]: value
+		});
+	}
 
-		  		<div className="">
+	adultIncrement() {
+		// console.log("yay");
+		var value = parseInt(document.getElementById('adult').value, 10);
 
+		value++;
+		// console.log(value);
 
-		  			<div className="">
-		  			  <div className="input-group">
-		  			    <div className="input-group-prepend">
-		  			      <div className="location-input-icon input-group-text"><i className="fa fa-search"></i></div>
-		  			    </div>
-		  			    <input type="location" className="location-input form-control" placeholder="Where are you going?"></input>
-		  			  </div>
-		  			</div>
-		  		</div>
-
-		  	{/*INPUT DATE*/} 
-		  		<div className="d-inline-flex flex-fill  ">
-
-		  			<div className="form-group flex-fill">
-		  			    <div className="input-group date" id="datetimepicker4" data-target-input="nearest">
-		  			    	<div className="input-group-append" data-target="#datetimepicker4" data-toggle="datetimepicker">
-		  			            <div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
-		  			        </div>
-		  			        <input type="text" className="check-in-input form-control datetimepicker-input" data-target="#datetimepicker4" placeholder="Check In"/>
-		  			            
-		  			    </div>
-		  			</div>
-		  			<div className="form-group flex-fill">
-		  			    <div className="input-group date" id="datetimepicker5" data-target-input="nearest">
-		  			        <div className="input-group-append" data-target="#datetimepicker5" data-toggle="datetimepicker">
-		  			                <div className="check-out-icon input-group-text"><i className="fa fa-calendar"></i></div>
-		  			        </div>
-		  			        <input type="text" className="check-out-input form-control datetimepicker-input" data-target="#datetimepicker5" placeholder="Check Out"/>
-		  			           
-		  			    </div>
-		  			</div>
-		  		</div>
-
-		  	{/*GUESTS 
-
-		  		<div classNameName="form-inline d-flex justify-content-start">
-
-			  		<div className="input-group">
-			  		  <input type="text" className="form-control" aria-label="Text input with dropdown button"></input>
-			  		  <div className="input-group-append">
-			  		    <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</button>
-			  		    <div className="dropdown-menu">
-			  		      <a className="dropdown-item" href="#">Action</a>
-			  		      <a className="dropdown-item" href="#">Another action</a>
-			  		      <a className="dropdown-item" href="#">Something else here</a>
-			  		      <div role="separator" className="dropdown-divider"></div>
-			  		      <a className="dropdown-item" href="#">Separated link</a>
-			  		    </div>
-			  		  </div>
-			  		</div>
-		  		</div>
-		  		*/}
-
-		  		<div className="form-inline d-flex justify-content-start">
-					<input className="p-2 flex-grow-1 bd-highlight"></input>
-                 	<button className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Search</button>
-		  		</div>
+		document.getElementById('adult').value = value;
+		var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
 
 
-		  		
-		  		            
-		  		                
-		  		            
-		  		        
-{/*
-		  		<div className="form-inline d-flex justify-content-center">
-		  			<input></input>
-		  			<div className="form-group">
-		  			    <div className="input-group date" id="datetimepicker4" data-target-input="nearest">
-		  			        <input type="text" className="form-control datetimepicker-input" data-target="#datetimepicker4" placeholder="Check Out"/>
-		  			            <div className="input-group-append" data-target="#datetimepicker4" data-toggle="datetimepicker">
-		  			                <div className="input-group-text"><i className="fa fa-calendar"></i></div>
-		  			            </div>
-		  			    </div>
-		  			</div>
-		  		</div>
-*/}
-		  	</form>	
-		    
+		this.setState({
+			adult: value,
+			guest_number: guest_number
+
+		})
+
+	}
+
+	adultDecrement() {
+		// console.log("yay");
+		var value = parseInt(document.getElementById('adult').value, 10);
+
+		if (value !== 0) {
+			value--;
+		}
+		// console.log(value);
+
+		document.getElementById('adult').value = value;
+		var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
 
 
+		this.setState({
+			adult: value,
+			guest_number: guest_number
+		})
 
-	  	</div>
+	}
 
-	  	<div className="mid-section bg-light col-auto"> 	
-	  		
-	  	</div>
+	childrenIncrement() {
+		// console.log("yay");
+		var value = parseInt(document.getElementById('children').value, 10);
 
-	  	<div className="bottom-section bg-primary col-auto"> 	
-	  	c
-	  	</div>
+		value++;
+		// console.log(value);
 
-  	</div>
-  	  );
+		document.getElementById('children').value = value;
+		var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
 
 
+		this.setState({
+			children: value,
+			guest_number: guest_number
+
+		})
+
+	}
+
+	childrenDecrement() {
+		// console.log("yay");
+		var value = parseInt(document.getElementById('children').value, 10);
+
+		if (value !== 0) {
+			value--;
+		}
+		// console.log(value);
+
+
+		document.getElementById('children').value = value;
+		var guest_number = parseInt(document.getElementById('adult').value, 10) + parseInt(document.getElementById('children').value, 10)
+
+
+		this.setState({
+			children: value,
+			guest_number: guest_number
+		})
+
+	}
+
+	putGoogleMapMarker = (latitude, longitude) => {
+		window.googleMapMarker ? window.googleMapMarker.setPosition({ lat: parseFloat(latitude), lng: parseFloat(longitude) }) : window.googleMapMarker = new window.google.maps.Marker({
+			position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
+			map: window.googleMap
+		})
+	}
+
+	showPlaceDetails(place) {
+		let geoDetail = JSON.stringify(place.geometry.location, null, 2).replace(/['"]+/g, '')
+		const latitude = geoDetail.substring(geoDetail.lastIndexOf("lat:") + "lat: ".length, geoDetail.lastIndexOf(","))
+		const longitude = geoDetail.substring(geoDetail.lastIndexOf("lng:") + "lng: ".length, geoDetail.lastIndexOf("}"))
+
+		const fullAddress = JSON.stringify(place.formatted_address, null, 2).replace(/['"]+/g, '')
+
+		let address = JSON.stringify(place.adr_address, null, 2).replace(/['"]+/g, '')
+		address = address.replace(/(\r\n|\n|\r)/gm, "")
+
+		const streetAddress = extractFromAddress(address)
+		const city = extractFromAddress(address, 'city')
+		const state = extractFromAddress(address, 'state')
+
+		this.setState(
+			{
+				latitude, longitude,
+				fullAddress, streetAddress,
+				city, state, place
+			},
+			window.googleMap.setCenter(
+				new window.google.maps.LatLng(latitude, longitude)
+			)
+		)
+		this.putGoogleMapMarker(latitude, longitude)
+	}
+
+	search = (event) => {
+		event.preventDefault()
+
+		const temp_fields = {
+			streetAddress: this.state.streetAddress,
+			city: this.state.city,
+			state: this.state.state,
+			latitude: this.state.latitude,
+			longitude: this.state.longitude,
+			date_in: this.state.date_in.format('YYYY-MM-DD'),
+			date_out: this.state.date_out.format('YYYY-MM-DD'),
+			adult: this.state.adult,
+			children: this.state.children,
+			guest_number: this.state.guest_number,
+		}
+
+		HotelSearchFunction(temp_fields).then(response => {
+
+			let queryString = `latitude=${temp_fields.latitude}&longitude=${temp_fields.longitude}
+								&date_in=${temp_fields.date_in}&date_out=${temp_fields.date_out}
+								&adult=${this.state.adult}&children=${this.state.children}
+								&guest_number=${this.state.guest_number}&full_address=${this.state.fullAddress}
+								&city=${temp_fields.city}&street_address=${temp_fields.streetAddress}`
+
+			this.props.history.push({
+				pathname: `/HotelSearch`,
+				search: `?${queryString}`,
+			})
+		})
+	}
+
+	render() {
+		return (
+			<div className="col-lg-12 home-container col-auto" style={topSectionStyle}>
+				<div className="home-form-container col-lg-12">
+
+					
+
+					<Form className="home-form col-lg-12" onSubmit={this.search}>
+						
+						<div className="top-header ">
+							Plan your next trip
+		  				</div>
+
+		  				
+
+						<FormGroup className="form-inline home-form-inputs">
+							<div className="col-lg-1"></div>
+							<div className="col-lg-3 input-group home-location">
+								<div className="input-group-append">
+									<div className="location-input-icon input-group-text"><i className="fa fa-search"></i></div>
+								</div>
+								<Autocomplete onPlaceChanged={this.showPlaceDetails.bind(this)} />
+							</div>
+
+							<div className="col-lg-4 input-group home-date">
+								<div className="input-group-append">
+									<div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
+								</div>
+								<DateRangePicker
+									startDatePlaceholderText="Check-In"
+									startDate={this.state.date_in} // momentPropTypes.momentObj or null,
+									startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
+									endDatePlaceholderText="Check-Out"
+									endDate={this.state.date_out} // momentPropTypes.momentObj or null,
+									endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
+									onDatesChange={({ startDate, endDate }) => this.setState({ date_in: startDate, date_out: endDate })} // PropTypes.func.isRequired,
+									focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+									onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
+								/>
+							</div>
+
+
+							<div className=" col-lg-2 input-group menu-container">
+
+								<div className="col-lg-12 menu-item">
+									<div className={this.state.guest_number === 0 ? "home-guest-dropdown" : "home-guest-dropdown-filled"}>{this.state.guest_number === 0 ? null : this.state.guest_number}&nbsp;Guests</div>
+									<ul>
+										<li>
+											<div className="form-inline home-adults-container">
+												<div className="col-lg-3 home-adults">
+													Adults
+						                	</div>
+
+												<div className="col-lg-9 home-increments">
+													<i className="fa fa-minus home-guest-icon-increment" type="button" value="Decrement Value" onClick={this.adultDecrement}></i>
+													<input readOnly className="home-guest-input" name="adult" type="text" id="adult" value={this.state.adult} onChange={this.handleChange} />
+													<i className="fa fa-plus home-guest-icon-decrement" type="button" value="Increment Value" onClick={this.adultIncrement} />
+												</div>
+											</div>
+
+											<div className="form-inline home-children-container">
+												<div className="col-lg-3 home-children">
+													Children
+						                	</div>
+
+												<div className="col-lg-9 home-increments">
+													<i className="fa fa-minus home-guest-icon-increment" type="button" value="Decrement Value" onClick={this.childrenDecrement}></i>
+													<input readOnly className="home-guest-input" name="children" type="text" id="children" value={this.state.children} onChange={this.handleChange} />
+													<i className="fa fa-plus home-guest-icon-decrement" type="button" value="Increment Value" onClick={this.childrenIncrement} />
+												</div>
+											</div>
+
+										</li>
+									</ul>
+								</div>
+
+							</div>
+
+							<div className="col-lg-1 home-submit-button-container">
+								<button disabled={!this.state.city || !this.state.date_in || !this.state.date_out || this.state.guest_number === 0} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Search</button>
+							</div>
+
+						</FormGroup>
+					</Form>
+
+					<div className="col-lg-12 home-map-container row">
+
+						<div className="col-lg-3">
+						</div>
+						<div className="col-lg-6 home-map ">
+								<div className="" style={{width:580, height:350}} id="map"></div>
+						</div>
+						<div className="col-lg-3">
+						</div>
+
+					</div>
+				</div>
+				
+
+			</div>
+		);
+	}
 }
 
-export default Home;
+export default withRouter(Home);
