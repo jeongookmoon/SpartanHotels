@@ -222,9 +222,15 @@ router.post('/cancellation', (req,res)=>{
                                                         console.log(query5)
                                                         //Refund is the amount paid - cancellation charge
                                                         let refund = results[0].amount_paid - results[0].cancellation_charge
-                                                        res.status(200).send({message: "Booking cancelled & Rewards were refunded",
-                                                                              booking_id: req.body.booking_id,
-                                                                              amount_refunded: refund.toFixed(2)}) 
+                                                            if(results[0].status == 'booked') {
+                                                                res.status(200).send({message: "Booking cancelled & Rewards were refunded",
+                                                                                      transaction_id: req.body.transaction_id,
+                                                                                      amount_refunded: refund.toFixed(2)}) 
+                                                            }
+                                                            else {
+                                                                res.status(400).send("Cannot cancel transaction id: " + req.body.transaction_id + " because already cancelled")
+                                                            }
+
                                                         },
                                                         error5 => {
                                                             res.status(400).send(error5)
