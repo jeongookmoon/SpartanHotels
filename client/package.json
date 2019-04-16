@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^3.9.3",
     "axios": "^0.18.0",
+    "google-maps-react": "^2.0.2",
     "prop-types": "^15.7.2",
     "react": "^16.8.5",
     "react-axios": "^2.0.3",
@@ -12,7 +14,7 @@
     "react-dom": "^16.8.5",
     "react-number-format": "^4.0.7",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "2.1.5",
+    "react-scripts": "^2.1.8",
     "reactstrap": "^7.1.0"
   },
   "scripts": {
