@@ -761,7 +761,7 @@ async function sufficientRewardsCheck(requestedBooking,res){
             res.status(400).send("bad")
             return false
         }
-        let availableRewards = queryResults[0].sum
+        let availableRewards = queryResults[0].rewards
         console.log(`availableRewards is ${availableRewards}`)
         if(availableRewards < requestedBooking.rewards_applied){
             res.status(400).send("User doesn't have enough reward points")
