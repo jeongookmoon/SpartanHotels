@@ -238,7 +238,7 @@ router.get('/viewres', (req, res) => {
         console.log("Reservations viewed")
     },
     (error) => {
-        console.log("Can't get reservations")
+        res.status(400).send('Cannot retrieve reservations')
     })
 })
 

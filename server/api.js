@@ -155,18 +155,16 @@ router.post('/edit_account', authenticationMiddleware(), (req, res) => {
             let editq = mysql.format(Queries.user.edit, [name, hash, req.session.passport.user.user_id])
             Queries.run(editq).then((results) => {
                 console.log(results)
-                res.status(200).send(results)
-                console.log('Account updated')
-                res.end("Accounted Updated")
+                res.status(200).send('Account Updated')
             },
             (error) => {
                 console.log('An error as occurred')
-                res.end("Error in the query")
+                res.status(400).send(error)
             })
         })
     }
     else {
-        res.end('Passwords do not match')
+        res.status(400).send('Passwords do not match')
     }
 
 })
@@ -186,15 +184,16 @@ router.post('/recovery', (req,res) => {
     let emailSearch = mysql.format(Queries.user.searchEmail, [req.body.email])
     Queries.run(emailSearch).then((results) => {
         if (results == '') {
-            res.end('Email not registered. Please try again')
+            res.status(400).send('Email not registered')
         }
         else {
             var sendRecoveryEmail = Email.email(recoveryEmailParams)
-            res.end('Recovery Email Sent')
+            res.status(200).send('Recovery email sent')
         }
     },
     (error) => {
         console.log('Query failed')
+        res.status(400).send(error)
     })
     console.log(JSON.stringify(recoveryEmailParams))
 
@@ -202,11 +201,11 @@ router.post('/recovery', (req,res) => {
     let updateAccessCode = mysql.format(Queries.user.setAccessCode, [accessCode, req.body.email])
     Queries.run(updateAccessCode).then((results) => {
         console.log(results)
-        res.status(200).send(results)
         console.log('Access Code Updated')
     },
     (error) => {
         console.log('An Error has occurred')
+        res.status(400).send(error)
     })
     //res.end('Recovery Email Sent')
 })
@@ -221,14 +220,15 @@ router.post('/checkcode', (req,res) => {
         //res.status(200).send(results)
         console.log('This is the access code: '+ results[0].access_code.toString())
         if (req.body.access_code == results[0].access_code.toString()) {
-            res.end('Code Accepted')
+            res.status(200).send('Code Accepted')
         }
         else {
-            res.end('Invalid Code')
+            res.status(400).send('Invalid Code')
         }
     },
     (error) => {
         console.log('An Error has occurred')
+        res.status(400).send(error)
     })
     
 })
@@ -242,18 +242,16 @@ router.post('/changepass', (req,res) => {
             let change_pass_query = mysql.format(Queries.user.changepass, [hash, req.body.email])
             Queries.run(change_pass_query).then((results) => {
                 console.log(results)
-                res.status(200).send(results)
-                console.log('Password Changed')
-                res.end('Password Changed')
+                res.status(200).send('Password changed')
             },
             (error) => {
                 console.log('An error as occurred')
-                res.end("Error in the query")
+                res.status(400).send(error)
             })
         })
     }
     else {
-        res.end('Passwords do not match')
+        res.status(400).send('Passwords do not match')
     }
 })
 
