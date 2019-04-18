@@ -79,7 +79,7 @@ module.exports = {
         create: 'insert into spartanhotel.user (user_id,name,password,email) values (null,?,?,?)',
         session: 'select LAST_INSERT_ID() as user_id ',
         authenticate: 'select user_id, password from spartanhotel.user where email=?',
-        getAvailableRewards: 'SELECT sum(R.change) as reward FROM spartanhotel.reward R where user_id=? and date_active <= curdate();'
+        getAvailableRewards: 'SELECT sum(R.change) as rewards FROM spartanhotel.reward R where user_id=? and date_active <= curdate();'
     },
 
     hotel: {
