@@ -86,6 +86,7 @@ module.exports = {
         getAccessCode: 'SELECT access_code FROM user WHERE email = ?',
         setAccessCode: 'UPDATE user SET access_code = ? WHERE email = ?',
         getAvailableRewards: 'SELECT sum(R.change) as sum FROM spartanhotel.reward R where user_id=? and date_active <= curdate();'
+        getAvailableRewards: 'SELECT sum(R.change) as rewards FROM spartanhotel.reward R where user_id=? and date_active <= curdate();'
     },
 
     hotel: {
