@@ -3,7 +3,7 @@ import axios from 'axios'
 export const logoutClearSession = () => {
     return axios.get('/api/logout')
         .then(res => {
-            console.log(res)
+            // console.log(res)
         })
 }
 
@@ -38,6 +38,7 @@ export const loginPost = temp_fields => {
     }).catch(error => {
         // console.log("error message for login: " + error)
     })
+
 
 
 
