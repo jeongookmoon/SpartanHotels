@@ -130,16 +130,26 @@ router.get('/logout', authenticationMiddleware(), (req,res)=>{
     
 })
 
-// TODO: Update to v0.2
+// Updated to retrieve the new rewards for profile
 router.get('/profile', authenticationMiddleware(), (req, res) =>{
     console.log(req.session.passport.user.user_id)
     const profile = req.session.passport.user.user_id
     let q1 = mysql.format(Queries.user.profile, [profile])
 
     Queries.run(q1).then((results) => {
-        console.log(results)
-        res.status(200).send(results)
+        console.log(results[0])
         console.log("Profile can be viewed.")
+        let q2 = mysql.format(Queries.user.getAvailableRewards, [profile])
+        Queries.run(q2).then((results2) => {
+            console.log(results2[0])
+            
+            results[0].reward = results2[0].rewards
+            res.status(200).send(results[0])
+            console.log("Here are the user's rewards")
+        },
+        (error) => {
+            console.log("Cannot get user's rewards")
+        })
     },
     (error) => {
         console.log("Cannot access profile.")
@@ -253,6 +263,21 @@ router.post('/changepass', (req,res) => {
     else {
         res.status(400).send('Passwords do not match')
     }
+  
+// Retrieves the user's total amount of rewards for checkout to check
+router.get('/rewards', authenticationMiddleware(), (req, res) =>{
+    console.log(req.session.passport.user.user_id)
+    const profile = req.session.passport.user.user_id
+    let q1 = mysql.format(Queries.user.getAvailableRewards, [profile])
+
+    Queries.run(q1).then((results) => {
+        console.log(results[0])
+        res.status(200).send(results[0])
+        console.log("Here are the user's rewards")
+    },
+    (error) => {
+        console.log("Cannot get user's rewards")
+    })
 })
 
 //Function is used to allow certain users to access features
