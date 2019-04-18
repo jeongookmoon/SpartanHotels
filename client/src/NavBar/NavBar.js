@@ -125,7 +125,7 @@ class NavBar extends React.Component {
               {/*Error message for invalid login credentials (email or pw)*/}
               <div className="form-inline my-2 my-lg-0"><div className="text-warning">{this.state.loginerror}</div></div>
               <div className="input-group-prepend">
-                <div className="email-input input-group-text"><i className="far fa-user"></i></div>
+                <div className="email-icon input-group-text"><i className="far fa-user"></i></div>
               </div>
               <FormGroup>
                 <Input type="text" name="email" value={this.state.loginfields.email} onChange={this.updateFields} placeholder="Email" />
@@ -137,7 +137,7 @@ class NavBar extends React.Component {
           <div className="col-auto pl-0">
             <div className="input-group">
               <div className="input-group-prepend">
-                <div className="password-input input-group-text"><i className="fa fa-lock"></i></div>
+                <div className="password-icon input-group-text"><i className="fa fa-lock"></i></div>
               </div>
               <FormGroup>
                 <Input type="password" name="password" value={this.state.loginfields.password} onChange={this.updateFields} placeholder="********" />
@@ -167,8 +167,8 @@ class NavBar extends React.Component {
     )
 
     return (
-      <nav className="sticky-top navbar navbar-dark bg-light fixed-top">
-        {/*<nav className="sticky-top navbar navbar-dark bg-light fixed-top">*/}
+      <nav className= { this.props.location.pathname === "/" || this.props.location.pathname === "/HotelSearchh"  ? "sticky-top navbar navbar-home fixed-top" : "sticky-top navbar navbar-pages fixed-top" } >
+        {/*<nav className="sticky-top navbar navbar-home navbar-dark bg-light fixed-top">*/}
 
         {/*LEFT SIDE*/}
         <div className="navbar-left form-inline my-2 my-lg-0" >
