@@ -197,17 +197,22 @@ router.post('/', (req, res)=>{
 
 })
 
-// TODO: Check if it is valid and it works
+
 router.post('/cancellation', (req,res)=>{
     console.log(req.body);
     cancelReservation(req.body.transaction_id, req.user.user_id, res)
 })
 
-// TODO: Does not work
+
 router.post('/modification', (req,res)=>{
 
     // Check values
     console.log(req.body);
+
+    if( req.body.rooms.length == 0){
+        cancelReservation(req.body.transaction_id, req.user.user_id, res)
+        return
+    }
 
     if (! checks.date_checker(req.body, res)){
         return
