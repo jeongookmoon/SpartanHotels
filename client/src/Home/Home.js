@@ -11,8 +11,10 @@ import Autocomplete from "../Utility/Autocomplete";
 
 import homeImage from './Images/homeImage7.jpg';
 import {
-	Form, FormGroup
+	Form, FormGroup, CustomInput
 } from 'reactstrap'
+
+import { homeFilterData } from '../Utility/DataForMenu'
 
 var topSectionStyle = {
 	width: "100%",
@@ -39,7 +41,9 @@ class Home extends React.Component {
 			children: 0,
 			focusedInput: null,
 			guest_number: 0,
-			place: {}
+			place: {},
+			checkbox: {
+			}
 		};
 
 		this.handleChange = this.handleChange.bind(this);
@@ -48,6 +52,7 @@ class Home extends React.Component {
 		this.adultDecrement = this.adultDecrement.bind(this);
 		this.childrenIncrement = this.childrenIncrement.bind(this);
 		this.childrenDecrement = this.childrenDecrement.bind(this);
+		this.handleCheckBox = this.handleCheckBox.bind(this);
 	}
 
 	componentDidMount() {
@@ -65,6 +70,16 @@ class Home extends React.Component {
 		this.setState({
 			[name]: value
 		});
+	}
+
+	handleCheckBox(event) {
+		const name = event.target.name
+		this.setState(prevState => ({
+			checkbox: {
+				...prevState.checkbox,
+				[name]: !prevState.checkbox[name]
+			}
+		}))
 	}
 
 	adultIncrement() {
@@ -183,6 +198,11 @@ class Home extends React.Component {
 	search = (event) => {
 		event.preventDefault()
 
+		// convert true props of checkbox into array and join the array into a string
+		const keys = Object.keys(this.state.checkbox)
+		const filteredElements = keys.filter( (key) => this.state.checkbox[key] === true)
+
+
 		const temp_fields = {
 			streetAddress: this.state.streetAddress,
 			city: this.state.city,
@@ -202,7 +222,8 @@ class Home extends React.Component {
 								&date_in=${temp_fields.date_in}&date_out=${temp_fields.date_out}
 								&adult=${this.state.adult}&children=${this.state.children}
 								&guest_number=${this.state.guest_number}&full_address=${this.state.fullAddress}
-								&city=${temp_fields.city}&street_address=${temp_fields.streetAddress}`
+								&city=${temp_fields.city}&street_address=${temp_fields.streetAddress}
+								&amenities=${filteredElements}`
 
 			this.props.history.push({
 				pathname: `/HotelSearch`,
@@ -216,15 +237,15 @@ class Home extends React.Component {
 			<div className="col-lg-12 home-container col-auto" style={topSectionStyle}>
 				<div className="home-form-container col-lg-12">
 
-					
+
 
 					<Form className="home-form col-lg-12" onSubmit={this.search}>
-						
+
 						<div className="top-header ">
 							Plan your next trip
 		  				</div>
 
-		  				
+
 
 						<FormGroup className="form-inline home-form-inputs">
 							<div className="col-lg-1"></div>
@@ -253,7 +274,7 @@ class Home extends React.Component {
 							</div>
 
 
-							<div className=" col-lg-2 input-group menu-container">
+							<div className=" col-lg-1 input-group menu-container">
 
 								<div className="col-lg-12 menu-item">
 									<div className={this.state.guest_number === 0 ? "home-guest-dropdown" : "home-guest-dropdown-filled"}>{this.state.guest_number === 0 ? null : this.state.guest_number}&nbsp;Guests</div>
@@ -292,6 +313,13 @@ class Home extends React.Component {
 							<div className="col-lg-1 home-submit-button-container">
 								<button disabled={!this.state.city || !this.state.date_in || !this.state.date_out || this.state.guest_number === 0} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Search</button>
 							</div>
+							<div className="col-lg-1">
+								<div className="form-checkboxes">
+									{homeFilterData.map((each, key) => {
+										return <CustomInput type="checkbox" key={key} id={key + 123} name={each.name} label={each.label} value={each.value} onChange={this.handleCheckBox} />
+									})}
+								</div>
+							</div>
 
 						</FormGroup>
 					</Form>
@@ -301,16 +329,16 @@ class Home extends React.Component {
 						<div className="col-lg-3">
 						</div>
 						<div className="col-lg-6 home-map ">
-								<div className="" style={{width:580, height:350}} id="map"></div>
+							<div className="" style={{ width: 580, height: 350 }} id="map"></div>
 						</div>
 						<div className="col-lg-3">
 						</div>
 
 					</div>
 				</div>
-				
 
-			</div>
+
+			</div >
 		);
 	}
 }
