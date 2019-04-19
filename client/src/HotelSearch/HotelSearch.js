@@ -152,15 +152,7 @@ class HotelSearch extends React.Component {
 		window.infoWindow = infoWindow
 		window.markers = []
 		this.state.hotels.results.forEach((eachHotel, index) => {
-
-			let arraychecker = eachHotel.images.split(",")
-			let imageURL = ''
-			if (eachHotel.images && arraychecker.constructor === Array) {
-				imageURL = arraychecker[0]
-			} else {
-				imageURL = eachHotel.images
-			}
-
+			const imageURL = this.getHotelSearchResultImages(eachHotel.images)
 			const hotelInfo = `<h5 style="text-align:center;">${eachHotel.name}</h5>
 											 <img src=${imageURL} style="width: 50%; height: 50%"/>
 											 <p>${eachHotel.address}</p>
@@ -361,6 +353,15 @@ class HotelSearch extends React.Component {
 		setTimeout(() => { window.markers[index].setAnimation() }, 750);
 	}
 
+	getHotelSearchResultImages(images) {
+		let arraychecker = []
+		if (images && images.constructor === Array) {
+			arraychecker = images.split(",")
+			return arraychecker[0]
+		} 
+		return images
+	}
+
 	render() {
 		if (this.state.hotels.results === undefined) {
 			return <div> Loading...</div>
@@ -462,17 +463,8 @@ class HotelSearch extends React.Component {
 			<Table hover borderless>
 				<tbody>
 					{this.state.hotels.results.map((eachHotelResult, index) => {
-
-						let arraychecker = eachHotelResult.images.split(",")
-						let imageURL = ''
-						if (eachHotelResult.images && arraychecker.constructor === Array) {
-							imageURL = arraychecker[0]
-						} else {
-							imageURL = eachHotelResult.images
-						}
-
+						const imageURL = this.getHotelSearchResultImages(eachHotelResult.images)
 						return (
-
 							<tr key={index} className="hotel-search-row shadow-sm p-3 mb-5" tag="a" onClick={this.roomSearch(eachHotelResult)} onMouseEnter={() => this.moveMap(eachHotelResult.latitude, eachHotelResult.longitude, index)} style={{ cursor: "pointer" }}>
 								<td className="col-lg-6">
 									<img className="hotel-search-item-image" src={imageURL} alt="logo" />
