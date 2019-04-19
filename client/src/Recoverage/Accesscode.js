@@ -148,8 +148,8 @@ class Accesscode extends Component {
         // }
         else{
         changePost(temp_fields).then(resopnse=>{
-          
-          
+          alert("Reset password successfully! Please login again")
+          window.location.assign("/")
           
         })}
         

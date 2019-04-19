@@ -62,7 +62,8 @@ class Recoverage extends Component {
                         pathname: '/Accesscode',
                         state: email
                     });
-                })
+                }
+                )
             }
             else{
                 this.setState({
