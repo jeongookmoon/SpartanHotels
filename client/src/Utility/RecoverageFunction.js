@@ -6,7 +6,7 @@ export const sendcodePost = email_value => {
     }).then(response => {
         if(response.data === "S1") {
             console.log(response.data)
-            localStorage.setItem('accesstoken', response.data)
+            localStorage.setItem('1',response.data)
         }
         return response.data
     }).catch(error => {
@@ -22,7 +22,7 @@ export const checkCodePost = temp_fields => {
         email: temp_fields.email
     }).then(response => {
         if(response.data === "S") {
-            localStorage.setItem('accesstoken', response.data)
+            localStorage.setItem('1',response.data)
         }
         return response.data
     }).catch(error => {
@@ -38,7 +38,7 @@ export const changePost = temp_fields => {
         confirmpassword: temp_fields.repassword
     }).then(response => {
         if(response.data === "S") {
-            localStorage.setItem('accesstoken', response.data)
+            localStorage.setItem(response.data)
         }
         return response.data
     }).catch(error => {
