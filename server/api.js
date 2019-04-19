@@ -263,12 +263,8 @@ router.post('/changepass', (req,res) => {
         })
     }
     else {
-<<<<<<< HEAD
-        res.status(400).send('Passwords do not match')
-=======
         console.log('Query wrong!')
         res.end('Passwords do not match')
->>>>>>> 493448d... function done, need repuire pull
     }
 }) 
   
