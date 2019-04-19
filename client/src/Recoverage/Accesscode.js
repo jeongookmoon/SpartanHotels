@@ -6,9 +6,9 @@ import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { checkCodePost, changePost } from '../Utility/RecoverageFunction'
-import {
-    UncontrolledPopover, PopoverHeader, PopoverBody,
-  } from 'reactstrap'
+// import {
+//     UncontrolledPopover, PopoverHeader, PopoverBody,
+//   } from 'reactstrap'
 
 let card ={
   width: '275px'
@@ -158,18 +158,18 @@ class Accesscode extends Component {
 
     render(){
 
-        const password_error = (
-            <div className="text-warning">{this.state.password_error.map((each) => <div>{each}</div>
-            )}</div>
-        )
+        // const password_error = (
+        //     <div className="text-warning">{this.state.password_error.map((each) => <div>{each}</div>
+        //     )}</div>
+        // )
     
-        const no_error = (
-            <div className="text-warning"></div>
-        )
+        // const no_error = (
+        //     <div className="text-warning"></div>
+        // )
     
-        var password_requirements_component = this.state.passwordCheck.map(ele=>{
-            return <div key={ele.req} className= { ele.valid ? "valid-req" : "invalid-req" }>{ele.req}</div>
-        }) 
+        // var password_requirements_component = this.state.passwordCheck.map(ele=>{
+        //     return <div key={ele.req} className= { ele.valid ? "valid-req" : "invalid-req" }>{ele.req}</div>
+        // }) 
     
 
         return(
