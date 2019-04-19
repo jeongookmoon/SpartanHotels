@@ -58,7 +58,7 @@ class Home extends React.Component {
 	componentDidMount() {
 		const googleMap = new window.google.maps.Map(document.getElementById('map'), {
 			center: { lat: 37.3382082, lng: -121.88632860000001 },
-			zoom: 13
+			zoom: 14
 		})
 		window.googleMap = googleMap
 	}
