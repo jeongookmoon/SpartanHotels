@@ -24,7 +24,7 @@ ignore 1 rows
 set email=@email, name=@name
 ;
 
-load data infile "./data/Hotels_v0.2.csv" into table hotel
+load data infile "./data/v0.3/Hotels_v0.3.csv" into table hotel
 character set utf8mb4 
 fields terminated by "," enclosed by '"' 
 lines terminated by "\r\n" 
