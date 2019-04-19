@@ -34,13 +34,16 @@ class Accesscode extends Component {
             error: {
 
             },
-            password_error: [],
+            // password_error: [],
+            // repassword_error: [],
+            // showNullError: false,
+            // code_error: false,
             passwordCheck: [{req:"≥ 8 characters", valid:false},
             {req:"At least 1 uppercase letter", valid:false},
             {req:"At least 1 lowercase letter", valid:false},
             {req:"At least 1 special character !@#$%^&*",valid:false}]
         };
-        // this.passwordChecker = this.passwordChecker.bind(this);
+        this.passwordChecker = this.passwordChecker.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
 
@@ -55,41 +58,42 @@ class Accesscode extends Component {
           }}),
           // () => console.log("after  update", this.state.fields.password)
           )
+      this.passwordChecker()
      }
 
-    // passwordChecker(){
-    //     let pw = this.state.fields.password;
-    //     let tmp_passwordCheck = this.state.passwordCheck
+    passwordChecker(){
+        let pw = this.state.fields.password;
+        let tmp_passwordCheck = this.state.passwordCheck
     
-    //     // req:"≥ 8 characters"
-    //     tmp_passwordCheck[0].valid = (pw.length >= 8) ? true : false
+        // req:"≥ 8 characters"
+        tmp_passwordCheck[0].valid = (pw.length >= 8) ? true : false
         
-    //     // At least 1 Uppercase letter
-    //     if( /(?=.*[A-Z])/.test(pw)){
-    //       tmp_passwordCheck[1].valid = true
-    //     }
-    //     else{
-    //       tmp_passwordCheck[1].valid = false
-    //     }
+        // At least 1 Uppercase letter
+        if( /(?=.*[A-Z])/.test(pw)){
+          tmp_passwordCheck[1].valid = true
+        }
+        else{
+          tmp_passwordCheck[1].valid = false
+        }
     
-    //     // At least 1 Lowercase letter
-    //     if( /(?=.*[a-z])/.test(pw)){
-    //       tmp_passwordCheck[2].valid = true
-    //     }
-    //     else{
-    //       tmp_passwordCheck[2].valid = false
-    //     }
+        // At least 1 Lowercase letter
+        if( /(?=.*[a-z])/.test(pw)){
+          tmp_passwordCheck[2].valid = true
+        }
+        else{
+          tmp_passwordCheck[2].valid = false
+        }
     
-    //     // At least 1 special character !@#$%^&*
-    //     if( /(?=.*[!@#$%^&*])/.test(pw)){
-    //       tmp_passwordCheck[3].valid = true
-    //     }
-    //     else{
-    //       tmp_passwordCheck[3].valid = false
-    //     }
+        // At least 1 special character !@#$%^&*
+        if( /(?=.*[!@#$%^&*])/.test(pw)){
+          tmp_passwordCheck[3].valid = true
+        }
+        else{
+          tmp_passwordCheck[3].valid = false
+        }
     
-    //     this.setState({ passwordCheck: tmp_passwordCheck});
-    //   }
+        this.setState({ passwordCheck: tmp_passwordCheck});
+      }
 
     checkCode = (e) => {
       e.preventDefault();
@@ -122,12 +126,11 @@ class Accesscode extends Component {
           }
           if(temp_fields.code === '' || temp_fields.password==='' || temp_fields.repassword==='')
           {
-          this.setState({
-            password_error: false,
-            code_error: false,
-            showNullError: true,
-          })
-        }
+            alert("The field code, password, and repassword can't be empty!")
+          } else if(temp_fields.repassword !== temp_fields.password)
+          {
+            alert("Repassword is not match to password!")
+          }
         // if (this.validate()) {
         //   const temp_fields = {
         //   code: this.state.fields.code,
@@ -236,7 +239,14 @@ class Accesscode extends Component {
                           <div>
                             <p>The code is invalid. Please check again.</p>
                           </div>
-                        )} */}
+                        )}
+                        {
+                          repassword_error && (
+                            <div>
+                              <p>The repassword is not match to password!</p>
+                            </div>
+                          )
+                        } */}
                   </CardContent>
                 </Card>
             </div>
