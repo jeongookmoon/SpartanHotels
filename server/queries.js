@@ -79,6 +79,12 @@ module.exports = {
         create: 'insert into spartanhotel.user (user_id,name,password,email) values (null,?,?,?)',
         session: 'select LAST_INSERT_ID() as user_id ',
         authenticate: 'select user_id, password from spartanhotel.user where email=?',
+        edit: 'UPDATE user SET name=?, password=? WHERE user_id=?',
+        changepass: 'UPDATE user SET password = ? WHERE email = ?',
+        searchEmail: 'SELECT * FROM user WHERE email = ?',
+        getEmailwithID: 'SELECT email FROM user WHERE user_id = ?',
+        getAccessCode: 'SELECT access_code FROM user WHERE email = ?',
+        setAccessCode: 'UPDATE user SET access_code = ? WHERE email = ?',
         getAvailableRewards: 'SELECT sum(R.change) as rewards FROM spartanhotel.reward R where user_id=? and date_active <= curdate();'
     },
 
@@ -472,6 +478,16 @@ module.exports = {
 
 
     booking: {
+
+    book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, guest_id, room_id, total_price, cancellation_charge, date_in, date_out, status, amount_paid) values (null, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    cancel: 'UPDATE booking SET status="cancelled" WHERE booking_id=?',
+    modify: 'UPDATE booking SET room_id=?, date_in=?, date_out=? WHERE booking_id=?',
+    view: `SELECT transaction.*, room.*, hotel.name, hotel.phone_number, hotel.address, hotel.city, hotel.state, hotel.country, hotel.zipcode FROM transaction 
+    INNER JOIN transaction_room ON transaction.transaction_id = transaction_room.transaction_id 
+    INNER JOIN room ON transaction_room.room_id = room.room_id
+    INNER JOIN hotel ON room.hotel_id = hotel.hotel_id 
+    WHERE transaction.user_id = ?`,
+
       /**
        * 
        * @returns placeholder query to insert into transaction table
@@ -540,6 +556,7 @@ module.exports = {
 
       return mysql.format(query, [transaction_id, room_id])
     },
+
 
     /**
      * 
