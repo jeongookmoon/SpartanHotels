@@ -2,7 +2,10 @@ var express = require('express');
 var router = express.Router();
 const passport = require('./auth.js')
 var Queries = require('./queries')
+var Email = require('./api/email.js')
 var mysql = require('mysql')
+var randomstring = require('randomstring')
+var reservationapi = require('./api/reservation.js')
 
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -32,6 +35,16 @@ router.post('/register', (req,res)=>{
                  res.sendStatus(200).end("Login Successful")
                  });
             //res.status(200).send(results)
+
+            //Send an email to registered user.
+            console.log('wtf')
+            var registerEmailParams = {}
+            registerEmailParams.to = req.body.email
+            registerEmailParams.subject = 'Welcome to Spartan Hotels!'
+            registerEmailParams.text = 'Thank you for registering an account to Spartan Hotels! Start booking reservations now!'
+            var sendRegisterEmail = Email.email(registerEmailParams)
+            console.log(registerEmailParams)
+            res.end()
         },
         (error) => {
           console.log("User could not be created.")
@@ -43,7 +56,7 @@ router.post('/register', (req,res)=>{
             res.end()
           }
 
-        res.end()
+        
         return
 
         })
@@ -143,6 +156,114 @@ router.get('/profile', authenticationMiddleware(), (req, res) =>{
     })
 })
 
+//edit account information. Change name and password.
+router.post('/edit_account', authenticationMiddleware(), (req, res) => {
+    console.log(req.headers)
+    if (req.body.password === req.body.confirmpassword) {
+        bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+            const name = req.body.firstname + " " + req.body.lastname
+            let editq = mysql.format(Queries.user.edit, [name, hash, req.session.passport.user.user_id])
+            Queries.run(editq).then((results) => {
+                console.log(results)
+                res.status(200).send('Account Updated')
+            },
+            (error) => {
+                console.log('An error as occurred')
+                res.status(400).send(error)
+            })
+        })
+    }
+    else {
+        res.status(400).send('Passwords do not match')
+    }
+
+})
+
+//Initiate password recovery
+router.post('/recovery', (req,res) => {
+    console.log(req.body.email)
+    
+    //Send an email generating a random string that contains the access code.
+    var recoveryEmailParams = {};
+    var accessCode = randomstring.generate(7);
+    recoveryEmailParams.to = req.body.email
+    recoveryEmailParams.subject = 'Password Recovery'
+    recoveryEmailParams.text = 'Put in this access code to change your password: ' + accessCode;
+
+    //Search if the email exists
+    let emailSearch = mysql.format(Queries.user.searchEmail, [req.body.email])
+    Queries.run(emailSearch).then((results) => {
+        if (results == '') {
+            res.status(400).send('Email not registered')
+        }
+        else {
+            var sendRecoveryEmail = Email.email(recoveryEmailParams)
+            res.status(200).send('Recovery email sent')
+        }
+    },
+    (error) => {
+        console.log('Query failed')
+        res.status(400).send(error)
+    })
+    console.log(JSON.stringify(recoveryEmailParams))
+
+    //Query an UPDATE statement to update the access code into database.
+    let updateAccessCode = mysql.format(Queries.user.setAccessCode, [accessCode, req.body.email])
+    Queries.run(updateAccessCode).then((results) => {
+        console.log(results)
+        console.log('Access Code Updated')
+    },
+    (error) => {
+        console.log('An Error has occurred')
+        res.status(400).send(error)
+    })
+    //res.end('Recovery Email Sent')
+})
+
+
+//User puts in access code.
+router.post('/checkcode', (req,res) => {
+    console.log(req.body.access_code)
+    let getCodeQuery = mysql.format(Queries.user.getAccessCode, [req.body.email])
+    Queries.run(getCodeQuery).then((results) => {
+        console.log(results)
+        //res.status(200).send(results)
+        console.log('This is the access code: '+ results[0].access_code.toString())
+        if (req.body.access_code == results[0].access_code.toString()) {
+            res.status(200).send('Code Accepted')
+        }
+        else {
+            res.status(400).send('Invalid Code')
+        }
+    },
+    (error) => {
+        console.log('An Error has occurred')
+        res.status(400).send(error)
+    })
+    
+})
+
+//Different logic for editing account. This request gets sent after user enters their access code and needs to change their password. System knows
+//which row to update based user's email.
+router.post('/changepass', (req,res) => {
+    console.log(req.body.email)
+    if (req.body.password === req.body.confirmpassword) {
+        bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+            let change_pass_query = mysql.format(Queries.user.changepass, [hash, req.body.email])
+            Queries.run(change_pass_query).then((results) => {
+                console.log(results)
+                res.status(200).send('Password changed')
+            },
+            (error) => {
+                console.log('An error as occurred')
+                res.status(400).send(error)
+            })
+        })
+    }
+    else {
+        res.status(400).send('Passwords do not match')
+    }
+  
 // Retrieves the user's total amount of rewards for checkout to check
 router.get('/rewards', authenticationMiddleware(), (req, res) =>{
     console.log(req.session.passport.user.user_id)
