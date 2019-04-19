@@ -183,13 +183,17 @@ module.exports = {
             // WHERE/FILTER CLAUSE
             // TODO: filter by distance
             if (typeof params.amenities !== 'undefined'){
-              let amenities = JSON.parse(decodeURIComponent(params.amenities))
-              for(var i=0;i< amenities.length;i++){
+              const amenities = params.amenities
+              const isAmenitiesArray = amenities.split(",")
+              if(isAmenitiesArray && isAmenitiesArray.constructor === Array) {
+                isAmenitiesArray.forEach((eachAmenity) => {
+                  conditions.push(" amenities like ? ")
+                  values.push("%" + eachAmenity + "%")
+                })
+              } else {
                 conditions.push(" amenities like ? ");
-                values.push("%" + amenities[i] + "%");
+                values.push("%" + amenities + "%");
               }
-
-
             }
 
             if (typeof params.rating !== 'undefined'){
@@ -236,8 +240,16 @@ module.exports = {
                 case("price_des"):
                   sortByClause = " order by min_price desc ";
                   break
+                case("distance_asc"):
+                  if(typeof params.latitude !== 'undefined' && params.latitude !== '' && typeof params.longitude !== 'undefined' && params.longitude !== '')
+                  sortByClause = ` order by (POW((${params.latitude}-latitude),2) + POW((${params.longitude}-longitude),2)) asc`;
+                  break
+                case("distance_des"):
+                  if(typeof params.latitude !== 'undefined' && params.latitude !== '' && typeof params.longitude !== 'undefined' && params.longitude !== '')
+                  sortByClause = ` order by (POW((${params.latitude}-latitude),2) + POW((${params.longitude}-longitude),2)) desc`;
+                  break
                 default:
-                  sortByClause = " order by name "
+                  sortByClause = ` order by (POW((${params.latitude}-latitude),2) + POW((${params.longitude}-longitude),2)) asc`;
               }
             }
         

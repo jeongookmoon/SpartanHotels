@@ -16,6 +16,10 @@ import { DateRangePicker } from 'react-dates'
 import 'react-dates/lib/css/_datepicker.css'
 import moment from 'moment'
 
+import mapMarkerDefault from './Images/mapMarkerDefault.png'
+import mapMarkerActive from './Images/mapMarkerActive.png'
+import { sortByDropDownData } from '../Utility/DataForMenu'
+
 class HotelSearch extends React.Component {
 
 	constructor(props) {
@@ -54,6 +58,7 @@ class HotelSearch extends React.Component {
 			focusedInput: null,
 			place: {},
 		};
+
 
 		this.roomSearch = this.roomSearch.bind(this)
 		this.handleChange = this.handleChange.bind(this)
@@ -126,7 +131,7 @@ class HotelSearch extends React.Component {
 		const latitude = parseFloat(params.get('latitude'))
 		const longitude = parseFloat(params.get('longitude'))
 
-		let googleMap = new window.google.maps.Map(document.getElementById('map'), {
+		const googleMap = new window.google.maps.Map(document.getElementById('map'), {
 			center: { lat: latitude, lng: longitude },
 			zoom: 14
 		});
@@ -141,36 +146,47 @@ class HotelSearch extends React.Component {
 		// 		alert('Geocode was not successful for the following reason: ' + status);
 		// 	}
 		// });
-
+		window.googleMap = googleMap
 		// display each hotel's information window when clicking the marker	
-		let infoWindow = new window.google.maps.InfoWindow()
-
+		const infoWindow = new window.google.maps.InfoWindow()
+		window.infoWindow = infoWindow
+		window.markers = []
 		this.state.hotels.results.forEach((eachHotel, index) => {
 
+			let arraychecker = eachHotel.images.split(",")
 			let imageURL = ''
-			if (eachHotel.images && eachHotel.images.constructor === Array) {
-				imageURL = eachHotel.images.split(",")[0]
+			if (eachHotel.images && arraychecker.constructor === Array) {
+				imageURL = arraychecker[0]
 			} else {
 				imageURL = eachHotel.images
 			}
 
-			let hotelInfo = `<img src=${imageURL} style="width: 50%; height: 50%"/>
-											 <h6 style="text-align:center;">${eachHotel.name}</h6>
+			const hotelInfo = `<h5 style="text-align:center;">${eachHotel.name}</h5>
+											 <img src=${imageURL} style="width: 50%; height: 50%"/>
 											 <p>${eachHotel.address}</p>
-											 <p>$${eachHotel.min_price} ~ ${eachHotel.max_price}/per night</p>`
+											 <p style="text: bold">$${eachHotel.min_price} ~ ${eachHotel.max_price}/per night</p>`
 
 			// display each hotel's marker along with index number
-			let marker = new window.google.maps.Marker({
+			const googleMapMarker = new window.google.maps.Marker({
 				position: { lat: parseFloat(eachHotel.latitude), lng: parseFloat(eachHotel.longitude) },
-				map: googleMap,
+				map: window.googleMap,
 				label: (index + 1).toString(),
-				title: eachHotel.name
+				title: eachHotel.name,
+				icon: mapMarkerDefault
 			})
 
+			window.markers.push(googleMapMarker)
+
 			// action listener to open information window when clicking marker
-			marker.addListener('click', function () {
-				infoWindow.setContent(hotelInfo)
-				infoWindow.open(googleMap, marker);
+			googleMapMarker.addListener('click', () => {
+				var center = new window.google.maps.LatLng(eachHotel.latitude, eachHotel.longitude);
+				window.googleMap.panTo(center);
+				window.markers.forEach((eachMarker) => eachMarker.setIcon(mapMarkerDefault))
+				window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
+				window.markers[index].setIcon(mapMarkerActive)
+				setTimeout(() => { window.markers[index].setAnimation() }, 750);
+				window.infoWindow.setContent(hotelInfo)
+				window.infoWindow.open(window.googleMap, googleMapMarker);
 			});
 		})
 	}
@@ -318,7 +334,7 @@ class HotelSearch extends React.Component {
 		let pageNumbers = []
 		const params = new URLSearchParams(this.props.location.search)
 		let pageNumber = parseInt(params.get('pageNumber'))
-		if(!pageNumber) {
+		if (!pageNumber) {
 			pageNumber = 0;
 		}
 		let activeFlag = false
@@ -334,6 +350,15 @@ class HotelSearch extends React.Component {
 			}
 		}
 		return pageNumbers
+	}
+
+	moveMap(lat, lng, index) {
+		var center = new window.google.maps.LatLng(lat, lng);
+		window.googleMap.panTo(center);
+		window.markers.forEach((eachMarker) => eachMarker.setIcon(mapMarkerDefault))
+		window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
+		window.markers[index].setIcon(mapMarkerActive)
+		setTimeout(() => { window.markers[index].setAnimation() }, 750);
 	}
 
 	render() {
@@ -418,7 +443,7 @@ class HotelSearch extends React.Component {
 
 		const pagination = (
 			<div className="hotel-search-pagination">
-				<Pagination aria-label="Page navigation example">
+				<Pagination>
 					{this.generatePageNumbers()}
 				</Pagination>
 			</div>
@@ -427,13 +452,70 @@ class HotelSearch extends React.Component {
 		const sortByDropdown = (
 			<select name="sortBy" onChange={this.getHotelSearchResult} value={this.state.sortBy}>
 				<option value="" disabled hidden >Sort By</option>
-				<option value="price_asc" label="Prce(Low to High)"></option>
-				<option value="price_des" label="Prce(High to Low)"></option>
-				<option value="name_asc" label="Name(A to Z)"></option>
-				<option value="name_des" label="Name(Z to A)"></option>
+				{sortByDropDownData.map((each, key) => {
+            return <option key={key} value={each.value} label={each.label}></option>
+          })}
 			</select>
 		)
 
+		const HotelTable = (
+			<Table hover borderless>
+				<tbody>
+					{this.state.hotels.results.map((eachHotelResult, index) => {
+
+						let arraychecker = eachHotelResult.images.split(",")
+						let imageURL = ''
+						if (eachHotelResult.images && arraychecker.constructor === Array) {
+							imageURL = arraychecker[0]
+						} else {
+							imageURL = eachHotelResult.images
+						}
+
+						return (
+
+							<tr key={index} className="hotel-search-row shadow-sm p-3 mb-5" tag="a" onClick={this.roomSearch(eachHotelResult)} onMouseEnter={() => this.moveMap(eachHotelResult.latitude, eachHotelResult.longitude, index)} style={{ cursor: "pointer" }}>
+								<td className="col-lg-6">
+									<img className="hotel-search-item-image" src={imageURL} alt="logo" />
+								</td>
+								<td className="col-lg-4">
+									<div>
+										<div className="hotel-search-item-row hotel-search-item-header">
+											<div className="hotel-search-item-number">{index + 1}.</div>
+											<div className="hotel-search-item-name"> {/* Hotel Name */} </div>
+											<a href=" " className="col-lg-10 hotel-search-item-name">{eachHotelResult.name}</a>
+										</div>
+										<div className="hotel-search-item-row hotel-search-item-rating">
+											<span className="fa fa-star hotel-search-item-rating-checked"></span>
+											<span className="fa fa-star hotel-search-item-rating-checked"></span>
+											<span className="fa fa-star hotel-search-item-rating-checked"></span>
+											<span className="fa fa-star hotel-search-item-rating-checked"></span>
+											<span className="fa fa-star"></span>
+										</div>
+
+										{/* Hotel Address */}
+										<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.address}</div>
+										<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.city}</div>
+										<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.phone_number}</div>
+
+									</div>
+								</td>
+								<td className="col-lg-2">
+									<div>
+										<div className="hotel-search-item-row">
+
+											{/* Min Price */}
+											<div className="hotel-search-item-price">
+												${eachHotelResult.min_price} &nbsp;-&nbsp; ${eachHotelResult.max_price}
+											</div>
+										</div>
+									</div>
+								</td>
+							</tr>
+						);
+					})}
+				</tbody>
+			</Table>
+		)
 		const ResultTable = (
 			<div className="col-lg-6 hotel-search-first-column">
 
@@ -444,61 +526,7 @@ class HotelSearch extends React.Component {
 				</div>
 
 				<div className="hotel-search-table-container">
-					<Table hover borderless>
-						<tbody>
-							{this.state.hotels.results.map((eachHotelResult, index) => {
-
-								let imageURL = ''
-								if (eachHotelResult.images && eachHotelResult.images.constructor === Array) {
-									imageURL = eachHotelResult.images.split(",")[0]
-								} else {
-									imageURL = eachHotelResult.images
-								}
-
-								return (
-
-									<tr key={index} className="hotel-search-row shadow-sm p-3 mb-5" tag="a" onClick={this.roomSearch(eachHotelResult)} style={{ cursor: "pointer" }}>
-										<td className="col-lg-6">
-											<img className="hotel-search-item-image" src={imageURL} alt="logo" />
-										</td>
-										<td className="col-lg-4">
-											<div>
-												<div className="hotel-search-item-row hotel-search-item-header">
-													<div className="hotel-search-item-number">{index + 1}.</div>
-													<div className="hotel-search-item-name"> {/* Hotel Name */} </div>
-													<a href=" " className="col-lg-10 hotel-search-item-name">{eachHotelResult.name}</a>
-												</div>
-												<div className="hotel-search-item-row hotel-search-item-rating">
-													<span className="fa fa-star hotel-search-item-rating-checked"></span>
-													<span className="fa fa-star hotel-search-item-rating-checked"></span>
-													<span className="fa fa-star hotel-search-item-rating-checked"></span>
-													<span className="fa fa-star hotel-search-item-rating-checked"></span>
-													<span className="fa fa-star"></span>
-												</div>
-
-												{/* Hotel Address */}
-												<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.address}</div>
-												<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.city}</div>
-												<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.phone_number}</div>
-
-											</div>
-										</td>
-										<td className="col-lg-2">
-											<div>
-												<div className="hotel-search-item-row">
-
-													{/* Min Price */}
-													<div className="hotel-search-item-price">
-														${eachHotelResult.min_price} &nbsp;-&nbsp; ${eachHotelResult.max_price}
-													</div>
-												</div>
-											</div>
-										</td>
-									</tr>
-								);
-							})}
-						</tbody>
-					</Table>
+					{HotelTable}
 				</div>
 				{this.state.hotels.results.length > 0 ? pagination : ''}
 			</div>
