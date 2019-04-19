@@ -263,7 +263,8 @@ router.post('/changepass', (req,res) => {
     else {
         res.status(400).send('Passwords do not match')
     }
-  
+})
+    
 // Retrieves the user's total amount of rewards for checkout to check
 router.get('/rewards', authenticationMiddleware(), (req, res) =>{
     console.log(req.session.passport.user.user_id)
