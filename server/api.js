@@ -297,7 +297,7 @@ function authenticationMiddleware() {
            res.write("You are not logged in")
            res.end()
        }
-   }
+}
 
 
 
