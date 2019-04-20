@@ -223,6 +223,7 @@ class Home extends React.Component {
 								&adult=${this.state.adult}&children=${this.state.children}
 								&guest_number=${this.state.guest_number}&full_address=${this.state.fullAddress}
 								&city=${temp_fields.city}&street_address=${temp_fields.streetAddress}
+								&state=${temp_fields.state}
 								&amenities=${filteredElements}`
 
 			this.props.history.push({

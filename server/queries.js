@@ -1,5 +1,6 @@
 const mysql = require('mysql')
 const config = require('./sql/config.js')
+const convertStatesCode = require('./utility/statesCode')
 
 var connection = mysql.createConnection(config)
 
@@ -167,7 +168,7 @@ module.exports = {
             // STATE - Exact match
             if (typeof params.state !== 'undefined' && params.state !== '') {
               conditions.push("state like ?");
-              values.push("" + params.state + "");
+              values.push("" + convertStatesCode(params.state) + "");
             }
             // ZIP - Exact match
             if (typeof params.zip !== 'undefined' && params.zip !== '') {

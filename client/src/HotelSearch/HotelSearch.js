@@ -35,6 +35,7 @@ class HotelSearch extends React.Component {
 		const children = params.get('children')
 		const guest_number = params.get('guest_number')
 		const sortBy = params.get('sortBy')
+		const state = params.get('state')
 
 		this.state = {
 			hotels: [{}],
@@ -44,7 +45,7 @@ class HotelSearch extends React.Component {
 				city,
 				latitude,
 				longitude,
-				state: '',
+				state,
 				date_in: moment(dateIn, ('YYYY-MM-DD')),
 				date_out: moment(dateOut, ('YYYY-MM-DD')),
 			},
@@ -136,19 +137,10 @@ class HotelSearch extends React.Component {
 			zoom: 14
 		});
 
-		// const city_name = params.get('city')
-		// let geocoder = new window.google.maps.Geocoder();
-		// // display the center of the map by city name
-		// geocoder.geocode({ 'address': city_name }, function (results, status) {
-		// 	if (status === 'OK') {
-		// 		googleMap.setCenter(results[0].geometry.location);
-		// 	} else {
-		// 		alert('Geocode was not successful for the following reason: ' + status);
-		// 	}
-		// });
+		
 		window.googleMap = googleMap
 		// display each hotel's information window when clicking the marker	
-		const infoWindow = new window.google.maps.InfoWindow({ maxWidth: 320 })
+		const infoWindow = new window.google.maps.InfoWindow()
 		window.infoWindow = infoWindow
 		window.markers = []
 		this.state.hotels.results.forEach((eachHotel, index) => {
@@ -179,6 +171,7 @@ class HotelSearch extends React.Component {
 				setTimeout(() => { window.markers[index].setAnimation() }, 750);
 				window.infoWindow.setContent(hotelInfo)
 				window.infoWindow.open(window.googleMap, googleMapMarker);
+				window.infoWindow.setOptions({maxWidth:250}); 
 			});
 		})
 	}
@@ -301,6 +294,7 @@ class HotelSearch extends React.Component {
 								&adult=${this.state.adult}&children=${this.state.children}
 								&guest_number=${this.state.guest_number}&full_address=${this.state.fullAddress}
 								&street_address=${this.state.streetAddress}&city=${searchParams.city}
+								&state=${searchParams.state}
 								${additionalClause}`
 
 			this.props.history.push({
