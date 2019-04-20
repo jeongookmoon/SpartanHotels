@@ -5,10 +5,9 @@ import ListItem from '@material-ui/core/ListItem';
 import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import { checkCodePost, changePost } from '../Utility/RecoverageFunction'
-// import {
-//     UncontrolledPopover, PopoverHeader, PopoverBody,
-//   } from 'reactstrap'
+import { checkCodePost, changePost } from '../Utility/RecoverageFunction';
+import {UncontrolledPopover, PopoverHeader, PopoverBody,} from 'reactstrap';
+import accessImage from './Images/homeImage7.jpg';
 
 let card ={
   width: '275px'
@@ -19,7 +18,14 @@ let card ={
  var topSectionStyle = {
   marginTop:"10%",
 };
-
+// var topSectionStyle = {
+// 	width: "100%",
+// 	backgroundRepeat: "no-repeat",
+// 	backgroundSize: "cover",
+// 	backgroundPosition: "center center",
+//   backgroundImage: `url(${accessImage})`,
+//   marginLeft: "45%"
+// };
 
 class Accesscode extends Component {
     constructor(props) {
@@ -34,8 +40,9 @@ class Accesscode extends Component {
             error: {
 
             },
-            // password_error: [],
-            // repassword_error: [],
+
+            password_error: [],
+            repassword_error: [],
             // showNullError: false,
             // code_error: false,
             passwordCheck: [{req:"≥ 8 characters", valid:false},
@@ -108,6 +115,8 @@ class Accesscode extends Component {
             // const whatever = { ... this.state}
             // console.log('whatever1', whatever)
             alert("Code is valid, please set your new password!");
+            localStorage.removeItem('checkToken')
+            window.location.reload();
         }
         else {
             alert("Code is invalid or expired. Please go back to get a new code!");
@@ -119,6 +128,7 @@ class Accesscode extends Component {
     reset = (event) => {
         // alert("Email sent!");
         event.preventDefault();
+        if(this.validate()){
         const temp_fields = {
             email: this.props.location.state,
             password: this.state.fields.password,
@@ -155,16 +165,53 @@ class Accesscode extends Component {
           window.location.assign("/")
           
         })}
-        
+      }
+   
     }
 
+    validate() {
+      let temp_fields = this.state.fields;
+      let temp_errors = {};
+      let temp_password_error = [];
+      let formIsValid = true;
+      if(temp_fields["password"] === '') {
+        formIsValid = false;
+        temp_errors["password"] = "*Please enter a password";
+      }
+      if (temp_fields["password"] !== '') {
+        let checker = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$");
+        if (!checker.test(temp_fields["password"])) {
+          formIsValid = false;
+          temp_errors["password"] = "*This password does not meet the requirements"
+        }
+  
+        else{
+          if (temp_fields["repassword"] === '') {
+            formIsValid = false;
+            temp_errors["repassword"] = "*Please re-enter password";
+          }
+      
+          if (temp_fields["repassword"] !== '') {
+            if (!temp_fields["repassword"].match(temp_fields["password"])) {
+              formIsValid = false;
+              temp_errors["repassword"] = "*Passwords must match";
+            }
+          }
+        }
+      }
+      this.setState({
+        errors: temp_errors,
+        password_error: temp_password_error
+      });
+      return formIsValid;
+    }
 
     render(){
-
-        // const password_error = (
-        //     <div className="text-warning">{this.state.password_error.map((each) => <div>{each}</div>
-        //     )}</div>
-        // )
+        const EmptyForm =(<div></div>)
+        const password_error = (
+            <div className="text-warning">{this.state.password_error.map((each) => <div>{each}</div>
+            )}</div>
+        )
     
         // const no_error = (
         //     <div className="text-warning"></div>
@@ -174,16 +221,20 @@ class Accesscode extends Component {
         //     return <div key={ele.req} className= { ele.valid ? "valid-req" : "invalid-req" }>{ele.req}</div>
         // }) 
     
-
+        var password_requirements_component = this.state.passwordCheck.map(ele=>{
+          return <div key={ele.req} className= { ele.valid ? "valid-req" : "invalid-req" }>{ele.req}</div>
+        })
         return(
-          <div style={container}>
-            <div className="topheader" style={topSectionStyle}>
+          <div style={topSectionStyle}>
+            <div className="topheader" style={container}>
               <Card style={card} >
                 <CardContent>
                   <div className="col-auto pl-0">
                     <h3> Password Recoverage </h3>
                   </div>
                     <List component="nav">
+                      {localStorage.checkToken ? 
+                      <div>
                       <ListItem />
                         <TextField  
                           id="code"
@@ -195,58 +246,45 @@ class Accesscode extends Component {
                         /> <button type="submit" color="primary" onClick={this.checkCode}>
                               Check Code
                           </button>
-                        <ListItem />
-                        <TextField
-                          id="PopoverFocus"
-                          type="password"
-                          label="password"
-                          name="password"
-                          value={this.state.fields.password}
-                          onChange={this.handleChange()}
-                          placeholder="**********"
-                          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$" 
-                          required     
-                        />
-                        {/* <div className="text-warning">{this.state.errors.password}</div>
-                        {this.state.password_error? password_error : no_error}
-                        <UncontrolledPopover trigger="focus" placement="right" target="PopoverFocus">
+                        </div>: EmptyForm}
+                          {localStorage.checkToken ? 
+                          EmptyForm :
+                          <div>
+                          <ListItem />
+                          <TextField
+                            id="PopoverFocus"
+                            type="password"
+                            label="password"
+                            name="password"
+                            value={this.state.fields.password}
+                            onChange={this.handleChange()}
+                            placeholder="**********"
+                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$" 
+                            required     
+                          />
+                          {/* <div className="text-warning">{this.state.errors.password}</div> */}
+                          <UncontrolledPopover trigger="focus" placement="right" target="PopoverFocus">
                             <PopoverHeader>Password Requirements</PopoverHeader>
                             <PopoverBody>
                             {password_requirements_component}
                             </PopoverBody>
-                        </UncontrolledPopover> */}
-                        <ListItem />
-                        <TextField
-                          id="repassword"
-                          label="repassword"
-                          name="repassword"
-                          type="password"
-                          value={this.state.fields.repassword}
-                          onChange={this.handleChange()}
-                          placeholder="**********"     
-                        />
-                        <ListItem/>
-                          <button type="submit" color="primary" onClick={this.reset}>
-                              Reset Password
-                          </button>
-                      </List>
-                        {/* {showNullError && (
-                          <div>
-                            <p>The code, password, repassword cannot be null.</p>
-                          </div>
-                        )}
-                        {code_error && (
-                          <div>
-                            <p>The code is invalid. Please check again.</p>
-                          </div>
-                        )}
-                        {
-                          repassword_error && (
-                            <div>
-                              <p>The repassword is not match to password!</p>
-                            </div>
-                          )
-                        } */}
+                          </UncontrolledPopover>
+                          <ListItem />
+                          <TextField
+                            id="repassword"
+                            label="repassword"
+                            name="repassword"
+                            type="password"
+                            value={this.state.fields.repassword}
+                            onChange={this.handleChange()}
+                            placeholder="**********"     
+                          />
+                          <ListItem/>
+                            <button type="submit" color="primary" onClick={this.reset}>
+                                Reset Password
+                            </button>
+                            </div>}
+                            </List>
                   </CardContent>
                 </Card>
             </div>
