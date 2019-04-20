@@ -148,7 +148,7 @@ class HotelSearch extends React.Component {
 		// });
 		window.googleMap = googleMap
 		// display each hotel's information window when clicking the marker	
-		const infoWindow = new window.google.maps.InfoWindow()
+		const infoWindow = new window.google.maps.InfoWindow({ maxWidth: 320 })
 		window.infoWindow = infoWindow
 		window.markers = []
 		this.state.hotels.results.forEach((eachHotel, index) => {
