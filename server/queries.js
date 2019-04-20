@@ -219,7 +219,7 @@ module.exports = {
 
             // SORT BY CLAUSE
             // TODO: sort by distance
-            var sortByClause = " order by name "; 
+            let sortByClause = ` order by (POW((${params.latitude}-latitude),2) + POW((${params.longitude}-longitude),2)) asc `
             if (typeof params.sortBy !== 'undefined' && params.sortBy !== '') {
               switch (params.sortBy) {
                 case ("rating_asc"):

@@ -273,18 +273,23 @@ class HotelSearch extends React.Component {
 
 		const params = new URLSearchParams(this.props.location.search)
 		const sortBy = params.get("sortBy")
+		const amenities = params.get("amenities")
 
 		let additionalClause = ''
 		if (event.target.name && event.target.name === 'sortBy') {
 			additionalClause = `&sortBy=${event.target.value}`
 			this.setState({ [event.target.name]: event.target.value })
 		}
+
 		if (event.target.name && event.target.name === 'pagination') {
 			additionalClause = `&pageNumber=${event.target.value}`
 			if (sortBy && sortBy !== '') {
 				additionalClause = additionalClause + `&sortBy=${sortBy}`
 			}
 		}
+
+		if(amenities && amenities !== '')
+			additionalClause += `&amenities=${amenities}`
 
 		let searchParams = Object.assign({}, this.state.searchParams)
 		searchParams.date_in = searchParams.date_in.format('YYYY-MM-DD')
