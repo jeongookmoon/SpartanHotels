@@ -6,7 +6,7 @@ export const sendcodePost = email_value => {
     }).then(response => {
         if(response.data === "S1") {
             console.log(response.data)
-            localStorage.setItem('1',response.data)
+            localStorage.setItem('checkToken',response.data)
         }
         return response.data
     }).catch(error => {

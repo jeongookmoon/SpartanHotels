@@ -2,7 +2,6 @@ import React from 'react';
 import { withRouter } from 'react-router-dom'
 import Registration from '../Registration/Registration'
 import { logoutClearSession, loginPost } from '../Utility/ReigstrationLoginFunction'
-import Reset from '../Recoverage/Recoverage'
 
 // import neccessary components
 import {
