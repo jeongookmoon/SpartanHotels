@@ -63,7 +63,7 @@ const statesCode = {
 const convertStatesCode = (abbreviation) => {
   if(statesCode[abbreviation]) 
     return statesCode[abbreviation]
-  return null
+  return abbreviation
 }
 
 module.exports = convertStatesCode
