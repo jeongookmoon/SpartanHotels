@@ -48,11 +48,11 @@ class Home extends React.Component {
 	}
 
 	componentDidMount() {
-		const googleMap = new window.google.maps.Map(document.getElementById('map'), {
+		const googleMapHome = new window.google.maps.Map(document.getElementById('map'), {
 			center: { lat: 37.3382082, lng: -121.88632860000001 },
 			zoom: 14
 		})
-		window.googleMap = googleMap
+		window.googleMapHome = googleMapHome
 	}
 
 	handleChange = (event) => {
@@ -154,9 +154,9 @@ class Home extends React.Component {
 	}
 
 	putGoogleMapMarker = (latitude, longitude) => {
-		window.googleMapMarker ? window.googleMapMarker.setPosition({ lat: parseFloat(latitude), lng: parseFloat(longitude) }) : window.googleMapMarker = new window.google.maps.Marker({
+		window.googleHomeMapMarker ? window.googleHomeMapMarker.setPosition({ lat: parseFloat(latitude), lng: parseFloat(longitude) }) : window.googleHomeMapMarker = new window.google.maps.Marker({
 			position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
-			map: window.googleMap
+			map: window.googleMapHome
 		})
 	}
 
@@ -180,7 +180,7 @@ class Home extends React.Component {
 				fullAddress, streetAddress,
 				city, state, place
 			},
-			window.googleMap.setCenter(
+			window.googleMapHome.setCenter(
 				new window.google.maps.LatLng(latitude, longitude)
 			)
 		)
