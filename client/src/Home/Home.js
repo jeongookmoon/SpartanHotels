@@ -18,6 +18,7 @@ import { homeFilterData } from '../Utility/DataForMenu'
 
 var topSectionStyle = {
 	width: "100%",
+	height: "100vh",
 	backgroundRepeat: "no-repeat",
 	backgroundSize: "cover",
 	backgroundPosition: "center center",
