@@ -9,6 +9,7 @@ import {
 
 import { changeName } from '../Utility/ReigstrationLoginFunction'
 
+
 class ProfileEditName extends React.Component {
 	constructor() {
 		super();
@@ -19,7 +20,6 @@ class ProfileEditName extends React.Component {
 				name: ''
 			},
 			errors: {
-
 			}
 		}
 
@@ -70,6 +70,7 @@ class ProfileEditName extends React.Component {
 	      errors: temp_errors
 	    });
 	    return formIsValid;
+
 	}
 
 	render() {
