@@ -35,7 +35,6 @@ class ProfileEditName extends React.Component {
 	handleSubmit = (event) => {
 		event.preventDefault()
 	}
-	  
 
 	toggle() {
 		this.setState({
