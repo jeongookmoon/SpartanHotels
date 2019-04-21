@@ -15,7 +15,7 @@ const dateChecker = require("./_checks")
 router.get('/hotels', (req,res)=>{
     console.log(req.query)
 
-    if (! dateChecker(req.query, res)){
+    if (! dateChecker.date_checker(req.query, res)){
         return
     }
 
@@ -113,7 +113,7 @@ router.get('/hotels/:hotelID', (req,res)=>{
         res.status(400).send("Error: hotelID is not a number")
         return
     }
-    if (! dateChecker(req.query, res)){
+    if (! dateChecker.date_checker(req.query, res)){
         return
     }
 
