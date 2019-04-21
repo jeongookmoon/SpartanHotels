@@ -7,13 +7,12 @@
 }
 
 .DateRangePickerInput{
-	padding-top:.4em;
-	padding-bottom:.4em;
-	padding-left: 1em;
-	padding-right:2.3em;
+	padding-top:0em;
+	padding-bottom:0em;
+	padding-left: 0em;
+	padding-right:0em;
 	border:none;
 	    color: #a6a6a6;
-
 
 }
 

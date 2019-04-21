@@ -175,10 +175,20 @@ class HotelSearch extends React.Component {
 		window.markers = []
 		this.state.hotels.results.forEach((eachHotel, index) => {
 			const imageURL = this.getHotelSearchResultImages(eachHotel.images)
-			const hotelInfo = `<h5 style="text-align:center;">${eachHotel.name}</h5>
-											 <img src=${imageURL} style="width: 50%; height: 50%"/>
-											 <p>${eachHotel.address}</p>
-											 <p style="text: bold">$${eachHotel.min_price} ~ ${eachHotel.max_price}/per night</p>`
+			//const imageURL = this.getHotelSearchResultImages(eachHotel.images).split(",")[0]
+			//^^ FOR DAVID
+			const hotelInfo = `
+
+											<a href="" style="padding-top:1vh; text-align:center;"><h5>${eachHotel.name}</h5></a>
+											<div style="font-size: 1em; font-weight:600">${eachHotel.address}</div>
+											<div style="font-size: 1em; font-weight:600">${eachHotel.city}</div>
+											<p style="font-size: 1em; font-weight:600">${eachHotel.phone_number}</p>
+											<p style="font-size: 1em; font-weight:600">$${eachHotel.min_price.toFixed(2)} ~ ${eachHotel.max_price.toFixed(2)}/per night</p>
+											<img src=${imageURL} style="max-width: 100%; max-height: 100%; "/>
+
+
+								`
+
 
 			// display each hotel's marker along with index number
 			const googleMapMarker = new window.google.maps.Marker({
@@ -397,16 +407,17 @@ class HotelSearch extends React.Component {
 
 		const searchBar = (
 			<div>
+				<hr className="hotel-search-hr-bottom">
+				</hr>
 				<FormGroup className="form-inline hotel-search-inputs">
-					<div className="col-lg-1"></div>
-					<div className="col-lg-2 input-group home-location">
+					<div className="col-lg-3 input-group home-location">
 						<div className="input-group-append">
 							<div className="location-input-icon input-group-text"><i className="fa fa-search"></i></div>
 						</div>
 						<Autocomplete onPlaceChanged={this.showPlaceDetails.bind(this)} />
 					</div>
 
-					<div className="col-lg-3 input-group home-date">
+					<div className="col-lg-4 input-group home-date custom-row">
 						<div className="input-group-append">
 							<div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
 						</div>
@@ -429,7 +440,7 @@ class HotelSearch extends React.Component {
 						/>
 					</div>
 
-					<div className=" col-lg-2 input-group menu-container">
+					<div className=" col-lg-1 input-group menu-container">
 						<div className="col-lg-12 menu-item">
 							<div className="home-guest-dropdown">{this.state.guest_number}&nbsp;Guests</div>
 							<ul>
@@ -495,12 +506,15 @@ class HotelSearch extends React.Component {
 				<tbody>
 					{this.state.hotels.results.map((eachHotelResult, index) => {
 						const imageURL = this.getHotelSearchResultImages(eachHotelResult.images)
+						{/*const imageURL = this.getHotelSearchResultImages(eachHotelResult.images).split(",")[0] */}
+						{/* FOR DAVID */}
+
 						return (
 							<tr key={index} className="hotel-search-row shadow-sm p-3 mb-5" tag="a" onClick={this.roomSearch(eachHotelResult)} onMouseEnter={() => this.moveMap(eachHotelResult.latitude, eachHotelResult.longitude, index)} style={{ cursor: "pointer" }}>
-								<td className="col-lg-6">
+								<td className="">
 									<img className="hotel-search-item-image" src={imageURL} alt="logo" />
 								</td>
-								<td className="col-lg-4">
+								<td className="">
 									<div>
 										<div className="hotel-search-item-row hotel-search-item-header">
 											<div className="hotel-search-item-number">{index + 1}.</div>
@@ -522,13 +536,13 @@ class HotelSearch extends React.Component {
 
 									</div>
 								</td>
-								<td className="col-lg-2">
+								<td className="">
 									<div>
 										<div className="hotel-search-item-row">
 
 											{/* Min Price */}
 											<div className="hotel-search-item-price">
-												${eachHotelResult.min_price} &nbsp;-&nbsp; ${eachHotelResult.max_price}
+												${eachHotelResult.min_price.toFixed(2)} &nbsp;-&nbsp; ${eachHotelResult.max_price.toFixed(2)}
 											</div>
 										</div>
 									</div>
