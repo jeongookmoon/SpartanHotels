@@ -933,8 +933,8 @@ code {
   margin-left: 5vw;
   margin-right:5vw;
   margin-bottom:5vh;
-  -webkit-box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2);
 }
 
 
