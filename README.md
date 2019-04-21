@@ -4,8 +4,8 @@ CMPE 165 Project
 ## Client
 Inside /client,  
     `npm install` to install dependencies
-    
-    'npm install --save google-maps-react' to install map dependencies
+     At root of client folder, create ".env" file containing (replace YOUR_KEY)
+       REACT_APP_AUTOCOMPLETE_URL=https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&libraries=places
     `npm start` to start react on port 3000  
 http://localhost:3000/ should automatically open up
 
