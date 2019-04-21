@@ -25,6 +25,7 @@ class ProfileEditPassword extends React.Component {
 			password_error: [],
 			old_pass_error: false,
 
+
 			passwordCheck: [{req:"≥ 8 characters", valid:false},
       		{req:"At least 1 uppercase letter", valid:false},
 		    {req:"At least 1 lowercase letter", valid:false},
@@ -45,6 +46,8 @@ class ProfileEditPassword extends React.Component {
 		this.newPasswordChecker()
 	}
 
+		this.newPasswordChecker()
+	}
 
 	newPasswordChecker () {
 		let pw = this.state.fields.newpass;
@@ -130,7 +133,7 @@ class ProfileEditPassword extends React.Component {
 
 	    if (temp_fields["newpass"] !== '') {
 	      let checker = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$");
-	      if (!checker.test(temp_fields["newpass"])) {
+	      if (!checker.test(temp_fields["password"])) {
 	        formIsValid = false;
 	        temp_errors["newpass"] = "*This password does not meet the requirements"
 	      }
@@ -156,7 +159,6 @@ class ProfileEditPassword extends React.Component {
 	    });
 	    return formIsValid;
 	}
-
 
 	render() {
 
@@ -216,6 +218,7 @@ class ProfileEditPassword extends React.Component {
 				</Modal>
 			</div>
 		);
+
 	}
 }
 
