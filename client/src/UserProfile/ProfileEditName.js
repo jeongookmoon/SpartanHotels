@@ -33,7 +33,6 @@ class ProfileEditName extends React.Component {
 		this.setState({ fields : temp_fields });
 	}
 
-
 	toggle() {
 		this.setState({
 			...this.state,
