@@ -1,0 +1,39 @@
+.reservations-container {
+	padding:0;
+  	margin:0;
+  	height:100%;
+  	width:100%;
+}
+
+.reservations-form-container {
+	height:100%;
+  	width:100%;
+  	min-height:41.6rem;
+}
+
+.reservations-carousel-size {
+	width:100%;
+}
+
+.reservations-text-color {
+	color: black;
+}
+
+.reservations-image {
+	opacity: 0.5;
+}
+
+.reservations-scrollbar {
+	position: relative;
+	height:375px;
+	overflow: auto;
+}
+
+.reservations-table-wrapper-scroll-y {
+	display: block;
+}
+
+.reservations-table-header { /* for later note: static top row */
+	position: sticky;
+}
+
