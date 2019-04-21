@@ -179,9 +179,7 @@ class NavBar extends React.Component {
           <div className="col-auto pl-0" onClick={this.Home.bind(this)}>
             SPARTAN HOTELS
           </div>
-          <div className="col-auto pl-0">
-            |
-          </div>
+          {localStorage.accesstoken ? EmptyForm : <div className="col-auto pl-0">|</div>}
           {localStorage.accesstoken ? EmptyForm : <Registration />}
         </div>
 

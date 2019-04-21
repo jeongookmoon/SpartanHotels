@@ -45,14 +45,6 @@ class Home extends React.Component {
 			checkbox: {
 			}
 		};
-
-		this.handleChange = this.handleChange.bind(this);
-		this.search = this.search.bind(this);
-		this.adultIncrement = this.adultIncrement.bind(this);
-		this.adultDecrement = this.adultDecrement.bind(this);
-		this.childrenIncrement = this.childrenIncrement.bind(this);
-		this.childrenDecrement = this.childrenDecrement.bind(this);
-		this.handleCheckBox = this.handleCheckBox.bind(this);
 	}
 
 	componentDidMount() {
@@ -63,7 +55,7 @@ class Home extends React.Component {
 		window.googleMap = googleMap
 	}
 
-	handleChange(event) {
+	handleChange = (event) => {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
 		const name = target.name;
@@ -72,7 +64,7 @@ class Home extends React.Component {
 		});
 	}
 
-	handleCheckBox(event) {
+	handleCheckBox = (event) => {
 		const name = event.target.name
 		this.setState(prevState => ({
 			checkbox: {
@@ -82,7 +74,7 @@ class Home extends React.Component {
 		}))
 	}
 
-	adultIncrement() {
+	adultIncrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('adult').value, 10);
 
@@ -101,7 +93,7 @@ class Home extends React.Component {
 
 	}
 
-	adultDecrement() {
+	adultDecrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('adult').value, 10);
 
@@ -121,7 +113,7 @@ class Home extends React.Component {
 
 	}
 
-	childrenIncrement() {
+	childrenIncrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('children').value, 10);
 
@@ -140,7 +132,7 @@ class Home extends React.Component {
 
 	}
 
-	childrenDecrement() {
+	childrenDecrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('children').value, 10);
 
@@ -200,7 +192,7 @@ class Home extends React.Component {
 
 		// convert true props of checkbox into array and join the array into a string
 		const keys = Object.keys(this.state.checkbox)
-		const filteredElements = keys.filter( (key) => this.state.checkbox[key] === true)
+		const filteredElements = keys.filter((key) => this.state.checkbox[key] === true)
 
 
 		const temp_fields = {
