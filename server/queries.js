@@ -1,5 +1,6 @@
 const mysql = require('mysql')
 const config = require('./sql/config.js')
+const convertStatesCode = require('./utility/statesCode')
 
 var connection = mysql.createConnection(config)
 
@@ -29,6 +30,7 @@ handleDisconnect();
 */
 
 module.exports = {
+    connection:connection,
 
     /**
     * Returns the result of a sql query as a promise.
@@ -79,7 +81,16 @@ module.exports = {
         create: 'insert into spartanhotel.user (user_id,name,password,email) values (null,?,?,?)',
         session: 'select LAST_INSERT_ID() as user_id ',
         authenticate: 'select user_id, password from spartanhotel.user where email=?',
-        getAvailableRewards: 'SELECT sum(R.change) as rewards FROM spartanhotel.reward R where user_id=? and date_active <= curdate();'
+        getAvailableRewardsIgnoringTransaction: 'SELECT sum(R.change) as sum FROM spartanhotel.reward R where user_id=? and date_active <= curdate() and transaction_id != ?;',
+        getBookingForTransaction:'SELECT * FROM spartanhotel.booking WHERE transaction_id=?',
+        edit: 'UPDATE user SET name=?, password=? WHERE user_id=?',
+        changepass: 'UPDATE user SET password = ? WHERE email = ?',
+        searchEmail: 'SELECT * FROM user WHERE email = ?',
+        getEmailwithID: 'SELECT email FROM user WHERE user_id = ?',
+        getAccessCode: 'SELECT access_code FROM user WHERE email = ?',
+        setAccessCode: 'UPDATE user SET access_code = ? WHERE email = ?',
+        getAvailableRewards: 'SELECT sum(R.change) as rewards FROM spartanhotel.reward R where user_id=? and date_active <= curdate()'
+
     },
 
     hotel: {
@@ -161,7 +172,7 @@ module.exports = {
             // STATE - Exact match
             if (typeof params.state !== 'undefined' && params.state !== '') {
               conditions.push("state like ?");
-              values.push("" + params.state + "");
+              values.push("" + convertStatesCode(params.state) + "");
             }
             // ZIP - Exact match
             if (typeof params.zip !== 'undefined' && params.zip !== '') {
@@ -177,13 +188,17 @@ module.exports = {
             // WHERE/FILTER CLAUSE
             // TODO: filter by distance
             if (typeof params.amenities !== 'undefined'){
-              let amenities = JSON.parse(decodeURIComponent(params.amenities))
-              for(var i=0;i< amenities.length;i++){
+              const amenities = params.amenities
+              const isAmenitiesArray = amenities.split(",")
+              if(isAmenitiesArray && isAmenitiesArray.constructor === Array) {
+                isAmenitiesArray.forEach((eachAmenity) => {
+                  conditions.push(" amenities like ? ")
+                  values.push("%" + eachAmenity + "%")
+                })
+              } else {
                 conditions.push(" amenities like ? ");
-                values.push("%" + amenities[i] + "%");
+                values.push("%" + amenities + "%");
               }
-
-
             }
 
             if (typeof params.rating !== 'undefined'){
@@ -209,7 +224,10 @@ module.exports = {
 
             // SORT BY CLAUSE
             // TODO: sort by distance
-            var sortByClause = " order by name "; 
+            let sortByClause = ''
+            if(typeof params.latitude !== 'undefined' && params.latitude !== '' && typeof params.longitude !== 'undefined' && params.longitude !== '')
+             sortByClause = ` order by (POW((${params.latitude}-latitude),2) + POW((${params.longitude}-longitude),2)) asc `
+
             if (typeof params.sortBy !== 'undefined' && params.sortBy !== '') {
               switch (params.sortBy) {
                 case ("rating_asc"):
@@ -230,8 +248,16 @@ module.exports = {
                 case("price_des"):
                   sortByClause = " order by min_price desc ";
                   break
+                case("distance_asc"):
+                  if(typeof params.latitude !== 'undefined' && params.latitude !== '' && typeof params.longitude !== 'undefined' && params.longitude !== '')
+                  sortByClause = ` order by (POW((${params.latitude}-latitude),2) + POW((${params.longitude}-longitude),2)) asc`;
+                  break
+                case("distance_des"):
+                  if(typeof params.latitude !== 'undefined' && params.latitude !== '' && typeof params.longitude !== 'undefined' && params.longitude !== '')
+                  sortByClause = ` order by (POW((${params.latitude}-latitude),2) + POW((${params.longitude}-longitude),2)) desc`;
+                  break
                 default:
-                  sortByClause = " order by name "
+                  sortByClause = " order by name ";
               }
             }
         
@@ -472,6 +498,16 @@ module.exports = {
 
 
     booking: {
+
+    book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, guest_id, room_id, total_price, cancellation_charge, date_in, date_out, status, amount_paid) values (null, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    cancel: 'UPDATE booking SET status="cancelled" WHERE booking_id=?',
+    modify: 'UPDATE booking SET room_id=?, date_in=?, date_out=? WHERE booking_id=?',
+    view: `SELECT transaction.*, room.*, hotel.name, hotel.phone_number, hotel.address, hotel.city, hotel.state, hotel.country, hotel.zipcode FROM transaction 
+    INNER JOIN transaction_room ON transaction.transaction_id = transaction_room.transaction_id 
+    INNER JOIN room ON transaction_room.room_id = room.room_id
+    INNER JOIN hotel ON room.hotel_id = hotel.hotel_id 
+    WHERE transaction.user_id = ?`,
+
       /**
        * 
        * @returns placeholder query to insert into transaction table
@@ -497,6 +533,10 @@ module.exports = {
         let placeholderComponent = placeholders.join(",")
         return mysql.format(insertStatement + placeholderComponent,values)
       },
+    book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, guest_id, room_id, total_price, cancellation_charge, date_in, date_out, status, amount_paid) values (null, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    cancel: 'UPDATE booking SET status="cancelled" WHERE booking_id=?',
+    modify: 'UPDATE booking SET room_id=?, date_in=?, date_out=? WHERE booking_id=?',
+    removeTransactionRoomDataForTransaction:'',
     
     //For when the user cancels the entire transaction
     cancel_transaction: 'UPDATE spartanhotel.transaction SET status="cancelled" WHERE transaction_id=?',
@@ -504,8 +544,6 @@ module.exports = {
     // For when the user cancels only a single room
     cancel_one: 'DELETE from spartanhotel.transaction_room where transaction_id=? AND room_id=?',
     cancel_one_room: 'UPDATE spartanhotel.transaction SET total_price=?, cancellation_charge=?, amount_paid=? WHERE transaction_id=?',
-
-    modify: 'UPDATE booking SET status="modified", room_id=?, date_in=?, date_out=? WHERE booking_id=?',
     user_id: 'SELECT * FROM transaction WHERE transaction_id=?',
     room_price: 'SELECT * FROM transaction_room WHERE transaction_id=? AND room_id=?',
 
@@ -540,6 +578,7 @@ module.exports = {
 
       return mysql.format(query, [transaction_id, room_id])
     },
+
 
     /**
      * 
@@ -745,6 +784,131 @@ module.exports = {
       console.log(sql)
       return sql
   },
+
+     /**
+     * The same as BookableAndPriceCheck, ignoring the given transaction_id
+     * @param {*} params 
+     * {date_in, date_out, rooms:[room_ids], transaction_id}
+     * @returns [{}] An array of {room_id, hotel_id, room_number, price, bed_type, capacity, booked}
+     * booked = 0 means not booked
+     * 
+     * This returns a query, that when run, will:
+     * 
+     * Return an array containing the booked status and pricing info of each requested room
+     * eg
+     * 
+     * params: {date_in: '2019-03-10', date_out: '2019-03-12', rooms:[1,2,3], transaction_id: 1}
+     * 
+     * transaction #1 has
+     * rooms 1 and 2 are booked during this time
+     * 
+     * the query ignores those because we might replace those rooms
+     * 
+     * then
+     * returns [{room_id:1, hotel_id, room_number, price, bed_type, capacity, 0},
+     * {room_id:2, hotel_id, room_number, price, bed_type, capacity, 0},
+     * {room_id:3, hotel_id, room_number, price, bed_type, capacity, 0}]
+     * 
+     * Else, returns an error message
+     * 
+      */
+  modify_BookableAndPriceCheck: function(params = {}){
+
+    // let q = `
+    // SELECT 
+    // A.*, (case when B_room_id IS NULL then FALSE else TRUE end)  as booked
+    // FROM
+    //     (SELECT 
+    //         *
+    //     FROM
+    //         room R
+    //     WHERE
+    //         (R.room_id = 9 OR R.room_id = 11
+    //             OR R.room_id = 8)) AS A
+    // LEFT JOIN
+    //     (SELECT DISTINCT
+    //         (room_id) AS B_room_id
+    //     FROM
+    //         spartanhotel.booking B
+    //     WHERE
+    //         date_in < '2019-03-21'
+    //             AND date_out > '2019-03-02'
+    //             AND status != 'cancelled'
+    //             AND (room_id = 9 OR room_id = 11
+    //             OR room_id = 8)
+    //            and transaction_id != 43
+    //      ) 
+    // AS AB ON A.room_id = B_room_id                                                              
+    // `
+    
+    let q1 = `
+    SELECT 
+    A.*, (case when B_room_id IS NULL then FALSE else TRUE end)  as booked
+    FROM
+        (SELECT 
+            *
+        FROM
+            room R
+        WHERE
+            
+    `
+    // (R.room_id = 9 OR R.room_id = 11
+    //   OR R.room_id = 8))
+    let placeholderComponentForRooms = []
+    let placeholderValues = []
+    let rooms = []
+    for(i=0;i<params.rooms.length;i++){
+      placeholderComponentForRooms.push("room_id = ?")
+      rooms.push(params.rooms[i])
+    }
+    console.log(`AAA ${rooms}`)
+    let roomIdCondition = "(" + placeholderComponentForRooms.join(" or ") + ")"
+
+    q1 = q1 + " " + roomIdCondition +")"
+    placeholderValues.push.apply(placeholderValues, rooms)
+    console.log(placeholderValues)
+
+
+    let q2 = `
+    AS A
+    LEFT JOIN
+        (SELECT DISTINCT
+            (room_id) AS B_room_id
+        FROM
+            spartanhotel.booking B
+        WHERE
+            date_in < ?
+                AND date_out > ?
+                AND status != 'cancelled'
+                AND 
+    `
+    // (room_id = 9 OR room_id = 11
+    //   OR room_id = 8)
+    
+    
+    placeholderValues.push(params.date_out)
+    placeholderValues.push(params.date_in)
+
+    q2 = q2 + " " + roomIdCondition 
+    placeholderValues.push.apply(placeholderValues, rooms)
+
+    // and transaction_id != 43)
+    let q3 = ` and transaction_id != ?) `
+    placeholderValues.push(params.transaction_id)
+
+    let q4 = `
+    AS AB ON A.room_id = B_room_id                                                              
+    `
+
+    let q = q1 + q2 + q3 + q4
+
+    console.log(q)
+
+    
+    let sql = mysql.format(q, placeholderValues)
+    console.log(sql)
+    return sql
+},
       
 
 
@@ -824,7 +988,17 @@ module.exports = {
 
     guest: {
       insert: 'INSERT INTO spartanhotel.guest(guest_id, email, name) values (null, ?, ?)'
-
+    },
+    modify:{
+      removeTransactionRoomDataAndRewardsForTransaction: `
+      DELETE TR,R FROM transaction_room TR
+        LEFT JOIN
+        reward R
+      ON TR.transaction_id = R.transaction_id
+      WHERE
+      TR.transaction_id = ?
+      `,
+      updateTransaction: 'UPDATE spartanhotel.transaction SET total_price=?, cancellation_charge=?, date_in=?, date_out=?, status=?, amount_paid=?, stripe_id=? WHERE transaction_id=?',
     }
 
 

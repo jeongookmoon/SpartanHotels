@@ -10,12 +10,12 @@ const bodyParser = require('body-parser')
 
 var validator = require('validator');
 
-const dateChecker = require("./_checks")
+const checks = require("./_checks")
 
 router.get('/hotels', (req,res)=>{
     console.log(req.query)
 
-    if (! dateChecker(req.query, res)){
+    if (! checks.date_checker(req.query, res)){
         return
     }
 
@@ -113,7 +113,7 @@ router.get('/hotels/:hotelID', (req,res)=>{
         res.status(400).send("Error: hotelID is not a number")
         return
     }
-    if (! dateChecker(req.query, res)){
+    if (! checks.date_checker(req.query, res)){
         return
     }
 

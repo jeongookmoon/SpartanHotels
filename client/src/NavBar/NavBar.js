@@ -49,17 +49,21 @@ class NavBar extends React.Component {
         if (response === "S") {
           // console.log("login success")
           empty_fields["email"] = ''
+          temp_loginerror = ''
         } else {
           temp_loginerror = "*Please enter valid credentials (email or password)"
           this.setState({ loginerror: temp_loginerror })
           empty_fields["email"] = this.state.loginfields.email
         }
 
-        this.setState({ loginfields: empty_fields, loginerror : temp_loginerror })
-        this.props.history.push(`/`)
+        this.setState({ loginfields: empty_fields, loginerror : temp_loginerror }, () => this.pushtoCurrentURL())
       })
     }
+  }
 
+  pushtoCurrentURL() {
+    const currentURL = this.props.location.pathname + this.props.location.search
+    this.props.history.push(currentURL)
   }
 
   Home(event) {
@@ -72,7 +76,7 @@ class NavBar extends React.Component {
     logoutClearSession()
     event.preventDefault()
     localStorage.removeItem('accesstoken')
-    this.props.history.push(`/`)
+    this.pushtoCurrentURL()
   }
 
   UserProfile(event) {
