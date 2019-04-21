@@ -160,23 +160,6 @@ class Home extends React.Component {
 		})
 	}
 
-	getNearbyInfo(results, status) {
-		const nearbyPlacesID = []
-		if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-			console.log('nearby', results)
-			let max = 8
-			if(results.length < max) 
-				max = results.length
-			for (var i = 0; i < max ; i++) {
-				var place = results[i].place_id;
-				console.log(`place${i}`, place)
-				nearbyPlacesID.push(place)
-			}
-		}
-		window.nearbyPlacesID = nearbyPlacesID
-		console.log('window.nearbyPlacesID', window.nearbyPlacesID)
-	}
-
 	showPlaceDetails(place) {
 		let geoDetail = JSON.stringify(place.geometry.location, null, 2).replace(/['"]+/g, '')
 		const latitude = geoDetail.substring(geoDetail.lastIndexOf("lat:") + "lat: ".length, geoDetail.lastIndexOf(","))
@@ -191,41 +174,16 @@ class Home extends React.Component {
 		const city = extractFromAddress(address, 'city')
 		const state = extractFromAddress(address, 'state')
 
-		var pyrmont = new window.google.maps.LatLng(-33.8665433,151.1956316);
-
-		var request = {
-			location: pyrmont,
-			radius: '500',
-			query: 'things to do'
-		};
-
-		const detailRequest = {
-			placeId: 'ChIJlRNfzEKuEmsRmYatuej_zR8'
-		}
 		this.setState(
 			{
 				latitude, longitude,
 				fullAddress, streetAddress,
 				city, state, place
 			},
-			() =>{
-				window.googleMapHome.setCenter(
-					new window.google.maps.LatLng(latitude, longitude)
-				)
-				this.putGoogleMapMarker(latitude, longitude)
-				const service = new window.google.maps.places.PlacesService(window.googleMapHome)
-				service.textSearch(request, this.getNearbyInfo)
-				service.getDetails(detailRequest, this.getNearbyDetail)
-			}
+			window.googleMapHome.setCenter(
+				new window.google.maps.LatLng(latitude, longitude)
+			)
 		)
-	}
-
-	getNearbyDetail(results, status) {
-		if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-
-			console.log('first photo', results.photos[0].getUrl())
-			console.log('second photo', results.photos[1].getUrl())
-		}
 	}
 
 	search = (event) => {
