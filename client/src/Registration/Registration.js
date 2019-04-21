@@ -106,36 +106,18 @@ class Registration extends React.Component {
         password: this.state.fields.password
       }
       registerPost(temp_fields).then(response => {
-        // console.log("status number(200 success, else fail): ")
         if (response === 200) {
-          // console.log("expected reponse 200 (registraion and login success): ")
-          // console.log(response)
-          this.setState({email_duplicate_error : false})
-          this.props.history.push(`/`)
-          //   loginPost(temp_fields).then(loginresponse => {
-          //     if(loginresponse === "S") {
-          //       console.log("login success")
-          //     } else if (loginresponse === "F") {
-          //       console.log("login fail")
-          //     }
-          //     this.props.history.push(`/`)
-          // })
+          this.setState({email_duplicate_error : false}, () => this.pushtoCurrentURL())
         } else if (response === 400) {
-          // console.log("expected reponse 400 (email already exists): ")
-          // console.log(response)
-          // let empty_fields = {}
-          // empty_fields["email"] = ""
-          // empty_fields["firstname"] = ""
-          // empty_fields["lastname"] = ""
-          // empty_fields["password"] = ""
-          // empty_fields["repassword"] = ""
-          // // empty fields states
-          // this.setState({ fields: empty_fields })
-          this.setState({email_duplicate_error : true})
-          this.props.history.push(`/`)
+          this.setState({email_duplicate_error : true}, () => this.pushtoCurrentURL())
         }
       })
     }
+  }
+
+  pushtoCurrentURL() {
+    const currentURL = this.props.location.pathname + this.props.location.search
+    this.props.history.push(currentURL)
   }
 
   validate() {
