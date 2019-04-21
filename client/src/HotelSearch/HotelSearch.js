@@ -19,6 +19,7 @@ import moment from 'moment'
 import mapMarkerDefault from './Images/mapMarkerDefault.png'
 import mapMarkerActive from './Images/mapMarkerActive.png'
 import { sortByDropDownData } from '../Utility/DataForMenu'
+import AmenityFilterDropdown from './Components/AmenityFilterDropdown'
 
 class HotelSearch extends React.Component {
 
@@ -36,6 +37,20 @@ class HotelSearch extends React.Component {
 		const guest_number = params.get('guest_number')
 		const sortBy = params.get('sortBy')
 		const state = params.get('state')
+		let amenities = ''
+		let selectedOption = []
+		if (params.get("amenities") && params.get("amenities") !== '') {
+			amenities = params.get("amenities")
+			const ifarray = amenities.split(",")
+			if (ifarray.constructor === Array) {
+				ifarray.forEach((amenity) => {
+					const amenityobj = {}
+					amenityobj.value = amenity
+					amenityobj.label = amenity
+					selectedOption.push(amenityobj)
+				})
+			}
+		}
 
 		this.state = {
 			hotels: [{}],
@@ -48,6 +63,7 @@ class HotelSearch extends React.Component {
 				state,
 				date_in: moment(dateIn, ('YYYY-MM-DD')),
 				date_out: moment(dateOut, ('YYYY-MM-DD')),
+				amenities
 			},
 			sortBy,
 			hotel_id: 0,
@@ -58,16 +74,30 @@ class HotelSearch extends React.Component {
 			guest_number,
 			focusedInput: null,
 			place: {},
+			selectedOption
 		};
+	}
 
+	convertSelectedOption = () => {
+		let amenities = ''
 
-		this.roomSearch = this.roomSearch.bind(this)
-		this.handleChange = this.handleChange.bind(this)
-		this.getHotelSearchResult = this.getHotelSearchResult.bind(this)
-		this.adultIncrement = this.adultIncrement.bind(this)
-		this.adultDecrement = this.adultDecrement.bind(this)
-		this.childrenIncrement = this.childrenIncrement.bind(this)
-		this.childrenDecrement = this.childrenDecrement.bind(this)
+		this.state.selectedOption.forEach((option, index) => {
+			amenities += option.label
+			if (index !== this.state.selectedOption.length - 1)
+				amenities += ','
+		});
+
+		this.setState(prevState => ({
+			searchParams: {
+				...prevState.searchParams,
+				amenities
+			}
+		}));
+	}
+
+	handleFilterDropdown = (selectedOption) => {
+		this.setState({ selectedOption },
+			() => this.convertSelectedOption())
 	}
 
 	async componentDidMount() {
@@ -137,7 +167,7 @@ class HotelSearch extends React.Component {
 			zoom: 14
 		});
 
-		
+
 		window.googleMap = googleMap
 		// display each hotel's information window when clicking the marker	
 		const infoWindow = new window.google.maps.InfoWindow()
@@ -171,12 +201,12 @@ class HotelSearch extends React.Component {
 				setTimeout(() => { window.markers[index].setAnimation() }, 750);
 				window.infoWindow.setContent(hotelInfo)
 				window.infoWindow.open(window.googleMap, googleMapMarker);
-				window.infoWindow.setOptions({maxWidth:250}); 
+				window.infoWindow.setOptions({ maxWidth: 250 });
 			});
 		})
 	}
 
-	handleChange(event) {
+	handleChange = (event) => {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
 		const name = target.name;
@@ -186,7 +216,7 @@ class HotelSearch extends React.Component {
 		});
 	}
 
-	adultIncrement() {
+	adultIncrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('adult').value, 10);
 
@@ -203,7 +233,7 @@ class HotelSearch extends React.Component {
 		})
 	}
 
-	adultDecrement() {
+	adultDecrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('adult').value, 10);
 
@@ -224,7 +254,7 @@ class HotelSearch extends React.Component {
 
 	}
 
-	childrenIncrement() {
+	childrenIncrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('children').value, 10);
 
@@ -242,7 +272,7 @@ class HotelSearch extends React.Component {
 
 	}
 
-	childrenDecrement() {
+	childrenDecrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('children').value, 10);
 
@@ -266,7 +296,6 @@ class HotelSearch extends React.Component {
 
 		const params = new URLSearchParams(this.props.location.search)
 		const sortBy = params.get("sortBy")
-		const amenities = params.get("amenities")
 
 		let additionalClause = ''
 		if (event.target.name && event.target.name === 'sortBy') {
@@ -281,8 +310,8 @@ class HotelSearch extends React.Component {
 			}
 		}
 
-		if(amenities && amenities !== '')
-			additionalClause += `&amenities=${amenities}`
+		if (this.state.searchParams.amenities)
+			additionalClause += `&amenities=${this.state.searchParams.amenities}`
 
 		let searchParams = Object.assign({}, this.state.searchParams)
 		searchParams.date_in = searchParams.date_in.format('YYYY-MM-DD')
@@ -357,7 +386,7 @@ class HotelSearch extends React.Component {
 		if (images && images.constructor === Array) {
 			arraychecker = images.split(",")
 			return arraychecker[0]
-		} 
+		}
 		return images
 	}
 
@@ -370,14 +399,14 @@ class HotelSearch extends React.Component {
 			<div>
 				<FormGroup className="form-inline hotel-search-inputs">
 					<div className="col-lg-1"></div>
-					<div className="col-lg-3 input-group home-location">
+					<div className="col-lg-2 input-group home-location">
 						<div className="input-group-append">
 							<div className="location-input-icon input-group-text"><i className="fa fa-search"></i></div>
 						</div>
 						<Autocomplete onPlaceChanged={this.showPlaceDetails.bind(this)} />
 					</div>
 
-					<div className="col-lg-4 input-group home-date">
+					<div className="col-lg-3 input-group home-date">
 						<div className="input-group-append">
 							<div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
 						</div>
@@ -433,6 +462,9 @@ class HotelSearch extends React.Component {
 							</ul>
 						</div>
 					</div>
+					<div className="col-lg-2 home-submit-button-container">
+						<AmenityFilterDropdown value={this.state.selectedOption} handleFilterDropdown={this.handleFilterDropdown} />
+					</div>
 					<div className="col-lg-1 home-submit-button-container">
 						<button onClick={this.getHotelSearchResult} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Search</button>
 					</div>
@@ -453,8 +485,8 @@ class HotelSearch extends React.Component {
 			<select name="sortBy" onChange={this.getHotelSearchResult} value={this.state.sortBy}>
 				<option value="" disabled hidden >Sort By</option>
 				{sortByDropDownData.map((each, key) => {
-            return <option key={key} value={each.value} label={each.label}></option>
-          })}
+					return <option key={key} value={each.value} label={each.label}></option>
+				})}
 			</select>
 		)
 
