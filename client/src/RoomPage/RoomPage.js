@@ -1,10 +1,8 @@
 import React from 'react';
 import axios from 'axios'
 import { withRouter } from 'react-router-dom'
-import { Table, FormGroup } from 'reactstrap';
+import { Table} from 'reactstrap';
 import './css/RoomPage.css'
-import { DateRangePicker } from 'react-dates'
-import moment from 'moment'
 
 
 
@@ -25,12 +23,6 @@ class RoomPage extends React.Component {
 			date_in,
 			date_out,
 			city,
-			searchParams: {
-				city,
-				state: '',
-				date_in: moment(date_in, ('YYYY-MM-DD')),
-				date_out: moment(date_out, ('YYYY-MM-DD')),
-			},
 		};
 	}
 
@@ -68,14 +60,6 @@ class RoomPage extends React.Component {
 			let imageArray = []
 			if (imageURLS) {
 				imageArray = imageURLS.split(",");
-			}
-
-			var hotelImageStyle = {
-				width: "100vw",
-				height: "100vh",
-				backgroundRepeat: "no-repeat",
-				backgroundSize: "cover",
-				backgroundPosition: "center center",
 			}
 
 			return (
@@ -134,7 +118,7 @@ class RoomPage extends React.Component {
 
 													           	</div>
 
-													           	<div className="col-md-8 image" style={{backgroundImage: `url(${imageArray[0]})`}}>
+													           	<div className="col-md-8 room-page-image" style={{backgroundImage: `url(${imageArray[0]})`}}>
 								              					</div>
 												            </div>
 					          							</div>  
@@ -151,8 +135,8 @@ class RoomPage extends React.Component {
 													return (
 															<div className="room-page-room-item col-lg-4 mb-5" key={index}>
 																<div className="block-34"  style={{ cursor: "pointer" }}>
-																  	<div className="image">
-																      	<a href="#child4"><img src={imageArray[0]} alt="Image placeholder"/></a>
+																  	<div className="room-page-image">
+																      	<a href="#child4"><img src={imageArray[0]} alt="Placeholder"/></a>
 																  	</div>
 																  	<div className="text">
 																	    <h2 className="heading">Presidential Room</h2>
@@ -240,7 +224,7 @@ class RoomPage extends React.Component {
 																					this.state.rooms.results.map((eachRoomResult, index) => {
 																						return (
 																							<tr onClick={this.Checkout.bind(this)} key={index}>
-																								<td scope="row">Room Name Here</td>
+																								<td >Room Name Here</td>
 																								<td>{eachRoomResult.bed_type}</td>
 																								<td>${eachRoomResult.price.toFixed(2)}</td>
 																								<td> Quantity Here </td>
@@ -273,7 +257,7 @@ class RoomPage extends React.Component {
 																</Table>
 															</div>
 									
-									<p className=""><a href="#" className="room-page-submit-button btn btn-primary py-3 px-5 mb-5" onClick={this.Checkout.bind(this)}>Checkout</a></p>
+									<p className="room-page-submit-button btn btn-primary py-3 px-5 mb-5"  style={{ cursor: "pointer" }} onClick={this.Checkout.bind(this)}>Checkout</p>
 
 								</div>
 

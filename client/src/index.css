@@ -508,7 +508,7 @@ code {
 
 
  .hotel-search-container{
-  margin-top:4.7em;
+  padding-top:4.7em;
   width:100%;
   height:100%;
   background-color: #f9fbfc;
@@ -800,7 +800,7 @@ code {
     width:100%;
     overflow-x:hidden;
     direction:ltr;
-  max-height:29em;
+    max-height:29em;
   padding-right:10px;
 
   }
@@ -991,7 +991,7 @@ code {
   background: #fff;
   -webkit-box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.2);
   box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.2); }
-  .block-34 .image img, .block-3 .image img {
+  .block-34 .room-page-image img, .block-3 .room-page-image img {
     max-width: 100%; }
   .block-34 .text, .block-3 .text {
     padding: 30px; }
@@ -1017,11 +1017,11 @@ code {
       .block-34 .text .specs li strong, .block-3 .text .specs li strong {
         color: #000; }
 
-.block-3 .text, .block-3 .image {
+.block-3 .text, .block-3 .room-page-image {
   width: 100%;
   padding: 5% 3%; }
   @media (min-width: 768px) {
-    .block-3 .text, .block-3 .image {
+    .block-3 .text, .block-3 .room-page-image {
       width: 50%;
       padding: 5% 3%; } }
 
@@ -1038,10 +1038,10 @@ code {
 .block-3 .text p:last-child {
   margin-bottom: 0; }
 
-.block-3 .image {
+.block-3 .room-page-image {
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat; }
   @media (max-width: 767.98px) {
-    .block-3 .image {
+    .block-3 .room-page-image {
       height: 300px; } }
