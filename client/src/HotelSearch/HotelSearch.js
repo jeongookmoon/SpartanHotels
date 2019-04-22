@@ -170,7 +170,7 @@ class HotelSearch extends React.Component {
 
 		// bounding box for map
 		var bounds = new window.google.maps.LatLngBounds()
-		bounds.extend(new window.google.maps.LatLng(latitude, longitude))
+		//bounds.extend(new window.google.maps.LatLng(latitude, longitude))
 		
 		window.googleMap = googleMap
 		// display each hotel's information window when clicking the marker	
