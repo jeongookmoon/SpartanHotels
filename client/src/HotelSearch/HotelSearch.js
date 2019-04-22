@@ -205,6 +205,9 @@ class HotelSearch extends React.Component {
 				icon: defaultMarkerImage
 			})
 
+			// https://stackoverflow.com/questions/15719951/auto-center-map-with-multiple-markers-in-google-maps-api-v3
+			// https://developers.google.com/maps/documentation/javascript/reference/coordinates#LatLngBounds.extend
+			// https://stackoverflow.com/questions/2437683/google-maps-api-v3-can-i-setzoom-after-fitbounds
 			
 
 			// add marker position to boundingbox
