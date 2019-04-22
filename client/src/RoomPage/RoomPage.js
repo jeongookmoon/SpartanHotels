@@ -1,8 +1,10 @@
 import React from 'react';
 import axios from 'axios'
 import { withRouter } from 'react-router-dom'
-import { Table } from 'reactstrap';
+import { Table} from 'reactstrap';
 import './css/RoomPage.css'
+
+
 
 class RoomPage extends React.Component {
 	constructor(props) {
@@ -20,7 +22,7 @@ class RoomPage extends React.Component {
 			hotel_id,
 			date_in,
 			date_out,
-			city
+			city,
 		};
 	}
 
@@ -46,107 +48,13 @@ class RoomPage extends React.Component {
 	}
 
 	render() {
-		const something = (
-			<div className="rooms">
-				<div className="container">
-					<div className="row">
-						<div className="col">
-							<div className="card-columns">
-
-								<div className="card" onClick={this.Checkout.bind(this)} style={{ cursor: "pointer" }}>
-									<img className="card-img-top" src="https://colorlib.com/preview/theme/marimar/images/room_1.jpg" alt="Room" />
-									<div className="card-body">
-										<div className="rooms_title"><h2>Luxury Double Suite</h2></div>
-										<div className="rooms_text">
-											<p>Maecenas sollicitudin tincidunt maximus. Morbi tempus malesuada erat sed pellentesque. Donec pharetra mattis nulla, id laoreet neque scelerisque at. Quisque eget sem non ligula consectetur ultrices in quis augue. Donec imperd iet leo eget tortor dictum, eget varius eros sagittis. Curabitur tempor dignissim massa ut faucibus sollicitudin tinci dunt maximus. Morbi tempus malesuada erat sed pellentesque.</p>
-										</div>
-										<div className="rooms_list">
-											<ul>
-												<li className="d-flex flex-row align-items-center justify-content-start">
-													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="1" />
-													<span>Morbi tempus malesuada erat sed</span>
-												</li>
-												<li className="d-flex flex-row align-items-center justify-content-start">
-													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="2" />
-													<span>Tempus malesuada erat sed</span>
-												</li>
-												<li className="d-flex flex-row align-items-center justify-content-start">
-													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
-													<span>Pellentesque vel neque finibus elit</span>
-												</li>
-											</ul>
-										</div>
-										<div className="rooms_price">$129/<span>Night</span></div>
-									</div>
-								</div>
-
-								<div className="card card-special">
-									<img className="card-img-top" src="https://colorlib.com/preview/theme/marimar/images/room_4.jpg" alt="description" />
-									<div className="card-special-panel">special offer</div>
-									<div className="card-body">
-										<div className="rooms_title"><h2>Budget Suite</h2></div>
-										<div className="rooms_text">
-											<p>Maecenas sollicitudin tincidunt maximus. Morbi tempus malesuada erat sed pellentesque. Donec pharetra mattis nulla, id laoreet neque scelerisque at.</p>
-										</div>
-										<div className="rooms_list">
-											<ul>
-												<li className="d-flex flex-row align-items-center justify-content-start">
-													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
-													<span>Morbi tempus malesuada erat sed</span>
-												</li>
-												<li className="d-flex flex-row align-items-center justify-content-start">
-													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
-													<span>Tempus malesuada erat sed</span>
-												</li>
-												<li className="d-flex flex-row align-items-center justify-content-start">
-													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
-													<span>Pellentesque vel neque finibus elit</span>
-												</li>
-											</ul>
-										</div>
-										<div className="rooms_price">$129/<span>Night</span></div>
-									</div>
-								</div>
-
-								<div className="card">
-									<img className="card-img-top" src="https://colorlib.com/preview/theme/marimar/images/room_2.jpg" alt="Roomimage" />
-									<div className="card-body">
-										<div className="rooms_title"><h2>Luxury Single Room</h2></div>
-										<div className="rooms_text">
-											<p>Maecenas sollicitudin tincidunt maximus. Morbi tempus malesuada erat sed pellentesque. Donec pharetra mattis nulla, id laoreet neque scelerisque at.</p>
-										</div>
-										<div className="rooms_list">
-											<ul>
-												<li className="d-flex flex-row align-items-center justify-content-start">
-													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
-													<span>Morbi tempus malesuada erat sed</span>
-												</li>
-												<li className="d-flex flex-row align-items-center justify-content-start">
-													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
-													<span>Tempus malesuada erat sed</span>
-												</li>
-												<li className="d-flex flex-row align-items-center justify-content-start">
-													<img src="https://colorlib.com/preview/theme/marimar/images/check.png" alt="" />
-													<span>Pellentesque vel neque finibus elit</span>
-												</li>
-											</ul>
-										</div>
-										<div className="rooms_price">$129/<span>Night</span></div>
-									</div>
-								</div>
-
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		)
 
 		if (!this.state.hotel.results) {
 			return (
 				<div className="hotel-search-container"> Loading </div>
 			);
 		}
+
 		else {
 			const imageURLS = this.state.hotel.results[0].images;
 			let imageArray = []
@@ -156,9 +64,15 @@ class RoomPage extends React.Component {
 
 			return (
 				<div className="room-page-container">
-					<div className="col-lg-12 room-page-hotel-image-container row">
-						<div className="col-lg-3 shadow-lg room-page-hotel-desdays cription">
-							<h1>{this.state.hotel.results[0].name}</h1>
+					{/*
+					<div className="col-lg-12 custom-row room-page-hotel-image-container" style={{width: "100vw",
+							height: "100vh",
+							backgroundRepeat: "no-repeat",
+							backgroundSize: "cover",
+							backgroundPosition: "center center", backgroundImage: `url(${imageArray[0]})`}}>		
+					
+						<div className="col-lg-6 room-page-hotel-description">
+							<p>{this.state.hotel.results[0].name}</p>
 							<hr></hr>
 							<div> {this.state.hotel.results[0].address} </div>
 							<div> {this.state.hotel.results[0].state} </div>
@@ -168,15 +82,188 @@ class RoomPage extends React.Component {
 
 							<hr></hr>
 							{this.state.hotel.results[0].description}
-
 						</div>
-						<img className="col-lg-9 room-page-hotel-image " src={imageArray[0]} alt="logo" />
 
 					</div>
+					*/}
 
 					<div className="room-page-rooms-container">
+						<div>
+						        {
+									this.state.rooms.results.length > 0 ?
+										<div className="">
+											<div className="col-lg-12 custom-row room-page-hotel-container">
+												<div className="container">
+							        				<div className="custom-row mb-5">
+							          					<div className="col-md-12">
+								            				<div className="block-3 d-md-flex room-page-hotel-description">
+								              					
+									           					<div className="col-md-4 text">
+
+									               					<h2 className="heading">{this.state.hotel.results[0].name}</h2>
+
+									               					<div className="room-page-item-rating">
+									               						<span className="fa fa-star hotel-search-item-rating-checked"></span>
+									               						<span className="fa fa-star hotel-search-item-rating-checked"></span>
+									               						<span className="fa fa-star hotel-search-item-rating-checked"></span>
+									               						<span className="fa fa-star hotel-search-item-rating-checked"></span>
+									               						<span className="fa fa-star"></span>
+									               					</div>
+
+										                			<ul className="specs">
+											                  			<li> {this.state.hotel.results[0].address}, {this.state.hotel.results[0].city}, {this.state.hotel.results[0].state}, {this.state.hotel.results[0].zipcode} </li>
+											                  			<li> {this.state.hotel.results[0].phone_number}</li>
+											                  			<li> <sup>{this.state.hotel.results[0].description}</sup></li>
+										                			</ul>
+
+													           	</div>
+
+													           	<div className="col-md-8 room-page-image" style={{backgroundImage: `url(${imageArray[0]})`}}>
+								              					</div>
+												            </div>
+					          							</div>  
+					          						</div> 
+		          								</div> 
+	          								</div>
+
+											<hr></hr>
+
+	          								<div className="col-lg-12 room-page-rooms custom-row container">
+											{
+
+												this.state.rooms.results.map((eachRoomResult, index) => {
+													return (
+															<div className="room-page-room-item col-lg-4 mb-5" key={index}>
+																<div className="block-34"  style={{ cursor: "pointer" }}>
+																  	<div className="room-page-image">
+																      	<a href="#child4"><img src={imageArray[0]} alt="Placeholder"/></a>
+																  	</div>
+																  	<div className="text">
+																	    <h2 className="heading">Presidential Room</h2>
+																	    <div className="price"><sup className="room-page-room-price">$</sup><span className="room-page-room-price">{eachRoomResult.price.toFixed(2)}</span><sub>/per night</sub></div>
+																	    <ul className="specs">
+																		     	 <li><strong>Bed Type:</strong> {eachRoomResult.bed_type} </li>																	    
+																		     	 <li><strong>Ammenities:</strong> Closet with hangers, HD flat-screen TV, Telephone</li>
+																		     	 <li><strong>Capacity Per Room:</strong> {eachRoomResult.capacity}</li>
+																		     	 {/*<li><strong>Bed Number:</strong> {eachRoomResult.bed_number} </li>*/}
+
+																		     	 {/*<a href="#child4">{eachRoomResult.room_number}</a>*/}
+																	    </ul>
+																	    <div >
+																	    	<strong># Of Rooms </strong> 
+																		    <input type="text" name="numbers" list="numbers">
+																		    </input>
+																		    <datalist id="numbers">
+																		      <option value="1"></option>
+																		      <option value="2"></option>
+																		      <option value="3"></option>
+																		      <option value="4"></option>
+																		      <option value="5"></option>
+																		    </datalist>
+																	    </div>
+										                				{/*<p><a href="#" className="btn btn-primary py-3 px-5">Read More</a></p>*/}
+
+																  	</div>
+																</div>
+															</div>
+													)
+												})			
+											}
+											</div>
+										</div> :
+										<div>no result</div>
+								}
+
+								<hr></hr>
+									{/*
+									<FormGroup className="form-inline ">
+										<div className="col-lg-12 input-group custom-row home-date">
+											<div className="input-group-append">
+												<div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
+											</div>
+											<DateRangePicker
+												startDate={this.state.searchParams.date_in} // momentPropTypes.momentObj or null,
+												startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
+												endDate={this.state.searchParams.date_out} // momentPropTypes.momentObj or null,
+												endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
+												onDatesChange={({ startDate, endDate }) =>
+													this.setState(prevState => ({
+														searchParams: {
+															...prevState.searchParams,
+															date_in: startDate,
+															date_out: endDate
+														}
+													}))
+												} // PropTypes.func.isRequired,
+												focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+												onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
+											/>
+										</div>
+
+									</FormGroup>
+
+									*/}
+
+									<div className="room-page-checkout-description">
+
+																<Table hover borderless>
+																	<thead>
+																		<tr>
+																			<th>Room Name</th>
+																			<th>Bed Type</th>
+																			<th>Price</th>
+																			<th>Quantity</th>
+																			<th>Total</th>
+																		</tr>
+																	</thead>
+
+																	{
+																		this.state.rooms.results.length > 0 ?
+																			<tbody>
+																				{
+																					this.state.rooms.results.map((eachRoomResult, index) => {
+																						return (
+																							<tr onClick={this.Checkout.bind(this)} key={index}>
+																								<td >Room Name Here</td>
+																								<td>{eachRoomResult.bed_type}</td>
+																								<td>${eachRoomResult.price.toFixed(2)}</td>
+																								<td> Quantity Here </td>
+																								<td>$ </td>
+																							</tr>
+																							
+																						)
+																					})
+																				}
+
+																				<tr className="hr-row">
+																								<td><hr></hr> </td>
+																								<td><hr></hr> </td>
+																								<td><hr></hr> </td>
+																								<td><hr></hr> </td>
+																								<td><hr></hr> </td>
+																				</tr>
+
+																				<tr>
+																								<td> </td>
+																								<td> </td>
+																								<td> </td>
+																								<td><strong> Estimated Total </strong></td>
+																								<td> $ </td>
+																				</tr>
+
+																			</tbody> :
+																			<tbody><tr>no result</tr></tbody>
+																	}
+																</Table>
+															</div>
+									
+									<p className="room-page-submit-button btn btn-primary py-3 px-5 mb-5"  style={{ cursor: "pointer" }} onClick={this.Checkout.bind(this)}>Checkout</p>
+
+								</div>
+
+
+						{/* JEONG'S
 						<div className="col-lg-12 shadow-lg room-page-rooms">
-							{something}
 
 							<Table hover borderless>
 								<thead>
@@ -206,12 +293,10 @@ class RoomPage extends React.Component {
 										</tbody> :
 										<tbody><tr>no result</tr></tbody>
 								}
-
 							</Table>
 						</div>
+						*/}
 					</div>
-
-
 				</div>
 			);
 		}
