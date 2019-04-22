@@ -151,7 +151,6 @@ class Home extends React.Component {
 			children: value,
 			guest_number: guest_number
 		})
-
 	}
 
 	putGoogleMapMarker = (latitude, longitude) => {
