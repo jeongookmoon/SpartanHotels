@@ -139,9 +139,8 @@ CREATE TABLE IF NOT EXISTS `spartanhotel`.`room_image` (
   `room_image_id` INT(11) NOT NULL AUTO_INCREMENT,
   `hotel_id` INT(11) UNSIGNED NOT NULL,
   `bed_type` VARCHAR(255) NOT NULL,
-  `bed_number` INT(11) UNSIGNED NOT NULL,
   `url` VARCHAR(255) NULL DEFAULT NULL,
-  `description` VARCHAR(2048) NULL,
+  `description` TEXT NULL,
   PRIMARY KEY (`room_image_id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
@@ -218,7 +217,6 @@ CREATE TABLE IF NOT EXISTS `spartanhotel`.`promo` (
   `included_hotels` JSON NULL,
   `excluded_hotels` JSON NULL,
   `included_room_bed_types` JSON NULL,
-  `included_room_bed_number` JSON NULL,
   `promo_type` ENUM("FIXED", "PERCENTAGE", "GIFT") NULL,
   `start_date` DATETIME NULL,
   `end_date` DATETIME NULL,
