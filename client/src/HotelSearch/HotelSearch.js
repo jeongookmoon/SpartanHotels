@@ -168,7 +168,10 @@ class HotelSearch extends React.Component {
 			zoom: 14
 		});
 
-
+		// bounding box for map
+		var bounds = new window.google.maps.LatLngBounds()
+		bounds.extend(new window.google.maps.LatLng(latitude, longitude))
+		
 		window.googleMap = googleMap
 		// display each hotel's information window when clicking the marker	
 		const infoWindow = new window.google.maps.InfoWindow()
@@ -202,7 +205,16 @@ class HotelSearch extends React.Component {
 				icon: defaultMarkerImage
 			})
 
-			window.markers.push(googleMapMarker)
+			
+
+			// add marker position to boundingbox
+			bounds.extend(new window.google.maps.LatLng(eachHotel.latitude, eachHotel.longitude))
+			window.googleMap.fitBounds(bounds)
+			var listener = window.google.maps.event.addListener(googleMap, "idle", function() { 
+				if (googleMap.getZoom() > 16) googleMap.setZoom(16); 
+				window.markers.push(googleMapMarker)
+				window.google.maps.event.removeListener(listener); 
+			  });
 
 			// action listener to open information window when clicking marker
 			googleMapMarker.addListener('click', () => {
