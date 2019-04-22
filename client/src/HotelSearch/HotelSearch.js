@@ -16,8 +16,6 @@ import { DateRangePicker } from 'react-dates'
 import 'react-dates/lib/css/_datepicker.css'
 import moment from 'moment'
 
-import mapMarkerDefault from './Images/mapMarkerDefault.png'
-import mapMarkerActive from './Images/mapMarkerActive.png'
 import { sortByDropDownData } from '../Utility/DataForMenu'
 import AmenityFilterDropdown from './Components/AmenityFilterDropdown'
 import {defaultMarkerImageBaseURL, selectedMarkerImageBaseURL} from './mapMarker'
