@@ -20,6 +20,7 @@ import mapMarkerDefault from './Images/mapMarkerDefault.png'
 import mapMarkerActive from './Images/mapMarkerActive.png'
 import { sortByDropDownData } from '../Utility/DataForMenu'
 import AmenityFilterDropdown from './Components/AmenityFilterDropdown'
+import {defaultMarkerImageBaseURL, selectedMarkerImageBaseURL} from './mapMarker'
 
 class HotelSearch extends React.Component {
 
@@ -190,13 +191,15 @@ class HotelSearch extends React.Component {
 								`
 
 
+			var defaultMarkerImage = defaultMarkerImageBaseURL + "" + (index+1);
+			var selectedMarkerImage = selectedMarkerImageBaseURL + "" + (index+1);
+		  
 			// display each hotel's marker along with index number
 			const googleMapMarker = new window.google.maps.Marker({
 				position: { lat: parseFloat(eachHotel.latitude), lng: parseFloat(eachHotel.longitude) },
 				map: window.googleMap,
-				label: (index + 1).toString(),
 				title: eachHotel.name,
-				icon: mapMarkerDefault
+				icon: defaultMarkerImage
 			})
 
 			window.markers.push(googleMapMarker)
@@ -205,9 +208,12 @@ class HotelSearch extends React.Component {
 			googleMapMarker.addListener('click', () => {
 				var center = new window.google.maps.LatLng(eachHotel.latitude, eachHotel.longitude);
 				window.googleMap.panTo(center);
-				window.markers.forEach((eachMarker) => eachMarker.setIcon(mapMarkerDefault))
-				window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
-				window.markers[index].setIcon(mapMarkerActive)
+				window.markers.forEach((eachMarker,index) => {
+					eachMarker.setIcon(defaultMarkerImageBaseURL+(index+1))
+					eachMarker.setAnimation(null)
+				})
+				// window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
+				window.markers[index].setIcon(selectedMarkerImage)
 				setTimeout(() => { window.markers[index].setAnimation() }, 750);
 				window.infoWindow.setContent(hotelInfo)
 				window.infoWindow.open(window.googleMap, googleMapMarker);
@@ -385,10 +391,15 @@ class HotelSearch extends React.Component {
 	moveMap(lat, lng, index) {
 		var center = new window.google.maps.LatLng(lat, lng);
 		window.googleMap.panTo(center);
-		window.markers.forEach((eachMarker) => eachMarker.setIcon(mapMarkerDefault))
-		window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
-		window.markers[index].setIcon(mapMarkerActive)
-		setTimeout(() => { window.markers[index].setAnimation() }, 750);
+		window.markers.forEach((eachMarker,index) => {
+			eachMarker.setIcon(defaultMarkerImageBaseURL+(index+1))
+			eachMarker.setZIndex(0)
+			eachMarker.setAnimation(null)
+		})
+		// window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
+		window.markers[index].setIcon(selectedMarkerImageBaseURL+(index+1))
+		window.markers[index].setZIndex(12)
+		setTimeout(() => { window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE) }, 0);
 	}
 
 	getHotelSearchResultImages(images) {
