@@ -3,29 +3,23 @@ import List from '@material-ui/core/List';
 import { withRouter } from 'react-router-dom'; 
 import ListItem from '@material-ui/core/ListItem';
 import TextField from '@material-ui/core/TextField';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
+import './Recoverage.css';
+import HomeImage from './homeImage7.jpg';
 import { checkCodePost, changePost } from '../Utility/RecoverageFunction';
 import {UncontrolledPopover, PopoverHeader, PopoverBody,} from 'reactstrap';
-import accessImage from './Images/homeImage7.jpg';
+// import accessImage from './Images/homeImage7.jpg';
+import { Card, CardBody, Container, CardTitle} from 'reactstrap';
 
-let card ={
-  width: '275px'
- };
- let container = {
-  marginLeft: "45%"
- }
- var topSectionStyle = {
-  marginTop:"10%",
+
+var topSectionStyle = {
+  width: "100%",
+  height: '800px',
+  marginTop: "0%",
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "cover",
+  backgroundPosition: "center center",
+  backgroundImage: `url(${HomeImage})`
 };
-// var topSectionStyle = {
-// 	width: "100%",
-// 	backgroundRepeat: "no-repeat",
-// 	backgroundSize: "cover",
-// 	backgroundPosition: "center center",
-//   backgroundImage: `url(${accessImage})`,
-//   marginLeft: "45%"
-// };
 
 class Accesscode extends Component {
     constructor(props) {
@@ -207,31 +201,22 @@ class Accesscode extends Component {
     }
 
     render(){
-        const EmptyForm =(<div></div>)
-        const password_error = (
-            <div className="text-warning">{this.state.password_error.map((each) => <div>{each}</div>
-            )}</div>
-        )
-    
-        // const no_error = (
-        //     <div className="text-warning"></div>
-        // )
-    
-        // var password_requirements_component = this.state.passwordCheck.map(ele=>{
-        //     return <div key={ele.req} className= { ele.valid ? "valid-req" : "invalid-req" }>{ele.req}</div>
-        // }) 
-    
+        const EmptyForm =(<div></div>);
         var password_requirements_component = this.state.passwordCheck.map(ele=>{
           return <div key={ele.req} className= { ele.valid ? "valid-req" : "invalid-req" }>{ele.req}</div>
         })
         return(
-          <div style={topSectionStyle}>
-            <div className="topheader" style={container}>
-              <Card style={card} >
-                <CardContent>
+          <div className="col-lg-12 recoverage-container col-auto flex-container" style={topSectionStyle}>
+            <div className="recoverage-form-container col-lg-12">
+            <br/>
+             <Container style={{marginTop: '10%'}}>
+              <Card style={{width: "275px", marginLeft: "45%", backgroundColor: 'transparent'}}>
+                <CardTitle>
                   <div className="col-auto pl-0">
                     <h3> Password Recoverage </h3>
-                  </div>
+                  </div>  
+                </CardTitle>
+                <CardBody style={{ backgroundColor: 'transparent'}}>
                     <List component="nav">
                       {localStorage.checkToken ? 
                       <div>
@@ -262,7 +247,6 @@ class Accesscode extends Component {
                             pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$" 
                             required     
                           />
-                          {/* <div className="text-warning">{this.state.errors.password}</div> */}
                           <UncontrolledPopover trigger="focus" placement="right" target="PopoverFocus">
                             <PopoverHeader>Password Requirements</PopoverHeader>
                             <PopoverBody>
@@ -285,8 +269,9 @@ class Accesscode extends Component {
                             </button>
                             </div>}
                             </List>
-                  </CardContent>
+                      </CardBody>
                 </Card>
+              </Container>
             </div>
           </div>
         )

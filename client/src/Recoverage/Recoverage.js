@@ -1,29 +1,20 @@
 import React, { Component} from 'react';
 import { withRouter } from 'react-router-dom'; 
 import TextField from '@material-ui/core/TextField';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
+import homeImage from './homeImage7.jpg';
+import './Recoverage.css';
 import { sendcodePost } from '../Utility/RecoverageFunction';
+import { Card, CardBody, Container, CardTitle } from 'reactstrap';
 
-    
-    // var topSectionStyle = {
-    //     width: "100%",
-    //     height: '450px',
-    //     marginTop: "0%",
-    //     backgroundRepeat: "no-repeat",
-    //     backgroundSize: "cover",
-    //     backgroundPosition: "center center",
-    //     backgroundImage: `url(${recoveryImage})`
-    // };
-       let card ={
-        width: '275px'
-       };
-       let container = {
-        marginLeft: "45%"
-       }
-       var topSectionStyle = {
-        marginTop:"10%",
-      };
+var topSectionStyle = {
+    width: "100%",
+    height: '800px',
+    marginTop: "0%",
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundPosition: "center center",
+    backgroundImage: `url(${homeImage})`
+};
 
 
 class Recoverage extends Component {
@@ -96,13 +87,17 @@ class Recoverage extends Component {
 		// 	marginTop: "2em",
 		// };
         return(
-            <div style={topSectionStyle}>
-                <div className="topheader" style={container}>
-                    <Card style={card} >
-                        <CardContent>
-                        <div className="col-auto pl-0">
-                            <h3> Password Recoverage </h3>
+            <div className="col-lg-12 recoverage-container col-auto" style={topSectionStyle}>
+                <div className="recoverage-form-container col-lg-12">
+                <br/>
+                <Container style={{marginTop: '10%'}}>
+                    <Card style={{width: "275px", marginLeft: "45%", backgroundColor: 'transparent', align: "center"}}>
+                        <CardTitle>
+                        <div className="col-auto pl-0" style={{alignText: 'center'}}>
+                            <h4> Password Recoverage </h4>
                         </div>
+                        </CardTitle>
+                        <CardBody style={{ backgroundColor: 'transparent'}}>
                             <TextField
                             //   style={inputStyle}
                             id="email"
@@ -110,6 +105,7 @@ class Recoverage extends Component {
                             type="email"
                             value={email}
                             onChange={this.handleChange('email')}
+                            inputProps={{ maxLength: 99 }}
                             placeholder="email address"     
                             />
                             <button type="submit" color="primary" onClick={this.sendcode}>
@@ -129,8 +125,9 @@ class Recoverage extends Component {
                                     <p>Access code has sent!</p>
                                 </div>
                             )}
-                            </CardContent>
+                            </CardBody>
                     </Card>
+                    </Container>
                 </div>
         </div>
         )
