@@ -47,10 +47,10 @@ class UserProfile extends React.Component{
       axios.get('/api/profile')
         .then(res => 
           this.setState({
-            name: res.data[0].name,
-            email: res.data[0].email,
-            reward: res.data[0].reward
-          }))  
+            name: res.data.name,
+            email: res.data.email,
+            reward: res.data.reward
+          }, console.log(res)))  
   }
 
   
