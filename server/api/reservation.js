@@ -5,6 +5,7 @@ var Queries = require('../queries')
 var mysql = require('mysql')
 var Email = require('./email.js')
 var userapi = require('../api.js')
+const pug = require('pug')
 
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -193,56 +194,41 @@ router.post('/', (req, res)=>{
             res.status(200).send({message:`created transaction #${transactionID}`, data: transactionID})
 
         }
-        
+        //Send order confirmation email
+        var emailParams = {};
+        let email = getUserEmail(requestedBooking.user)
+        console.log(email)
+        email.then(function(results) {
+        emailParams.to = results
+        console.log('Email being set to: ' + results)
+        emailParams.subject = 'Your Spartan Hotels Order Confirmation!'
+        // emailParams.text = 'Hello. Thank you for booking a reservation using Spartan Hotels. This is an email to confirm you order for: \n' + JSON.stringify(requestedBooking);
+        var emailContents = pug.renderFile("./email_templates/makeReservation.pug", {"transaction_number": transactionID, "date": new Date().toLocaleDateString()})
+        emailParams.html = emailContents
+        var email = Email.email(emailParams)
+        })
     }
 
-    //Send order confirmation email
-    var emailParams = {};
-    /*
-    Queries.run(emailQuery).then((results) => {
-        console.log(results)
-        sendEmail = results;
-        res.status(200).send(results)
-        console.log("Email set")
-    },
-    (error) => {
-        console.log("Nope.avi")
-    })
-    */
-    async function getEmail(userid) {
+
+
+    async function getUserEmail(userid) {
         let emailquery = mysql.format('SELECT email FROM user WHERE user_id = ?', userid)
-        let sendEmail;
+        let userEmail;
         try{
-            sendEmail = await Queries.run(emailquery).then(function(results) {
-                console.log('Email sent to: ' + results[0].email)
+            userEmail = await Queries.run(emailquery).then(function(results) {
+                console.log('email for user is' + results[0].email)
                 return results[0].email
             })
         } catch(e){
             // query failed for some reason
             console.log(e)
-            res.status(400).send("bad")
+            res.status(500).send("email service failure")
             return
         }
-        console.log('This is a statement')
-        return sendEmail
+        return userEmail
     }
 
-    let email = getEmail(requestedBooking.user)
-    console.log(email)
-    email.then(function(results) {
-        emailParams.to = results
-        console.log('Email being set to: ' + results)
-        emailParams.subject = 'Order Confirmation'
-        emailParams.text = 'Hello. Thank you for booking a reservation using Spartan Hotels. This is an email to confirm you order for: \n' + JSON.stringify(requestedBooking);
-        var email = Email.email(emailParams)
-    })
-    /*
-    emailParams.to = thisemail
-    console.log('Email being set to: ' + thisemail)
-    emailParams.subject = 'Order Confirmation'
-    emailParams.text = 'Hello. Thank you for booking a reservation using Spartan Hotels. This is an email to confirm you order for: \n' + JSON.stringify(requestedBooking);
-    var email = Email.email(emailParams)
-    */
+    
 })
 
 router.get('/viewres', (req, res) => {
