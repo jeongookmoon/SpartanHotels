@@ -6,7 +6,7 @@ shell.echo(`Running load_data.js from ${pwd}`)
 
 // Get the location of secure_file_priv
 let shellResult = shell.exec(
-    "mysql -u root -p -e \"SHOW VARIABLES LIKE 'secure_file_priv';",
+    "mysql -u root -p -e \"SHOW VARIABLES LIKE 'secure_file_priv';\"",
     { silent: true }
 );
 // user to acccess secure_file_priv location doesnt need to be root
