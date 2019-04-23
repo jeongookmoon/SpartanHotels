@@ -36,14 +36,6 @@ class ProfileEditName extends React.Component {
 		event.preventDefault()
 	}
 	  
-	componentDidMount() {
-	    axios.get('/api/profile')
-	        .then(res => 
-	          this.setState({
-	            name: res.data[0].name,
-	            email: res.data[0].email,
-	        }))  
-	}
 
 	toggle() {
 		this.setState({

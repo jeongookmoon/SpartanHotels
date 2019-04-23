@@ -156,6 +156,47 @@ router.get('/profile', authenticationMiddleware(), (req, res) =>{
     })
 })
 
+router.get('/currentRewardsHistory', authenticationMiddleware(), (req, res) =>{
+    console.log(req.session.passport.user.user_id)
+    const profile = req.session.passport.user.user_id
+    let q1 = mysql.format(Queries.rewards.getCurrentRewardsHistory, [profile])
+
+    Queries.run(q1).then((results) => {    
+        console.log(results.length)
+        for(x = 0; x < results.length ; x++) {
+            var newDate = formatDate(results[x].date_active)
+            results[x].date_active = newDate;
+        }
+        console.log("Current History Rewards can be viewed.")
+            res.status(200).send(results)
+            console.log("Here are the user's current rewards")
+    },
+    (error) => {
+        console.log("Cannot access profile and get rewards history")
+    })
+})
+
+router.get('/futureRewardsHistory', authenticationMiddleware(), (req, res) =>{
+    console.log(req.session.passport.user.user_id)
+    const profile = req.session.passport.user.user_id
+    let q1 = mysql.format(Queries.rewards.getFutureRewardsHistory, [profile])
+
+    Queries.run(q1).then((results) => {
+        console.log(results.length)
+        for(x = 0; x < results.length ; x++) {
+            var newDate = formatDate(results[x].date_active)
+            results[x].date_active = newDate;
+        }
+        console.log("Future History Rewards can be viewed.")
+            console.log(results)
+            res.status(200).send(results)
+            console.log("Here are the user's future rewards")
+    },
+    (error) => {
+        console.log("Cannot access profile and get rewards history")
+    })
+})
+
 //edit account information. Change name and password.
 router.post('/edit_account', authenticationMiddleware(), (req, res) => {
     console.log(req.headers)
@@ -302,7 +343,17 @@ function authenticationMiddleware() {
        }
 }
 
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
 
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+}
 
 
 
