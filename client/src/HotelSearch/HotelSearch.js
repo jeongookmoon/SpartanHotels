@@ -18,7 +18,7 @@ import moment from 'moment'
 
 import { sortByDropDownData } from '../Utility/DataForMenu'
 import AmenityFilterDropdown from './Components/AmenityFilterDropdown'
-import {defaultMarkerImageBaseURL, selectedMarkerImageBaseURL} from './mapMarker'
+import { defaultMarkerImageBaseURL, selectedMarkerImageBaseURL } from './mapMarker'
 
 class HotelSearch extends React.Component {
 
@@ -169,7 +169,7 @@ class HotelSearch extends React.Component {
 		// bounding box for map
 		var bounds = new window.google.maps.LatLngBounds()
 		//bounds.extend(new window.google.maps.LatLng(latitude, longitude))
-		
+
 		window.googleMap = googleMap
 		// display each hotel's information window when clicking the marker	
 		const infoWindow = new window.google.maps.InfoWindow()
@@ -192,9 +192,9 @@ class HotelSearch extends React.Component {
 								`
 
 
-			var defaultMarkerImage = defaultMarkerImageBaseURL + "" + (index+1);
-			var selectedMarkerImage = selectedMarkerImageBaseURL + "" + (index+1);
-		  
+			var defaultMarkerImage = defaultMarkerImageBaseURL + "" + (index + 1);
+			var selectedMarkerImage = selectedMarkerImageBaseURL + "" + (index + 1);
+
 			// display each hotel's marker along with index number
 			const googleMapMarker = new window.google.maps.Marker({
 				position: { lat: parseFloat(eachHotel.latitude), lng: parseFloat(eachHotel.longitude) },
@@ -206,23 +206,22 @@ class HotelSearch extends React.Component {
 			// https://stackoverflow.com/questions/15719951/auto-center-map-with-multiple-markers-in-google-maps-api-v3
 			// https://developers.google.com/maps/documentation/javascript/reference/coordinates#LatLngBounds.extend
 			// https://stackoverflow.com/questions/2437683/google-maps-api-v3-can-i-setzoom-after-fitbounds
-			
+
 
 			// add marker position to boundingbox
 			bounds.extend(new window.google.maps.LatLng(eachHotel.latitude, eachHotel.longitude))
 			window.googleMap.fitBounds(bounds)
-			var listener = window.google.maps.event.addListener(googleMap, "idle", function() { 
-				if (googleMap.getZoom() > 16) googleMap.setZoom(16); 
+			window.google.maps.event.addListenerOnce(googleMap, "idle", () => {
+				if (googleMap.getZoom() > 16) googleMap.setZoom(16);
 				window.markers.push(googleMapMarker)
-				window.google.maps.event.removeListener(listener); 
-			  });
+			})
 
 			// action listener to open information window when clicking marker
 			googleMapMarker.addListener('click', () => {
 				var center = new window.google.maps.LatLng(eachHotel.latitude, eachHotel.longitude);
 				window.googleMap.panTo(center);
-				window.markers.forEach((eachMarker,index) => {
-					eachMarker.setIcon(defaultMarkerImageBaseURL+(index+1))
+				window.markers.forEach((eachMarker, index) => {
+					eachMarker.setIcon(defaultMarkerImageBaseURL + (index + 1))
 					eachMarker.setAnimation(null)
 				})
 				// window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
@@ -404,15 +403,15 @@ class HotelSearch extends React.Component {
 	moveMap(lat, lng, index) {
 		var center = new window.google.maps.LatLng(lat, lng);
 		window.googleMap.panTo(center);
-		window.markers.forEach((eachMarker,index) => {
-			eachMarker.setIcon(defaultMarkerImageBaseURL+(index+1))
+		window.markers.forEach((eachMarker, index) => {
+			eachMarker.setIcon(defaultMarkerImageBaseURL + (index + 1))
 			eachMarker.setZIndex(0)
 			eachMarker.setAnimation(null)
 		})
 		// window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
-		window.markers[index].setIcon(selectedMarkerImageBaseURL+(index+1))
+		window.markers[index].setIcon(selectedMarkerImageBaseURL + (index + 1))
 		window.markers[index].setZIndex(12)
-		setTimeout(() => { window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE) }, 0);
+		window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
 	}
 
 	getHotelSearchResultImages(images) {
@@ -530,8 +529,8 @@ class HotelSearch extends React.Component {
 				<tbody>
 					{this.state.hotels.results.map((eachHotelResult, index) => {
 						const imageURL = this.getHotelSearchResultImages(eachHotelResult.images)
-						{/*const imageURL = this.getHotelSearchResultImages(eachHotelResult.images).split(",")[0] */}
-						{/* FOR DAVID */}
+						{/*const imageURL = this.getHotelSearchResultImages(eachHotelResult.images).split(",")[0] */ }
+						{/* FOR DAVID */ }
 
 						return (
 							<tr key={index} className="hotel-search-row shadow-sm p-3 mb-5" tag="a" onClick={this.roomSearch(eachHotelResult)} onMouseEnter={() => this.moveMap(eachHotelResult.latitude, eachHotelResult.longitude, index)} style={{ cursor: "pointer" }}>
