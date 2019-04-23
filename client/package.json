@@ -3,9 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^3.9.3",
     "axios": "^0.18.0",
-    "google-maps-react": "^2.0.2",
     "prop-types": "^15.7.2",
     "react": "^16.8.5",
     "react-axios": "^2.0.3",
