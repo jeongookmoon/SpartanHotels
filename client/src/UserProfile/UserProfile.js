@@ -5,8 +5,8 @@ import "./UserProfile.css";
 import homeImage from './homeImage7.jpg';
 import ProfileEditName from './ProfileEditName'
 import ProfileEditPassword from './ProfileEditPassword'
-import { Card, CardText, CardBody,
-		CardTitle, Button, CardHeader,
+import { Card, CardText,
+		Button, CardHeader,
 		Container, Row, Col, Table } from 'reactstrap';
 
 var topSectionStyle = {
@@ -50,7 +50,7 @@ class UserProfile extends React.Component{
             name: res.data.name,
             email: res.data.email,
             reward: res.data.reward
-          }, console.log(res)))  
+          }))  
   }
 
   
@@ -67,87 +67,89 @@ class UserProfile extends React.Component{
 						<Container>
 							<Row>
 								<Col sm="12" md={{ size: 6, offset: 3 }}>
-									<Card body className="text-center"  style={{height: "710px"}}>
-										<CardBody>
-											<CardTitle> <h1> Hello {this.state.name}! </h1></CardTitle>
-			         						<br />
-			          						<Row>
-				         						<Col>
-				         							<Card>
-				         								<CardHeader tag="h4"> ABOUT </CardHeader>
-				         								<CardBody>
-				         									<Row>
-					         									<Col xs="6" sm="4">	
-					         										<br />				         									
-							         								<img src="https://png.pngtree.com/svg/20160308/_user_profile_icon_1108089.png" width="90" />
-							         							</Col>
-							         							<Col>
-							         								<CardText> 
-							         									<br />
-							         									<b> Email: </b> {this.state.email}
-						         										<br />
-						         										<b> Name: </b> {this.state.name}
-						         										<br />
-						         										<b> Password: </b> ********
-								         							</CardText>
-							         							</Col>
-						         							</Row>
-						         							<Row>
-						         								<Col xs="4"></Col>
-								         						<Col xs="8">
-								         							<Button size = "sm" color ="link"> <ProfileEditName /> </Button>
-								         							<Button size = "sm" color = "link"> <ProfileEditPassword /> </Button>
-								         						</Col>
-						         							</Row>
-				         								</CardBody>
-				         							</Card>
-				         						</Col>
-				         					</Row>
-				         					<br/>
-				         					<Row>
-				          						<Col>
-				          							<Card>
-				          								<CardHeader tag="h4"> REWARDS </CardHeader>
-				         								<CardBody>
-				         									<CardText>
-				         										Total Points: {this.state.reward} 
-				         										<br />
-				         										<br />
-				         										<div className="profile-table-wrapper-scroll-y profile-scrollbar">
-				         											<Table hover>
-				         												<thead>
-				         													<tr>
-				         														<th> Date </th>
-				         														<th> Points Earned </th>
-				         														<th> Transaction </th>
-				         													</tr>
-				         												</thead>
-				         												<tbody>
-				         													<tr>
-				         														<td> holder </td>
-				         														<td> holder </td>
-				         														<td> holder </td>
-				         													</tr>
-				         													<tr>
-				         														<td> holder </td>
-				         														<td> holder </td>
-				         														<td> holder </td>
-				         													</tr>
-				         													<tr>
-				         														<td> holder </td>
-				         														<td> holder </td>
-				         														<td> holder </td>
-				         													</tr>
-				         												</tbody>
-				         											</Table>
-				         										</div>
-				         									</CardText>
-				         								</CardBody>
-				         							</Card>
-				          						</Col>
-				          					</Row>
-			        					</CardBody>
-			      					</Card>
+									<div className="profile-card">
+										<div className="profile-center-title"> <h1> Hello {this.state.name}! </h1></div>
+		         						<br />
+		          						<div className="profile-card-body profile-inner-card">
+			         						<Col>
+			         							<Card>
+			         								<CardHeader className="profile-inner-cardheader" tag="h4"> ABOUT </CardHeader>
+			         								<div className="profile-inner-cardbody">
+			         									<Row>
+				         									<Col xs="6" sm="4">	
+				         										<br />	
+				         										<br />			         									
+						         								<img className="profile-human-pic" src="https://png.pngtree.com/svg/20160308/_user_profile_icon_1108089.png" alt="profile" width="115" />
+						         							</Col>
+						         							<Col>
+						         								<CardText className="profile-text-row"> 
+						         									<br />
+						         									<b> Email: </b> {this.state.email}
+					         										<br />
+					         										<b> Name: </b> {this.state.name}
+					         										<br />
+					         										<b> Password: </b> ********
+							         							</CardText>
+						         							</Col>
+					         							</Row>
+					         							<Row>
+					         								<Col xs="4"></Col>
+							         						<Col xs="8">
+							         							<Button size = "sm" color ="link"> <ProfileEditName /> </Button>
+							         							<Button size = "sm" color = "link"> <ProfileEditPassword /> </Button>
+							         							<br/ >
+							         							<br />
+							         						</Col>
+					         							</Row>
+			         								</div>
+			         							</Card>
+			         						</Col>
+			         					</div>
+			         					<br/>
+			         					<div className="profile-card-body profile-inner-card">
+			          						<Col>
+			          							<Card>
+			          								<CardHeader className="profile-inner-cardheader" tag="h4"> REWARDS </CardHeader>
+			         								<div className="profile-inner-cardbody">
+			         									<CardText>
+			         										<br />
+			         										Total Points: {this.state.reward} 
+			         										<br />
+			         										<br />
+			         										<div className="profile-table-wrapper-scroll-y profile-scrollbar">
+			         											<Table hover>
+			         												<thead>
+			         													<tr>
+			         														<th> Date </th>
+			         														<th> Points Earned </th>
+			         														<th> Transaction </th>
+			         													</tr>
+			         												</thead>
+			         												<tbody>
+			         													<tr>
+			         														<td> holder </td>
+			         														<td> holder </td>
+			         														<td> holder </td>
+			         													</tr>
+			         													<tr>
+			         														<td> holder </td>
+			         														<td> holder </td>
+			         														<td> holder </td>
+			         													</tr>
+			         													<tr>
+			         														<td> holder </td>
+			         														<td> holder </td>
+			         														<td> holder </td>
+			         													</tr>
+			         												</tbody>
+			         											</Table>
+			         										</div>
+			         									</CardText>
+			         								</div>
+			         							</Card>
+			          						</Col>
+			          					</div>
+			      					</div>
 			      				</Col>
 		      				</Row>
 		      			</Container>

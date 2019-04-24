@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import {
   Button, Modal, ModalHeader, ModalBody, ModalFooter,
-  Form, FormGroup, Label, Input, Row, Col,
+  Form, FormGroup, Label, Input
 } from 'reactstrap'
 
 class ProfileEditName extends React.Component {
