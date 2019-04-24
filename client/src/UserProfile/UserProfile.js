@@ -6,18 +6,12 @@ import homeImage from './homeImage7.jpg';
 import ProfileEditName from './ProfileEditName'
 import ProfileEditPassword from './ProfileEditPassword'
 
-var topSectionStyle = {
-	width: "100%",
-	backgroundRepeat: "no-repeat",
-	backgroundSize: "cover",
-	backgroundPosition: "center center",
-	backgroundImage: `url(${homeImage})`,
-
 import {
 	Card, CardText,
 	Button, CardHeader,
 	Container, Row, Col
 } from 'reactstrap';
+
 
 var topSectionStyle = {
 	width: "100%",
