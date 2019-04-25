@@ -6,6 +6,7 @@ import Home from './Home/Home';
 import HotelSearch from './HotelSearch/HotelSearch';
 import HotelSearchDemo from './HotelSearchDemo/HotelSearchDemo';
 import UserProfile from './UserProfile/UserProfile';
+import RewardHistory from './UserProfile/RewardHistory'
 import Reservations from './Reservations/Reservations'
 import Checkout from './Checkout/Checkout';
 import RoomPage from './RoomPage/RoomPage';
@@ -28,6 +29,7 @@ class App extends Component {
           <Route path="/RoomPage" component={RoomPage}/>
           <Route exact path="/Recoverage" component={Recoverage} />
           <Route exact path="/Accesscode" component={Accesscode} />
+          <Route exact path="/RewardHistory" component={RewardHistory}/>
 
 
 
