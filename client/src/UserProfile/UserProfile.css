@@ -2,8 +2,9 @@
 	background: #ffffff;
 	padding-top: 50px;
 	transition: all 200ms ease;
-	height: 720px;
+	height: 625px;
 	padding-bottom: 50px;
+	margin-bottom: 40px;
 }
 
 .profile-card-body {
@@ -34,6 +35,7 @@
 .profile-inner-card {
 	margin-left: -40px;
 	margin-right: 40px;
+	margin-bottom: 30px;
 }
 
 .profile-inner-cardbody {

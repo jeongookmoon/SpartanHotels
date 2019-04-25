@@ -7,7 +7,7 @@ import ProfileEditName from './ProfileEditName'
 import ProfileEditPassword from './ProfileEditPassword'
 import { Card, CardText,
 		Button, CardHeader,
-		Container, Row, Col, Table } from 'reactstrap';
+		Container, Row, Col } from 'reactstrap';
 
 var topSectionStyle = {
 	width: "100%",
@@ -26,6 +26,11 @@ class UserProfile extends React.Component{
     reward: "",
     user : []
     
+  }
+
+  RewardHistory(event) {
+  	event.preventDefault()
+  	this.props.history.push('/RewardHistory')
   }
   
   change = e =>{
@@ -105,7 +110,6 @@ class UserProfile extends React.Component{
 			         							</Card>
 			         						</Col>
 			         					</div>
-			         					<br/>
 			         					<div className="profile-card-body profile-inner-card">
 			          						<Col>
 			          							<Card>
@@ -116,34 +120,9 @@ class UserProfile extends React.Component{
 			         										Total Points: {this.state.reward} 
 			         										<br />
 			         										<br />
-			         										<div className="profile-table-wrapper-scroll-y profile-scrollbar">
-			         											<Table hover>
-			         												<thead>
-			         													<tr>
-			         														<th> Date </th>
-			         														<th> Points Earned </th>
-			         														<th> Transaction </th>
-			         													</tr>
-			         												</thead>
-			         												<tbody>
-			         													<tr>
-			         														<td> holder </td>
-			         														<td> holder </td>
-			         														<td> holder </td>
-			         													</tr>
-			         													<tr>
-			         														<td> holder </td>
-			         														<td> holder </td>
-			         														<td> holder </td>
-			         													</tr>
-			         													<tr>
-			         														<td> holder </td>
-			         														<td> holder </td>
-			         														<td> holder </td>
-			         													</tr>
-			         												</tbody>
-			         											</Table>
-			         										</div>
+			         										<Button onClick={this.RewardHistory.bind(this)} color="info"> See my reward history > </Button>
+			         										<br />
+			         										<br />
 			         									</CardText>
 			         								</div>
 			         							</Card>
