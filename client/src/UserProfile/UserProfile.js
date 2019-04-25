@@ -24,6 +24,12 @@ class UserProfile extends React.Component{
     name: "",
     email: "",
     reward: "",
+    currentDates: "",
+    futureDates: "",
+    rewardsEarned: "",
+    transaction: "",
+    currentRewardsHistory: [],
+    futureRewardsHistory: [],
     user : []
     
   }
@@ -48,6 +54,7 @@ class UserProfile extends React.Component{
       console.log(event.target.files[0]);
   }
   
+
   componentDidMount() {
       axios.get('/api/profile')
         .then(res => 
@@ -134,8 +141,9 @@ class UserProfile extends React.Component{
 		      			</Container>
     				</div>
 				</div>
-			</div>
-		);
-	}
+			);
+		}
+
 }
+
 export default withRouter(UserProfile);
