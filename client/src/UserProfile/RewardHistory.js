@@ -125,6 +125,7 @@ class RewardHistory extends React.Component {
 			<div className="col-lg-12 history-container col-auto" style={topSectionStyle}>
 				{localStorage.accesstoken ? rewardPage : this.redirectToHome()}
 			</div>
+
 		);
 	}
 }
