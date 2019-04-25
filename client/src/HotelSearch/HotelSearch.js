@@ -16,9 +16,9 @@ import { DateRangePicker } from 'react-dates'
 import 'react-dates/lib/css/_datepicker.css'
 import moment from 'moment'
 
-import mapMarkerDefault from './Images/mapMarkerDefault.png'
-import mapMarkerActive from './Images/mapMarkerActive.png'
 import { sortByDropDownData } from '../Utility/DataForMenu'
+import AmenityFilterDropdown from './Components/AmenityFilterDropdown'
+import { defaultMarkerImageBaseURL, selectedMarkerImageBaseURL } from './mapMarker'
 
 class HotelSearch extends React.Component {
 
@@ -36,6 +36,20 @@ class HotelSearch extends React.Component {
 		const guest_number = params.get('guest_number')
 		const sortBy = params.get('sortBy')
 		const state = params.get('state')
+		let amenities = ''
+		let selectedOption = []
+		if (params.get("amenities") && params.get("amenities") !== '') {
+			amenities = params.get("amenities")
+			const ifarray = amenities.split(",")
+			if (ifarray.constructor === Array) {
+				ifarray.forEach((amenity) => {
+					const amenityobj = {}
+					amenityobj.value = amenity
+					amenityobj.label = amenity
+					selectedOption.push(amenityobj)
+				})
+			}
+		}
 
 		this.state = {
 			hotels: [{}],
@@ -48,6 +62,7 @@ class HotelSearch extends React.Component {
 				state,
 				date_in: moment(dateIn, ('YYYY-MM-DD')),
 				date_out: moment(dateOut, ('YYYY-MM-DD')),
+				amenities
 			},
 			sortBy,
 			hotel_id: 0,
@@ -58,16 +73,30 @@ class HotelSearch extends React.Component {
 			guest_number,
 			focusedInput: null,
 			place: {},
+			selectedOption
 		};
+	}
 
+	convertSelectedOption = () => {
+		let amenities = ''
 
-		this.roomSearch = this.roomSearch.bind(this)
-		this.handleChange = this.handleChange.bind(this)
-		this.getHotelSearchResult = this.getHotelSearchResult.bind(this)
-		this.adultIncrement = this.adultIncrement.bind(this)
-		this.adultDecrement = this.adultDecrement.bind(this)
-		this.childrenIncrement = this.childrenIncrement.bind(this)
-		this.childrenDecrement = this.childrenDecrement.bind(this)
+		this.state.selectedOption.forEach((option, index) => {
+			amenities += option.label
+			if (index !== this.state.selectedOption.length - 1)
+				amenities += ','
+		});
+
+		this.setState(prevState => ({
+			searchParams: {
+				...prevState.searchParams,
+				amenities
+			}
+		}));
+	}
+
+	handleFilterDropdown = (selectedOption) => {
+		this.setState({ selectedOption },
+			() => this.convertSelectedOption())
 	}
 
 	async componentDidMount() {
@@ -137,7 +166,10 @@ class HotelSearch extends React.Component {
 			zoom: 14
 		});
 
-		
+		// bounding box for map
+		var bounds = new window.google.maps.LatLngBounds()
+		//bounds.extend(new window.google.maps.LatLng(latitude, longitude))
+
 		window.googleMap = googleMap
 		// display each hotel's information window when clicking the marker	
 		const infoWindow = new window.google.maps.InfoWindow()
@@ -145,38 +177,64 @@ class HotelSearch extends React.Component {
 		window.markers = []
 		this.state.hotels.results.forEach((eachHotel, index) => {
 			const imageURL = this.getHotelSearchResultImages(eachHotel.images)
-			const hotelInfo = `<h5 style="text-align:center;">${eachHotel.name}</h5>
-											 <img src=${imageURL} style="width: 50%; height: 50%"/>
-											 <p>${eachHotel.address}</p>
-											 <p style="text: bold">$${eachHotel.min_price} ~ ${eachHotel.max_price}/per night</p>`
+			//const imageURL = this.getHotelSearchResultImages(eachHotel.images).split(",")[0]
+			//^^ FOR DAVID
+			const hotelInfo = `
+
+											<a href="" style="padding-top:1vh; text-align:center;"><h5>${eachHotel.name}</h5></a>
+											<div style="font-size: 1em; font-weight:600">${eachHotel.address}</div>
+											<div style="font-size: 1em; font-weight:600">${eachHotel.city}</div>
+											<p style="font-size: 1em; font-weight:600">${eachHotel.phone_number}</p>
+											<p style="font-size: 1em; font-weight:600">$${eachHotel.min_price.toFixed(2)} ~ ${eachHotel.max_price.toFixed(2)}/per night</p>
+											<img src=${imageURL} style="max-width: 100%; max-height: 100%; "/>
+
+
+								`
+
+
+			var defaultMarkerImage = defaultMarkerImageBaseURL + "" + (index + 1);
+			var selectedMarkerImage = selectedMarkerImageBaseURL + "" + (index + 1);
 
 			// display each hotel's marker along with index number
 			const googleMapMarker = new window.google.maps.Marker({
 				position: { lat: parseFloat(eachHotel.latitude), lng: parseFloat(eachHotel.longitude) },
 				map: window.googleMap,
-				label: (index + 1).toString(),
 				title: eachHotel.name,
-				icon: mapMarkerDefault
+				icon: defaultMarkerImage
 			})
 
-			window.markers.push(googleMapMarker)
+			// https://stackoverflow.com/questions/15719951/auto-center-map-with-multiple-markers-in-google-maps-api-v3
+			// https://developers.google.com/maps/documentation/javascript/reference/coordinates#LatLngBounds.extend
+			// https://stackoverflow.com/questions/2437683/google-maps-api-v3-can-i-setzoom-after-fitbounds
+
+
+			// add marker position to boundingbox
+			bounds.extend(new window.google.maps.LatLng(eachHotel.latitude, eachHotel.longitude))
+			window.googleMap.fitBounds(bounds)
+			window.google.maps.event.addListenerOnce(googleMap, "idle", () => {
+				if (googleMap.getZoom() > 16) googleMap.setZoom(16);
+				window.markers.push(googleMapMarker)
+			})
 
 			// action listener to open information window when clicking marker
 			googleMapMarker.addListener('click', () => {
 				var center = new window.google.maps.LatLng(eachHotel.latitude, eachHotel.longitude);
 				window.googleMap.panTo(center);
-				window.markers.forEach((eachMarker) => eachMarker.setIcon(mapMarkerDefault))
-				window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
-				window.markers[index].setIcon(mapMarkerActive)
+				window.markers.forEach((eachMarker, index) => {
+					eachMarker.setIcon(defaultMarkerImageBaseURL + (index + 1))
+					eachMarker.setAnimation(null)
+				})
+				// window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
+				window.markers[index].setIcon(selectedMarkerImage)
 				setTimeout(() => { window.markers[index].setAnimation() }, 750);
 				window.infoWindow.setContent(hotelInfo)
 				window.infoWindow.open(window.googleMap, googleMapMarker);
-				window.infoWindow.setOptions({maxWidth:250}); 
+				window.infoWindow.setOptions({ maxWidth: 250 });
 			});
 		})
 	}
 
-	handleChange(event) {
+	handleChange = (event) => {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
 		const name = target.name;
@@ -186,7 +244,7 @@ class HotelSearch extends React.Component {
 		});
 	}
 
-	adultIncrement() {
+	adultIncrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('adult').value, 10);
 
@@ -203,7 +261,7 @@ class HotelSearch extends React.Component {
 		})
 	}
 
-	adultDecrement() {
+	adultDecrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('adult').value, 10);
 
@@ -224,7 +282,7 @@ class HotelSearch extends React.Component {
 
 	}
 
-	childrenIncrement() {
+	childrenIncrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('children').value, 10);
 
@@ -242,7 +300,7 @@ class HotelSearch extends React.Component {
 
 	}
 
-	childrenDecrement() {
+	childrenDecrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('children').value, 10);
 
@@ -266,7 +324,6 @@ class HotelSearch extends React.Component {
 
 		const params = new URLSearchParams(this.props.location.search)
 		const sortBy = params.get("sortBy")
-		const amenities = params.get("amenities")
 
 		let additionalClause = ''
 		if (event.target.name && event.target.name === 'sortBy') {
@@ -281,8 +338,8 @@ class HotelSearch extends React.Component {
 			}
 		}
 
-		if(amenities && amenities !== '')
-			additionalClause += `&amenities=${amenities}`
+		if (this.state.searchParams.amenities)
+			additionalClause += `&amenities=${this.state.searchParams.amenities}`
 
 		let searchParams = Object.assign({}, this.state.searchParams)
 		searchParams.date_in = searchParams.date_in.format('YYYY-MM-DD')
@@ -346,10 +403,15 @@ class HotelSearch extends React.Component {
 	moveMap(lat, lng, index) {
 		var center = new window.google.maps.LatLng(lat, lng);
 		window.googleMap.panTo(center);
-		window.markers.forEach((eachMarker) => eachMarker.setIcon(mapMarkerDefault))
+		window.markers.forEach((eachMarker, index) => {
+			eachMarker.setIcon(defaultMarkerImageBaseURL + (index + 1))
+			eachMarker.setZIndex(0)
+			eachMarker.setAnimation(null)
+		})
+		// window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
+		window.markers[index].setIcon(selectedMarkerImageBaseURL + (index + 1))
+		window.markers[index].setZIndex(12)
 		window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
-		window.markers[index].setIcon(mapMarkerActive)
-		setTimeout(() => { window.markers[index].setAnimation() }, 750);
 	}
 
 	getHotelSearchResultImages(images) {
@@ -357,7 +419,7 @@ class HotelSearch extends React.Component {
 		if (images && images.constructor === Array) {
 			arraychecker = images.split(",")
 			return arraychecker[0]
-		} 
+		}
 		return images
 	}
 
@@ -368,8 +430,9 @@ class HotelSearch extends React.Component {
 
 		const searchBar = (
 			<div>
+				<hr className="hotel-search-hr-bottom">
+				</hr>
 				<FormGroup className="form-inline hotel-search-inputs">
-					<div className="col-lg-1"></div>
 					<div className="col-lg-3 input-group home-location">
 						<div className="input-group-append">
 							<div className="location-input-icon input-group-text"><i className="fa fa-search"></i></div>
@@ -377,7 +440,7 @@ class HotelSearch extends React.Component {
 						<Autocomplete onPlaceChanged={this.showPlaceDetails.bind(this)} />
 					</div>
 
-					<div className="col-lg-4 input-group home-date">
+					<div className="col-lg-4 input-group home-date custom-row">
 						<div className="input-group-append">
 							<div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
 						</div>
@@ -400,7 +463,7 @@ class HotelSearch extends React.Component {
 						/>
 					</div>
 
-					<div className=" col-lg-2 input-group menu-container">
+					<div className=" col-lg-1 input-group menu-container">
 						<div className="col-lg-12 menu-item">
 							<div className="home-guest-dropdown">{this.state.guest_number}&nbsp;Guests</div>
 							<ul>
@@ -433,6 +496,9 @@ class HotelSearch extends React.Component {
 							</ul>
 						</div>
 					</div>
+					<div className="col-lg-2 home-submit-button-container">
+						<AmenityFilterDropdown value={this.state.selectedOption} handleFilterDropdown={this.handleFilterDropdown} />
+					</div>
 					<div className="col-lg-1 home-submit-button-container">
 						<button onClick={this.getHotelSearchResult} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Search</button>
 					</div>
@@ -453,8 +519,8 @@ class HotelSearch extends React.Component {
 			<select name="sortBy" onChange={this.getHotelSearchResult} value={this.state.sortBy}>
 				<option value="" disabled hidden >Sort By</option>
 				{sortByDropDownData.map((each, key) => {
-            return <option key={key} value={each.value} label={each.label}></option>
-          })}
+					return <option key={key} value={each.value} label={each.label}></option>
+				})}
 			</select>
 		)
 
@@ -463,12 +529,15 @@ class HotelSearch extends React.Component {
 				<tbody>
 					{this.state.hotels.results.map((eachHotelResult, index) => {
 						const imageURL = this.getHotelSearchResultImages(eachHotelResult.images)
+						{/*const imageURL = this.getHotelSearchResultImages(eachHotelResult.images).split(",")[0] */ }
+						{/* FOR DAVID */ }
+
 						return (
 							<tr key={index} className="hotel-search-row shadow-sm p-3 mb-5" tag="a" onClick={this.roomSearch(eachHotelResult)} onMouseEnter={() => this.moveMap(eachHotelResult.latitude, eachHotelResult.longitude, index)} style={{ cursor: "pointer" }}>
-								<td className="col-lg-6">
+								<td className="">
 									<img className="hotel-search-item-image" src={imageURL} alt="logo" />
 								</td>
-								<td className="col-lg-4">
+								<td className="">
 									<div>
 										<div className="hotel-search-item-row hotel-search-item-header">
 											<div className="hotel-search-item-number">{index + 1}.</div>
@@ -490,13 +559,13 @@ class HotelSearch extends React.Component {
 
 									</div>
 								</td>
-								<td className="col-lg-2">
+								<td className="">
 									<div>
 										<div className="hotel-search-item-row">
 
 											{/* Min Price */}
 											<div className="hotel-search-item-price">
-												${eachHotelResult.min_price} &nbsp;-&nbsp; ${eachHotelResult.max_price}
+												${eachHotelResult.min_price.toFixed(2)} &nbsp;-&nbsp; ${eachHotelResult.max_price.toFixed(2)}
 											</div>
 										</div>
 									</div>
