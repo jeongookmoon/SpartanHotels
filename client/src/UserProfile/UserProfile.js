@@ -12,7 +12,6 @@ import {
 	Container, Row, Col
 } from 'reactstrap';
 
-
 var topSectionStyle = {
 	width: "100%",
 	backgroundRepeat: "no-repeat",
