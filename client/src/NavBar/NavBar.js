@@ -170,8 +170,23 @@ class NavBar extends React.Component {
       </div>
     )
 
+    function navbarChange(temp){
+      
+      if(temp === "/"){
+        return "sticky-top navbar navbar-home fixed-top"
+      }
+
+      else if(temp === "/HotelSearch"){
+        return "sticky-top navbar navbar-pages fixed-top"
+      }
+
+      else 
+        return "sticky-top navbar navbar-page-room fixed-top"
+    
+    }
+
     return (
-      <nav className= { this.props.location.pathname === "/" || this.props.location.pathname === "/HotelSearchh"  ? "sticky-top navbar navbar-home fixed-top" : "sticky-top navbar navbar-pages fixed-top" } >
+      <nav className= {navbarChange(this.props.location.pathname)}>
         {/*<nav className="sticky-top navbar navbar-home navbar-dark bg-light fixed-top">*/}
 
         {/*LEFT SIDE*/}
@@ -179,9 +194,7 @@ class NavBar extends React.Component {
           <div className="col-auto pl-0" onClick={this.Home.bind(this)}>
             SPARTAN HOTELS
           </div>
-          <div className="col-auto pl-0">
-            |
-          </div>
+          {localStorage.accesstoken ? EmptyForm : <div className="col-auto pl-0">|</div>}
           {localStorage.accesstoken ? EmptyForm : <Registration />}
         </div>
 

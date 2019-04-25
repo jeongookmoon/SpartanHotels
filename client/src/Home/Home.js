@@ -18,6 +18,7 @@ import { homeFilterData } from '../Utility/DataForMenu'
 
 var topSectionStyle = {
 	width: "100%",
+	height: "100vh",
 	backgroundRepeat: "no-repeat",
 	backgroundSize: "cover",
 	backgroundPosition: "center center",
@@ -45,25 +46,17 @@ class Home extends React.Component {
 			checkbox: {
 			}
 		};
-
-		this.handleChange = this.handleChange.bind(this);
-		this.search = this.search.bind(this);
-		this.adultIncrement = this.adultIncrement.bind(this);
-		this.adultDecrement = this.adultDecrement.bind(this);
-		this.childrenIncrement = this.childrenIncrement.bind(this);
-		this.childrenDecrement = this.childrenDecrement.bind(this);
-		this.handleCheckBox = this.handleCheckBox.bind(this);
 	}
 
 	componentDidMount() {
-		const googleMap = new window.google.maps.Map(document.getElementById('map'), {
+		const googleMapHome = new window.google.maps.Map(document.getElementById('map'), {
 			center: { lat: 37.3382082, lng: -121.88632860000001 },
 			zoom: 14
 		})
-		window.googleMap = googleMap
+		window.googleMapHome = googleMapHome
 	}
 
-	handleChange(event) {
+	handleChange = (event) => {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
 		const name = target.name;
@@ -72,7 +65,7 @@ class Home extends React.Component {
 		});
 	}
 
-	handleCheckBox(event) {
+	handleCheckBox = (event) => {
 		const name = event.target.name
 		this.setState(prevState => ({
 			checkbox: {
@@ -82,7 +75,7 @@ class Home extends React.Component {
 		}))
 	}
 
-	adultIncrement() {
+	adultIncrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('adult').value, 10);
 
@@ -101,7 +94,7 @@ class Home extends React.Component {
 
 	}
 
-	adultDecrement() {
+	adultDecrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('adult').value, 10);
 
@@ -121,7 +114,7 @@ class Home extends React.Component {
 
 	}
 
-	childrenIncrement() {
+	childrenIncrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('children').value, 10);
 
@@ -140,7 +133,7 @@ class Home extends React.Component {
 
 	}
 
-	childrenDecrement() {
+	childrenDecrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('children').value, 10);
 
@@ -158,13 +151,12 @@ class Home extends React.Component {
 			children: value,
 			guest_number: guest_number
 		})
-
 	}
 
 	putGoogleMapMarker = (latitude, longitude) => {
-		window.googleMapMarker ? window.googleMapMarker.setPosition({ lat: parseFloat(latitude), lng: parseFloat(longitude) }) : window.googleMapMarker = new window.google.maps.Marker({
+		window.googleHomeMapMarker ? window.googleHomeMapMarker.setPosition({ lat: parseFloat(latitude), lng: parseFloat(longitude) }) : window.googleHomeMapMarker = new window.google.maps.Marker({
 			position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
-			map: window.googleMap
+			map: window.googleMapHome
 		})
 	}
 
@@ -188,11 +180,10 @@ class Home extends React.Component {
 				fullAddress, streetAddress,
 				city, state, place
 			},
-			window.googleMap.setCenter(
+			window.googleMapHome.setCenter(
 				new window.google.maps.LatLng(latitude, longitude)
 			)
 		)
-		this.putGoogleMapMarker(latitude, longitude)
 	}
 
 	search = (event) => {
@@ -200,7 +191,7 @@ class Home extends React.Component {
 
 		// convert true props of checkbox into array and join the array into a string
 		const keys = Object.keys(this.state.checkbox)
-		const filteredElements = keys.filter( (key) => this.state.checkbox[key] === true)
+		const filteredElements = keys.filter((key) => this.state.checkbox[key] === true)
 
 
 		const temp_fields = {
