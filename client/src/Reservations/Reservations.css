@@ -11,18 +11,6 @@
   	min-height:41.6rem;
 }
 
-.reservations-carousel-size {
-	width:100%;
-}
-
-.reservations-text-color {
-	color: black;
-}
-
-.reservations-image {
-	opacity: 0.5;
-}
-
 .reservations-scrollbar {
 	position: relative;
 	height:375px;
@@ -35,5 +23,27 @@
 
 .reservations-table-header { /* for later note: static top row */
 	position: sticky;
+}
+
+.reservations-card {
+	background: #ffffff;
+	padding-top: 30px;
+	transition: all 200ms ease;
+	height: 520px;
+	padding-bottom: 50px;
+}
+
+.reservations-card-body {
+	padding-left: 80px;
+}
+
+.reservations-center-title {
+	text-align: center;
+	padding-bottom: 5px;
+}
+
+.reservations-inner-card {
+	margin-left: -40px;
+	margin-right: 40px;
 }
 

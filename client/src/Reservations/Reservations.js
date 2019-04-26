@@ -1,6 +1,5 @@
 import React from 'react';
-import { Table, Button, Card, 
-		CardBody, CardTitle, CardHeader,
+import { Table, Button,
 		Container, Row, Col } from 'reactstrap';
 import homeImage from './homeImage.jpg';
 import "./Reservations.css";
@@ -35,10 +34,10 @@ class Reservations extends React.Component {
 						<Container>
 							<Row>
 								<Col>
-									<Card>
-										<CardBody>
+									<div className="reservations-card">
+										<div className="reservations-card-body reservations-inner-card">
 											<br/>
-											<CardTitle> <h2> My Reservations </h2> </CardTitle>
+											<div className="reservations-center-title"> <h2> My Reservations </h2> </div>
 											<br />
 											<div className="reservations-table-wrapper-scroll-y reservations-scrollbar">
 												<Table hover>
@@ -126,8 +125,13 @@ class Reservations extends React.Component {
 								    				</tbody>
 								    			</Table>
 							    			</div>
+<<<<<<< HEAD
 								    	</CardBody>
 								    </Card>
+=======
+								    	</div>
+								    </div>
+>>>>>>> 6dd58e2325e095bb433d1b15c004a3d76c74992f
 								</Col>
 							</Row>
 						</Container>
