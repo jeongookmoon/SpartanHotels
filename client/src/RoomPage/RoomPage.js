@@ -39,7 +39,7 @@ class RoomPage extends React.Component {
 
 	Checkout = (event) => {
 		event.preventDefault()
-		let queryString = this.props.location.search + `&country=${this.state.hotel.results[0].country}&state=${this.state.hotel.results[0].state}&address=${this.state.hotel.results[0].address}&king=${this.state.King}&kingID=${this.kingID}&queen=${this.state.Queen}&queenID=${this.queenID}&totalPrice=${this.KingPrice * this.state.King + this.QueenPrice * this.state.Queen}`
+		let queryString = this.props.location.search + `&country=${this.state.hotel.results[0].country}&state=${this.state.hotel.results[0].state}&address=${this.state.hotel.results[0].address}&king=${this.state.King}&kingID=${this.kingID}&kingPrice=${this.KingPrice}&queen=${this.state.Queen}&queenID=${this.queenID}&queenPrice=${this.QueenPrice}&totalPrice=${this.KingPrice * this.state.King + this.QueenPrice * this.state.Queen}`
 		this.props.history.push({
 			pathname: `/Checkout`,
 			search: `${queryString}`,
