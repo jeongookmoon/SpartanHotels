@@ -3,6 +3,8 @@ import { Table, Button, Card,
 		CardBody, CardTitle, CardHeader,
 		Container, Row, Col } from 'reactstrap';
 import homeImage from './homeImage.jpg';
+import axios from 'axios';
+import moment from 'moment';
 import "./Reservations.css";
 
 var pageStyle = {
@@ -18,9 +20,17 @@ class Reservations extends React.Component {
 	constructor (props) {
 		super (props)
 		this.state = {
-			history: []
+			history: [{}]
 		}
 	}
+
+	componentDidMount() {
+      axios.get('/api/reservation/viewres').then(res => 
+          this.setState({
+            history: res.data
+          }))  
+        console.log(this.state.history)
+  }
 
 	render() {
 		return (
