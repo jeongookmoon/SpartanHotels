@@ -7,6 +7,8 @@ import {
   Form, FormGroup, Label, Input
 } from 'reactstrap'
 
+import { changeName } from '../Utility/ReigstrationLoginFunction'
+
 class ProfileEditName extends React.Component {
 	constructor() {
 		super();
@@ -14,8 +16,10 @@ class ProfileEditName extends React.Component {
 		this.state={
 			modal:false,
 			fields: {
-				name: '',
-				email: '',
+				name: ''
+			},
+			errors: {
+
 			}
 		}
 
@@ -25,15 +29,9 @@ class ProfileEditName extends React.Component {
 	}
 
 	handleUpdate(event) {
-		const target = event.target;
-
-		this.setState({
-			name : target.name
-		});
-	}
-
-	handleSubmit = (event) => {
-		event.preventDefault()
+		let temp_fields = this.state.fields;
+		temp_fields[event.target.name] = event.target.value;
+		this.setState({ fields : temp_fields });
 	}
 
 	toggle() {
@@ -41,6 +39,37 @@ class ProfileEditName extends React.Component {
 			...this.state,
 			modal: !this.state.modal
 		})
+	}	
+
+	handleSubmit = (event) => {
+		event.preventDefault()
+		if(this.nameChecker()) {
+			const temp_fields = {
+				name: this.state.fields.name
+			}
+		
+		changeName(temp_fields)
+			.then(res => {
+				console.log(res.data)
+			})
+		window.location.reload();
+		}
+	}
+
+
+	nameChecker() {
+		let temp_fields = this.state.fields;
+	    let temp_errors = {};
+	    let formIsValid = true;
+
+	    if (temp_fields["name"] === '') {
+	      formIsValid = false;
+	      temp_errors["name"] = "*Field was empty";
+	    }
+	    this.setState({
+	      errors: temp_errors
+	    });
+	    return formIsValid;
 	}
 
 	render() {
@@ -55,7 +84,8 @@ class ProfileEditName extends React.Component {
 				<Form onSubmit={this.handleSubmit}>
 					<FormGroup>
 						<Label> Name: </Label>
-						<Input type="text" name="name" placeholder={this.state.name} onChange={this.handleUpdate} required />
+						<Input type="text" name="name" placeholder={this.state.name} value={this.state.fields.name} onChange={this.handleUpdate} required />
+						<div className="text-warning">{this.state.errors.name}</div>
 					</FormGroup>
 				</Form>
 			</ModalBody>

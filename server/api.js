@@ -56,7 +56,6 @@ router.post('/register', (req,res)=>{
             res.end()
           }
 
-        
         return
 
         })
@@ -156,6 +155,90 @@ router.get('/profile', authenticationMiddleware(), (req, res) =>{
     })
 })
 
+//Api function to change the name in My Profile
+router.post('/changeName', authenticationMiddleware(), (req, res) => {
+    console.log(req.session.passport.user.user_id)
+    const profile = req.session.passport.user.user_id
+    let query = mysql.format(Queries.user.setNewName, [req.body.name, profile])
+    Queries.run(query).then((results) => {
+        console.log(results[0])
+        res.status(200).send('Success. Changed Name')
+    },
+    (error) => {
+        res.status(400).send('Something went wrong.')
+    })
+
+})
+
+//Used to change the password on My Profile
+router.post('/UserProfileChangePass', authenticationMiddleware(), (req,res) => {
+    console.log(req.session.passport.user.user_id)
+    const profile = req.session.passport.user.user_id
+    let change_pass_query = mysql.format(Queries.user.getOldPass, [profile])
+    Queries.run(change_pass_query).then((results) => {
+        console.log(results)
+        const hash = results[0].password.toString();
+        bcrypt.compare(req.body.oldpass, hash)
+            .then((response) => {
+                console.log(response)
+            if(response === true) { // user found with password match
+              bcrypt.hash(req.body.newpass, saltRounds, function(err, hash) {
+                    let change_pass_query = mysql.format(Queries.user.userProfileChangePass, [hash, profile])
+                    Queries.run(change_pass_query).then((results) => {
+                        console.log(results)
+                        res.status(200).send('Password changed')
+                    },
+                    (error) => {
+                        console.log('An error as occurred')
+                        res.status(400).send(error)
+                    })
+                })
+            }
+            else { 
+                res.setHeader("Content-Type","text/plain");
+                res.statusCode = 400
+                res.write("Old Password does not match")
+                res.end()
+            }
+          },
+          (error)=> {
+                res.status(400).send(error)
+          });
+
+    },
+    (error) => {
+        console.log('An error as occurred')
+        res.status(400).send(error)
+    })
+  
+})
+
+router.get('/rewardsHistory', authenticationMiddleware(), (req, res) =>{
+    console.log(req.session.passport.user.user_id)
+    const profile = req.session.passport.user.user_id
+    let q1 = mysql.format(Queries.rewards.getRewardsHistory, [profile])
+
+    Queries.run(q1).then((results) => {    
+        console.log(results.length)
+        for(x = 0; x < results.length ; x++) {
+            var newDateActive = formatDate(results[x].date_active)
+            var newDateIn = formatDate(results[x].date_in)
+            var newDateOut = formatDate(results[x].date_out)
+
+            results[x].date_active = newDateActive;
+            results[x].date_in = newDateIn;
+            results[x].date_out = newDateOut;
+        }
+        console.log("Current History Rewards can be viewed.")
+            res.status(200).send(results)
+            console.log("Here are the user's current rewards")
+    },
+    (error) => {
+        console.log("Cannot access profile and get rewards history")
+    })
+})
+
+/*
 router.get('/currentRewardsHistory', authenticationMiddleware(), (req, res) =>{
     console.log(req.session.passport.user.user_id)
     const profile = req.session.passport.user.user_id
@@ -196,6 +279,7 @@ router.get('/futureRewardsHistory', authenticationMiddleware(), (req, res) =>{
         console.log("Cannot access profile and get rewards history")
     })
 })
+*/
 
 //edit account information. Change name and password.
 router.post('/edit_account', authenticationMiddleware(), (req, res) => {
@@ -343,6 +427,7 @@ function authenticationMiddleware() {
        }
 }
 
+//Used to get rid of the Time to just get Date string
 function formatDate(date) {
     var d = new Date(date),
         month = '' + (d.getMonth() + 1),
