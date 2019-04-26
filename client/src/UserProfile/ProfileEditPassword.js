@@ -4,8 +4,7 @@ import axios from 'axios';
 
 import {
   Button, Modal, ModalHeader, ModalBody, ModalFooter,
-  Form, FormGroup, Label, Input, Row, Col,
-  UncontrolledPopover, PopoverHeader, PopoverBody,
+  Form, FormGroup, Label, Input
 } from 'reactstrap'
 
 class ProfileEditPassword extends React.Component {
@@ -125,8 +124,8 @@ class ProfileEditPassword extends React.Component {
 	    axios.get('/api/profile')
 	        .then(res => 
 	          this.setState({
-	            name: res.data[0].name,
-	            email: res.data[0].email,
+	            name: res.data.name,
+	            email: res.data.email,
 	        }))  
 	}
 
