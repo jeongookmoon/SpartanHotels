@@ -2,12 +2,10 @@
 CMPE 165 Project
 
 ## Client
-Inside /client,  
-    `npm install` to install dependencies
-    
-    'npm install --save google-maps-react' to install map dependencies
-    `npm start` to start react on port 3000  
-http://localhost:3000/ should automatically open up
+1. Inside /client, `npm install` to install dependencies and create ".env" file containing the following (replace YOUR_KEY)
+2. `REACT_APP_AUTOCOMPLETE_URL=https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&libraries=places`
+3. `npm start` to start react on port 3000 
+4. http://localhost:3000/ should automatically open up
 
 Any changes in /client should automatically reloaded in browser
 
