@@ -73,9 +73,9 @@ async function main(){
             break
 
         case 'reset':
-            // clear all data from tables
+            // equivalent to build and load
             shellResult = shell.exec(
-                "mysql -u root -p < empty_database_" + db_version + ".sql",
+                "mysql -u root -p < database_" + db_version + ".sql",
                 { silent: true }
             );
             if (shellResult.stderr){
