@@ -228,111 +228,108 @@ class Home extends React.Component {
 
 
 	render() {
+		return (
+			<div className="col-lg-12 home-container col-auto" style={topSectionStyle}>
+				<div className="home-form-container col-lg-12">
 
-		const homeHeader = (
 
-				<div className="col-lg-12 home-container col-auto" style={topSectionStyle}>
-					<div className="home-form-container col-lg-12">
-						<Form className="home-form col-lg-12" onSubmit={this.search}>
-							<FormGroup>
-								<div className="col-lg-12 custom-row">
-									<div className="col-lg-6 top-header ml-lg-5 ">
-										<div className="subheading-sm">Welcome</div>
-										<div>Spartan Hotels</div>
-					  				</div>
-					  				<div className="" style={{ width: 0, height: 0 }} id="map"></div>
-				  				</div>
 
-				  				<div className="row mb-5 mr-lg-5 ml-lg-5">
-				  				  	<div className="col-md-12 home-inputs-container">
+					<Form className="home-form col-lg-12" onSubmit={this.search}>
 
-				  				    <div className="block-32">
-				  				        <div className="row">
-				  				          <div className="col-md-6 mb-3 mb-lg-0 col-lg-4" >
-				  				            <label className="input-labels">Location</label>
-				  				            <div className="field-icon-wrap">
-				  				              <div className="icon"><i className="fa fa-search"></i></div>
-				  				            		<Autocomplete onPlaceChanged={this.showPlaceDetails.bind(this)}/>
-				  				            </div>
-				  				          </div>
-				  				          <div className="col-md-6 mb-3 mb-lg-0 col-lg-4">
-				  				            <label className="input-labels">Check In &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;      Check Out</label>
-				  				            <div className="field-icon-wrap check-wrap">
-				  				              <div className="icon"><i className="fa fa-calendar"></i></div>
-				  				              <DateRangePicker
-				  				              	startDatePlaceholderText="mm/dd/yyyy"
-				  				              	startDate={this.state.date_in} // momentPropTypes.momentObj or null,
-				  				              	startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
-				  				              	endDatePlaceholderText="mm/dd/yyyy"
-				  				              	endDate={this.state.date_out} // momentPropTypes.momentObj or null,
-				  				              	endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
-				  				              	onDatesChange={({ startDate, endDate }) => this.setState({ date_in: startDate, date_out: endDate })} // PropTypes.func.isRequired,
-				  				              	focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
-				  				              	onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
-				  				              />
-				  				            </div>
-				  				          </div>
-				  				          <div className="col-md-6 mb-3 mb-md-0 col-lg-2">
-				  				            <div className="row">
-				  				                <label className="input-labels">Guests</label>
-				  				                  	<div className="icon"><span className="ion-ios-arrow-down"></span></div>
-				  				                  	<div className={this.state.guest_number === 0 ? "home-guest-dropdown col-lg-12 menu-box menu-item" : "home-guest-dropdown-filled col-lg-12 menu-box menu-item" }> {this.state.guest_number === 0 ? null : this.state.guest_number}&nbsp;guests
-															<ul className="home-guest-dropdown-list-style">
-																<li>
-																	<div className="form-inline home-adults-container">
-																		<div className="home-adults">
-																			Adults
-												                		</div>
+						<div className="col-lg-12 custom-row">
+							<div className="col-lg-6 top-header ml-lg-5 ">
+								<div class="subheading-sm">Welcome</div>
+								<div>Spartan Hotels</div>
+			  				</div>
 
-																		<div className="home-increments">
-																			<i className="fa fa-minus home-guest-icon-increment" type="button" value="Decrement Value" onClick={this.adultDecrement}></i>
-																			<input readOnly className="home-guest-input" name="adult" type="text" id="adult" value={this.state.adult} onChange={this.handleChange} />
-																			<i className="fa fa-plus home-guest-icon-decrement" type="button" value="Increment Value" onClick={this.adultIncrement} />
-																		</div>
-																	</div>
+	
+			  						<div className="" style={{ width: 0, height: 0 }} id="map"></div>
+	
+		  				</div>
 
-																	<div className="form-inline home-children-container">
-																		<div className="home-children">
-																			Children
-												                		</div>
+		  				<div class="row mb-5 mr-lg-5 ml-lg-5">
+		  				  <div class="col-md-12 home-inputs-container">
 
-																		<div className="home-increments">
-																			<i className="fa fa-minus home-guest-icon-increment" type="button" value="Decrement Value" onClick={this.childrenDecrement}></i>
-																			<input readOnly className="home-guest-input" name="children" type="text" id="children" value={this.state.children} onChange={this.handleChange} />
-																			<i className="fa fa-plus home-guest-icon-decrement" type="button" value="Increment Value" onClick={this.childrenIncrement} />
-																		</div>
-																	</div>
-																</li>
-															</ul>
-														</div>
-				  				            </div>
-				  				          </div>
-				  				          <div className="col-md-6 mb-3 mb-md-0 col-lg-2 ">
-				  				          		  				                <label htmlFor="checkin">&nbsp;</label>
+		  				    <div class="block-32">
+		  				      <form action="#">
+		  				        <div class="row">
+		  				          <div class="col-md-6 mb-3 mb-lg-0 col-lg-4" >
+		  				            <label class="input-labels">Location</label>
+		  				            <div class="field-icon-wrap">
+		  				              <div class="icon"><i className="fa fa-search"></i></div>
+		  				            		<Autocomplete onPlaceChanged={this.showPlaceDetails.bind(this)}/>
+		  				            </div>
+		  				          </div>
+		  				          <div class="col-md-6 mb-3 mb-lg-0 col-lg-4">
+		  				            <label className="input-labels">Check In &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;      Check Out</label>
+		  				            <div class="field-icon-wrap check-wrap">
+		  				              <div class="icon"><i className="fa fa-calendar"></i></div>
+		  				              <DateRangePicker
+		  				              	startDatePlaceholderText="mm/dd/yyyy"
+		  				              	startDate={this.state.date_in} // momentPropTypes.momentObj or null,
+		  				              	startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
+		  				              	endDatePlaceholderText="mm/dd/yyyy"
+		  				              	endDate={this.state.date_out} // momentPropTypes.momentObj or null,
+		  				              	endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
+		  				              	onDatesChange={({ startDate, endDate }) => this.setState({ date_in: startDate, date_out: endDate })} // PropTypes.func.isRequired,
+		  				              	focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+		  				              	onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
+		  				              />
+		  				            </div>
+		  				          </div>
+		  				          <div class="col-md-6 mb-3 mb-md-0 col-lg-2">
+		  				            <div class="row">
+		  				                <label className="input-labels">Guests</label>
+		  				                  	<div class="icon"><span class="ion-ios-arrow-down"></span></div>
+		  				                  	<div className={this.state.guest_number === 0 ? "home-guest-dropdown col-lg-12 menu-box menu-item" : "home-guest-dropdown-filled col-lg-12 menu-box menu-item" }> {this.state.guest_number === 0 ? null : this.state.guest_number}&nbsp;guests
+													<ul>
+														<li>
+															<div className="form-inline home-adults-container">
+																<div className="home-adults">
+																	Adults
+										                		</div>
 
-				  				          	<div className="">
-				  				            <button disabled={!this.state.city || !this.state.date_in || !this.state.date_out || this.state.guest_number === 0} className="home-submit-button btn btn-primary py-3 px-4" type="submit">Search</button>
-				  				            </div>
+																<div className="home-increments">
+																	<i className="fa fa-minus home-guest-icon-increment" type="button" value="Decrement Value" onClick={this.adultDecrement}></i>
+																	<input readOnly className="home-guest-input" name="adult" type="text" id="adult" value={this.state.adult} onChange={this.handleChange} />
+																	<i className="fa fa-plus home-guest-icon-decrement" type="button" value="Increment Value" onClick={this.adultIncrement} />
+																</div>
+															</div>
 
-				  				          </div>
-				  				        </div>
-				  				    </div>
-				  				    <div className="col-lg-12">
-										<div className="form-checkboxes row home-checkboxes text-center">
-											{homeFilterData.map((each, key) => {
-												return <CustomInput className="col-lg-3 input-labels" type="checkbox" key={key} id={key + 123} name={each.name} label={each.label} value={each.value} onChange={this.handleCheckBox} />
-											})}
-										</div>
-									</div>
-				  				  </div>
-				  				</div>
-			  				</FormGroup>
-						</Form>
-					</div>
-				</div >
-		);
+															<div className="form-inline home-children-container">
+																<div className="home-children">
+																	Children
+										                		</div>
 
-{/*
+																<div className="home-increments">
+																	<i className="fa fa-minus home-guest-icon-increment" type="button" value="Decrement Value" onClick={this.childrenDecrement}></i>
+																	<input readOnly className="home-guest-input" name="children" type="text" id="children" value={this.state.children} onChange={this.handleChange} />
+																	<i className="fa fa-plus home-guest-icon-decrement" type="button" value="Increment Value" onClick={this.childrenIncrement} />
+																</div>
+															</div>
+														</li>
+													</ul>
+												</div>
+		  				            </div>
+		  				          </div>
+		  				          <div class="col-md-6 mb-3 mb-md-0 col-lg-2 ">
+		  				          		  				                <label for="checkin">&nbsp;</label>
+
+		  				          	<div className="">
+		  				            <button disabled={!this.state.city || !this.state.date_in || !this.state.date_out || this.state.guest_number === 0} className="home-submit-button btn btn-primary py-3 px-4" type="submit">Search</button>
+		  				            </div>
+
+		  				          </div>
+		  				        </div>
+		  				      </form>
+		  				    </div>
+		  				  </div>
+		  				</div>
+
+					</Form>
+
+					
+				</div>
 
 		const homeFeaturedHotels = (
 
@@ -353,7 +350,8 @@ class Home extends React.Component {
 			<div>
 				{homeHeader}
 
-			</div>
+
+			</div >
 		);
 	}
 }

@@ -355,9 +355,18 @@ code {
 
 
 .home-submit-button-container{
-  padding-top:1em;
   margin-bottom:10px;
 
+}
+
+.home-submit-button{
+    color: #fff;
+    background-color: #fb0a0a;
+    border-color: #f40404;
+    font-size: 14px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    margin-bottom:0px;
 }
 
 .home-submit-button{
@@ -520,7 +529,7 @@ code {
       appearance: none;
       width: 100%; }
   .block-32 .btn {
-    height: 62px;
+    height: 52px;
     color: #fff; }
 
 /* ////////////HOME GUEST DROPDOWN//////////////////////////////////////////////////////////////////////////////    */
