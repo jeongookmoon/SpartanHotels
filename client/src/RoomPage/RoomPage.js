@@ -10,6 +10,7 @@ class RoomPage extends React.Component {
 	constructor(props) {
 		super(props);
 
+
 		const params = new URLSearchParams(this.props.location.search);
 		const hotel_id = params.get('hotel_id')
 		const date_in = params.get('date_in')
@@ -23,12 +24,22 @@ class RoomPage extends React.Component {
 			date_in,
 			date_out,
 			city,
+			King: 0,
+			KingPrice: 0,
+			Queen: 0,
+			QueenPrice: 0,
+			totalPrice: 0,
 		};
+
+		this.KingPrice = 0;
+		this.QueenPrice = 0;
+		this.kingID = 0;
+		this.queenID = 0;
 	}
 
 	Checkout = (event) => {
 		event.preventDefault()
-		let queryString = this.props.location.search
+		let queryString = this.props.location.search + `&country=${this.state.hotel.results[0].country}&state=${this.state.hotel.results[0].state}&address=${this.state.hotel.results[0].address}&king=${this.state.King}&kingID=${this.kingID}&queen=${this.state.Queen}&queenID=${this.queenID}&totalPrice=${this.KingPrice * this.state.King + this.QueenPrice * this.state.Queen}`
 		this.props.history.push({
 			pathname: `/Checkout`,
 			search: `${queryString}`,
@@ -41,10 +52,48 @@ class RoomPage extends React.Component {
 
 		const rooms = (await axios.get(roomSearchQuery)).data
 		const hotel = (await axios.get(hotelSearchQuery)).data
-
 		this.setState({
 			rooms, hotel
 		})
+	}
+
+	handleEachRoomQuantity = (event) => {
+		const target = event.target;
+		const value = target.value;
+		const name = target.name; //King? Queen?
+		this.setState({
+			[name]: value
+		});
+
+	}
+
+
+	handleRoomPrice(room) {
+
+		if (room.bed_type === "King" && this.state.King > 0){
+			this.KingPrice = room.price;
+			this.kingID = room.room_id;
+		}
+
+		if (room.bed_type === "King" && this.state.King === 0){
+			this.KingPrice = 0;
+			this.kingID = room.room_id;
+
+		}
+
+		if (room.bed_type === "Queen" && this.state.Queen > 0){
+			this.QueenPrice = room.price;
+			this.queenID = room.room_id;
+
+
+		}
+
+		if (room.bed_type === "Queen" && this.state.Queen === 0){
+			this.QueenPrice = 0;
+			this.queenID = room.room_id;
+
+		}
+
 	}
 
 	render() {
@@ -62,7 +111,7 @@ class RoomPage extends React.Component {
 				imageArray = imageURLS.split(",");
 			}
 
-			return (
+		const roomPage = (
 				<div className="room-page-container">
 					{/*
 					<div className="col-lg-12 custom-row room-page-hotel-image-container" style={{width: "100vw",
@@ -130,8 +179,8 @@ class RoomPage extends React.Component {
 
 	          								<div className="col-lg-12 room-page-rooms custom-row container">
 											{
-
 												this.state.rooms.results.map((eachRoomResult, index) => {
+
 													return (
 															<div className="room-page-room-item col-lg-4 mb-5" key={index}>
 																<div className="block-34"  style={{ cursor: "pointer" }}>
@@ -139,19 +188,20 @@ class RoomPage extends React.Component {
 																      	<a href="#child4"><img src={imageArray[0]} alt="Placeholder"/></a>
 																  	</div>
 																  	<div className="text">
-																	    <h2 className="heading">Presidential Room</h2>
+																	    <h2 className="heading">{eachRoomResult.bed_type} Size Room</h2>
 																	    <div className="price"><sup className="room-page-room-price">$</sup><span className="room-page-room-price">{eachRoomResult.price.toFixed(2)}</span><sub>/per night</sub></div>
 																	    <ul className="specs">
-																		     	 <li><strong>Bed Type:</strong> {eachRoomResult.bed_type} </li>																	    
 																		     	 <li><strong>Ammenities:</strong> Closet with hangers, HD flat-screen TV, Telephone</li>
 																		     	 <li><strong>Capacity Per Room:</strong> {eachRoomResult.capacity}</li>
 																		     	 {/*<li><strong>Bed Number:</strong> {eachRoomResult.bed_number} </li>*/}
 
 																		     	 {/*<a href="#child4">{eachRoomResult.room_number}</a>*/}
 																	    </ul>
+
+
 																	    <div >
 																	    	<strong># Of Rooms </strong> 
-																		    <input type="text" name="numbers" list="numbers">
+																		    <input type="text" name={eachRoomResult.bed_type} list="numbers" value={eachRoomResult.THIS_IS_A_PLACEHOLDER} onChange={this.handleEachRoomQuantity}>
 																		    </input>
 																		    <datalist id="numbers">
 																		      <option value="1"></option>
@@ -209,8 +259,8 @@ class RoomPage extends React.Component {
 																<Table hover borderless>
 																	<thead>
 																		<tr>
-																			<th>Room Name</th>
-																			<th>Bed Type</th>
+																			<th>Room Type</th>
+																			<th>Capacity</th>
 																			<th>Price</th>
 																			<th>Quantity</th>
 																			<th>Total</th>
@@ -218,23 +268,70 @@ class RoomPage extends React.Component {
 																	</thead>
 
 																	{
-																		this.state.rooms.results.length > 0 ?
+																		this.state.King || this.state.Queen > 0 ?
 																			<tbody>
 																				{
-																					this.state.rooms.results.map((eachRoomResult, index) => {
-																						return (
-																							<tr onClick={this.Checkout.bind(this)} key={index}>
-																								<td >Room Name Here</td>
-																								<td>{eachRoomResult.bed_type}</td>
-																								<td>${eachRoomResult.price.toFixed(2)}</td>
-																								<td> Quantity Here </td>
-																								<td>$ </td>
-																							</tr>
-																							
-																						)
-																					})
-																				}
 
+																					this.state.rooms.results.map((eachRoomResult, index) => {
+
+																						{/*
+																							Can't get this to work, would prefer using this than the eachRoomResult.bed_type === "King" ? this.state.King : this.state.Queen...
+																						function identifyBedType(temp){
+
+																							if(temp === "King"){
+																								return {this.state.King}
+																							}
+
+																							else if(temp === "Queen"){
+																								return "this.state.Queen";
+																							}
+																						}
+																						*/}
+
+																						if(eachRoomResult.bed_type === "King" && this.state.King > 0){
+																							{this.handleRoomPrice(eachRoomResult)};
+																							return (
+
+																								<tr onClick={this.Checkout.bind(this)} key={index}>
+																									<td >{eachRoomResult.bed_type}</td>
+																									<td> {eachRoomResult.capacity}</td>
+																									<td>${eachRoomResult.price.toFixed(2)}</td>
+																									{/*<td> {identifyBedType(eachRoomResult.bed_type)}</td>*/}
+																									<td>{eachRoomResult.bed_type === "King" ? this.state.King : this.state.Queen} </td>
+																									<td>$ {eachRoomResult.bed_type === "King" ? this.state.King * eachRoomResult.price.toFixed(2) : this.state.Queen * eachRoomResult.price.toFixed(2)}</td>
+																								</tr>
+																							)
+
+
+																						}
+
+																						if(eachRoomResult.bed_type === "Queen" & this.state.Queen > 0){
+																							{this.handleRoomPrice(eachRoomResult)};
+																							return (
+																								<tr onClick={this.Checkout.bind(this)} key={index}>
+																									<td >{eachRoomResult.bed_type}</td>
+																									<td> {eachRoomResult.capacity}</td>
+																									<td>${eachRoomResult.price.toFixed(2)}</td>
+																									{/*<td> {identifyBedType(eachRoomResult.bed_type)}</td>*/}
+																									<td>{eachRoomResult.bed_type === "King" ? this.state.King : this.state.Queen} </td>
+																									<td>$ {eachRoomResult.bed_type === "King" ? this.state.King * eachRoomResult.price.toFixed(2) : this.state.Queen * eachRoomResult.price.toFixed(2)}</td>
+																								</tr>
+																							)
+
+
+																						}
+
+																						else {
+																							return (
+																							<div>
+																							</div>
+																							)
+																						}
+
+																					})
+
+
+																				}
 																				<tr className="hr-row">
 																								<td><hr></hr> </td>
 																								<td><hr></hr> </td>
@@ -248,11 +345,11 @@ class RoomPage extends React.Component {
 																								<td> </td>
 																								<td> </td>
 																								<td><strong> Estimated Total </strong></td>
-																								<td> $ </td>
+																								<td> $ {this.KingPrice * this.state.King + this.QueenPrice * this.state.Queen} </td>
 																				</tr>
 
 																			</tbody> :
-																			<tbody><tr>no result</tr></tbody>
+																			<tbody><tr></tr></tbody>
 																	}
 																</Table>
 															</div>
@@ -298,6 +395,10 @@ class RoomPage extends React.Component {
 						*/}
 					</div>
 				</div>
+			)
+
+			return(
+				<div>{roomPage}</div>
 			);
 		}
 	}
