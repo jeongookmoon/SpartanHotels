@@ -140,10 +140,10 @@ class UserProfile extends React.Component{
 		      				</Row>
 		      			</Container>
     				</div>
+    				</div>
 				</div>
 			);
 		}
-
 }
 
 export default withRouter(UserProfile);
