@@ -55,7 +55,7 @@ class ProfileEditName extends React.Component {
 	render() {
 		return (
 			<div>
-        	<Button size="sm" onClick={this.toggle} color="info">Edit Name</Button>
+        	<Button size="sm" color="info" onClick={this.toggle} className="profile-button" >Edit Name</Button>
 
 			<Modal isOpen={this.state.modal} toggle={this.toggle} centered>
 				<ModalHeader toggle={this.toggle}> Edit Your Name </ModalHeader>
