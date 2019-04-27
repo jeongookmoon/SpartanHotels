@@ -25,7 +25,7 @@ class RewardHistory extends React.Component {
 	  	var that = this
 	  	axios.all([axios.get('/api/rewardsHistory')])
 	  		.then(axios.spread(function(rewardsHistory) {
-
+	  			console.log(rewardsHistory.data[0])
 	  			var rewardsTableData = []
 	  			let today = new Date().toISOString().slice(0, 10)
 	  			var points_pending = 0;
