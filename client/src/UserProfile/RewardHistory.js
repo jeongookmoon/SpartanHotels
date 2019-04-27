@@ -22,14 +22,14 @@ class RewardHistory extends React.Component {
 	}
 
 	componentDidMount() {
-		var that = this
-		axios.all([axios.get('/api/rewardsHistory')])
-			.then(axios.spread(function (rewardsHistory) {
-
-				var rewardsTableData = []
-				let today = new Date().toISOString().slice(0, 10)
-				var points_pending = 0;
-				var points_earned = 0;
+	  	var that = this
+	  	axios.all([axios.get('/api/rewardsHistory')])
+	  		.then(axios.spread(function(rewardsHistory) {
+	  			console.log(rewardsHistory.data[0])
+	  			var rewardsTableData = []
+	  			let today = new Date().toISOString().slice(0, 10)
+	  			var points_pending = 0;
+	  			var points_earned = 0;
 
 				for (var x = 0; x < rewardsHistory.data.length; x++) {
 					var booking_id = rewardsHistory.data[x].transaction_id
