@@ -115,6 +115,39 @@ class ProfileEditPassword extends React.Component {
 	    this.props.history.push(currentURL)
 	}
 
+	toggle() {
+		this.setState({
+			...this.state,
+			modal: !this.state.modal
+		});
+	}
+
+
+	handleSubmit = (event) => {
+	    // console.log('Register clicked')
+	    event.preventDefault()
+
+	    if (this.validate()) {
+	      	const temp_fields = {
+	      	oldpass: this.state.fields.oldpass,
+	        newpass: this.state.fields.newpass
+	      }
+	      changePass(temp_fields).then(response => {
+	      	console.log(response)
+	        if (response === 200) {
+	          this.setState({old_pass_error : false}, () => this.pushtoCurrentURL())
+	          window.location.reload();
+	        } else if (response === 400) {
+	          this.setState({old_pass_error : true}, () => this.pushtoCurrentURL())
+	        }
+	      })
+	    }
+  	}
+  	pushtoCurrentURL() {
+	    const currentURL = this.props.location.pathname + this.props.location.search
+	    this.props.history.push(currentURL)
+	}
+
 	validate() {
 	    let temp_fields = this.state.fields;
 	    let temp_errors = {};
