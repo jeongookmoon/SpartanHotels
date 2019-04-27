@@ -43,14 +43,14 @@ class Reservations extends React.Component {
 												<Table hover>
 								    				<thead>
 								      					<tr>
-								       						<th className="reservations-table-header">Booking ID</th>
-								        					<th className="reservations-table-header">Date In</th>
-								        					<th className="reservations-table-header">Date Out</th>
-								        					<th className="reservations-table-header">Hotel</th>
-								        					<th className="reservations-table-header">Room Type, Quantity</th>
-								        					<th className="reservations-table-header">Total Price</th>
-								        					<th className="reservations-table-header">Modify/Cancel</th>
-								        					<th className="reservations-table-header">Status</th>
+								       						<th>Booking ID</th>
+								        					<th>Date In</th>
+								        					<th>Date Out</th>
+								        					<th>Hotel</th>
+								        					<th>Room Type, Quantity</th>
+								        					<th>Total Price</th>
+								        					<th>Modify/Cancel</th>
+								        					<th>Status</th>
 								      					</tr>
 								    				</thead>
 								    				<tbody>
@@ -61,14 +61,24 @@ class Reservations extends React.Component {
 													        	<td> 
 													        		holder
 													        		<br />
-													        		include address
+													        		holder
 													        	</td>
 													        	<td> 
-													        		<Table size="sm" borderless>
-													        			holder, 3
-													        			<br />
-																		can also display room #
-													        		</Table>
+													        		holder, 3
+													        		<br />
+													        		holder, 2
+													        	</td>
+													        	<td> holder </td>
+													        	<td> <Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button> </td>
+													        	<td> holder </td>
+											        	</tr>
+								    					<tr>
+													     		<td> holder </td>
+													     		<td> holder </td>
+													        	<td> holder </td>
+													        	<td> holder </td>
+													        	<td>
+													        		holder, 3
 													        	</td>
 													        	<td> holder </td>
 													        	<td> <Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button> </td>
@@ -80,11 +90,7 @@ class Reservations extends React.Component {
 													        	<td> holder </td>
 													        	<td> holder </td>
 													        	<td> 
-													        		<Table size="sm" borderless>
-													        			holder, 3
-													        			<br />
-																		holder, 2
-													        		</Table>
+													        		holder, 3
 													        	</td>
 													        	<td> holder </td>
 													        	<td> <Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button> </td>
@@ -96,27 +102,7 @@ class Reservations extends React.Component {
 													        	<td> holder </td>
 													        	<td> holder </td>
 													        	<td> 
-													        		<Table size="sm" borderless>
-													        			holder, 3
-													        			<br />
-																		holder, 2
-													        		</Table>
-													        	</td>
-													        	<td> holder </td>
-													        	<td> <Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button> </td>
-													        	<td> holder </td>
-											        	</tr>
-								    					<tr>
-													     		<td> holder </td>
-													     		<td> holder </td>
-													        	<td> holder </td>
-													        	<td> holder </td>
-													        	<td> 
-													        		<Table size="sm" borderless>
-													        			holder, 3
-													        			<br />
-																		holder, 2
-													        		</Table>
+													        		holder, 3
 													        	</td>
 													        	<td> holder </td>
 													        	<td> <Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button> </td>

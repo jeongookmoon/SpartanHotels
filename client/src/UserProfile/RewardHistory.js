@@ -27,8 +27,7 @@ class RewardHistory extends React.Component {
 					<div>
 						<Container>	
 							<Row>
-								<Col sm="1"/>
-								<Col sm="10">
+								<Col>
 									<div className="history-card">
 										<div className="history-card-body history-inner-card">
 											<br />

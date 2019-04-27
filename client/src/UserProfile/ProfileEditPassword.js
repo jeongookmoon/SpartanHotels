@@ -1,6 +1,7 @@
 import React from 'react';
 import {withRouter} from 'react-router-dom'
 import axios from 'axios';
+import "./UserProfile.css";
 
 import {
   Button, Modal, ModalHeader, ModalBody, ModalFooter,
@@ -149,7 +150,7 @@ class ProfileEditPassword extends React.Component {
 
 		return (
 			<div>
-	        	<Button size="sm" onClick={this.toggle} color="info">Change Password</Button>
+	        	<Button size="sm" color="info" onClick={this.toggle} className="profile-button">Change Password</Button>
 
 				<Modal isOpen={this.state.modal} toggle={this.toggle} centered>
 					<ModalHeader toggle={this.toggle}> Change Your Password </ModalHeader>
