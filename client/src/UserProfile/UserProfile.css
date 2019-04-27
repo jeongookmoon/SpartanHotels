@@ -1,3 +1,11 @@
+.profile-button {
+	text-align: center;
+	cursor: pointer;
+	color: white;
+	float: left;
+	margin-bottom: 20px;
+	margin-left: 15px;
+}
 
 .profile-card {
 	background: #ffffff;
