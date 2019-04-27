@@ -12,6 +12,7 @@ import {
 	Container, Row, Col
 } from 'reactstrap';
 
+
 var topSectionStyle = {
 	width: "100%",
 	backgroundRepeat: "no-repeat",
@@ -107,44 +108,42 @@ class UserProfile extends React.Component {
 																<br />
 																<b> Password: </b> ********
 							         							</CardText>
-														</Col>
-													</Row>
-													<Row>
-														<Col xs="4"></Col>
-														<Col xs="8">
-															<Button size="sm" color="link"> <ProfileEditName /> </Button>
-															<Button size="sm" color="link"> <ProfileEditPassword /> </Button>
-															<br />
-															<br />
-														</Col>
-													</Row>
-												</div>
-											</Card>
-										</Col>
-									</div>
-									<div className="profile-card-body profile-inner-card">
-										<Col>
-											<Card>
-												<CardHeader className="profile-inner-cardheader" tag="h4"> REWARDS </CardHeader>
-												<div className="profile-inner-cardbody">
-													<CardText>
-														<br />
-														Total Points: {this.state.reward}
-														<br />
-														<br />
-														<Button onClick={this.RewardHistory.bind(this)} color="info"> See my reward history > </Button>
-														<br />
-														<br />
-													</CardText>
-												</div>
-											</Card>
-										</Col>
-									</div>
-								</div>
-
-							</Col>
-						</Row>
-					</Container>
+						         							</Col>
+					         							</Row>
+					         							<Row>
+					         								<Col xs="4"></Col>
+							         						<Col xs="8">
+							         							<ProfileEditName /> 
+							         							<ProfileEditPassword />
+							         						</Col>
+					         							</Row>
+			         								</div>
+			         							</Card>
+			         						</Col>
+			         					</div>
+			         					<div className="profile-card-body profile-inner-card">
+			          						<Col>
+			          							<Card>
+			          								<CardHeader className="profile-inner-cardheader" tag="h4"> REWARDS </CardHeader>
+			         								<div className="profile-inner-cardbody">
+			         									<CardText>
+			         										<br />
+			         										Total Points: {this.state.reward} 
+			         										<br />
+			         										<br />
+			         										<Button color="info" onClick={this.RewardHistory.bind(this)}> See my reward history > </Button>
+			         										<br />
+			         										<br />
+			         									</CardText>
+			         								</div>
+			         							</Card>
+			          						</Col>
+			          					</div>
+			      					</div>
+			      				</Col>
+		      				</Row>
+		      			</Container>
+    				</div>
 				</div>
 			</div>
 		)
