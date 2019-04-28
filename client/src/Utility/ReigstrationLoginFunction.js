@@ -6,6 +6,32 @@ export const logoutClearSession = () => {
             // console.log(res)
         })
 }
+export const changePass = (temp_fields) => {
+        return axios.post('/api/UserProfileChangePass', {
+            oldpass: temp_fields.oldpass,
+            newpass: temp_fields.newpass,
+        }).then(response => {
+        if(response.status === 200) {
+        }
+        return response.status
+    }).catch(error => {
+        //console.log(error.response.status)
+        return error.response.status
+    })
+}
+
+export const changeName = (temp_fields) => {
+        return axios.post('/api/changeName', {
+            name: temp_fields.name
+        }).then(response => {
+        if(response.status === 200) {
+        }
+        return response.status
+    }).catch(error => {
+        //console.log(error.response.status)
+        return error.response.status
+    })
+}
 
 export const registerPost = temp_fields => {
     return axios.post('/api/register', {

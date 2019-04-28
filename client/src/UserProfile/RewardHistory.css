@@ -3,7 +3,7 @@
 	padding-top: 30px;
 	transition: all 200ms ease;
 	height: 420px;
-	padding-bottom: 40px;
+	padding-bottom: 35px;
 	margin-top: 40px;
 }
 
@@ -13,7 +13,7 @@
 
 .history-center-title {
 	text-align: center;
-	padding-bottom: 20px;
+	padding-bottom: 15px;
 }
 
 .history-container {
@@ -25,14 +25,14 @@
 
 .history-form-container {
 	height: 100%;
-	width: 1000%;
+	width: 100%;
 	min-height: 41.6rem;
 }
 
 .history-inner-card {
 	margin-left: -40px;
 	margin-right: 40px;
-	margin-bottom: 30px;
+	margin-bottom: 25px;
 }
 
 .history-scrollbar {
@@ -43,4 +43,15 @@
 
 .history-table-wrapper-scroll-y {
 	display: block;
+}
+
+.history-table-static-header {
+	background-color: #DCDCDC;
+	position: fixed;
+	z-index: 1;
+	margin-top: -20px;
+}
+
+.history-table-static-body {
+	margin-top: 200px;
 }

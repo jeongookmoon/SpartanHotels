@@ -89,8 +89,10 @@ module.exports = {
         getEmailwithID: 'SELECT email FROM user WHERE user_id = ?',
         getAccessCode: 'SELECT access_code FROM user WHERE email = ?',
         setAccessCode: 'UPDATE user SET access_code = ? WHERE email = ?',
-        getAvailableRewards: 'SELECT sum(R.change) as rewards FROM spartanhotel.reward R where user_id=? and date_active <= curdate()'
-
+        getAvailableRewards: 'SELECT sum(R.change) as rewards FROM spartanhotel.reward R where user_id=? and date_active <= curdate()',
+        userProfileChangePass: 'UPDATE user SET password = ? WHERE user_id = ?',
+        getOldPass: 'SELECT password FROM user where user_id =?',
+        setNewName: 'UPDATE user SET name=? WHERE user_id=?'
     },
 
     hotel: {
@@ -976,14 +978,16 @@ module.exports = {
 },
 
     rewards: {
-
       book: 'INSERT INTO spartanhotel.rewards(reward_book_id, user_id, room_id, reward_points, no_cancellation, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',
       book: 'INSERT INTO spartanhotel.rewards (reward_book_id, user_id, room_id, reward_points, no_cancellation, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',
       useOnBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, transaction_id, date_active, `change`) values (null, ?, 1, ?, curdate(), ?)',
       gainFromBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, transaction_id, date_active, `change`) values (null, ?, 2, ?, ?, ?)',
       getUserRecords: 'SELECT R.*,RR.reason FROM spartanhotel.reward R join spartanhotel.reward_reason RR on R.reward_reason_id = RR.reward_reason_id WHERE user_id=?',
       cancelBooking: 'DELETE from spartanhotel.reward where transaction_id=?',
-      getOldBookingAppliedRewards: 'SELECT R.change FROM spartanhotel.reward R WHERE transaction_id = ? AND SIGN(change) = -1'
+      getOldBookingAppliedRewards: 'SELECT R.change FROM spartanhotel.reward R WHERE transaction_id = ? AND SIGN(change) = -1',
+      getCurrentRewardsHistory: 'SELECT a.reward_id, a.transaction_id, a.date_active, a.change, b.reason FROM reward a, reward_reason b where a.reward_reason_id = b.reward_reason_id and user_id = ? and date_active <= curdate()',
+      getFutureRewardsHistory: 'SELECT a.reward_id, a.transaction_id, a.date_active, a.change, b.reason FROM reward a, reward_reason b where a.reward_reason_id = b.reward_reason_id and user_id = ? and date_active >= curdate()',    
+      getRewardsHistory: 'SELECT DISTINCT a.transaction_id, a.date_active, a.change, b.date_in, b.date_out, e.name FROM reward a, transaction b, transaction_room c, room d, hotel e WHERE a.transaction_id = b.transaction_id and a.user_id = ? and a.transaction_id = c.transaction_id and c.room_id = d.room_id and d.hotel_id = e.hotel_id'
     },
 
     guest: {
