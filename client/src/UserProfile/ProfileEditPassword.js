@@ -2,6 +2,8 @@ import React from 'react';
 import {withRouter} from 'react-router-dom'
 import axios from 'axios';
 
+import "./UserProfile.css";
+
 import {
   Button, Modal, ModalHeader, ModalBody, ModalFooter,
   Form, FormGroup, Label, Input
@@ -25,7 +27,7 @@ class ProfileEditPassword extends React.Component {
 			password_error: [],
 			old_pass_error: false,
 
-			passwordCheck: [{req:"≥ 8 characters", valid:false},
+			newPasswordCheck: [{req:"≥ 8 characters", valid:false},
       		{req:"At least 1 uppercase letter", valid:false},
 		    {req:"At least 1 lowercase letter", valid:false},
 		    {req:"At least 1 special character !@#$%^&*",valid:false}]
@@ -44,7 +46,6 @@ class ProfileEditPassword extends React.Component {
 		//this.oldPasswordChecker()
 		this.newPasswordChecker()
 	}
-
 
 	newPasswordChecker () {
 		let pw = this.state.fields.newpass;
@@ -76,7 +77,7 @@ class ProfileEditPassword extends React.Component {
 	      tmp_passwordCheck[3].valid = false
 	    }
 
-	    this.setState({ passwordCheck: tmp_passwordCheck});
+	    this.setState({ newPasswordCheck: tmp_passwordCheck});
 	}
 
 	toggle() {
@@ -100,11 +101,11 @@ class ProfileEditPassword extends React.Component {
 	      	console.log(response)
 	        if (response === 200) {
 	          this.setState({old_pass_error : false}, () => this.pushtoCurrentURL())
+	          window.location.reload();
 	        } else if (response === 400) {
 	          this.setState({old_pass_error : true}, () => this.pushtoCurrentURL())
 	        }
 	      })
-	    window.location.reload();
 	    }
   	}
   	pushtoCurrentURL() {
@@ -157,12 +158,11 @@ class ProfileEditPassword extends React.Component {
 	    return formIsValid;
 	}
 
-
 	render() {
 
 		const password_error = (
       		<div className="text-warning">{this.state.password_error.map((each) => <div>{each}</div>
-      	)}</div>
+      		)}</div>
     	)
 
 	    const no_error = (
@@ -173,13 +173,13 @@ class ProfileEditPassword extends React.Component {
 	      <div className="text-warning">Old Password does not match</div>
 	    )
 
-	    var password_requirements_component = this.state.passwordCheck.map(ele=>{
+	    var password_requirements_component = this.state.newPasswordCheck.map(ele=>{
 	      return <div key={ele.req} className= { ele.valid ? "valid-req" : "invalid-req" }>{ele.req}</div>
 	    }) 
 
 		return (
 			<div>
-	        	<Button size="sm" onClick={this.toggle} color="info">Change Password</Button>
+	        	<Button size="sm" color="info" onClick={this.toggle} className="profile-button">Change Password</Button>
 
 				<Modal isOpen={this.state.modal} toggle={this.toggle} centered>
 					<ModalHeader toggle={this.toggle}> Change Your Password </ModalHeader>
@@ -198,7 +198,6 @@ class ProfileEditPassword extends React.Component {
 								<div className="text-warning">{this.state.errors.newpass}</div>
 								{this.state.password_error? password_error : no_error}
 
-
 							</FormGroup>
 							<FormGroup>
 								<Label> Re-enter New Password: </Label>
@@ -216,6 +215,7 @@ class ProfileEditPassword extends React.Component {
 				</Modal>
 			</div>
 		);
+
 	}
 }
 
