@@ -2,6 +2,8 @@ import React from 'react';
 import {withRouter} from 'react-router-dom'
 import axios from 'axios';
 
+import "./UserProfile.css";
+
 import {
   Button, Modal, ModalHeader, ModalBody, ModalFooter,
   Form, FormGroup, Label, Input
@@ -44,7 +46,6 @@ class ProfileEditPassword extends React.Component {
 		//this.oldPasswordChecker()
 		this.newPasswordChecker()
 	}
-
 
 	newPasswordChecker () {
 		let pw = this.state.fields.newpass;
@@ -157,7 +158,6 @@ class ProfileEditPassword extends React.Component {
 	    return formIsValid;
 	}
 
-
 	render() {
 
 		const password_error = (
@@ -179,7 +179,7 @@ class ProfileEditPassword extends React.Component {
 
 		return (
 			<div>
-	        	<Button size="sm" onClick={this.toggle} color="info">Change Password</Button>
+	        	<Button size="sm" color="info" onClick={this.toggle} className="profile-button">Change Password</Button>
 
 				<Modal isOpen={this.state.modal} toggle={this.toggle} centered>
 					<ModalHeader toggle={this.toggle}> Change Your Password </ModalHeader>
@@ -198,7 +198,6 @@ class ProfileEditPassword extends React.Component {
 								<div className="text-warning">{this.state.errors.newpass}</div>
 								{this.state.password_error? password_error : no_error}
 
-
 							</FormGroup>
 							<FormGroup>
 								<Label> Re-enter New Password: </Label>
@@ -216,6 +215,7 @@ class ProfileEditPassword extends React.Component {
 				</Modal>
 			</div>
 		);
+
 	}
 }
 

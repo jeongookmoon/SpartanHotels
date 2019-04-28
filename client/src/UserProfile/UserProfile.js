@@ -5,9 +5,7 @@ import "./UserProfile.css";
 import homeImage from './homeImage7.jpg';
 import ProfileEditName from './ProfileEditName'
 import ProfileEditPassword from './ProfileEditPassword'
-
-import { Card, CardText,
-		Button, CardHeader,
+import { Button, Card, CardText, CardHeader,
 		Container, Row, Col } from 'reactstrap';
 
 var topSectionStyle = {
@@ -108,10 +106,8 @@ class UserProfile extends React.Component{
 					         							<Row>
 					         								<Col xs="4"></Col>
 							         						<Col xs="8">
-							         							<Button size = "sm" color ="link"> <ProfileEditName /> </Button>
-							         							<Button size = "sm" color = "link"> <ProfileEditPassword /> </Button>
-							         							<br/ >
-							         							<br />
+							         							<ProfileEditName /> 
+							         							<ProfileEditPassword />
 							         						</Col>
 					         							</Row>
 			         								</div>
@@ -128,7 +124,7 @@ class UserProfile extends React.Component{
 			         										Total Points: {this.state.reward} 
 			         										<br />
 			         										<br />
-			         										<Button onClick={this.RewardHistory.bind(this)} color="info"> See my reward history > </Button>
+			         										<Button color="info" onClick={this.RewardHistory.bind(this)}> See my reward history > </Button>
 			         										<br />
 			         										<br />
 			         									</CardText>
@@ -137,15 +133,14 @@ class UserProfile extends React.Component{
 			          						</Col>
 			          					</div>
 			      					</div>
-
 			      				</Col>
 		      				</Row>
 		      			</Container>
     				</div>
-    				</div>
 				</div>
-			);
-		}
+			</div>
+		);
+	}
 }
 
 export default withRouter(UserProfile);
