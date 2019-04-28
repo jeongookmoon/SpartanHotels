@@ -56,7 +56,7 @@ class NavBar extends React.Component {
           empty_fields["email"] = this.state.loginfields.email
         }
 
-        this.setState({ loginfields: empty_fields, loginerror : temp_loginerror }, () => this.pushtoCurrentURL())
+        this.setState({ loginfields: empty_fields, loginerror: temp_loginerror }, () => this.pushtoCurrentURL())
       })
     }
   }
@@ -76,7 +76,10 @@ class NavBar extends React.Component {
     logoutClearSession()
     event.preventDefault()
     localStorage.removeItem('accesstoken')
-    this.pushtoCurrentURL()
+    if (window.location.pathname === '/UserProfile' || window.location.pathname === '/Reservations')
+      this.props.history.push('/')
+    else
+      this.pushtoCurrentURL()
   }
 
   UserProfile(event) {
@@ -170,23 +173,23 @@ class NavBar extends React.Component {
       </div>
     )
 
-    function navbarChange(temp){
-      
-      if(temp === "/"){
+    function navbarChange(temp) {
+
+      if (temp === "/") {
         return "sticky-top navbar navbar-home fixed-top"
       }
 
-      else if(temp === "/HotelSearch"){
+      else if (temp === "/HotelSearch") {
         return "sticky-top navbar navbar-pages fixed-top"
       }
 
-      else 
+      else
         return "sticky-top navbar navbar-page-room fixed-top"
-    
+
     }
 
     return (
-      <nav className= {navbarChange(this.props.location.pathname)}>
+      <nav className={navbarChange(this.props.location.pathname)}>
         {/*<nav className="sticky-top navbar navbar-home navbar-dark bg-light fixed-top">*/}
 
         {/*LEFT SIDE*/}

@@ -7,6 +7,7 @@ import {
   Form, FormGroup, Label, Input
 } from 'reactstrap'
 
+
 import { changeName } from '../Utility/ReigstrationLoginFunction'
 
 class ProfileEditName extends React.Component {
@@ -16,10 +17,10 @@ class ProfileEditName extends React.Component {
 		this.state={
 			modal:false,
 			fields: {
+
 				name: ''
 			},
 			errors: {
-
 			}
 		}
 
@@ -29,6 +30,7 @@ class ProfileEditName extends React.Component {
 	}
 
 	handleUpdate(event) {
+
 		let temp_fields = this.state.fields;
 		temp_fields[event.target.name] = event.target.value;
 		this.setState({ fields : temp_fields });
@@ -70,12 +72,13 @@ class ProfileEditName extends React.Component {
 	      errors: temp_errors
 	    });
 	    return formIsValid;
+
 	}
 
 	render() {
 		return (
 			<div>
-        	<Button size="sm" onClick={this.toggle} color="info">Edit Name</Button>
+        	<Button size="sm" color="info" onClick={this.toggle} className="profile-button" >Edit Name</Button>
 
 			<Modal isOpen={this.state.modal} toggle={this.toggle} centered>
 				<ModalHeader toggle={this.toggle}> Edit Your Name </ModalHeader>
@@ -84,6 +87,7 @@ class ProfileEditName extends React.Component {
 				<Form onSubmit={this.handleSubmit}>
 					<FormGroup>
 						<Label> Name: </Label>
+
 						<Input type="text" name="name" placeholder={this.state.name} value={this.state.fields.name} onChange={this.handleUpdate} required />
 						<div className="text-warning">{this.state.errors.name}</div>
 					</FormGroup>
