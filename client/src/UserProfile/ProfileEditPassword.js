@@ -27,7 +27,7 @@ class ProfileEditPassword extends React.Component {
 			password_error: [],
 			old_pass_error: false,
 
-			passwordCheck: [{req:"≥ 8 characters", valid:false},
+			newPasswordCheck: [{req:"≥ 8 characters", valid:false},
       		{req:"At least 1 uppercase letter", valid:false},
 		    {req:"At least 1 lowercase letter", valid:false},
 		    {req:"At least 1 special character !@#$%^&*",valid:false}]
@@ -77,7 +77,7 @@ class ProfileEditPassword extends React.Component {
 	      tmp_passwordCheck[3].valid = false
 	    }
 
-	    this.setState({ passwordCheck: tmp_passwordCheck});
+	    this.setState({ newPasswordCheck: tmp_passwordCheck});
 	}
 
 	toggle() {
@@ -162,7 +162,7 @@ class ProfileEditPassword extends React.Component {
 
 		const password_error = (
       		<div className="text-warning">{this.state.password_error.map((each) => <div>{each}</div>
-      	)}</div>
+      		)}</div>
     	)
 
 	    const no_error = (
@@ -173,7 +173,7 @@ class ProfileEditPassword extends React.Component {
 	      <div className="text-warning">Old Password does not match</div>
 	    )
 
-	    var password_requirements_component = this.state.passwordCheck.map(ele=>{
+	    var password_requirements_component = this.state.newPasswordCheck.map(ele=>{
 	      return <div key={ele.req} className= { ele.valid ? "valid-req" : "invalid-req" }>{ele.req}</div>
 	    }) 
 
