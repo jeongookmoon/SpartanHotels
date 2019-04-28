@@ -1,4 +1,13 @@
 
+.profile-button {
+	text-align: center;
+	cursor: pointer;
+	color: white;
+	float: left;
+	margin-bottom: 20px;
+	margin-left: 15px;
+}
+
 .profile-card {
 	background: #ffffff;
 	padding-top: 50px;
@@ -58,11 +67,9 @@
 	overflow: auto;
 }
 
-
 .profile-table-header { /* for later note: static top row */
 	position: sticky;
 }
-
 
 .profile-table-wrapper-scroll-y {
 	display: block;
@@ -70,5 +77,4 @@
 
 .profile-text-row {
 	margin-top: 10px;
-
 }

@@ -85,7 +85,7 @@ class RewardHistory extends React.Component {
 						<Container>	
 							<Row>
 								<Col>
-										<div className="history-card">
+									<div className="history-card">
 										<div className="history-card-body history-inner-card">
 											<br />
 											<div className="history-center-title"> <h2> My Reward History </h2> </div>
