@@ -19,16 +19,25 @@ class Reservations extends React.Component {
 	constructor (props) {
 		super (props)
 		this.state = {
-			history: [{}]
+			history: [],
+			info: []
 		}
 	}
 
 	componentDidMount() {
-      axios.get('/api/reservation/viewres').then(res => 
-          this.setState({
-            history: res.data
-          }))  
-        console.log(this.state.history)
+      var that = this
+      axios.get('/api/reservations/viewres')
+      .then(function(viewres) {
+      	var resInfo = []
+      	var
+      	for (var x = 0; x < viewres.data.length; x++) {
+
+      	}
+      	console.log(viewres.data[0])
+      	that.setState({
+            history: resInfo
+          })
+      })
   }
 
 	render() {
@@ -135,13 +144,8 @@ class Reservations extends React.Component {
 								    				</tbody>
 								    			</Table>
 							    			</div>
-<<<<<<< HEAD
-								    	</CardBody>
-								    </Card>
-=======
 								    	</div>
 								    </div>
->>>>>>> 6dd58e2325e095bb433d1b15c004a3d76c74992f
 								</Col>
 							</Row>
 						</Container>

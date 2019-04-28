@@ -245,6 +245,10 @@ router.post('/', (req, res)=>{
     */
 })
 
+/*
+Refer to Tommy's Branch api.js /rewardsHistory for how to format date_in and date_out
+Refer to RewardsHistory.js componentDidMont(), renderTables(), and render()
+*/
 router.get('/viewres', (req, res) => {
     if (typeof(req.user) == 'undefined') {
         res.status(400).send('Not signed in')
@@ -264,6 +268,18 @@ router.get('/viewres', (req, res) => {
     })
 })
 
+//Format the date so we display it correctly on the front end
+function formatDate(date) {
+   var d = new Date(date),
+       month = '' + (d.getMonth() + 1),
+       day = '' + d.getDate(),
+       year = d.getFullYear();
+
+   if (month.length < 2) month = '0' + month;
+   if (day.length < 2) day = '0' + day;
+
+   return [year, month, day].join('-');
+}
 
 router.post('/cancellation', (req,res)=>{
     console.log(req.body);
