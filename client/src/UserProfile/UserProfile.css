@@ -1,3 +1,13 @@
+
+.profile-button {
+	text-align: center;
+	cursor: pointer;
+	color: white;
+	float: left;
+	margin-bottom: 20px;
+	margin-left: 15px;
+}
+
 .profile-card {
 	background: #ffffff;
 	padding-top: 50px;
@@ -25,7 +35,7 @@
 .profile-form-container{
   height:100%;
   width:100%;
-  min-height:5.6rem;
+  min-height: 41.6rem;
 }
 
 .profile-human-pic {
