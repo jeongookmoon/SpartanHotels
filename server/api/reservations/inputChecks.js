@@ -1,6 +1,6 @@
 const validator = require('validator');
 let checks = require("../_checks")
-const {room_format_checker} = require("./room_format_checker") 
+const {room_type_format_checker} = require("./room_format_checker") 
 
 function inputChecks(req, res) {
 
@@ -47,7 +47,7 @@ function inputChecks(req, res) {
         requestedBooking.rewards_applied = parseFloat(req.body.rewards_applied)
     }
 
-    if (!room_format_checker(req.body.rooms, res)) {
+    if (!room_type_format_checker(req.body.rooms, res)) {
         return returnValues
     }
     requestedBooking.rooms = req.body.rooms
