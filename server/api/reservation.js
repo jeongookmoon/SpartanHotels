@@ -13,10 +13,6 @@ const pug = require('pug')
 
 var validator = require('validator');
 
-const TAX_RATE = 10;
-exports.TAX_RATE = TAX_RATE;
-const CANCELLATION_CHARGE_RATE = 20;
-exports.CANCELLATION_CHARGE_RATE = CANCELLATION_CHARGE_RATE;
 
 //Make a reservation 
 router.post('/', (req, res)=>{
