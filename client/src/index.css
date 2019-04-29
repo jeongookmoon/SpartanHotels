@@ -205,7 +205,7 @@ code {
 
 .home-adults-container{
   padding-top:2em;
-  padding-bottom:2em;
+  font-size: .5em;
 }
 
 .home-adults{
@@ -214,9 +214,26 @@ code {
     font-family: mallory,"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
+.home-checkboxes{
+  margin-top:5vh;
+  margin-left:10vw;
+  margin-right:10vw;
+  background:white;
+  text-align:center;
+}
+
+.home-checkboxes div{
+  padding:2em 1em 2em 1em;
+
+}
+
+.home-checkboxes div:hover{
+}
+
+
 .home-children-container{
   padding-top:1em;
-  padding-bottom:1em;
+  font-size:.5em;
 }
 
 .home-children{
@@ -284,6 +301,12 @@ code {
     font-weight: 300;
     font-family: Helvetica,Arial,sans-serif;
     cursor: pointer;
+
+}
+
+.home-guest-dropdown-list-style{
+    list-style: none;
+    padding-left: 0;
 
 }
 
@@ -577,7 +600,7 @@ code {
 }
 
 .menu-item:hover ul {
-  height: 12em;
+  height:20vh;
       z-index: 100;
 
 }

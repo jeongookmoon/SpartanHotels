@@ -11,8 +11,9 @@ import Autocomplete from "../Utility/Autocomplete";
 
 import homeImage from './Images/homeImage7.jpg';
 import {
-	Form
+	Form, CustomInput, FormGroup
 } from 'reactstrap'
+import { homeFilterData } from '../Utility/DataForMenu'
 
 
 var topSectionStyle = {
@@ -225,7 +226,13 @@ class Home extends React.Component {
 		})
 	}
 
+	changeColor(){
+	}
+
 	render() {
+
+		let checkBoxButtonColor = "none";
+
 		return (
 			<div className="col-lg-12 home-container col-auto" style={topSectionStyle}>
 				<div className="home-form-container col-lg-12">
@@ -233,7 +240,7 @@ class Home extends React.Component {
 
 
 					<Form className="home-form col-lg-12" onSubmit={this.search}>
-
+						<FormGroup>
 						<div className="col-lg-12 custom-row">
 							<div className="col-lg-6 top-header ml-lg-5 ">
 								<div className="subheading-sm">Welcome</div>
@@ -279,7 +286,7 @@ class Home extends React.Component {
 		  				                <label className="input-labels">Guests</label>
 		  				                  	<div className="icon"><span className="ion-ios-arrow-down"></span></div>
 		  				                  	<div className={this.state.guest_number === 0 ? "home-guest-dropdown col-lg-12 menu-box menu-item" : "home-guest-dropdown-filled col-lg-12 menu-box menu-item" }> {this.state.guest_number === 0 ? null : this.state.guest_number}&nbsp;guests
-													<ul>
+													<ul className="home-guest-dropdown-list-style">
 														<li>
 															<div className="form-inline home-adults-container">
 																<div className="home-adults">
@@ -319,10 +326,19 @@ class Home extends React.Component {
 		  				          </div>
 		  				        </div>
 		  				    </div>
+		  				    <div className="col-lg-12">
+								<div className="form-checkboxes row home-checkboxes text-center">
+									{homeFilterData.map((each, key) => {
+										return <CustomInput className="col-lg-3 input-labels" type="checkbox" key={key} id={key + 123} name={each.name} label={each.label} value={each.value} onClick={this.changeColor.bind(this)} onChange={this.handleCheckBox} />
+									})}
+								</div>
+							</div>
 		  				  </div>
 		  				</div>
-
+		  				</FormGroup>
 					</Form>
+
+					
 
 					
 				</div>
