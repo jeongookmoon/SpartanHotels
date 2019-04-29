@@ -1,6 +1,7 @@
 const { bookingConflictWithAnotherHotelCheck } = require("./bookingConflictWithAnotherHotelCheck");
 const { modify_Availability_SameHotel_AndPriceCheck } = require("./availabilityAndPriceCheck");
 const { paymentCheckOnModify } = require("./paymentCheckOnModify");
+const { TAX_RATE, CANCELLATION_CHARGE_RATE } = require("./rates");
 
 
 var Queries = require('../../queries')
