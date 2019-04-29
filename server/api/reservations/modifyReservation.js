@@ -1,7 +1,7 @@
 const { bookingConflictWithAnotherHotelCheck } = require("./bookingConflictWithAnotherHotelCheck");
 const { modifyAvailabilityCheck, totalPriceAndCancellationChargeCheck } = require("./availabilityAndPriceCheck");
 const { paymentCheckOnModify } = require("./paymentCheckOnModify");
-const { TAX_RATE, CANCELLATION_CHARGE_RATE } = require("./rates");
+const { TAX_RATE, REWARD_RATE } = require("./rates");
 
 var Queries = require('../../queries')
 var mysql = require('mysql')
@@ -83,13 +83,19 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
         insertNewRewardsAppliedDataQuery = mysql.format(Queries.rewards.useOnBooking, [requestedBooking.user, transaction_id, (-1) * requestedBooking.rewards_applied])
     }
 
+    let applied_reward_cash_value = requestedBooking.rewards_applied / 100
+
+    let amountCashPaid = requestedBooking.total_price - applied_reward_cash_value 
+    console.log(amountCashPaid)
+    
     // update rewards gained from this booking
-    let rewardsGained = parseInt(requestedBooking.amount_paid * 0.10)
+    let rewardsGained = parseInt(amountCashPaid * (REWARD_RATE/100) * 100)
     insertNewRewardsGainedDataQuery = mysql.format(Queries.rewards.gainFromBooking, [requestedBooking.user, transaction_id, requestedBooking.date_out, rewardsGained])
 
     insertNewTRDataQuery = Queries.booking.makeTransactionDetails(transaction_id, availableRequestedRooms)
     console.log(insertNewTRDataQuery)
     
+    let amount_user_paid = requestedBooking.total_price - (requestedBooking.rewards_applied/100)
 
     updateTransactionTableQuery = mysql.format(Queries.modify.updateTransaction,
         [requestedBooking.total_price,
@@ -97,7 +103,7 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
         requestedBooking.date_in,
         requestedBooking.date_out,
             "booked",
-        requestedBooking.amount_paid,
+            amount_user_paid,
             null,
             transaction_id
         ])

@@ -40,11 +40,11 @@ function inputChecks(req, res) {
         requestedBooking.rewards_applied = 0
     }
     else {
-        if (!validator.isFloat(req.body.rewards_applied + '', { min: 0 })) {
+        if (!validator.isInt(req.body.rewards_applied + '', { min: 0 })) {
             res.status(400).send("Invalid rewards_applied")
             return returnValues
         }
-        requestedBooking.rewards_applied = parseFloat(req.body.rewards_applied)
+        requestedBooking.rewards_applied = parseInt(req.body.rewards_applied)
     }
 
     if (!room_type_format_checker(req.body.rooms, res)) {
