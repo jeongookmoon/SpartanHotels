@@ -30,11 +30,11 @@ function inputChecks(req, res) {
         }
     }
 
-    if (typeof (req.body.amount_paid) == 'undefined' || !validator.isFloat(req.body.amount_paid + '')) {
-        res.status(400).send("Invalid amount_paid")
+    if (typeof (req.body.amount_due_from_user) == 'undefined' || !validator.isFloat(req.body.amount_due_from_user + '')) {
+        res.status(400).send("Invalid amount_due_from_user")
         return returnValues
     }
-    requestedBooking.amount_paid = parseFloat(req.body.amount_paid)
+    requestedBooking.amount_due_from_user = parseFloat(req.body.amount_due_from_user)
 
     if (typeof (req.body.rewards_applied) == 'undefined') {
         requestedBooking.rewards_applied = 0

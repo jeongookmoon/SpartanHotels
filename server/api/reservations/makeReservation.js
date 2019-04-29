@@ -24,7 +24,7 @@ async function makeReservation(requestedBooking = {}, res) {
     // check client-submitted total_price, cancellation_charge
     checkResult = await totalPriceAndCancellationChargeCheck(requestedBooking, res)
     if( ! checkResult.pass){
-        return
+        return 
     }
 
     let checkPassed = false
@@ -104,7 +104,7 @@ async function makeReservation(requestedBooking = {}, res) {
         }
 
         // update rewards gained from this booking
-        let rewardsGained = parseInt(requestedBooking.amount_paid * 0.10)
+        let rewardsGained = parseInt(requestedBooking.amount_due_from_user * 0.10)
 
         let rewardGainedQuery = mysql.format(Queries.rewards.gainFromBooking, [requestedBooking.user, transactionID, requestedBooking.date_out, rewardsGained])
         let rewardGainedResult;
