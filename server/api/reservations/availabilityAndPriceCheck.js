@@ -164,7 +164,7 @@ async function availabilityCheck(requestedBooking, res) {
             // requested room_type & price exists and is available
             let desiredNumberOfRooms = reqRoom.quantity
             let availableNumberOfRooms = match.quantity
-            if ( desiredNumberOfRooms < availableNumberOfRooms){
+            if ( desiredNumberOfRooms > availableNumberOfRooms){
                 // not enough rooms available
                 res.status(400).send(`Not enough rooms of type ${reqRoom.room_type} at price ${reqRoom.price} available`)
                 result.pass = false

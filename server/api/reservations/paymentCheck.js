@@ -21,7 +21,7 @@ async function paymentCheck(requestedBooking, res) {
         }
         // check that total_price = amount_paid + rewards_applied
         // console.log(` total ${requestedBooking.amount_paid + requestedBooking.rewards_applied}`)
-        if (requestedBooking.total_price != requestedBooking.amount_due_from_user + requestedBooking.applied_reward_cash_value) {
+        if (requestedBooking.total_price != requestedBooking.amount_due_from_user + applied_reward_cash_value) {
             res.status(400).send(`Amount due ${requestedBooking.total_price} doesnt match amount_due_from_user (including rewards) ${requestedBooking.amount_due_from_user + applied_reward_cash_value}`);
             return false;
         }

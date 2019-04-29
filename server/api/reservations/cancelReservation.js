@@ -2,10 +2,15 @@ var Queries = require('../../queries');
 var mysql = require('mysql');
 function cancelReservation(transaction_id, user_id, res) {
     let query = mysql.format(Queries.booking.user_id, [transaction_id]);
+    console.log(query)
     Queries.run(query).then(results => {
-        //console.log(results)
+        console.log(results)
         //console.log(results[0].user_id)
         //console.log(req.user.user_id)
+        if( typeof(results[0]) == 'undefined'){
+            res.status(400).send("Invalid transaction_id")
+            return
+        }
         if (results[0].user_id == user_id) {
             console.log("Id matches");
             //Checks if the date_in and date_out is acceptable to cancel
