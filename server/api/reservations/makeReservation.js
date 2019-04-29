@@ -44,7 +44,7 @@ async function makeReservation(requestedBooking = {}, res) {
 
     if (requestedBooking.user) {
         // make query to insert as user
-        insertTransactionQuery = mysql.format(Queries.booking.makeTransaction, [requestedBooking.user, null, req.body.total_price, req.body.cancellation_charge, req.body.date_in, req.body.date_out, "booked", req.body.amount_paid, req.stripe_id])
+        insertTransactionQuery = mysql.format(Queries.booking.makeTransaction, [requestedBooking.user, null, requestedBooking.total_price, requestedBooking.cancellation_charge, requestedBooking.date_in, requestedBooking.date_out, "booked", requestedBooking.amount_due_from_user, requestedBooking.stripe_id])
 
     }
     else {   // is guest
@@ -53,7 +53,7 @@ async function makeReservation(requestedBooking = {}, res) {
         let insertGuestResult = await Queries.run(insertGuestQuery)
         let guestID = insertGuestResult.insertId
         // make query to insert as guest
-        insertTransactionQuery = mysql.format(Queries.booking.makeTransaction, [null, guestID, req.body.total_price, req.body.cancellation_charge, req.body.date_in, req.body.date_out, "booked", req.body.amount_paid, req.stripe_id])
+        insertTransactionQuery = mysql.format(Queries.booking.makeTransaction, [null, guestID, requestedBooking.total_price, requestedBooking.cancellation_charge, requestedBooking.date_in, requestedBooking.date_out, "booked", requestedBooking.amount_due_from_user, requestedBooking.stripe_id])
     }
     console.log(insertTransactionQuery)
 
