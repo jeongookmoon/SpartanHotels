@@ -31,6 +31,8 @@
 	transition: all 200ms ease;
 	height: 520px;
 	padding-bottom: 50px;
+	margin-left: -50px;
+	margin-right: 50px;
 }
 
 .reservations-card-body {
