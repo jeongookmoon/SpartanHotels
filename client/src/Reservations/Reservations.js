@@ -31,7 +31,12 @@ class Reservations extends React.Component {
       axios.get('/api/reservations/viewres')
       .then(function(viewres) {
       	var resInfo = []
-      	var final_resinfo = []
+      	var room_info = []
+      	var room_numbers = []
+      	var room = 0
+      	for (var i = 0; i < viewres.data.length; i++) {
+      		room_numbers.push(viewres.data[i].room_number)
+      	}
       	for (var x = 0; x < viewres.data.length; x++) {
       		var booking_id = viewres.data[x].transaction_id
       		var date_in = viewres.data[x].date_in
@@ -39,7 +44,7 @@ class Reservations extends React.Component {
       		var hotel_name = viewres.data[x].name
       		var total_price = viewres.data[x].total_price
       		var status = viewres.data[x].status
-      		var room_info = viewres.data[x].room_number
+      		
       		resInfo[x] = {booking_id, date_in, date_out, hotel_name, room_info, total_price, status}
       	}
       	console.log(resInfo)
@@ -73,7 +78,7 @@ class Reservations extends React.Component {
 
 	render() {
 		const reservationPage = (
-			<div className="reservations-form-container col-lg-12">
+			<div className="reservations-form-container col-lg-12" style={pageStyle}>
 				<br />
 				<br />
 				<br />
@@ -117,102 +122,10 @@ class Reservations extends React.Component {
 		)
 
 		return (
-			<div className="col-lg-12 reservations-container col-auto" style={pageStyle}>
-				{localStorage.accesstoken ? reservationPage : this.redirectToHome()}
-				<div className="reservations-form-container col-lg-12">
-					<br/>
-					<br/>
-					<br/>
-					<br/>         
-					<br/> 
-					<div>
-						<Container>
-							<Row>
-								<Col>
-									<div className="reservations-card">
-										<div className="reservations-card-body reservations-inner-card">
-											<br/>
-											<div className="reservations-center-title"> <h2> My Reservations </h2> </div>
-											<br />
-											<div className="reservations-table-wrapper-scroll-y reservations-scrollbar">
-												<Table hover>
-								    				<thead>
-								      					<tr>
-								       						<th>Booking ID</th>
-								        					<th>Date In</th>
-								        					<th>Date Out</th>
-								        					<th>Hotel</th>
-								        					<th>Room Type, Quantity</th>
-								        					<th>Total Price</th>
-								        					<th>Modify/Cancel</th>
-								        					<th>Status</th>
-								      					</tr>
-								    				</thead>
-								    				<tbody>
-								    					<tr>
-								    					{this.renderReservationsTableData()}
-													     		<td> holder </td>
-													     		<td> holder </td>
-													        	<td> holder </td>
-													        	<td> 
-													        		holder
-													        		<br />
-													        		holder
-													        	</td>
-													        	<td> 
-													        		holder, 3
-													        		<br />
-													        		holder, 2
-													        	</td>
-													        	<td> holder </td>
-													        	<td> <Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button> </td>
-													        	<td> holder </td>
-											        	</tr>
-								    					<tr>
-													     		<td> holder </td>
-													     		<td> holder </td>
-													        	<td> holder </td>
-													        	<td> holder </td>
-													        	<td>
-													        		holder, 3
-													        	</td>
-													        	<td> holder </td>
-													        	<td> <Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button> </td>
-													        	<td> holder </td>
-											        	</tr>
-								    					<tr>
-													     		<td> holder </td>
-													     		<td> holder </td>
-													        	<td> holder </td>
-													        	<td> holder </td>
-													        	<td> 
-													        		holder, 3
-													        	</td>
-													        	<td> holder </td>
-													        	<td> <Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button> </td>
-													        	<td> holder </td>
-											        	</tr>
-								    					<tr>
-													     		<td> holder </td>
-													     		<td> holder </td>
-													        	<td> holder </td>
-													        	<td> holder </td>
-													        	<td> 
-													        		holder, 3
-													        	</td>
-													        	<td> holder </td>
-													        	<td> <Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button> </td>
-													        	<td> holder </td>
-											        	</tr>
-								    				</tbody>
-								    			</Table>
-							    			</div>
-								    </div>
-								    </div>
-								</Col>
-							</Row>
-						</Container>
-					</div>
+			<div>
+				<div className="reservations-container">
+					{localStorage.accesstoken ? reservationPage : this.redirectToHome()}
+					{reservationPage}
 				</div>
 			</div>
 		);
