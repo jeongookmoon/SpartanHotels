@@ -545,8 +545,12 @@ module.exports = {
       
       /**
        * Insert into transaction_room table
-       * @param {*} transaction_id 
-       * @param {[{}]} rooms_booked [{room:19, price:200},{room:20, price:400}]
+       * @param {Number} transaction_id 
+       * @param {Object[]} rooms_booked 
+       * @param {string} rooms_booked[].bed_type
+       * @param {Number} rooms_booked[].price
+       * @param {Number} rooms_booked[].desired_quantity
+       * @param {Number[]} rooms_booked[].room_ids
        * @returns A formatted query ie "INSERT INTO spartanhotel.transaction_room(transaction_id, room_id, room_price) VALUES (39,10,20),(39,11,65)"
        */
       makeTransactionDetails: function(transaction_id, rooms_booked){
@@ -554,10 +558,13 @@ module.exports = {
         let placeholders = []
         let values = []
         for(i=0;i<rooms_booked.length;i++){
-          placeholders.push("(?,?,?)")
-          values.push(transaction_id)
-          values.push(rooms_booked[i].room)
-          values.push(rooms_booked[i].price)
+          for( j = 0; j< rooms_booked[i].desired_quantity ; j++){
+            placeholders.push("(?,?,?)")
+            values.push(transaction_id)
+            values.push(rooms_booked[i].room_ids[j])
+            values.push(rooms_booked[i].price)
+          }
+          
         }
         let placeholderComponent = placeholders.join(",")
         return mysql.format(insertStatement + placeholderComponent,values)

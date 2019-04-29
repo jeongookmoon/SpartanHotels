@@ -90,7 +90,9 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
     let rewardsGained = parseInt(requestedBooking.amount_paid * 0.10)
     insertNewRewardsGainedDataQuery = mysql.format(Queries.rewards.gainFromBooking, [requestedBooking.user, transaction_id, requestedBooking.date_out, rewardsGained])
 
-    insertNewTRDataQuery = Queries.booking.makeTransactionDetails(transaction_id, requestedBooking.rooms)
+    insertNewTRDataQuery = Queries.booking.makeTransactionDetails(transaction_id, availableRequestedRooms)
+    console.log(insertNewTRDataQuery)
+    
 
     updateTransactionTableQuery = mysql.format(Queries.modify.updateTransaction,
         [requestedBooking.total_price,
