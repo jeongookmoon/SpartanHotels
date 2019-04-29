@@ -1,21 +1,49 @@
 const { bookingConflictWithAnotherHotelCheck } = require("./bookingConflictWithAnotherHotelCheck");
-const { modify_Availability_SameHotel_AndPriceCheck } = require("./availabilityAndPriceCheck");
+const { modifyAvailabilityCheck, totalPriceAndCancellationChargeCheck } = require("./availabilityAndPriceCheck");
 const { paymentCheckOnModify } = require("./paymentCheckOnModify");
 const { TAX_RATE, CANCELLATION_CHARGE_RATE } = require("./rates");
-
 
 var Queries = require('../../queries')
 var mysql = require('mysql')
 var Email = require('../email.js')
 const pug = require('pug')
 
-async function modifyReservation(requestedBooking = {}, transaction_id, res) {
-    let checkPassed = false
+/**
+ * 
+ * @param {Object} requestedBooking 
+ * @param {Number} requestedBooking.total_price
+ * @param {Number} requestedBooking.cancellation_charge  
+ * @param {Date} requestedBooking.date_in
+ * @param {Date} requestedBooking.date_out
+ * @param {Number} requestedBooking.rewards_applied
+ * @param {[Room]} requestedBooking.rooms
+ * @param {Number} requestedBooking.hotel_id
+ * @param {Number} requestedBooking.transaction_id
+ * @param {Number} requestedBooking.amount_due_from_user The difference that the user has to pay from their old booking to their new booking
+ * @param {Number} transaction_id 
+ * @param {Express.Response} res 
+ */
+async function modifyReservation(requestedBooking, transaction_id, res) {
+    console.log("modifying res")
+    let checkResults = await modifyAvailabilityCheck(requestedBooking, transaction_id, res)
 
-    checkPassed = await modify_Availability_SameHotel_AndPriceCheck(requestedBooking, transaction_id, res)
-    if (!checkPassed) {
+    if( ! checkResults.pass){
+        console.log("failed availability check")
+        return 
+    }
+    let availableRequestedRooms = checkResults.availableRequestedRooms
+    availableRequestedRooms.map( x=>{ x.room_ids = x.room_ids.split(",").map(y=> Number(y))})
+    console.log(availableRequestedRooms)
+
+    // check client-submitted total_price, cancellation_charge
+    checkResults = await totalPriceAndCancellationChargeCheck(requestedBooking, res)
+    if( ! checkResults.pass){
         return
     }
+
+    let checkPassed = false
+
+
     checkPassed = await bookingConflictWithAnotherHotelCheck(requestedBooking, res)
     if (!checkPassed) {
         return

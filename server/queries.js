@@ -339,7 +339,28 @@ module.exports = {
           return [query, values]
         
         },
-        room: function (params = {}, queryString={}, getCount=false) {
+
+        /**
+         * \* on parameter component means optional
+         * @param {Object} params
+         * @param {Number} params.hotelID 
+         * @param {Object} queryString {date_in, date_out, price_GTE\*, price_LTE\*, sortBy\*, pageNumber\*, resultsPerPage\*}
+         * @param {Date} queryString.date_in
+         * @param {Date} queryString.date_out
+         * @param {Number} [queryString.price_GTE]
+         * @param {Number} [queryString.price_LTE]
+         * @param {string} [queryString.sortBy]
+         * @param {Number} [queryString.pageNumber = 0]
+         * @param {Number} [queryString.resultsPerPage=10]
+         * sortBy can be name_asc, name_des, price_asc, price_des; Default is price_asc
+         * 
+         * pageNumber; Default is 0
+         * 
+         * resultsPerPage; Default is 10
+         * 
+         * @param {Boolean} [getCount=false] 
+         */
+        room: function (params, queryString, getCount=false) {
           // Example parameter: { name: "mint", category: "baby", sortByAsc: true,  priceGreaterThan: 2, priceLessThan: 5 }
           /*
             from StackOverflow, Jordan Running,
@@ -452,13 +473,7 @@ module.exports = {
       
       
           // PUTTING QUERY TOGETHER
-          let mainQuery = ''
-          if(getCount){
-            mainQuery = ` SELECT COUNT( * ) as count `
-          }else{
-            mainQuery = ' SELECT  * '
-          }
-          mainQuery = mainQuery +
+          let mainQuery = 
             `FROM
                 room
             WHERE
@@ -475,18 +490,32 @@ module.exports = {
         let query = ''
       
         if(getCount){
-          query = withClause + mainQuery + whereClause + ';'
+          query = withClause + ` 
+          SELECT  count(*) as count 
+          FROM 
+            (select count(*) as count 
+          `
+            + mainQuery + whereClause +
+          `
+            group by bed_type, price) 
+          as a 
+          `
+          + ';'
         }else{
           // wrap query inside a select so we can join the results with hotel images
-          query = ` select rh.*, group_concat(url) as images from ( ` + 
-          withClause + mainQuery + whereClause + 
+          query = withClause + ` 
+          SELECT  rh.hotel_id, rh.bed_type, rh.price, rh.capacity, group_concat( distinct(url) ) as images, count(room_id) as quantity, group_concat(room_id) as room_ids 
+          FROM 
+            (select * ` + 
+             mainQuery + whereClause + 
           `
-            ) as rh
+            ) 
+            as rh
             left join
             room_image
             on room_image.hotel_id = rh.hotel_id and room_image.bed_type = rh.bed_type
             group by
-            rh.room_id
+            bed_type, price
           `
           + sortByClause + paginationClause  + 
           ';'
@@ -999,6 +1028,18 @@ module.exports = {
       TR.transaction_id = ?
       `,
       updateTransaction: 'UPDATE spartanhotel.transaction SET total_price=?, cancellation_charge=?, date_in=?, date_out=?, status=?, amount_paid=?, stripe_id=? WHERE transaction_id=?',
+      getExistingTransaction:`
+      SELECT B.transaction_id, group_concat(B.transaction_room_id) as transaction_room_ids, B.user_id, B.guest_id, B.total_price , B.cancellation_charge, B.date_in, B.date_out, B.status, B.amount_paid, B.stripe_id, B.room_price,
+      R.bed_type, group_concat( distinct(url) ) as images, count(R.room_id) as quantity, group_concat(R.room_id) as room_ids FROM spartanhotel.booking B
+	    join room R
+      on R.room_id = B.room_id
+      left join room_image
+      on room_image.hotel_id = R.hotel_id and room_image.bed_type = R.bed_type
+      WHERE transaction_id=?
+      
+      group by
+              R.bed_type, B.room_price
+      `,
     }
 
 

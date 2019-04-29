@@ -1,6 +1,6 @@
 const { paymentCheck } = require("./paymentCheck");
 const { bookingConflictWithAnotherHotelCheck } = require("./bookingConflictWithAnotherHotelCheck");
-const { availability_SameHotel_AndPriceCheck } = require("./availabilityAndPriceCheck");
+const { availabilityCheck, totalPriceAndCancellationChargeCheck } = require("./availabilityAndPriceCheck");
 const { getUserEmail } = require("./getUserEmail");
 var Queries = require('../../queries')
 var mysql = require('mysql')
@@ -8,13 +8,26 @@ var Email = require('../email.js')
 const pug = require('pug')
 
 async function makeReservation(requestedBooking = {}, res) {
+    console.log(requestedBooking)
 
-    let checkPassed = false
+    // check requested rooms are available
+    let checkResult = await availabilityCheck(requestedBooking,res)
+    if( ! checkResult.pass){
+        return 
+    }
+    let availableRequestedRooms = checkResult.availableRequestedRooms
+    availableRequestedRooms.map( x=>{ x.room_ids = x.room_ids.split(",")})
+    console.log(availableRequestedRooms)
 
-    checkPassed = await availability_SameHotel_AndPriceCheck(requestedBooking, res)
-    if (!checkPassed) {
+
+
+    // check client-submitted total_price, cancellation_charge
+    checkResult = await totalPriceAndCancellationChargeCheck(requestedBooking, res)
+    if( ! checkResult.pass){
         return
     }
+
+    let checkPassed = false
 
     checkPassed = await bookingConflictWithAnotherHotelCheck(requestedBooking, res)
     if (!checkPassed) {
