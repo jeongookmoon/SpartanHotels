@@ -2,6 +2,7 @@ const { paymentCheck } = require("./paymentCheck");
 const { bookingConflictWithAnotherHotelCheck } = require("./bookingConflictWithAnotherHotelCheck");
 const { availabilityCheck, totalPriceAndCancellationChargeCheck } = require("./availabilityAndPriceCheck");
 const { getUserEmail } = require("./getUserEmail");
+const { REWARD_RATE } = require("./rates");
 var Queries = require('../../queries')
 var mysql = require('mysql')
 var Email = require('../email.js')
@@ -104,7 +105,7 @@ async function makeReservation(requestedBooking = {}, res) {
         }
 
         // update rewards gained from this booking
-        let rewardsGained = parseInt(requestedBooking.amount_due_from_user * 0.10)
+        let rewardsGained = parseInt(requestedBooking.amount_due_from_user * (REWARD_RATE/100) * 100)
 
         let rewardGainedQuery = mysql.format(Queries.rewards.gainFromBooking, [requestedBooking.user, transactionID, requestedBooking.date_out, rewardsGained])
         let rewardGainedResult;

@@ -35,8 +35,9 @@ async function paymentCheckOnModify(requestedBooking, transaction_id, res) {
             res.status(400).send("User doesn't have enough reward points");
             return returnValue;
         }
-        if (requestedBooking.rewards_applied > requestedBooking.total_price) {
-            res.status(400).send(`Rewards applied ${requestedBooking.rewards_applied} is more than ${requestedBooking.total_price}`);
+        let applied_reward_cash_value = requestedBooking.rewards_applied / 100
+        if (applied_reward_cash_value > requestedBooking.total_price) {
+            res.status(400).send(`Rewards applied value ${applied_reward_cash_value} is more than ${requestedBooking.total_price}`);
             return returnValue;
         }
         // get old transation data
@@ -54,8 +55,8 @@ async function paymentCheckOnModify(requestedBooking, transaction_id, res) {
         console.log(oldBookingData);
         oldBookingData = oldBookingData[0];
         returnValue.oldTransactionData = oldBookingData;
-        // TODO: reward conversion rate
-        let amountDueFromUser = requestedBooking.total_price - oldBookingData.amount_paid - requestedBooking.rewards_applied;
+        
+        let amountDueFromUser = requestedBooking.total_price - oldBookingData.amount_paid - applied_reward_cash_value;
         amountDueFromUser = parseFloat(amountDueFromUser.toFixed(2))
         console.log(`amountDueFromUser ${amountDueFromUser}`);
         returnValue.amountDueFromUser = amountDueFromUser.toFixed(2);

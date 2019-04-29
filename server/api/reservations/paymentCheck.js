@@ -8,21 +8,21 @@ var Queries = require('../../queries');
  */
 async function paymentCheck(requestedBooking, res) {
     if (requestedBooking.user) {
+        let applied_reward_cash_value = requestedBooking.rewards_applied / 100
         // if user is member
         // check if member has enough rewards if they used rewards
         checkPassed = await sufficientRewardsCheck(requestedBooking, res);
         if (!checkPassed) {
             return false;
         }
-        if (requestedBooking.rewards_applied > requestedBooking.total_price) {
-            res.status(400).send(`Rewards applied ${requestedBooking.rewards_applied} is more than ${requestedBooking.total_price}`);
+        if (applied_reward_cash_value > requestedBooking.total_price) {
+            res.status(400).send(`Rewards applied value ${applied_reward_cash_value} is more than ${requestedBooking.total_price}`);
             return false;
         }
         // check that total_price = amount_paid + rewards_applied
-        // TODO: reward conversion rate
         // console.log(` total ${requestedBooking.amount_paid + requestedBooking.rewards_applied}`)
-        if (requestedBooking.total_price != requestedBooking.amount_due_from_user + requestedBooking.rewards_applied) {
-            res.status(400).send(`Amount due ${requestedBooking.total_price} doesnt match amount_due_from_user (including rewards) ${requestedBooking.amount_due_from_user + requestedBooking.rewards_applied}`);
+        if (requestedBooking.total_price != requestedBooking.amount_due_from_user + requestedBooking.applied_reward_cash_value) {
+            res.status(400).send(`Amount due ${requestedBooking.total_price} doesnt match amount_due_from_user (including rewards) ${requestedBooking.amount_due_from_user + applied_reward_cash_value}`);
             return false;
         }
     }
