@@ -203,7 +203,7 @@ code {
 
 .home-adults-container{
   padding-top:2em;
-  font-size: .65em;
+  font-size: .5em;
 }
 
 .home-adults{
@@ -231,7 +231,7 @@ code {
 
 .home-children-container{
   padding-top:1em;
-  font-size:.65em;
+  font-size:.5em;
 }
 
 .home-children{
@@ -612,7 +612,7 @@ code {
 }
 
 .menu-item:hover ul {
-  height:25vh;
+  height:20vh;
       z-index: 100;
 
 }
