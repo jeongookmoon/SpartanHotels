@@ -848,8 +848,7 @@ code {
    
  .hotel-search-map-column{
 
-  min-height:25em;
-  max-height:30em;
+  min-height:70vh;
   height:100%;
   width:100%;
   padding-right: 0px;
@@ -942,7 +941,7 @@ code {
     width:100%;
     overflow-x:hidden;
     direction:ltr;
-    max-height:29em;
+    max-height:65vh;
   padding-right:10px;
 
   }
