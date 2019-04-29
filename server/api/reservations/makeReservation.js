@@ -75,7 +75,7 @@ async function makeReservation(requestedBooking = {}, res) {
     let transactionID = insertResult.insertId
 
     // insert transaction rooms
-    insertTransactionRoomDataQuery = mysql.format(Queries.booking.makeTransactionDetails(transactionID, requestedBooking.rooms))
+    insertTransactionRoomDataQuery = mysql.format(Queries.booking.makeTransactionDetails(transactionID, availableRequestedRooms))
     console.log(`hello ${insertTransactionRoomDataQuery}`)
 
     try {
