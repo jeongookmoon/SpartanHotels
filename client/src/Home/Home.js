@@ -238,7 +238,7 @@ class Home extends React.Component {
 
 						<div className="col-lg-12 custom-row">
 							<div className="col-lg-6 top-header ml-lg-5 ">
-								<div class="subheading-sm">Welcome</div>
+								<div className="subheading-sm">Welcome</div>
 								<div>Spartan Hotels</div>
 			  				</div>
 
@@ -247,23 +247,22 @@ class Home extends React.Component {
 	
 		  				</div>
 
-		  				<div class="row mb-5 mr-lg-5 ml-lg-5">
-		  				  <div class="col-md-12 home-inputs-container">
+		  				<div className="row mb-5 mr-lg-5 ml-lg-5">
+		  				  <div className="col-md-12 home-inputs-container">
 
-		  				    <div class="block-32">
-		  				      <form action="#">
-		  				        <div class="row">
-		  				          <div class="col-md-6 mb-3 mb-lg-0 col-lg-4" >
-		  				            <label class="input-labels">Location</label>
-		  				            <div class="field-icon-wrap">
-		  				              <div class="icon"><i className="fa fa-search"></i></div>
+		  				    <div className="block-32">
+		  				        <div className="row">
+		  				          <div className="col-md-6 mb-3 mb-lg-0 col-lg-4" >
+		  				            <label className="input-labels">Location</label>
+		  				            <div className="field-icon-wrap">
+		  				              <div className="icon"><i className="fa fa-search"></i></div>
 		  				            		<Autocomplete onPlaceChanged={this.showPlaceDetails.bind(this)}/>
 		  				            </div>
 		  				          </div>
-		  				          <div class="col-md-6 mb-3 mb-lg-0 col-lg-4">
+		  				          <div className="col-md-6 mb-3 mb-lg-0 col-lg-4">
 		  				            <label className="input-labels">Check In &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;      Check Out</label>
-		  				            <div class="field-icon-wrap check-wrap">
-		  				              <div class="icon"><i className="fa fa-calendar"></i></div>
+		  				            <div className="field-icon-wrap check-wrap">
+		  				              <div className="icon"><i className="fa fa-calendar"></i></div>
 		  				              <DateRangePicker
 		  				              	startDatePlaceholderText="mm/dd/yyyy"
 		  				              	startDate={this.state.date_in} // momentPropTypes.momentObj or null,
@@ -277,10 +276,10 @@ class Home extends React.Component {
 		  				              />
 		  				            </div>
 		  				          </div>
-		  				          <div class="col-md-6 mb-3 mb-md-0 col-lg-2">
-		  				            <div class="row">
+		  				          <div className="col-md-6 mb-3 mb-md-0 col-lg-2">
+		  				            <div className="row">
 		  				                <label className="input-labels">Guests</label>
-		  				                  	<div class="icon"><span class="ion-ios-arrow-down"></span></div>
+		  				                  	<div className="icon"><span className="ion-ios-arrow-down"></span></div>
 		  				                  	<div className={this.state.guest_number === 0 ? "home-guest-dropdown col-lg-12 menu-box menu-item" : "home-guest-dropdown-filled col-lg-12 menu-box menu-item" }> {this.state.guest_number === 0 ? null : this.state.guest_number}&nbsp;guests
 													<ul>
 														<li>
@@ -312,8 +311,8 @@ class Home extends React.Component {
 												</div>
 		  				            </div>
 		  				          </div>
-		  				          <div class="col-md-6 mb-3 mb-md-0 col-lg-2 ">
-		  				          		  				                <label for="checkin">&nbsp;</label>
+		  				          <div className="col-md-6 mb-3 mb-md-0 col-lg-2 ">
+		  				          		  				                <label htmlFor="checkin">&nbsp;</label>
 
 		  				          	<div className="">
 		  				            <button disabled={!this.state.city || !this.state.date_in || !this.state.date_out || this.state.guest_number === 0} className="home-submit-button btn btn-primary py-3 px-4" type="submit">Search</button>
@@ -321,7 +320,6 @@ class Home extends React.Component {
 
 		  				          </div>
 		  				        </div>
-		  				      </form>
 		  				    </div>
 		  				  </div>
 		  				</div>
