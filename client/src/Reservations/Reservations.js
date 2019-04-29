@@ -31,16 +31,42 @@ class Reservations extends React.Component {
       axios.get('/api/reservations/viewres')
       .then(function(viewres) {
       	var resInfo = []
-      	var
+      	var final_resinfo = []
       	for (var x = 0; x < viewres.data.length; x++) {
-
+      		var booking_id = viewres.data[x].transaction_id
+      		var date_in = viewres.data[x].date_in
+      		var date_out = viewres.data[x].date_out
+      		var hotel_name = viewres.data[x].name
+      		var total_price = viewres.data[x].total_price
+      		var status = viewres.data[x].status
+      		var room_info = viewres.data[x].room_number
+      		resInfo[x] = {booking_id, date_in, date_out, hotel_name, room_info, total_price, status}
       	}
-      	console.log(viewres.data[0])
+      	console.log(resInfo)
       	that.setState({
             history: resInfo
           })
       })
   }
+
+  	renderReservationsTableData() {
+		return this.state.history.map((reservations, index) => {
+			const { booking_id, date_in, date_out, hotel_name, room_info, total_price, status } = reservations //destructuring
+				return (
+				<tr >
+					<td>{booking_id}</td>
+					<td>{date_in}</td>
+					<td>{date_out}</td>
+					<td>{hotel_name}</td>
+					<td>{room_info}</td>
+					<td>{total_price}</td>
+					<td><Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button></td>
+					<td>{status}</td>
+				</tr>
+			)
+			
+		})
+	}
 	redirectToHome() {
 		this.props.history.push('/')
 	}
@@ -77,74 +103,7 @@ class Reservations extends React.Component {
 													</tr>
 												</thead>
 												<tbody>
-													<tr>
-														<td> holder </td>
-														<td> holder </td>
-														<td> holder </td>
-														<td>
-															holder
-															<br />
-															include address
-														</td>
-														<td>
-															<Table size="sm" borderless>
-																holder, 3
-																<br />
-																can also display room #
-															</Table>
-														</td>
-														<td> holder </td>
-														<td> <Button color="warning"> Modify </Button> <Button color="danger"> Cancel </Button> </td>
-														<td> holder </td>
-													</tr>
-													<tr>
-														<td> holder </td>
-														<td> holder </td>
-														<td> holder </td>
-														<td> holder </td>
-														<td>
-															<Table size="sm" borderless>
-																holder, 3
-																<br />
-																holder, 2
-															</Table>
-														</td>
-														<td> holder </td>
-														<td> <Button color="warning"> Modify </Button> <Button color="danger"> Cancel </Button> </td>
-														<td> holder </td>
-													</tr>
-													<tr>
-														<td> holder </td>
-														<td> holder </td>
-														<td> holder </td>
-														<td> holder </td>
-														<td>
-															<Table size="sm" borderless>
-																holder, 3
-																<br />
-																holder, 2
-															</Table>
-														</td>
-														<td> holder </td>
-														<td> <Button color="warning"> Modify </Button> <Button color="danger"> Cancel </Button> </td>
-														<td> holder </td>
-													</tr>
-													<tr>
-														<td> holder </td>
-														<td> holder </td>
-														<td> holder </td>
-														<td> holder </td>
-														<td>
-															<Table size="sm" borderless>
-																holder, 3
-																<br />
-																holder, 2
-															</Table>
-														</td>
-														<td> holder </td>
-														<td> <Button color="warning"> Modify </Button> <Button color="danger"> Cancel </Button> </td>
-														<td> holder </td>
-													</tr>
+													{this.renderReservationsTableData()}
 												</tbody>
 											</Table>
 										</div>
@@ -191,6 +150,7 @@ class Reservations extends React.Component {
 								    				</thead>
 								    				<tbody>
 								    					<tr>
+								    					{this.renderReservationsTableData()}
 													     		<td> holder </td>
 													     		<td> holder </td>
 													        	<td> holder </td>
@@ -247,11 +207,7 @@ class Reservations extends React.Component {
 								    				</tbody>
 								    			</Table>
 							    			</div>
-								    	</CardBody>
-								    </Card>
-								    	</div>
 								    </div>
-								    	</div>
 								    </div>
 								</Col>
 							</Row>

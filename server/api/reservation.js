@@ -260,6 +260,13 @@ router.get('/viewres', (req, res) => {
 
     Queries.run(viewquery).then((results) => {
         console.log(results)
+        for(x = 0; x < results.length ; x++) {
+            var newDateIn = formatDate(results[x].date_in)
+            var newDateOut = formatDate(results[x].date_out)
+
+            results[x].date_in = newDateIn;
+            results[x].date_out = newDateOut;
+        }
         res.status(200).send(results)
         console.log("Reservations viewed")
     },
