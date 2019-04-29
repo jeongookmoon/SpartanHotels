@@ -111,7 +111,6 @@ class RoomPage extends React.Component {
 				imageArray = imageURLS.split(",");
 			}
 
-			console.log(this.state.rooms.results)
 
 		const roomPage = (
 				<div className="room-page-container">
@@ -187,7 +186,7 @@ class RoomPage extends React.Component {
 															<div className="room-page-room-item col-lg-4 mb-5" key={index}>
 																<div className="block-34"  style={{ cursor: "pointer" }}>
 																  	<div className="room-page-image">
-																      	<a href="#child4"><img src={imageArray[0]} alt="Placeholder"/></a>
+																      	<a href="#child4"><img src={eachRoomResult.images} alt="Placeholder"/></a>
 																  	</div>
 																  	<div className="text">
 																	    <h2 className="heading">{eachRoomResult.bed_type} Size Room</h2>
@@ -325,8 +324,8 @@ class RoomPage extends React.Component {
 
 																						else {
 																							return (
-																							<div>
-																							</div>
+																							<tr>
+																							</tr>
 																							)
 																						}
 
