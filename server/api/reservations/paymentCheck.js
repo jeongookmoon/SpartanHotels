@@ -21,16 +21,16 @@ async function paymentCheck(requestedBooking, res) {
         // check that total_price = amount_paid + rewards_applied
         // TODO: reward conversion rate
         // console.log(` total ${requestedBooking.amount_paid + requestedBooking.rewards_applied}`)
-        if (requestedBooking.total_price != requestedBooking.amount_paid + requestedBooking.rewards_applied) {
-            res.status(400).send(`Amount due ${requestedBooking.total_price} doesnt match amount paid (including rewards) ${requestedBooking.amount_paid + requestedBooking.rewards_applied}`);
+        if (requestedBooking.total_price != requestedBooking.amount_due_from_user + requestedBooking.rewards_applied) {
+            res.status(400).send(`Amount due ${requestedBooking.total_price} doesnt match amount_due_from_user (including rewards) ${requestedBooking.amount_due_from_user + requestedBooking.rewards_applied}`);
             return false;
         }
     }
     else { // is guest
         // check that total_price = amount_paid
         // TODO: reward conversion rate
-        if (requestedBooking.total_price != requestedBooking.amount_paid) {
-            res.status(400).send(`Amount due ${requestedBooking.total_price} doesnt match amount paid ${requestedBooking.amount_paid}`);
+        if (requestedBooking.total_price != requestedBooking.amount_due_from_user) {
+            res.status(400).send(`Amount due ${requestedBooking.total_price} doesnt match amount_due_from_user ${requestedBooking.amount_due_from_user}`);
             return false;
         }
     }
