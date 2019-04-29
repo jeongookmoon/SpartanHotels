@@ -504,7 +504,8 @@ module.exports = {
     book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, guest_id, room_id, total_price, cancellation_charge, date_in, date_out, status, amount_paid) values (null, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     cancel: 'UPDATE booking SET status="cancelled" WHERE booking_id=?',
     modify: 'UPDATE booking SET room_id=?, date_in=?, date_out=? WHERE booking_id=?',
-    view: `SELECT transaction.*, room.*, hotel.name, hotel.phone_number, hotel.address, hotel.city, hotel.state, hotel.country, hotel.zipcode FROM transaction 
+    view: `SELECT transaction.*, room.*, hotel.name
+    FROM transaction 
     INNER JOIN transaction_room ON transaction.transaction_id = transaction_room.transaction_id 
     INNER JOIN room ON transaction_room.room_id = room.room_id
     INNER JOIN hotel ON room.hotel_id = hotel.hotel_id 
