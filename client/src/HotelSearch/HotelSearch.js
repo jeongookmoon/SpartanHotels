@@ -438,18 +438,19 @@ class HotelSearch extends React.Component {
 				<hr className="hotel-search-hr-bottom">
 				</hr>
 				<FormGroup className="form-inline hotel-search-inputs">
-					<div className="col-lg-3 input-group home-location">
+					<div className="col-lg-3 input-group room-page-location">
 						<div className="input-group-append">
 							<div className="location-input-icon input-group-text"><i className="fa fa-search"></i></div>
 						</div>
 						<Autocomplete onPlaceChanged={this.showPlaceDetails.bind(this)} />
 					</div>
 
-					<div className="col-lg-4 input-group home-date custom-row">
+					<div className="col-lg-4 field-icon-wrap input-group room-page-search-date custom-row">
 						<div className="input-group-append">
 							<div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
 						</div>
-						<DateRangePicker
+						<div className="room-page-date-check-wrap">
+						<DateRangePicker 
 							startDate={this.state.searchParams.date_in} // momentPropTypes.momentObj or null,
 							startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
 							endDate={this.state.searchParams.date_out} // momentPropTypes.momentObj or null,
@@ -466,12 +467,13 @@ class HotelSearch extends React.Component {
 							focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
 							onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
 						/>
+						</div>
 					</div>
 
-					<div className=" col-lg-1 input-group menu-container">
+					<div className=" col-lg-2 input-group menu-container room-page-guest-container">
 						<div className="col-lg-12 menu-item">
 							<div className="home-guest-dropdown">{this.state.guest_number}&nbsp;Guests</div>
-							<ul>
+							<ul className="home-guest-dropdown-list-style">
 								<li>
 									<div className="form-inline home-adults-container">
 										<div className="col-lg-3 home-adults">
