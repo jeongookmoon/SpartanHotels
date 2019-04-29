@@ -111,6 +111,8 @@ class RoomPage extends React.Component {
 				imageArray = imageURLS.split(",");
 			}
 
+			console.log(this.state.rooms.results)
+
 		const roomPage = (
 				<div className="room-page-container">
 					{/*

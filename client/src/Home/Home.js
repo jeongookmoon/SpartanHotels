@@ -226,12 +226,10 @@ class Home extends React.Component {
 		})
 	}
 
-	changeColor(){
-	}
+
 
 	render() {
 
-		let checkBoxButtonColor = "none";
 
 		return (
 			<div className="col-lg-12 home-container col-auto" style={topSectionStyle}>
@@ -329,7 +327,7 @@ class Home extends React.Component {
 		  				    <div className="col-lg-12">
 								<div className="form-checkboxes row home-checkboxes text-center">
 									{homeFilterData.map((each, key) => {
-										return <CustomInput className="col-lg-3 input-labels" type="checkbox" key={key} id={key + 123} name={each.name} label={each.label} value={each.value} onClick={this.changeColor.bind(this)} onChange={this.handleCheckBox} />
+										return <CustomInput className="col-lg-3 input-labels" type="checkbox" key={key} id={key + 123} name={each.name} label={each.label} value={each.value} onChange={this.handleCheckBox} />
 									})}
 								</div>
 							</div>

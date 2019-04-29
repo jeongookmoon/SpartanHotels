@@ -353,6 +353,7 @@ code {
 
 
 .home-submit-button-container{
+  padding-top:1em;
   margin-bottom:10px;
 
 }
@@ -517,7 +518,7 @@ code {
       appearance: none;
       width: 100%; }
   .block-32 .btn {
-    height: 52px;
+    height: 62px;
     color: #fff; }
 
 /* ////////////HOME GUEST DROPDOWN//////////////////////////////////////////////////////////////////////////////    */
@@ -655,6 +656,12 @@ code {
   font-size:2em;
  }
 
+ .hotel-search-date{
+  padding-right:-3em;
+  padding: 0 0 0 0;
+  padding-left: 2px;
+  font-size:1.3em;
+ }
  .hotel-search-date-container-demo{
 
  }
@@ -982,10 +989,27 @@ code {
 
  }
 
+ .room-page-date-check-wrap{
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.15rem;
+    padding-top:0.1vh;
+    padding-bottom:0.1vh;
+}
+
 .room-page-divider{
   padding-left: 0px;
   padding-right: 0px;
   background: #fafafa;
+}
+
+.room-page-guest-container{
+  margin-left:1em;
+  background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
 }
 
 .room-page-item-rating{
@@ -1018,6 +1042,10 @@ code {
 
 
 
+}
+
+.room-page-location{
+  font-size: 1.2em;
 }
 
 .room-page-promo-rooms{
@@ -1062,6 +1090,17 @@ code {
 
 }
 
+ .room-page-search-date{
+  padding-right:-3em;
+  padding: 0 0 0 0;
+  padding-left: 2px;
+  font-size:1.3em;
+  flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 31.3333%;
+    margin-right:-2vw;
+ }
+
 .room-page-checkout-description{
   padding-bottom:5vh;
   padding-top:5vh;
@@ -1084,6 +1123,13 @@ code {
     padding-bottom:1.5rem;
 
 }
+
+.room-page-date{
+  padding-left:0;
+  padding-right:0;
+
+}
+
 
 .room-page-rooms-container{
 
