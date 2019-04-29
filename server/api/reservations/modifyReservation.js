@@ -49,7 +49,7 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
         return
     }
 
-    let { checkFailed: checkResult, oldTransactionData, amountDueFromUser } = await paymentCheckOnModify(requestedBooking, transaction_id, res)
+    let { checkFailed: checkResult, oldTransactionData, amountDueFromUser: additionalAmountDueFromUser } = await paymentCheckOnModify(requestedBooking, transaction_id, res)
     checkPassed = !checkResult
     if (!checkPassed) {
         return
@@ -58,11 +58,10 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
 
     let final_cancellation_charge = (oldTransactionData.cancellation_charge > requestedBooking.cancellation_charge) ? oldTransactionData.cancellation_charge : requestedBooking.cancellation_charge
 
-    console.log(`amountduefromuser ${amountDueFromUser}`)
+    console.log(`additionalAmountDueFromUser ${additionalAmountDueFromUser}`)
     console.log(`oldTransactionData ${oldTransactionData}`)
     console.log(`oldTransactionData cancellation charge ${oldTransactionData.cancellation_charge}`)
     console.log(`cancellation_charge ${final_cancellation_charge}`)
-
 
     // issue refund or take payment? or check if stripe transaction valid ?
 

@@ -56,15 +56,16 @@ async function paymentCheckOnModify(requestedBooking, transaction_id, res) {
         returnValue.oldTransactionData = oldBookingData;
         // TODO: reward conversion rate
         let amountDueFromUser = requestedBooking.total_price - oldBookingData.amount_paid - requestedBooking.rewards_applied;
+        amountDueFromUser = parseFloat(amountDueFromUser.toFixed(2))
         console.log(`amountDueFromUser ${amountDueFromUser}`);
         returnValue.amountDueFromUser = amountDueFromUser.toFixed(2);
-        if (amountDueFromUser > 0) {
+        // if (amountDueFromUser > 0) {
             // check additional amount_paid 
             if (amountDueFromUser != requestedBooking.amount_due_from_user) {
                 res.status(400).send(`Amount due from user ${amountDueFromUser} doesnt match amount_due_from_user ${requestedBooking.amount_due_from_user}`);
                 return returnValue;
             }
-        }
+        // }
     }
     else {
         res.status(400).send(`Guest not allowed in modify reservation`);
