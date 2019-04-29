@@ -67,18 +67,16 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
     // issue refund or take payment? or check if stripe transaction valid ?
 
 
-    // query to remove old transaction_room data
-    let removeOldTRDataQuery;
     // query to insert new transaction_room data
     let insertNewTRDataQuery;
     // query to update transaction table
     let updateTransactionTableQuery
-    // query to remove old reward data
-    let removeOldRewardDataQuery;
+
     // query to insert reward data
     let insertNewRewardsAppliedDataQuery;
     let insertNewRewardsGainedDataQuery;
 
+    // query to remove old transaction_room data and old reward data
     let queryToRemoveOldTRDataAndOldRewardData = mysql.format(Queries.modify.removeTransactionRoomDataAndRewardsForTransaction, transaction_id)
     console.log(`queryToRemoveOldTRDataAndOldRewardData ${queryToRemoveOldTRDataAndOldRewardData}`)
 
