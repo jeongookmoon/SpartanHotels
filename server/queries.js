@@ -81,7 +81,7 @@ module.exports = {
         create: 'insert into spartanhotel.user (user_id,name,password,email) values (null,?,?,?)',
         session: 'select LAST_INSERT_ID() as user_id ',
         authenticate: 'select user_id, password from spartanhotel.user where email=?',
-        getAvailableRewardsIgnoringTransaction: 'SELECT sum(R.change) as sum FROM spartanhotel.reward R where user_id=? and date_active <= curdate() and transaction_id != ?;',
+        getAvailableRewardsIgnoringTransaction: 'SELECT sum(R.change) as sum FROM spartanhotel.reward R where user_id=? and date_active <= curdate() and (transaction_id != ? or transaction_id is NULL);',
         getBookingForTransaction:'SELECT * FROM spartanhotel.booking WHERE transaction_id=?',
         edit: 'UPDATE user SET name=?, password=? WHERE user_id=?',
         changepass: 'UPDATE user SET password = ? WHERE email = ?',
@@ -504,7 +504,7 @@ module.exports = {
         }else{
           // wrap query inside a select so we can join the results with hotel images
           query = withClause + ` 
-          SELECT  rh.hotel_id, rh.bed_type, rh.price, rh.capacity, group_concat( distinct(url) ) as images, count(room_id) as quantity, group_concat(room_id) as room_ids 
+          SELECT  rh.hotel_id, rh.bed_type, rh.price, ANY_VALUE(rh.capacity) as capacity, group_concat( distinct(url) ) as images, count(room_id) as quantity, group_concat(room_id) as room_ids 
           FROM 
             (select * ` + 
              mainQuery + whereClause + 
@@ -1036,7 +1036,7 @@ module.exports = {
       `,
       updateTransaction: 'UPDATE spartanhotel.transaction SET total_price=?, cancellation_charge=?, date_in=?, date_out=?, status=?, amount_paid=?, stripe_id=? WHERE transaction_id=?',
       getExistingTransaction:`
-      SELECT B.transaction_id, group_concat(B.transaction_room_id) as transaction_room_ids, B.user_id, B.guest_id, B.total_price , B.cancellation_charge, B.date_in, B.date_out, B.status, B.amount_paid, B.stripe_id, B.room_price,
+      SELECT B.transaction_id, group_concat(B.transaction_room_id) as transaction_room_ids, B.user_id, B.guest_id, B.total_price , B.cancellation_charge, ANY_VALUE(B.date_in) as date_in, ANY_VALUE(B.date_out) as date_out, B.status, B.amount_paid, B.stripe_id, B.room_price,
       R.bed_type, group_concat( distinct(url) ) as images, count(R.room_id) as quantity, group_concat(R.room_id) as room_ids FROM spartanhotel.booking B
 	    join room R
       on R.room_id = B.room_id
