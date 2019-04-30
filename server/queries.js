@@ -586,7 +586,7 @@ module.exports = {
     //When query is ran -> returns an array that cannot be cancelled, else returns an empty array which means can be cancelled
     isCancellable: function({transaction_id}) {
       let query = `SELECT * FROM spartanhotel.transaction WHERE
-                    transaction_id = ? AND date_in <= CURDATE() AND date_out >= CURDATE() AND status != 'cancelled';`
+                    transaction_id = ? AND date_in < CURDATE() AND status != 'cancelled';`
 
       return mysql.format(query, [transaction_id])
     },

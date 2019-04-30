@@ -20,6 +20,8 @@ function cancelReservation(transaction_id, user_id, res) {
             //console.log(query2)
             Queries.run(query2).then(results2 => {
                 let isCancelConflict = (Array.isArray(results2) && results2.length) ? true : false;
+                console.log(results2)
+                console.log(isCancelConflict)
                 if (isCancelConflict) {
                     console.log("There is a date conflict for cancelling.");
                     res.status(400).send("Cannot cancel because current date is in conflict with booking dates");
