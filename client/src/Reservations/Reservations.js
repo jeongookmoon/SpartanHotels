@@ -101,9 +101,9 @@ class Reservations extends React.Component {
 					<td>{date_in}</td>
 					<td>{date_out}</td>
 					<td>{hotel_name}</td>
-					<td>{bed_type}</td>
-					<td>{room_price}</td>
-					<td>{room_quantities}</td>
+					<td>{bed_type.replace(',', '\n')}</td>
+					<td>{room_price.replace(',', '\n')}</td>
+					<td>{room_quantities.replace(',', '\n')}</td>
 					<td>{total_price}</td>
 					<td><Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button></td>
 					<td>{status}</td>
