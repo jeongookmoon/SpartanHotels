@@ -55,8 +55,7 @@ code {
 
 
 .navbar-pages {
-  min-height:3em;
-  position: fixed;
+  min-height:5vh;
   width: 100%;
   top: 0;
   color:black;
@@ -76,7 +75,6 @@ code {
 
 .navbar-page-room {
   min-height:3em;
-  position: fixed;
   width: 100%;
   top: 0;
   color:black;
@@ -644,7 +642,6 @@ code {
 
 
  .hotel-search-container{
-  padding-top:4.7em;
   width:100%;
   height:100%;
   background-color: #f9fbfc;
@@ -979,7 +976,6 @@ code {
 .room-page-container{
   height:100vh;
   height:100%;
-  padding-top:10vh;
   background-color: #fafafa;
   padding-left:0px;
   padding-right:0px;
