@@ -471,14 +471,14 @@ class HotelSearch extends React.Component {
 					</div>
 
 					<div className=" col-lg-2 input-group menu-container room-page-guest-container">
-						<div className="col-lg-12 menu-item">
+						<div className="col-lg-12 hotel-search-menu-item">
 							<div className="home-guest-dropdown">{this.state.guest_number}&nbsp;Guests</div>
 							<ul className="home-guest-dropdown-list-style">
 								<li>
 									<div className="form-inline home-adults-container">
 										<div className="col-lg-3 home-adults">
 											Adults
-						        </div>
+						        		</div>
 
 										<div className="col-lg-9 home-increments">
 											<i className="fa fa-minus home-guest-icon-increment" type="button" value="Decrement Value" onClick={this.adultDecrement}></i>
