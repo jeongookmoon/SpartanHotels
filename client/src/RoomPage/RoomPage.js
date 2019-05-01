@@ -16,6 +16,7 @@ class RoomPage extends React.Component {
 		const date_in = params.get('date_in')
 		const date_out = params.get('date_out')
 		const city = params.get('city')
+		const guestNumber = params.get('guest_number')
 
 		this.state = {
 			hotel: {},
@@ -29,8 +30,14 @@ class RoomPage extends React.Component {
 			Queen: 0,
 			QueenPrice: 0,
 			totalPrice: 0,
+			verifyCheckout : false,
+			verifyRooms : false,
+			verifyGuests: false,
+
 		};
 
+		this.KingCapacity = 0;
+		this.QueenCapacity = 0;
 		this.KingPrice = 0;
 		this.QueenPrice = 0;
 		this.kingID = 0;
@@ -38,12 +45,30 @@ class RoomPage extends React.Component {
 	}
 
 	Checkout = (event) => {
-		event.preventDefault()
-		let queryString = this.props.location.search + `&country=${this.state.hotel.results[0].country}&state=${this.state.hotel.results[0].state}&address=${this.state.hotel.results[0].address}&king=${this.state.King}&kingID=${this.kingID}&kingPrice=${this.KingPrice}&queen=${this.state.Queen}&queenID=${this.queenID}&queenPrice=${this.QueenPrice}&totalPrice=${this.KingPrice * this.state.King + this.QueenPrice * this.state.Queen}`
-		this.props.history.push({
-			pathname: `/Checkout`,
-			search: `${queryString}`,
-		})
+
+		if (this.state.King || this.state.Queen != 0){
+			event.preventDefault()
+			let queryString = this.props.location.search + `&country=${this.state.hotel.results[0].country}&state=${this.state.hotel.results[0].state}&address=${this.state.hotel.results[0].address}&king=${this.state.King}&kingID=${this.kingID}&kingPrice=${this.KingPrice}&queen=${this.state.Queen}&queenID=${this.queenID}&queenPrice=${this.QueenPrice}&totalPrice=${this.KingPrice * this.state.King + this.QueenPrice * this.state.Queen}`
+			this.props.history.push({
+				pathname: `/Checkout`,
+				search: `${queryString}`,
+			})
+		}
+		
+		if (this.state.King || this.state.Queen === 0){
+			this.setState({
+				verifyRooms: true,
+			})
+		}
+
+
+
+		else{
+			this.setState({
+				verifyCheckout: true,
+			})
+		}
+
 	}
 
 	async componentDidMount() {
@@ -62,7 +87,8 @@ class RoomPage extends React.Component {
 		const value = target.value;
 		const name = target.name; //King? Queen?
 		this.setState({
-			[name]: value
+			[name]: value,
+			verifyRooms: false
 		});
 
 	}
@@ -73,17 +99,22 @@ class RoomPage extends React.Component {
 		if (room.bed_type === "King" && this.state.King > 0){
 			this.KingPrice = room.price;
 			this.kingID = room.room_id;
+			this.KingCapacity = room.capacity;
 		}
 
 		if (room.bed_type === "King" && this.state.King === 0){
 			this.KingPrice = 0;
 			this.kingID = room.room_id;
+			this.KingCapacity = room.capacity;
+
 
 		}
 
 		if (room.bed_type === "Queen" && this.state.Queen > 0){
 			this.QueenPrice = room.price;
 			this.queenID = room.room_id;
+			this.QueenCapacity = room.capacity;
+
 
 
 		}
@@ -91,6 +122,8 @@ class RoomPage extends React.Component {
 		if (room.bed_type === "Queen" && this.state.Queen === 0){
 			this.QueenPrice = 0;
 			this.queenID = room.room_id;
+			this.QueenCapacity = room.capacity;
+
 
 		}
 
@@ -111,6 +144,7 @@ class RoomPage extends React.Component {
 				imageArray = imageURLS.split(",");
 			}
 
+			console.log(this.state.rooms.results)
 
 		const roomPage = (
 				<div className="room-page-container">
@@ -204,7 +238,7 @@ class RoomPage extends React.Component {
 																	    	<strong># Of Rooms </strong> 
 																		    <input type="text" name={eachRoomResult.bed_type} list="numbers" value={eachRoomResult.THIS_IS_A_PLACEHOLDER} onChange={this.handleEachRoomQuantity}>
 																		    </input>
-																		    <datalist id="numbers">
+																		    <datalist id="numbers" autoComplete="false">
 																		      <option value="1"></option>
 																		      <option value="2"></option>
 																		      <option value="3"></option>
@@ -299,7 +333,7 @@ class RoomPage extends React.Component {
 																									<td>${eachRoomResult.price.toFixed(2)}</td>
 																									{/*<td> {identifyBedType(eachRoomResult.bed_type)}</td>*/}
 																									<td>{eachRoomResult.bed_type === "King" ? this.state.King : this.state.Queen} </td>
-																									<td>$ {eachRoomResult.bed_type === "King" ? this.state.King * eachRoomResult.price.toFixed(2) : this.state.Queen * eachRoomResult.price.toFixed(2)}</td>
+																									<td>$ {(eachRoomResult.bed_type === "King" ? this.state.King * eachRoomResult.price.toFixed(2) : this.state.Queen * eachRoomResult.price.toFixed(2)).toFixed(2)}</td>
 																								</tr>
 																							)
 
@@ -309,13 +343,13 @@ class RoomPage extends React.Component {
 																						if(eachRoomResult.bed_type === "Queen" & this.state.Queen > 0){
 																							{this.handleRoomPrice(eachRoomResult)};
 																							return (
-																								<tr onClick={this.Checkout.bind(this)} key={index}>
+																								<tr key={index}>
 																									<td >{eachRoomResult.bed_type}</td>
 																									<td> {eachRoomResult.capacity}</td>
 																									<td>${eachRoomResult.price.toFixed(2)}</td>
 																									{/*<td> {identifyBedType(eachRoomResult.bed_type)}</td>*/}
 																									<td>{eachRoomResult.bed_type === "King" ? this.state.King : this.state.Queen} </td>
-																									<td>$ {eachRoomResult.bed_type === "King" ? this.state.King * eachRoomResult.price.toFixed(2) : this.state.Queen * eachRoomResult.price.toFixed(2)}</td>
+																									<td>$ {(eachRoomResult.bed_type === "King" ? this.state.King * eachRoomResult.price.toFixed(2) : this.state.Queen * eachRoomResult.price.toFixed(2)).toFixed(2)}</td>
 																								</tr>
 																							)
 
@@ -346,7 +380,7 @@ class RoomPage extends React.Component {
 																								<td> </td>
 																								<td> </td>
 																								<td><strong> Estimated Total </strong></td>
-																								<td> $ {this.KingPrice * this.state.King + this.QueenPrice * this.state.Queen} </td>
+																								<td> $ {(this.KingPrice * this.state.King + this.QueenPrice * this.state.Queen).toFixed(2) }</td>
 																				</tr>
 
 																			</tbody> :
@@ -355,6 +389,8 @@ class RoomPage extends React.Component {
 																</Table>
 															</div>
 									
+									{this.state.verifyCheckout ? <div className="room-page-verify-checkout"> Unable to checkout </div> : null}
+									{this.state.verifyRooms ? <div className="room-page-verify-checkout"> Please select a room </div> : null}
 									<p className="room-page-submit-button btn btn-primary py-3 px-5 mb-5"  style={{ cursor: "pointer" }} onClick={this.Checkout.bind(this)}>Checkout</p>
 
 								</div>
