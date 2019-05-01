@@ -203,7 +203,7 @@ code {
 
 .home-adults-container{
   padding-top:2em;
-  font-size: .5em;
+  font-size: .65em;
 }
 
 .home-adults{
@@ -231,7 +231,7 @@ code {
 
 .home-children-container{
   padding-top:1em;
-  font-size:.5em;
+  font-size:.65em;
 }
 
 .home-children{
@@ -346,6 +346,10 @@ code {
 .home-map-container{
   height:3em;
   padding-bottom:20em;
+}
+
+.home-featured-hotels{
+  min-height:30vh;
 }
 
 
@@ -599,7 +603,7 @@ code {
 }
 
 .menu-item:hover ul {
-  height:20vh;
+  height:25vh;
       z-index: 100;
 
 }
@@ -853,6 +857,38 @@ code {
   padding-top:1.3em;
 
  }
+
+ .hotel-search-menu-item ul {
+  margin-top: 5px;
+  list-style-type: none;
+  height: 0px;
+  overflow: hidden;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    width: 100%;
+    background:white;
+  
+  -webkit-transition: height 1s ease;
+    -moz-transition: height 1s ease;
+    -o-transition: height 1s ease;
+    -ms-transition: height 1s ease;
+    transition: height 1s ease;
+    z-index: 100;
+}
+
+.hotel-search-menu-item:hover ul {
+  height:15vh;
+      z-index: 100;
+
+
+}
+
+.menu-item ul li div {
+  width: 100%;
+
+
+}
 
  .hotel-search-results-header{
   color:black;
@@ -1145,6 +1181,12 @@ code {
   border: 2px solid #fc3c3c;
     background: transparent;
     color: #fc3c3c;
+}
+
+.room-page-verify-checkout{
+  padding-bottom:3vh;
+  
+  color: #fc3c3c;
 }
 
 .custom-row{
