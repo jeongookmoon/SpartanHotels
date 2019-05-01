@@ -1,6 +1,5 @@
 import React from 'react';
 import {withRouter} from 'react-router-dom'
-import axios from 'axios';
 
 import {
   Button, Modal, ModalHeader, ModalBody, ModalFooter,
