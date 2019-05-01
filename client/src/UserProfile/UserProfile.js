@@ -112,9 +112,8 @@ class UserProfile extends React.Component {
 													<Row>
 														<Col xs="4"></Col>
 														<Col xs="8">
-															<Button size="sm" color="link"> <ProfileEditName /> </Button>
-															<Button size="sm" color="link"> <ProfileEditPassword /> </Button>
-															<br />
+															<ProfileEditName />
+															<ProfileEditPassword />
 															<br />
 														</Col>
 													</Row>
@@ -141,7 +140,6 @@ class UserProfile extends React.Component {
 										</Col>
 									</div>
 								</div>
-
 							</Col>
 						</Row>
 					</Container>
