@@ -25,10 +25,6 @@ class RoomPage extends React.Component {
 			date_in,
 			date_out,
 			city,
-			King: 0,
-			KingPrice: 0,
-			Queen: 0,
-			QueenPrice: 0,
 			totalPrice: 0,
 			verifyCheckout : false,
 			verifyRooms : false,
@@ -36,25 +32,30 @@ class RoomPage extends React.Component {
 
 		};
 
-		this.KingCapacity = 0;
-		this.QueenCapacity = 0;
-		this.KingPrice = 0;
-		this.QueenPrice = 0;
-		this.kingID = 0;
-		this.queenID = 0;
+		this.totalPrice = 0;
 
 	}
 
 	Checkout = (event) => {
 
-		if (this.state.King || this.state.Queen != 0){
-			event.preventDefault()
-			let queryString = this.props.location.search + `&country=${this.state.hotel.results[0].country}&state=${this.state.hotel.results[0].state}&address=${this.state.hotel.results[0].address}&king=${this.state.King}&kingID=${this.kingID}&kingPrice=${this.KingPrice}&queen=${this.state.Queen}&queenID=${this.queenID}&queenPrice=${this.QueenPrice}&totalPrice=${this.KingPrice * this.state.King + this.QueenPrice * this.state.Queen}`
-			this.props.history.push({
-				pathname: `/Checkout`,
-				search: `${queryString}`,
-			})
-		}
+
+		console.log(JSON.stringify(this.state.rooms))
+
+		const dataObjectString = JSON.stringify(this.state.rooms);
+		
+		const queryToEncode = this.props.location.search + `&country=${this.state.hotel.results[0].country}&state=${this.state.hotel.results[0].state}&address=${this.state.hotel.results[0].address}` + dataObjectString 
+
+		let queryString = encodeURI(queryToEncode)
+		console.log(queryString)
+
+		const decodedString = decodeURI(queryString)
+		console.log(decodedString)
+
+		this.props.history.push({
+			pathname: `/Checkout`,
+			search: `${queryString}`,
+		})
+
 		
 		if (this.state.King || this.state.Queen === 0){
 			this.setState({
@@ -78,7 +79,6 @@ class RoomPage extends React.Component {
 
 		const rooms = (await axios.get(roomSearchQuery)).data
 		const hotel = (await axios.get(hotelSearchQuery)).data
-		console.log()
 		rooms.results.map((eachRoomResult,index) => {
 			rooms.results[index].desired_quantity = 0;
 		})
@@ -105,38 +105,19 @@ class RoomPage extends React.Component {
 	}
 
 
-	handleRoomPrice(room) {
+	handleRoomPrice() {
 
-		if (room.bed_type === "King" && this.state.King > 0){
-			this.KingPrice = room.price;
-			this.kingID = room.room_id;
-			this.KingCapacity = room.capacity;
-		}
+		let total = 0;
+		this.totalPrice = 0;
 
-		if (room.bed_type === "King" && this.state.King === 0){
-			this.KingPrice = 0;
-			this.kingID = room.room_id;
-			this.KingCapacity = room.capacity;
+		this.state.rooms.results.map((eachRoomResult, index) => 
 
+			this.totalPrice = this.totalPrice + (eachRoomResult.price * eachRoomResult.desired_quantity)
+		);
 
-		}
+		total = this.totalPrice
 
-		if (room.bed_type === "Queen" && this.state.Queen > 0){
-			this.QueenPrice = room.price;
-			this.queenID = room.room_id;
-			this.QueenCapacity = room.capacity;
-
-
-
-		}
-
-		if (room.bed_type === "Queen" && this.state.Queen === 0){
-			this.QueenPrice = 0;
-			this.queenID = room.room_id;
-			this.QueenCapacity = room.capacity;
-
-
-		}
+		return total;
 
 	}
 
@@ -319,12 +300,11 @@ class RoomPage extends React.Component {
 																					this.state.rooms.results.map((eachRoomResult, index) => {
 
 																						if(eachRoomResult.desired_quantity > 0){
-																							{this.handleRoomPrice(eachRoomResult)};
 																							return (
 
-																								<tr onClick={this.Checkout.bind(this)} key={index}>
-																									<td >{eachRoomResult.bed_type}</td>
-																									<td> {eachRoomResult.capacity}</td>
+																								<tr key={index}>
+																									<td>{eachRoomResult.bed_type}</td>
+																									<td>{eachRoomResult.capacity}</td>
 																									<td>${eachRoomResult.price.toFixed(2)}</td>
 																									<td>{eachRoomResult.desired_quantity} </td>
 																									<td>$ {(eachRoomResult.desired_quantity * eachRoomResult.price).toFixed(2)}</td>
@@ -353,7 +333,7 @@ class RoomPage extends React.Component {
 																								<td> </td>
 																								<td> </td>
 																								<td><strong> Estimated Total </strong></td>
-																								<td> $ {(this.KingPrice * this.state.King + this.QueenPrice * this.state.Queen).toFixed(2) }</td>
+																								<td> $ {this.handleRoomPrice()}</td>
 																				</tr>
 
 																			</tbody>
