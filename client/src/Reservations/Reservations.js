@@ -150,7 +150,6 @@ class Reservations extends React.Component {
 				<br />
 				<br />
 				<br />
-<<<<<<< HEAD
 				<div>
 					<Container>
 						<Row>
