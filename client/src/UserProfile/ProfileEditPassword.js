@@ -1,7 +1,6 @@
 import React from 'react';
 import {withRouter} from 'react-router-dom'
 
-
 import "./UserProfile.css";
 
 import {
@@ -131,7 +130,7 @@ class ProfileEditPassword extends React.Component {
 
 	    if (temp_fields["newpass"] !== '') {
 	      let checker = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$");
-	      if (!checker.test(temp_fields["password"])) {
+	      if (!checker.test(temp_fields["newpass"])) {
 	        formIsValid = false;
 	        temp_errors["newpass"] = "*This password does not meet the requirements"
 	      }
@@ -197,7 +196,6 @@ class ProfileEditPassword extends React.Component {
 								<Input type="password" name="newpass" placeholder="********" value={this.state.fields.newpass} onChange={this.updateFields} required />
 								<div className="text-warning">{this.state.errors.newpass}</div>
 								{this.state.password_error? password_error : no_error}
-
 
 							</FormGroup>
 							<FormGroup>
