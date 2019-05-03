@@ -95,7 +95,8 @@ class Reservations extends React.Component {
   	renderReservationsTableData() {
 		return this.state.history.map((reservations, index) => {
 			const {booking_id, date_in, date_out, hotel_name, bed_type, room_price, room_quantities, total_price, status} = reservations //destructuring
-				return (
+				if (statutus == 'booked') {
+					return (
 				<tr >
 					<td>{booking_id}</td>
 					<td>{date_in}</td>
@@ -108,7 +109,23 @@ class Reservations extends React.Component {
 					<td><Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button></td>
 					<td>{status}</td>
 				</tr>
-			)
+					)
+				}
+				else {
+					return (
+				<tr >
+					<td>{booking_id}</td>
+					<td>{date_in}</td>
+					<td>{date_out}</td>
+					<td>{hotel_name}</td>
+					<td>{bed_type.replace(',', '\n')}</td>
+					<td>{room_price.replace(',', '\n')}</td>
+					<td>{room_quantities.replace(',', '\n')}</td>
+					<td>{total_price}</td>
+					<td>{status}</td>
+				</tr>
+					)
+				}
 			
 		})
 	}
