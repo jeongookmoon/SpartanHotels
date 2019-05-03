@@ -1,14 +1,13 @@
 import React, { Component} from 'react';
 import { withRouter } from 'react-router-dom'; 
-import TextField from '@material-ui/core/TextField';
 import homeImage from './homeImage7.jpg';
 import './Recoverage.css';
 import { sendcodePost } from '../Utility/RecoverageFunction';
-import { Card, CardBody, Container, CardTitle } from 'reactstrap';
+import { Card, CardBody, Container, CardTitle, Label, Input} from 'reactstrap';
 
 var topSectionStyle = {
     width: "100%",
-    height: '800px',
+    height: '100vh',
     marginTop: "0%",
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
@@ -98,7 +97,7 @@ class Recoverage extends Component {
                         </div>
                         </CardTitle>
                         <CardBody style={{ backgroundColor: 'transparent'}}>
-                            <TextField
+                            {/* <TextField
                             //   style={inputStyle}
                             id="email"
                             label="email"
@@ -107,6 +106,16 @@ class Recoverage extends Component {
                             onChange={this.handleChange('email')}
                             inputProps={{ maxLength: 99 }}
                             placeholder="email address"     
+                            /> */}
+                            <Label> Please entery email</Label>
+                            <Input 
+                                id="email"
+                                label="email"
+                                type="email"
+                                value={email}
+                                onChange={this.handleChange('email')}
+                                inputProps={{ maxLength: 99 }}
+                                placeholder="email address"
                             />
                             <button type="submit" color="primary" onClick={this.sendcode}>
                             Send Code</button>

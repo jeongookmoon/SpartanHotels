@@ -1,19 +1,16 @@
 import React, { Component } from "react";
-import List from '@material-ui/core/List';
 import { withRouter } from 'react-router-dom'; 
-import ListItem from '@material-ui/core/ListItem';
-import TextField from '@material-ui/core/TextField';
 import './Recoverage.css';
 import HomeImage from './homeImage7.jpg';
 import { checkCodePost, changePost } from '../Utility/RecoverageFunction';
 import {UncontrolledPopover, PopoverHeader, PopoverBody,} from 'reactstrap';
 // import accessImage from './Images/homeImage7.jpg';
-import { Card, CardBody, Container, CardTitle} from 'reactstrap';
+import { Card, CardBody, Container, CardTitle, Form, FormGroup, Label, Input, Button} from 'reactstrap';
 
 
 var topSectionStyle = {
   width: "100%",
-  height: '800px',
+  height: '100vh',
   marginTop: "0%",
   backgroundRepeat: "no-repeat",
   backgroundSize: "cover",
@@ -113,8 +110,7 @@ class Accesscode extends Component {
             window.location.reload();
         }
         else {
-            alert("Code is invalid or expired. Please go back to get a new code!");
-            window.location.assign("/Recoverage")
+            alert("Code is invalid or expired! Try again");
         }
       })
     }
@@ -201,7 +197,7 @@ class Accesscode extends Component {
     }
 
     render(){
-        const EmptyForm =(<div></div>);
+        // const EmptyForm =(<div></div>);
         var password_requirements_component = this.state.passwordCheck.map(ele=>{
           return <div key={ele.req} className= { ele.valid ? "valid-req" : "invalid-req" }>{ele.req}</div>
         })
@@ -217,58 +213,86 @@ class Accesscode extends Component {
                   </div>  
                 </CardTitle>
                 <CardBody style={{ backgroundColor: 'transparent'}}>
-                    <List component="nav">
+                    <Form component="nav">
                       {localStorage.checkToken ? 
                       <div>
-                      <ListItem />
-                        <TextField  
-                          id="code"
-                          label="code"
-                          name="code"
-                          value={this.state.fields.code}
-                          onChange={this.handleChange()}
-                          placeholder="Access code: 1234567"     
-                        /> <button type="submit" color="primary" onClick={this.checkCode}>
-                              Check Code
-                          </button>
-                        </div>: EmptyForm}
-                          {localStorage.checkToken ? 
-                          EmptyForm :
-                          <div>
-                          <ListItem />
-                          <TextField
-                            id="PopoverFocus"
-                            type="password"
-                            label="password"
-                            name="password"
-                            value={this.state.fields.password}
-                            onChange={this.handleChange()}
-                            placeholder="**********"
-                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$" 
-                            required     
-                          />
-                          <UncontrolledPopover trigger="focus" placement="right" target="PopoverFocus">
-                            <PopoverHeader>Password Requirements</PopoverHeader>
-                            <PopoverBody>
-                            {password_requirements_component}
-                            </PopoverBody>
-                          </UncontrolledPopover>
-                          <ListItem />
-                          <TextField
-                            id="repassword"
-                            label="repassword"
-                            name="repassword"
-                            type="password"
-                            value={this.state.fields.repassword}
-                            onChange={this.handleChange()}
-                            placeholder="**********"     
-                          />
-                          <ListItem/>
-                            <button type="submit" color="primary" onClick={this.reset}>
-                                Reset Password
-                            </button>
+                          <FormGroup>
+                            {/* <TextField  
+                              id="code"
+                              label="code"
+                              name="code"
+                              value={this.state.fields.code}
+                              onChange={this.handleChange()}
+                              placeholder="Access code: 1234567"     
+                            />  */}
+                            <Label>Access Code</Label>
+                            <Input
+                              id="code"
+                              name="code"
+                              value={this.state.fields.code}
+                              onChange={this.handleChange()}
+                              placeholder="Access code: 1234567"
+                            />
+                            {/* <div className="text-warning">{this.state.errors.email}</div> */}
+                            <Button type="submit" color="primary" onClick={this.checkCode}>Check Code</Button>
+                          </FormGroup>
+                        </div>: <div>
+                          <FormGroup>
+                              {/* <TextField
+                                id="PopoverFocus"
+                                type="password"
+                                label="password"
+                                name="password"
+                                value={this.state.fields.password}
+                                onChange={this.handleChange()}
+                                placeholder="**********"
+                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$" 
+                                required     
+                              /> */}
+                              <Label>New Password</Label>
+                              <Input 
+                                id="PopoverFocus"
+                                type="password"
+                                name="password"
+                                value={this.state.fields.password}
+                                onChange={this.handleChange()}
+                                placeholder="**********"
+                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$" 
+                                required
+                              />
+                              <UncontrolledPopover trigger="focus" placement="right" target="PopoverFocus">
+                                <PopoverHeader>Password Requirements</PopoverHeader>
+                                  <PopoverBody>
+                                  {password_requirements_component}
+                                  </PopoverBody>
+                              </UncontrolledPopover>
+                            </FormGroup>
+                            <FormGroup>
+                              {/* <TextField
+                                id="repassword"
+                                label="repassword"
+                                name="repassword"
+                                type="password"
+                                value={this.state.fields.repassword}
+                                onChange={this.handleChange()}
+                                placeholder="**********"     
+                                /> */}
+                              <Label>Re-entery password</Label>
+                              <Input 
+                                id="repassword"
+                                label="repassword"
+                                name="repassword"
+                                type="password"
+                                value={this.state.fields.repassword}
+                                onChange={this.handleChange()}
+                                placeholder="**********"
+                              />
+                            </FormGroup>
+                              <button type="submit" color="primary" onClick={this.reset}>
+                                  Reset Password
+                              </button>
                             </div>}
-                            </List>
+                            </Form>
                       </CardBody>
                 </Card>
               </Container>

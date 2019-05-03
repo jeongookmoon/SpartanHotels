@@ -263,9 +263,7 @@ class Registration extends React.Component {
                   <PopoverBody>
                   {password_requirements_component}
                   </PopoverBody>
-                </UncontrolledPopover>
-
-                
+                </UncontrolledPopover> 
               </FormGroup>
               <FormGroup>
                 <Label>Re-enter Password</Label>
