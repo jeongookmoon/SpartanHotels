@@ -129,7 +129,7 @@ class RoomPage extends React.Component {
 
 	createAvailableRooms(index){
 		let options = []
-		for (let i = 0; i <= this.state.rooms.results[0].quantity; i++){
+		for (let i = 0; i <= this.state.rooms.results[index.index].quantity; i++){
 			options.push(<option key={i}>{i}</option>)
 		}
 
@@ -220,7 +220,6 @@ class RoomPage extends React.Component {
 	          								<div className="col-lg-12 room-page-rooms custom-row container">
 											{
 												this.state.rooms.results.map((eachRoomResult, index) => {
-
 													return (
 															<div className="room-page-room-item col-lg-4 mb-5" key={index}>
 																<div className="block-34"  style={{ cursor: "pointer" }}>
@@ -231,7 +230,7 @@ class RoomPage extends React.Component {
 																	    <h2 className="heading">{eachRoomResult.bed_type} Size Room</h2>
 																	    <div className="price"><sup className="room-page-room-price">$</sup><span className="room-page-room-price">{eachRoomResult.price.toFixed(2)}</span><sub>/per night</sub></div>
 																	    <ul className="specs">
-																		     	 <li><strong>Ammenities:</strong> Closet with hangers, HD flat-screen TV, Telephone</li>
+																		     	 <li><strong>Amenities:</strong> Closet with hangers, HD flat-screen TV, Telephone</li>
 																		     	 <li><strong>Capacity Per Room:</strong> {eachRoomResult.capacity}</li>
 																		     	 {/*<li><strong>Bed Number:</strong> {eachRoomResult.bed_number} </li>*/}
 
