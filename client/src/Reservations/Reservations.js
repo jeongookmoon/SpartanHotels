@@ -22,7 +22,7 @@ class Reservations extends React.Component {
 		super(props)
 		this.state = {
 			history: [],
-			info: []
+			roominfo: []
 		}
 	}
 
@@ -35,15 +35,23 @@ class Reservations extends React.Component {
       	var bed_types = []
       	var room_prices = []
       	var quantities = []
+      	var room_quan = 1
+      	//Putting detailed room information on the panel. Include bed type, price, and quantity
       	for (var i = 0; i < viewres.data.length; i++) {
       		bed_types.push(viewres.data[i].bed_type)
       		room_prices.push(viewres.data[i].price)
       		quantities.push(1)
       		for (var j = i + 1; j < viewres.data.length; j++) {
       			if (viewres.data[j].transaction_id == viewres.data[i].transaction_id) {
-      				bed_types.push(viewres.data[j].bed_type)
-      				room_prices.push(viewres.data[j].price)
-      				quantities.push(1)
+      				if ((viewres.data[j].bed_type == viewres.data[i].bed_type) && (viewres.data[j].price == viewres.data[i].price)) {
+      					room_quan++
+      				}
+      				else {
+      					bed_types.push(viewres.data[j].bed_type)
+      					room_prices.push(viewres.data[j].price)
+      					quantities.push(room_quan)
+      					room_quan = 1
+      				}
       			}
       			else {
       				i = j - 1
@@ -95,7 +103,7 @@ class Reservations extends React.Component {
   	renderReservationsTableData() {
 		return this.state.history.map((reservations, index) => {
 			const {booking_id, date_in, date_out, hotel_name, bed_type, room_price, room_quantities, total_price, status} = reservations //destructuring
-				if (statutus == 'booked') {
+				if (status == 'booked') {
 					return (
 				<tr >
 					<td>{booking_id}</td>
@@ -122,6 +130,7 @@ class Reservations extends React.Component {
 					<td>{room_price.replace(',', '\n')}</td>
 					<td>{room_quantities.replace(',', '\n')}</td>
 					<td>{total_price}</td>
+					<td>       </td>
 					<td>{status}</td>
 				</tr>
 					)
