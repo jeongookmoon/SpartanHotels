@@ -17,9 +17,9 @@ var topSectionStyle = {
 
 class RewardHistory extends React.Component {
 	state = {
-	    rewardsHistory: [],
-	    user : []
-	  }
+		rewardsHistory: [],
+		user: []
+	}
 
 	componentDidMount() {
 	  	var that = this
@@ -31,7 +31,6 @@ class RewardHistory extends React.Component {
 	  			var points_pending = 0;
 	  			var points_earned = 0;
 
-<<<<<<< HEAD
 				for (var x = 0; x < rewardsHistory.data.length; x++) {
 					var booking_id = rewardsHistory.data[x].transaction_id
 					var hotel = rewardsHistory.data[x].name;
@@ -126,7 +125,6 @@ class RewardHistory extends React.Component {
 			<div className="col-lg-12 history-container col-auto" style={topSectionStyle}>
 				{localStorage.accesstoken ? rewardPage : this.redirectToHome()}
 			</div>
-
 		);
 	}
 }
