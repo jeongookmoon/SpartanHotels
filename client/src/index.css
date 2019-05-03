@@ -1121,6 +1121,19 @@ code {
 
 }
 
+.room-page-room-quantity-dropdown{
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    margin-left:1vw;
+    width:10vw;
+}
+
+.room-page-room-quantity-dropdown: focus{
+
+}
+
  .room-page-search-date{
   padding-right:-3em;
   padding: 0 0 0 0;

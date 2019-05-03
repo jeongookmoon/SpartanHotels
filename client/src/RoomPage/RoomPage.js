@@ -26,6 +26,7 @@ class RoomPage extends React.Component {
 			date_out,
 			city,
 			totalPrice: 0,
+			guest_number : guestNumber,
 			verifyCheckout : false,
 			verifyRooms : false,
 			verifyGuests: false,
@@ -38,39 +39,52 @@ class RoomPage extends React.Component {
 
 	Checkout = (event) => {
 
-
-		console.log(JSON.stringify(this.state.rooms))
-
-		const dataObjectString = JSON.stringify(this.state.rooms);
-		
-		const queryToEncode = this.props.location.search + `&country=${this.state.hotel.results[0].country}&state=${this.state.hotel.results[0].state}&address=${this.state.hotel.results[0].address}` + dataObjectString 
-
-		let queryString = encodeURI(queryToEncode)
-		console.log(queryString)
-
-		const decodedString = decodeURI(queryString)
-		console.log(decodedString)
-
-		this.props.history.push({
-			pathname: `/Checkout`,
-			search: `${queryString}`,
+		let total = 0;
+		let totalCapacity = 0;
+		this.setState({
+			verifyRooms:false,
+			verifyGuests:false
 		})
 
-		
-		if (this.state.King || this.state.Queen === 0){
+		this.state.rooms.results.map((eachRoomResult, index) => 
+			total = total + eachRoomResult.desired_quantity
+		);
+
+		this.state.rooms.results.map((eachRoomResult, index) => 
+			totalCapacity = totalCapacity + (eachRoomResult.desired_quantity * eachRoomResult.capacity)
+		);
+
+	{/*There is a warning here "expected '===', this needs to be ==, won't work with ===*/}
+		if (total == 0){
 			this.setState({
-				verifyRooms: true,
+				verifyRooms : true,
 			})
 		}
 
-
-
-		else{
+		if (totalCapacity < this.state.guest_number){
 			this.setState({
-				verifyCheckout: true,
+				verifyGuests: true,
 			})
 		}
 
+		if ((total > 0) && (totalCapacity >= this.state.guest_number)){
+			console.log(JSON.stringify(this.state.rooms))
+
+			const dataObjectString = JSON.stringify(this.state.rooms);
+			
+			const queryToEncode = this.props.location.search + `&country=${this.state.hotel.results[0].country}&state=${this.state.hotel.results[0].state}&address=${this.state.hotel.results[0].address}&rooms=` + dataObjectString 
+
+			let queryString = encodeURI(queryToEncode)
+			console.log(queryString)
+
+			const decodedString = decodeURI(queryString)
+			console.log(decodedString)
+
+			this.props.history.push({
+				pathname: `/Checkout`,
+				search: `${queryString}`,
+			})
+		}
 	}
 
 	async componentDidMount() {
@@ -85,40 +99,41 @@ class RoomPage extends React.Component {
 		this.setState({
 			rooms, hotel
 		})
-
-
 	}
 
 	handleEachRoomQuantity = (event) => {
 		const target = event.target;
 		const value = target.value;
-		const name = target.name; //King? Queen?
-		console.log(name)
-
+		const name = target.name;
+	{/*Warning shows - I can't set state for vv, the name is too peculiar I think, but I have to do this*/}
 		this.state.rooms.results[name].desired_quantity = value;
 		const roomsWithUpdatedQuantity = this.state.rooms;
 		this.setState({
 			rooms: roomsWithUpdatedQuantity,
-			verifyRooms: false
+			verifyRooms: false,
+			verifyGuests: false,
 		});
-
 	}
 
 
 	handleRoomPrice() {
 
-		let total = 0;
 		this.totalPrice = 0;
-
 		this.state.rooms.results.map((eachRoomResult, index) => 
-
 			this.totalPrice = this.totalPrice + (eachRoomResult.price * eachRoomResult.desired_quantity)
 		);
 
-		total = this.totalPrice
+		return this.totalPrice;
 
-		return total;
+	}
 
+	createAvailableRooms(index){
+		let options = []
+		for (let i = 0; i <= this.state.rooms.results[0].quantity; i++){
+			options.push(<option key={i}>{i}</option>)
+		}
+
+		return options
 	}
 
 	render() {
@@ -135,8 +150,6 @@ class RoomPage extends React.Component {
 			if (imageURLS) {
 				imageArray = imageURLS.split(",");
 			}
-
-			console.log(this.state.rooms.results)
 
 		const roomPage = (
 				<div className="room-page-container">
@@ -227,15 +240,9 @@ class RoomPage extends React.Component {
 
 																	    <div >
 																	    	<strong># Of Rooms </strong> 
-																		    <input type="text" name={index} list="numbers" value={eachRoomResult.THIS_IS_A_PLACEHOLDER} onChange={this.handleEachRoomQuantity}>
-																		    </input>
-																		    <datalist id="numbers" autoComplete="false">
-																		      <option value="1"></option>
-																		      <option value="2"></option>
-																		      <option value="3"></option>
-																		      <option value="4"></option>
-																		      <option value="5"></option>
-																		    </datalist>
+																		    <select className="room-page-room-quantity-dropdown" type="text" name={index} list="numbers" value={eachRoomResult.THIS_IS_A_PLACEHOLDER} onChange={this.handleEachRoomQuantity}>
+																		      {this.createAvailableRooms({index})}
+																		    </select>
 																	    </div>
 										                				{/*<p><a href="#" className="btn btn-primary py-3 px-5">Read More</a></p>*/}
 
@@ -282,106 +289,68 @@ class RoomPage extends React.Component {
 
 									<div className="room-page-checkout-description">
 
-																<Table hover borderless>
-																	<thead>
-																		<tr>
-																			<th>Room Type</th>
-																			<th>Capacity</th>
-																			<th>Price</th>
-																			<th>Quantity</th>
-																			<th>Total</th>
+										<Table hover borderless>
+											<thead>
+												<tr>
+													<th>Room Type</th>
+													<th>Capacity</th>
+													<th>Price</th>
+													<th>Quantity</th>
+													<th>Total</th>
+												</tr>
+											</thead>
+
+											{
+													<tbody>
+														{
+															this.state.rooms.results.map((eachRoomResult, index) => {
+																if(eachRoomResult.desired_quantity > 0){
+																	return (
+
+																		<tr key={index}>
+																			<td>{eachRoomResult.bed_type}</td>
+																			<td>{eachRoomResult.capacity}</td>
+																			<td>${eachRoomResult.price.toFixed(2)}</td>
+																			<td>{eachRoomResult.desired_quantity} </td>
+																			<td>$ {(eachRoomResult.desired_quantity * eachRoomResult.price).toFixed(2)}</td>
 																		</tr>
-																	</thead>
+																	)
+																}
 
-																	{
-																			<tbody>
-																				{
+																else {
+																	return (
+																	<tr key={index}>
+																	</tr>
+																	)
+																}
+															})
+														}
+														<tr className="hr-row">
+																		<td><hr></hr> </td>
+																		<td><hr></hr> </td>
+																		<td><hr></hr> </td>
+																		<td><hr></hr> </td>
+																		<td><hr></hr> </td>
+														</tr>
+														<tr>
+																		<td> </td>
+																		<td> </td>
+																		<td> </td>
+																		<td><strong> Estimated Total </strong></td>
+																		<td> $ {this.handleRoomPrice()}</td>
+														</tr>
 
-																					this.state.rooms.results.map((eachRoomResult, index) => {
-
-																						if(eachRoomResult.desired_quantity > 0){
-																							return (
-
-																								<tr key={index}>
-																									<td>{eachRoomResult.bed_type}</td>
-																									<td>{eachRoomResult.capacity}</td>
-																									<td>${eachRoomResult.price.toFixed(2)}</td>
-																									<td>{eachRoomResult.desired_quantity} </td>
-																									<td>$ {(eachRoomResult.desired_quantity * eachRoomResult.price).toFixed(2)}</td>
-																								</tr>
-																							)
-																						}
-
-																						else {
-																							return (
-																							<tr key={index}>
-																							</tr>
-																							)
-																						}
-																					})
-																				}
-																				<tr className="hr-row">
-																								<td><hr></hr> </td>
-																								<td><hr></hr> </td>
-																								<td><hr></hr> </td>
-																								<td><hr></hr> </td>
-																								<td><hr></hr> </td>
-																				</tr>
-
-																				<tr>
-																								<td> </td>
-																								<td> </td>
-																								<td> </td>
-																								<td><strong> Estimated Total </strong></td>
-																								<td> $ {this.handleRoomPrice()}</td>
-																				</tr>
-
-																			</tbody>
-																	}
-																</Table>
-															</div>
+													</tbody>
+											}
+										</Table>
+									</div>
 									
 									{this.state.verifyCheckout ? <div className="room-page-verify-checkout"> Unable to checkout </div> : null}
 									{this.state.verifyRooms ? <div className="room-page-verify-checkout"> Please select a room </div> : null}
+									{this.state.verifyGuests ? <div className="room-page-verify-checkout"> Please select enough rooms to accomodate all guests </div> : null}
 									<p className="room-page-submit-button btn btn-primary py-3 px-5 mb-5"  style={{ cursor: "pointer" }} onClick={this.Checkout.bind(this)}>Checkout</p>
 
-								</div>
-
-
-						{/* JEONG'S
-						<div className="col-lg-12 shadow-lg room-page-rooms">
-
-							<Table hover borderless>
-								<thead>
-									<tr>
-										<th>Room #</th>
-										<th>Bed #</th>
-										<th>Bed Type</th>
-										<th>Price</th>
-									</tr>
-								</thead>
-
-								{
-									this.state.rooms.results.length > 0 ?
-										<tbody>
-											{
-												this.state.rooms.results.map((eachRoomResult, index) => {
-													return (
-														<tr onClick={this.Checkout.bind(this)} style={{ cursor: "pointer" }} key={index}>
-															<th scope="row"><a href="#child4">{eachRoomResult.room_number}</a></th>
-															<td>{eachRoomResult.bed_number}</td>
-															<td>{eachRoomResult.bed_type}</td>
-															<td>${eachRoomResult.price}</td>
-														</tr>
-													)
-												})
-											}
-										</tbody> :
-										<tbody><tr>no result</tr></tbody>
-								}
-							</Table>
 						</div>
-						*/}
 					</div>
 				</div>
 			)
