@@ -114,7 +114,7 @@ class Reservations extends React.Component {
 					<td>{room_price.replace(',', '\n')}</td>
 					<td>{room_quantities.replace(',', '\n')}</td>
 					<td>{total_price}</td>
-					<td><Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button></td>
+					//<td><Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button></td>
 					<td>{status}</td>
 				</tr>
 					)
@@ -130,7 +130,7 @@ class Reservations extends React.Component {
 					<td>{room_price.replace(',', '\n')}</td>
 					<td>{room_quantities.replace(',', '\n')}</td>
 					<td>{total_price}</td>
-					<td>       </td>
+					//<td>       </td>
 					<td>{status}</td>
 				</tr>
 					)
@@ -150,6 +150,7 @@ class Reservations extends React.Component {
 				<br />
 				<br />
 				<br />
+<<<<<<< HEAD
 				<div>
 					<Container>
 						<Row>
@@ -182,18 +183,24 @@ class Reservations extends React.Component {
 										</div>
 									</div>
 								</div>
-							</Col>
-						</Row>
-					</Container>
-				</div>
+							</div>
+						</Col>
+					</Row>
+				</Container>
 			</div>
 		)
-
 		return (
-			<div>
-				<div className="reservations-container">
-					{localStorage.accesstoken ? reservationPage : this.redirectToHome()}
+								    	</div>
+								    </div>
+								    	</div>
+								    </div>
+								</Col>
+							</Row>
+						</Container>
+					</div>
 				</div>
+			<div>
+				{localStorage.accesstoken ? reservationPage : this.redirectToHome()}
 			</div>
 		);
 	}

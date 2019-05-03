@@ -51,7 +51,7 @@ class NavBar extends React.Component {
           empty_fields["email"] = ''
           temp_loginerror = ''
         } else {
-          temp_loginerror = "*Please enter valid credentials (email or password)"
+          temp_loginerror = "*Please enter valid credentials (email or password) or reset password"
           this.setState({ loginerror: temp_loginerror })
           empty_fields["email"] = this.state.loginfields.email
         }
@@ -80,6 +80,11 @@ class NavBar extends React.Component {
       this.props.history.push('/')
     else
       this.pushtoCurrentURL()
+  }
+
+  ResetPassword(event){
+    event.preventDefault()
+    this.props.history.push('/recoverage')
   }
 
   UserProfile(event) {
@@ -120,6 +125,7 @@ class NavBar extends React.Component {
 
     const ProfileLink = (<div className="col-auto" onClick={this.UserProfile.bind(this)} >My Profile</div>)
     const ReservationLink = (<div className="col-auto" onClick={this.Reservations.bind(this)} >My Reservations</div>)
+    const ResetPasswordLink = (<div className="col-auto" onClick={this.ResetPassword.bind(this)} >Reset Password</div>)
 
     const LoginForm = (
       /*RIGHT SIDE*/
@@ -207,6 +213,7 @@ class NavBar extends React.Component {
 
           {localStorage.accesstoken ? ProfileLink : EmptyForm}
           {localStorage.accesstoken ? ReservationLink : EmptyForm}
+          {localStorage.accesstoken ? EmptyForm : ResetPasswordLink}
           {localStorage.accesstoken ? LogoutForm : LoginForm}
 
         </div>

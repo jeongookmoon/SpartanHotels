@@ -403,15 +403,20 @@ class HotelSearch extends React.Component {
 	moveMap(lat, lng, index) {
 		var center = new window.google.maps.LatLng(lat, lng);
 		window.googleMap.panTo(center);
-		window.markers.forEach((eachMarker, index) => {
-			eachMarker.setIcon(defaultMarkerImageBaseURL + (index + 1))
-			eachMarker.setZIndex(0)
-			eachMarker.setAnimation(null)
+		window.markers.forEach((eachMarker, i) => {
+			if(eachMarker) {
+				if(i === index) {
+					eachMarker.setIcon(selectedMarkerImageBaseURL + (index + 1))
+					eachMarker.setZIndex(12)
+					eachMarker.setAnimation(window.google.maps.Animation.BOUNCE)
+				} else {
+					eachMarker.setIcon(defaultMarkerImageBaseURL + (i + 1))
+					eachMarker.setZIndex(0)
+					eachMarker.setAnimation(null)
+				}
+				
+			}
 		})
-		// window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
-		window.markers[index].setIcon(selectedMarkerImageBaseURL + (index + 1))
-		window.markers[index].setZIndex(12)
-		window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
 	}
 
 	getHotelSearchResultImages(images) {
@@ -529,8 +534,6 @@ class HotelSearch extends React.Component {
 				<tbody>
 					{this.state.hotels.results.map((eachHotelResult, index) => {
 						const imageURL = this.getHotelSearchResultImages(eachHotelResult.images)
-						{/*const imageURL = this.getHotelSearchResultImages(eachHotelResult.images).split(",")[0] */ }
-						{/* FOR DAVID */ }
 
 						return (
 							<tr key={index} className="hotel-search-row shadow-sm p-3 mb-5" tag="a" onClick={this.roomSearch(eachHotelResult)} onMouseEnter={() => this.moveMap(eachHotelResult.latitude, eachHotelResult.longitude, index)} style={{ cursor: "pointer" }}>
