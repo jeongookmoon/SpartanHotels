@@ -81,7 +81,7 @@ module.exports = {
         create: 'insert into spartanhotel.user (user_id,name,password,email) values (null,?,?,?)',
         session: 'select LAST_INSERT_ID() as user_id ',
         authenticate: 'select user_id, password from spartanhotel.user where email=?',
-        getAvailableRewardsIgnoringTransaction: 'SELECT sum(R.change) as sum FROM spartanhotel.reward R where user_id=? and date_active <= curdate() and transaction_id != ?;',
+        getAvailableRewardsIgnoringTransaction: 'SELECT sum(R.change) as sum FROM spartanhotel.reward R where user_id=? and date_active <= curdate() and (transaction_id != ? or transaction_id is NULL);',
         getBookingForTransaction:'SELECT * FROM spartanhotel.booking WHERE transaction_id=?',
         edit: 'UPDATE user SET name=?, password=? WHERE user_id=?',
         changepass: 'UPDATE user SET password = ? WHERE email = ?',
@@ -341,7 +341,28 @@ module.exports = {
           return [query, values]
         
         },
-        room: function (params = {}, queryString={}, getCount=false) {
+
+        /**
+         * \* on parameter component means optional
+         * @param {Object} params
+         * @param {Number} params.hotelID 
+         * @param {Object} queryString {date_in, date_out, price_GTE\*, price_LTE\*, sortBy\*, pageNumber\*, resultsPerPage\*}
+         * @param {Date} queryString.date_in
+         * @param {Date} queryString.date_out
+         * @param {Number} [queryString.price_GTE]
+         * @param {Number} [queryString.price_LTE]
+         * @param {string} [queryString.sortBy]
+         * @param {Number} [queryString.pageNumber = 0]
+         * @param {Number} [queryString.resultsPerPage=10]
+         * sortBy can be name_asc, name_des, price_asc, price_des; Default is price_asc
+         * 
+         * pageNumber; Default is 0
+         * 
+         * resultsPerPage; Default is 10
+         * 
+         * @param {Boolean} [getCount=false] 
+         */
+        room: function (params, queryString, getCount=false) {
           // Example parameter: { name: "mint", category: "baby", sortByAsc: true,  priceGreaterThan: 2, priceLessThan: 5 }
           /*
             from StackOverflow, Jordan Running,
@@ -454,13 +475,7 @@ module.exports = {
       
       
           // PUTTING QUERY TOGETHER
-          let mainQuery = ''
-          if(getCount){
-            mainQuery = ` SELECT COUNT( * ) as count `
-          }else{
-            mainQuery = ' SELECT  * '
-          }
-          mainQuery = mainQuery +
+          let mainQuery = 
             `FROM
                 room
             WHERE
@@ -477,18 +492,32 @@ module.exports = {
         let query = ''
       
         if(getCount){
-          query = withClause + mainQuery + whereClause + ';'
+          query = withClause + ` 
+          SELECT  count(*) as count 
+          FROM 
+            (select count(*) as count 
+          `
+            + mainQuery + whereClause +
+          `
+            group by bed_type, price) 
+          as a 
+          `
+          + ';'
         }else{
           // wrap query inside a select so we can join the results with hotel images
-          query = ` select rh.*, group_concat(url) as images from ( ` + 
-          withClause + mainQuery + whereClause + 
+          query = withClause + ` 
+          SELECT  rh.hotel_id, rh.bed_type, rh.price, ANY_VALUE(rh.capacity) as capacity, group_concat( distinct(url) ) as images, count(room_id) as quantity, group_concat(room_id) as room_ids 
+          FROM 
+            (select * ` + 
+             mainQuery + whereClause + 
           `
-            ) as rh
+            ) 
+            as rh
             left join
             room_image
             on room_image.hotel_id = rh.hotel_id and room_image.bed_type = rh.bed_type
             group by
-            rh.room_id
+            bed_type, price
           `
           + sortByClause + paginationClause  + 
           ';'
@@ -518,8 +547,12 @@ module.exports = {
       
       /**
        * Insert into transaction_room table
-       * @param {*} transaction_id 
-       * @param {[{}]} rooms_booked [{room:19, price:200},{room:20, price:400}]
+       * @param {Number} transaction_id 
+       * @param {Object[]} rooms_booked 
+       * @param {string} rooms_booked[].bed_type
+       * @param {Number} rooms_booked[].price
+       * @param {Number} rooms_booked[].desired_quantity
+       * @param {Number[]} rooms_booked[].room_ids
        * @returns A formatted query ie "INSERT INTO spartanhotel.transaction_room(transaction_id, room_id, room_price) VALUES (39,10,20),(39,11,65)"
        */
       makeTransactionDetails: function(transaction_id, rooms_booked){
@@ -527,10 +560,13 @@ module.exports = {
         let placeholders = []
         let values = []
         for(i=0;i<rooms_booked.length;i++){
-          placeholders.push("(?,?,?)")
-          values.push(transaction_id)
-          values.push(rooms_booked[i].room)
-          values.push(rooms_booked[i].price)
+          for( j = 0; j< rooms_booked[i].desired_quantity ; j++){
+            placeholders.push("(?,?,?)")
+            values.push(transaction_id)
+            values.push(rooms_booked[i].room_ids[j])
+            values.push(rooms_booked[i].price)
+          }
+          
         }
         let placeholderComponent = placeholders.join(",")
         return mysql.format(insertStatement + placeholderComponent,values)
@@ -552,7 +588,7 @@ module.exports = {
     //When query is ran -> returns an array that cannot be cancelled, else returns an empty array which means can be cancelled
     isCancellable: function({transaction_id}) {
       let query = `SELECT * FROM spartanhotel.transaction WHERE
-                    transaction_id = ? AND date_in <= CURDATE() AND date_out >= CURDATE() AND status != 'cancelled';`
+                    transaction_id = ? AND date_in < CURDATE() AND status != 'cancelled';`
 
       return mysql.format(query, [transaction_id])
     },
@@ -1003,6 +1039,18 @@ module.exports = {
       TR.transaction_id = ?
       `,
       updateTransaction: 'UPDATE spartanhotel.transaction SET total_price=?, cancellation_charge=?, date_in=?, date_out=?, status=?, amount_paid=?, stripe_id=? WHERE transaction_id=?',
+      getExistingTransaction:`
+      SELECT B.transaction_id, group_concat(B.transaction_room_id) as transaction_room_ids, B.user_id, B.guest_id, B.total_price , B.cancellation_charge, ANY_VALUE(B.date_in) as date_in, ANY_VALUE(B.date_out) as date_out, B.status, B.amount_paid, B.stripe_id, B.room_price,
+      R.bed_type, group_concat( distinct(url) ) as images, count(R.room_id) as quantity, group_concat(R.room_id) as room_ids FROM spartanhotel.booking B
+	    join room R
+      on R.room_id = B.room_id
+      left join room_image
+      on room_image.hotel_id = R.hotel_id and room_image.bed_type = R.bed_type
+      WHERE transaction_id=?
+      
+      group by
+              R.bed_type, B.room_price
+      `,
     }
 
 
