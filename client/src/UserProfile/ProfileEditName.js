@@ -1,6 +1,5 @@
 import React from 'react';
 import {withRouter} from 'react-router-dom'
-import axios from 'axios';
 
 import {
   Button, Modal, ModalHeader, ModalBody, ModalFooter,
@@ -30,6 +29,10 @@ class ProfileEditName extends React.Component {
 	}
 
 	handleUpdate(event) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4229c921b7dfebf67ee2d78f415f8efb80b5a2ed
 		let temp_fields = this.state.fields;
 		temp_fields[event.target.name] = event.target.value;
 		this.setState({ fields : temp_fields });

@@ -1,0 +1,41 @@
+.recoverage-container{
+    padding:0;
+    margin:0;
+    height:100%;
+    width:100%;
+  }
+  
+  .recoverage-form-container{
+    height:100%;
+    width:100%;
+    min-height:5.6rem;
+  }
+  
+  .recoverage-picture {
+      flex: 1;
+      width: 10;
+      height: 10;
+      resizeMode: 'contain';
+  }
+  
+  .recoverage-scrollbar {
+      position: relative;
+      height:150px;
+      overflow: auto;
+  }
+  
+  .recoverage-table-wrapper-scroll-y {
+      display: block;
+  }
+  
+  .recoverage-table-header { /* for later note: static top row */
+      position: sticky;
+  }
+  
+  .flex-container {
+      align-items: flex-start;
+  }
+
+  .flex-center {
+      align-items: center;
+  }
