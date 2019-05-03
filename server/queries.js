@@ -1019,7 +1019,7 @@ module.exports = {
       gainFromBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, transaction_id, date_active, `change`) values (null, ?, 2, ?, ?, ?)',
       getUserRecords: 'SELECT R.*,RR.reason FROM spartanhotel.reward R join spartanhotel.reward_reason RR on R.reward_reason_id = RR.reward_reason_id WHERE user_id=?',
       cancelBooking: 'DELETE from spartanhotel.reward where transaction_id=?',
-      getOldBookingAppliedRewards: 'SELECT R.change FROM spartanhotel.reward R WHERE transaction_id = ? AND SIGN(change) = -1'
+      getOldBookingAppliedRewards: 'SELECT R.change FROM spartanhotel.reward R WHERE transaction_id = ? AND SIGN(R.change) = -1'
     },
 
     guest: {
