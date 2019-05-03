@@ -7,7 +7,7 @@ html(lang="en")
         meta(http-equiv="X-UA-Compatible", content="ie=edge")
         title Document
     body
-        p Thank you for booking with us!
+        p Your booking has been modified! Your updated booking details are below:
 
         h2 Booking # #{transaction_number}
         h4 #{date}
@@ -50,8 +50,7 @@ html(lang="en")
                 tr
                     td(colspan="4" style={"text-align":"right"}) Room Total / Night
                     td(style={"text-align":"right"}) $#{totalRoomPricePerNight.toFixed(2)}
-                tr
-                    td(colspan="4" style={"text-align":"right"}) # of Nights
+                td(colspan="4" style={"text-align":"right"}) # of Nights
                     td(style={"text-align":"right"}) x #{numberOfNightsStayed}
                 tr
                     td(colspan="4" style={"text-align":"right"})
@@ -62,7 +61,7 @@ html(lang="en")
                     td(style={"text-align":"right"}) $#{ (totalRoomPricePerNight * numberOfNightsStayed).toFixed(2) }
                 tr
                     td(colspan="4" style={"text-align":"right"}) Tax
-                    td(style={"text-align":"right"}) $#{(requestedBooking.total_price - (totalRoomPricePerNight * numberOfNightsStayed) ).toFixed(2)}
+                    td(style={"text-align":"right"}) $#{(requestedBooking.total_price - (totalRoomPricePerNight * numberOfNightsStayed)).toFixed(2)}
                 tr
                     td(colspan="4" style={"text-align":"right"})
                     td
@@ -79,5 +78,5 @@ html(lang="en")
                         hr(style={"background-color":"white", "color":"white"})
                 tr
                     td(colspan="4" style={"text-align":"right"}) Total
-                    td(style={"text-align":"right"}) $#{(requestedBooking.amount_due_from_user).toFixed(2)}
+                    td(style={"text-align":"right"}) $#{(requestedBooking.total_price - requestedBooking.rewards_applied/100).toFixed(2)}
 
