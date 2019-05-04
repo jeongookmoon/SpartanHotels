@@ -230,6 +230,8 @@ async function totalPriceAndCancellationChargeCheck(requestedBooking, res) {
         return result;
     }
     result.pass = true
+    result.nights_stayed = nights_stayed
+    result.totalRoomPricePerNight = totalRoomCost
     return result;
 }
 exports.totalPriceAndCancellationChargeCheck = totalPriceAndCancellationChargeCheck;
