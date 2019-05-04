@@ -16,6 +16,10 @@ import { DateRangePicker } from 'react-dates'
 import 'react-dates/lib/css/_datepicker.css'
 import moment from 'moment'
 
+import { sortByDropDownData } from '../Utility/DataForMenu'
+import AmenityFilterDropdown from './Components/AmenityFilterDropdown'
+import { defaultMarkerImageBaseURL, selectedMarkerImageBaseURL } from './mapMarker'
+
 class HotelSearch extends React.Component {
 
 	constructor(props) {
@@ -31,6 +35,21 @@ class HotelSearch extends React.Component {
 		const children = params.get('children')
 		const guest_number = params.get('guest_number')
 		const sortBy = params.get('sortBy')
+		const state = params.get('state')
+		let amenities = ''
+		let selectedOption = []
+		if (params.get("amenities") && params.get("amenities") !== '') {
+			amenities = params.get("amenities")
+			const ifarray = amenities.split(",")
+			if (ifarray.constructor === Array) {
+				ifarray.forEach((amenity) => {
+					const amenityobj = {}
+					amenityobj.value = amenity
+					amenityobj.label = amenity
+					selectedOption.push(amenityobj)
+				})
+			}
+		}
 
 		this.state = {
 			hotels: [{}],
@@ -40,9 +59,10 @@ class HotelSearch extends React.Component {
 				city,
 				latitude,
 				longitude,
-				state: '',
+				state,
 				date_in: moment(dateIn, ('YYYY-MM-DD')),
 				date_out: moment(dateOut, ('YYYY-MM-DD')),
+				amenities
 			},
 			sortBy,
 			hotel_id: 0,
@@ -53,15 +73,30 @@ class HotelSearch extends React.Component {
 			guest_number,
 			focusedInput: null,
 			place: {},
+			selectedOption
 		};
+	}
 
-		this.roomSearch = this.roomSearch.bind(this)
-		this.handleChange = this.handleChange.bind(this)
-		this.getHotelSearchResult = this.getHotelSearchResult.bind(this)
-		this.adultIncrement = this.adultIncrement.bind(this)
-		this.adultDecrement = this.adultDecrement.bind(this)
-		this.childrenIncrement = this.childrenIncrement.bind(this)
-		this.childrenDecrement = this.childrenDecrement.bind(this)
+	convertSelectedOption = () => {
+		let amenities = ''
+
+		this.state.selectedOption.forEach((option, index) => {
+			amenities += option.label
+			if (index !== this.state.selectedOption.length - 1)
+				amenities += ','
+		});
+
+		this.setState(prevState => ({
+			searchParams: {
+				...prevState.searchParams,
+				amenities
+			}
+		}));
+	}
+
+	handleFilterDropdown = (selectedOption) => {
+		this.setState({ selectedOption },
+			() => this.convertSelectedOption())
 	}
 
 	async componentDidMount() {
@@ -126,56 +161,80 @@ class HotelSearch extends React.Component {
 		const latitude = parseFloat(params.get('latitude'))
 		const longitude = parseFloat(params.get('longitude'))
 
-		let googleMap = new window.google.maps.Map(document.getElementById('map'), {
+		const googleMap = new window.google.maps.Map(document.getElementById('map'), {
 			center: { lat: latitude, lng: longitude },
 			zoom: 14
 		});
 
-		// const city_name = params.get('city')
-		// let geocoder = new window.google.maps.Geocoder();
-		// // display the center of the map by city name
-		// geocoder.geocode({ 'address': city_name }, function (results, status) {
-		// 	if (status === 'OK') {
-		// 		googleMap.setCenter(results[0].geometry.location);
-		// 	} else {
-		// 		alert('Geocode was not successful for the following reason: ' + status);
-		// 	}
-		// });
+		// bounding box for map
+		var bounds = new window.google.maps.LatLngBounds()
+		//bounds.extend(new window.google.maps.LatLng(latitude, longitude))
 
+		window.googleMap = googleMap
 		// display each hotel's information window when clicking the marker	
-		let infoWindow = new window.google.maps.InfoWindow()
-
+		const infoWindow = new window.google.maps.InfoWindow()
+		window.infoWindow = infoWindow
+		window.markers = []
 		this.state.hotels.results.forEach((eachHotel, index) => {
+			const imageURL = this.getHotelSearchResultImages(eachHotel.images)
+			//const imageURL = this.getHotelSearchResultImages(eachHotel.images).split(",")[0]
+			//^^ FOR DAVID
+			const hotelInfo = `
 
-			let imageURL = ''
-			if (eachHotel.images && eachHotel.images.constructor === Array) {
-				imageURL = eachHotel.images.split(",")[0]
-			} else {
-				imageURL = eachHotel.images
-			}
+											<a href="" style="padding-top:1vh; text-align:center;"><h5>${eachHotel.name}</h5></a>
+											<div style="font-size: 1em; font-weight:600">${eachHotel.address}</div>
+											<div style="font-size: 1em; font-weight:600">${eachHotel.city}</div>
+											<p style="font-size: 1em; font-weight:600">${eachHotel.phone_number}</p>
+											<p style="font-size: 1em; font-weight:600">$${eachHotel.min_price.toFixed(2)} ~ ${eachHotel.max_price.toFixed(2)}/per night</p>
+											<img src=${imageURL} style="max-width: 100%; max-height: 100%; "/>
 
-			let hotelInfo = `<img src=${imageURL} style="width: 50%; height: 50%"/>
-											 <h6 style="text-align:center;">${eachHotel.name}</h6>
-											 <p>${eachHotel.address}</p>
-											 <p>$${eachHotel.min_price} ~ ${eachHotel.max_price}/per night</p>`
+
+								`
+
+
+			var defaultMarkerImage = defaultMarkerImageBaseURL + "" + (index + 1);
+			var selectedMarkerImage = selectedMarkerImageBaseURL + "" + (index + 1);
 
 			// display each hotel's marker along with index number
-			let marker = new window.google.maps.Marker({
+			const googleMapMarker = new window.google.maps.Marker({
 				position: { lat: parseFloat(eachHotel.latitude), lng: parseFloat(eachHotel.longitude) },
-				map: googleMap,
-				label: (index + 1).toString(),
-				title: eachHotel.name
+				map: window.googleMap,
+				title: eachHotel.name,
+				icon: defaultMarkerImage
+			})
+
+			// https://stackoverflow.com/questions/15719951/auto-center-map-with-multiple-markers-in-google-maps-api-v3
+			// https://developers.google.com/maps/documentation/javascript/reference/coordinates#LatLngBounds.extend
+			// https://stackoverflow.com/questions/2437683/google-maps-api-v3-can-i-setzoom-after-fitbounds
+
+
+			// add marker position to boundingbox
+			bounds.extend(new window.google.maps.LatLng(eachHotel.latitude, eachHotel.longitude))
+			window.googleMap.fitBounds(bounds)
+			window.google.maps.event.addListenerOnce(googleMap, "idle", () => {
+				if (googleMap.getZoom() > 16) googleMap.setZoom(16);
+				window.markers.push(googleMapMarker)
 			})
 
 			// action listener to open information window when clicking marker
-			marker.addListener('click', function () {
-				infoWindow.setContent(hotelInfo)
-				infoWindow.open(googleMap, marker);
+			googleMapMarker.addListener('click', () => {
+				var center = new window.google.maps.LatLng(eachHotel.latitude, eachHotel.longitude);
+				window.googleMap.panTo(center);
+				window.markers.forEach((eachMarker, index) => {
+					eachMarker.setIcon(defaultMarkerImageBaseURL + (index + 1))
+					eachMarker.setAnimation(null)
+				})
+				// window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
+				window.markers[index].setIcon(selectedMarkerImage)
+				setTimeout(() => { window.markers[index].setAnimation() }, 750);
+				window.infoWindow.setContent(hotelInfo)
+				window.infoWindow.open(window.googleMap, googleMapMarker);
+				window.infoWindow.setOptions({ maxWidth: 250 });
 			});
 		})
 	}
 
-	handleChange(event) {
+	handleChange = (event) => {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
 		const name = target.name;
@@ -185,7 +244,7 @@ class HotelSearch extends React.Component {
 		});
 	}
 
-	adultIncrement() {
+	adultIncrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('adult').value, 10);
 
@@ -202,7 +261,7 @@ class HotelSearch extends React.Component {
 		})
 	}
 
-	adultDecrement() {
+	adultDecrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('adult').value, 10);
 
@@ -223,7 +282,7 @@ class HotelSearch extends React.Component {
 
 	}
 
-	childrenIncrement() {
+	childrenIncrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('children').value, 10);
 
@@ -241,7 +300,7 @@ class HotelSearch extends React.Component {
 
 	}
 
-	childrenDecrement() {
+	childrenDecrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('children').value, 10);
 
@@ -271,12 +330,16 @@ class HotelSearch extends React.Component {
 			additionalClause = `&sortBy=${event.target.value}`
 			this.setState({ [event.target.name]: event.target.value })
 		}
+
 		if (event.target.name && event.target.name === 'pagination') {
 			additionalClause = `&pageNumber=${event.target.value}`
 			if (sortBy && sortBy !== '') {
 				additionalClause = additionalClause + `&sortBy=${sortBy}`
 			}
 		}
+
+		if (this.state.searchParams.amenities)
+			additionalClause += `&amenities=${this.state.searchParams.amenities}`
 
 		let searchParams = Object.assign({}, this.state.searchParams)
 		searchParams.date_in = searchParams.date_in.format('YYYY-MM-DD')
@@ -288,6 +351,7 @@ class HotelSearch extends React.Component {
 								&adult=${this.state.adult}&children=${this.state.children}
 								&guest_number=${this.state.guest_number}&full_address=${this.state.fullAddress}
 								&street_address=${this.state.streetAddress}&city=${searchParams.city}
+								&state=${searchParams.state}
 								${additionalClause}`
 
 			this.props.history.push({
@@ -318,7 +382,7 @@ class HotelSearch extends React.Component {
 		let pageNumbers = []
 		const params = new URLSearchParams(this.props.location.search)
 		let pageNumber = parseInt(params.get('pageNumber'))
-		if(!pageNumber) {
+		if (!pageNumber) {
 			pageNumber = 0;
 		}
 		let activeFlag = false
@@ -336,6 +400,34 @@ class HotelSearch extends React.Component {
 		return pageNumbers
 	}
 
+	moveMap(lat, lng, index) {
+		var center = new window.google.maps.LatLng(lat, lng);
+		window.googleMap.panTo(center);
+		window.markers.forEach((eachMarker, i) => {
+			if(eachMarker) {
+				if(i === index) {
+					eachMarker.setIcon(selectedMarkerImageBaseURL + (index + 1))
+					eachMarker.setZIndex(12)
+					eachMarker.setAnimation(window.google.maps.Animation.BOUNCE)
+				} else {
+					eachMarker.setIcon(defaultMarkerImageBaseURL + (i + 1))
+					eachMarker.setZIndex(0)
+					eachMarker.setAnimation(null)
+				}
+				
+			}
+		})
+	}
+
+	getHotelSearchResultImages(images) {
+		let arraychecker = []
+		if (images && images.constructor === Array) {
+			arraychecker = images.split(",")
+			return arraychecker[0]
+		}
+		return images
+	}
+
 	render() {
 		if (this.state.hotels.results === undefined) {
 			return <div> Loading...</div>
@@ -343,8 +435,9 @@ class HotelSearch extends React.Component {
 
 		const searchBar = (
 			<div>
+				<hr className="hotel-search-hr-bottom">
+				</hr>
 				<FormGroup className="form-inline hotel-search-inputs">
-					<div className="col-lg-1"></div>
 					<div className="col-lg-3 input-group home-location">
 						<div className="input-group-append">
 							<div className="location-input-icon input-group-text"><i className="fa fa-search"></i></div>
@@ -352,7 +445,7 @@ class HotelSearch extends React.Component {
 						<Autocomplete onPlaceChanged={this.showPlaceDetails.bind(this)} />
 					</div>
 
-					<div className="col-lg-4 input-group home-date">
+					<div className="col-lg-4 input-group home-date custom-row">
 						<div className="input-group-append">
 							<div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
 						</div>
@@ -375,7 +468,7 @@ class HotelSearch extends React.Component {
 						/>
 					</div>
 
-					<div className=" col-lg-2 input-group menu-container">
+					<div className=" col-lg-1 input-group menu-container">
 						<div className="col-lg-12 menu-item">
 							<div className="home-guest-dropdown">{this.state.guest_number}&nbsp;Guests</div>
 							<ul>
@@ -408,6 +501,9 @@ class HotelSearch extends React.Component {
 							</ul>
 						</div>
 					</div>
+					<div className="col-lg-2 home-submit-button-container">
+						<AmenityFilterDropdown value={this.state.selectedOption} handleFilterDropdown={this.handleFilterDropdown} />
+					</div>
 					<div className="col-lg-1 home-submit-button-container">
 						<button onClick={this.getHotelSearchResult} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Search</button>
 					</div>
@@ -418,7 +514,7 @@ class HotelSearch extends React.Component {
 
 		const pagination = (
 			<div className="hotel-search-pagination">
-				<Pagination aria-label="Page navigation example">
+				<Pagination>
 					{this.generatePageNumbers()}
 				</Pagination>
 			</div>
@@ -427,13 +523,62 @@ class HotelSearch extends React.Component {
 		const sortByDropdown = (
 			<select name="sortBy" onChange={this.getHotelSearchResult} value={this.state.sortBy}>
 				<option value="" disabled hidden >Sort By</option>
-				<option value="price_asc" label="Prce(Low to High)"></option>
-				<option value="price_des" label="Prce(High to Low)"></option>
-				<option value="name_asc" label="Name(A to Z)"></option>
-				<option value="name_des" label="Name(Z to A)"></option>
+				{sortByDropDownData.map((each, key) => {
+					return <option key={key} value={each.value} label={each.label}></option>
+				})}
 			</select>
 		)
 
+		const HotelTable = (
+			<Table hover borderless>
+				<tbody>
+					{this.state.hotels.results.map((eachHotelResult, index) => {
+						const imageURL = this.getHotelSearchResultImages(eachHotelResult.images)
+
+						return (
+							<tr key={index} className="hotel-search-row shadow-sm p-3 mb-5" tag="a" onClick={this.roomSearch(eachHotelResult)} onMouseEnter={() => this.moveMap(eachHotelResult.latitude, eachHotelResult.longitude, index)} style={{ cursor: "pointer" }}>
+								<td className="">
+									<img className="hotel-search-item-image" src={imageURL} alt="logo" />
+								</td>
+								<td className="">
+									<div>
+										<div className="hotel-search-item-row hotel-search-item-header">
+											<div className="hotel-search-item-number">{index + 1}.</div>
+											<div className="hotel-search-item-name"> {/* Hotel Name */} </div>
+											<a href=" " className="col-lg-10 hotel-search-item-name">{eachHotelResult.name}</a>
+										</div>
+										<div className="hotel-search-item-row hotel-search-item-rating">
+											<span className="fa fa-star hotel-search-item-rating-checked"></span>
+											<span className="fa fa-star hotel-search-item-rating-checked"></span>
+											<span className="fa fa-star hotel-search-item-rating-checked"></span>
+											<span className="fa fa-star hotel-search-item-rating-checked"></span>
+											<span className="fa fa-star"></span>
+										</div>
+
+										{/* Hotel Address */}
+										<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.address}</div>
+										<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.city}</div>
+										<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.phone_number}</div>
+
+									</div>
+								</td>
+								<td className="">
+									<div>
+										<div className="hotel-search-item-row">
+
+											{/* Min Price */}
+											<div className="hotel-search-item-price">
+												${eachHotelResult.min_price.toFixed(2)} &nbsp;-&nbsp; ${eachHotelResult.max_price.toFixed(2)}
+											</div>
+										</div>
+									</div>
+								</td>
+							</tr>
+						);
+					})}
+				</tbody>
+			</Table>
+		)
 		const ResultTable = (
 			<div className="col-lg-6 hotel-search-first-column">
 
@@ -444,61 +589,7 @@ class HotelSearch extends React.Component {
 				</div>
 
 				<div className="hotel-search-table-container">
-					<Table hover borderless>
-						<tbody>
-							{this.state.hotels.results.map((eachHotelResult, index) => {
-
-								let imageURL = ''
-								if (eachHotelResult.images && eachHotelResult.images.constructor === Array) {
-									imageURL = eachHotelResult.images.split(",")[0]
-								} else {
-									imageURL = eachHotelResult.images
-								}
-
-								return (
-
-									<tr key={index} className="hotel-search-row shadow-sm p-3 mb-5" tag="a" onClick={this.roomSearch(eachHotelResult)} style={{ cursor: "pointer" }}>
-										<td className="col-lg-6">
-											<img className="hotel-search-item-image" src={imageURL} alt="logo" />
-										</td>
-										<td className="col-lg-4">
-											<div>
-												<div className="hotel-search-item-row hotel-search-item-header">
-													<div className="hotel-search-item-number">{index + 1}.</div>
-													<div className="hotel-search-item-name"> {/* Hotel Name */} </div>
-													<a href=" " className="col-lg-10 hotel-search-item-name">{eachHotelResult.name}</a>
-												</div>
-												<div className="hotel-search-item-row hotel-search-item-rating">
-													<span className="fa fa-star hotel-search-item-rating-checked"></span>
-													<span className="fa fa-star hotel-search-item-rating-checked"></span>
-													<span className="fa fa-star hotel-search-item-rating-checked"></span>
-													<span className="fa fa-star hotel-search-item-rating-checked"></span>
-													<span className="fa fa-star"></span>
-												</div>
-
-												{/* Hotel Address */}
-												<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.address}</div>
-												<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.city}</div>
-												<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.phone_number}</div>
-
-											</div>
-										</td>
-										<td className="col-lg-2">
-											<div>
-												<div className="hotel-search-item-row">
-
-													{/* Min Price */}
-													<div className="hotel-search-item-price">
-														${eachHotelResult.min_price} &nbsp;-&nbsp; ${eachHotelResult.max_price}
-													</div>
-												</div>
-											</div>
-										</td>
-									</tr>
-								);
-							})}
-						</tbody>
-					</Table>
+					{HotelTable}
 				</div>
 				{this.state.hotels.results.length > 0 ? pagination : ''}
 			</div>
