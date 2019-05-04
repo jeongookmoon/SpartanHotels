@@ -13,8 +13,9 @@
     "react-dom": "^16.8.5",
     "react-number-format": "^4.0.7",
     "react-router-dom": "^4.3.1",
-    "react-select": "^2.4.3",
     "react-scripts": "^2.1.8",
+    "react-select": "^2.4.3",
+    "react-stripe-elements": "^3.0.0",
     "reactstrap": "^7.1.0"
   },
   "scripts": {
