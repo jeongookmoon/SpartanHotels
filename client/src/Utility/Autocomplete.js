@@ -1,11 +1,15 @@
 import React from "react";
-
 class Autocomplete extends React.Component {
   constructor(props) {
     super(props);
     
+    const params = new URLSearchParams(window.location.search);
+    let fullAddress = ''
+    if(params.get('full_address') && params.get('full_address')!== '')
+      fullAddress = params.get('full_address')
+
     this.state = {
-      fullAddress: ''
+      fullAddress
     }
 
     this.autocompleteInput = React.createRef();
@@ -14,13 +18,6 @@ class Autocomplete extends React.Component {
   }
 
   componentDidMount() {
-    const params = new URLSearchParams(window.location.search);
-    const fullAddress = params.get('full_address')
-    
-    this.setState({
-      fullAddress
-    })
-    
     this.autocomplete = new window.google.maps.places.Autocomplete(
       this.autocompleteInput.current,
       { types: ["geocode"] }

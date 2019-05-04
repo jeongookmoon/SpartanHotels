@@ -11,11 +11,14 @@ import Autocomplete from "../Utility/Autocomplete";
 
 import homeImage from './Images/homeImage7.jpg';
 import {
-	Form, FormGroup
+	Form, FormGroup, CustomInput
 } from 'reactstrap'
+
+import { homeFilterData } from '../Utility/DataForMenu'
 
 var topSectionStyle = {
 	width: "100%",
+	height: "100vh",
 	backgroundRepeat: "no-repeat",
 	backgroundSize: "cover",
 	backgroundPosition: "center center",
@@ -39,26 +42,21 @@ class Home extends React.Component {
 			children: 0,
 			focusedInput: null,
 			guest_number: 0,
-			place: {}
+			place: {},
+			checkbox: {
+			}
 		};
-
-		this.handleChange = this.handleChange.bind(this);
-		this.search = this.search.bind(this);
-		this.adultIncrement = this.adultIncrement.bind(this);
-		this.adultDecrement = this.adultDecrement.bind(this);
-		this.childrenIncrement = this.childrenIncrement.bind(this);
-		this.childrenDecrement = this.childrenDecrement.bind(this);
 	}
 
 	componentDidMount() {
-		const googleMap = new window.google.maps.Map(document.getElementById('map'), {
+		const googleMapHome = new window.google.maps.Map(document.getElementById('map'), {
 			center: { lat: 37.3382082, lng: -121.88632860000001 },
-			zoom: 13
+			zoom: 14
 		})
-		window.googleMap = googleMap
+		window.googleMapHome = googleMapHome
 	}
 
-	handleChange(event) {
+	handleChange = (event) => {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
 		const name = target.name;
@@ -67,7 +65,17 @@ class Home extends React.Component {
 		});
 	}
 
-	adultIncrement() {
+	handleCheckBox = (event) => {
+		const name = event.target.name
+		this.setState(prevState => ({
+			checkbox: {
+				...prevState.checkbox,
+				[name]: !prevState.checkbox[name]
+			}
+		}))
+	}
+
+	adultIncrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('adult').value, 10);
 
@@ -86,7 +94,7 @@ class Home extends React.Component {
 
 	}
 
-	adultDecrement() {
+	adultDecrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('adult').value, 10);
 
@@ -106,7 +114,7 @@ class Home extends React.Component {
 
 	}
 
-	childrenIncrement() {
+	childrenIncrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('children').value, 10);
 
@@ -125,7 +133,7 @@ class Home extends React.Component {
 
 	}
 
-	childrenDecrement() {
+	childrenDecrement = () => {
 		// console.log("yay");
 		var value = parseInt(document.getElementById('children').value, 10);
 
@@ -143,13 +151,12 @@ class Home extends React.Component {
 			children: value,
 			guest_number: guest_number
 		})
-
 	}
 
 	putGoogleMapMarker = (latitude, longitude) => {
-		window.googleMapMarker ? window.googleMapMarker.setPosition({ lat: parseFloat(latitude), lng: parseFloat(longitude) }) : window.googleMapMarker = new window.google.maps.Marker({
+		window.googleHomeMapMarker ? window.googleHomeMapMarker.setPosition({ lat: parseFloat(latitude), lng: parseFloat(longitude) }) : window.googleHomeMapMarker = new window.google.maps.Marker({
 			position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
-			map: window.googleMap
+			map: window.googleMapHome
 		})
 	}
 
@@ -173,15 +180,19 @@ class Home extends React.Component {
 				fullAddress, streetAddress,
 				city, state, place
 			},
-			window.googleMap.setCenter(
+			window.googleMapHome.setCenter(
 				new window.google.maps.LatLng(latitude, longitude)
 			)
 		)
-		this.putGoogleMapMarker(latitude, longitude)
 	}
 
 	search = (event) => {
 		event.preventDefault()
+
+		// convert true props of checkbox into array and join the array into a string
+		const keys = Object.keys(this.state.checkbox)
+		const filteredElements = keys.filter((key) => this.state.checkbox[key] === true)
+
 
 		const temp_fields = {
 			streetAddress: this.state.streetAddress,
@@ -202,7 +213,9 @@ class Home extends React.Component {
 								&date_in=${temp_fields.date_in}&date_out=${temp_fields.date_out}
 								&adult=${this.state.adult}&children=${this.state.children}
 								&guest_number=${this.state.guest_number}&full_address=${this.state.fullAddress}
-								&city=${temp_fields.city}&street_address=${temp_fields.streetAddress}`
+								&city=${temp_fields.city}&street_address=${temp_fields.streetAddress}
+								&state=${temp_fields.state}
+								&amenities=${filteredElements}`
 
 			this.props.history.push({
 				pathname: `/HotelSearch`,
@@ -216,15 +229,15 @@ class Home extends React.Component {
 			<div className="col-lg-12 home-container col-auto" style={topSectionStyle}>
 				<div className="home-form-container col-lg-12">
 
-					
+
 
 					<Form className="home-form col-lg-12" onSubmit={this.search}>
-						
+
 						<div className="top-header ">
 							Plan your next trip
 		  				</div>
 
-		  				
+
 
 						<FormGroup className="form-inline home-form-inputs">
 							<div className="col-lg-1"></div>
@@ -253,7 +266,7 @@ class Home extends React.Component {
 							</div>
 
 
-							<div className=" col-lg-2 input-group menu-container">
+							<div className=" col-lg-1 input-group menu-container">
 
 								<div className="col-lg-12 menu-item">
 									<div className={this.state.guest_number === 0 ? "home-guest-dropdown" : "home-guest-dropdown-filled"}>{this.state.guest_number === 0 ? null : this.state.guest_number}&nbsp;Guests</div>
@@ -292,6 +305,13 @@ class Home extends React.Component {
 							<div className="col-lg-1 home-submit-button-container">
 								<button disabled={!this.state.city || !this.state.date_in || !this.state.date_out || this.state.guest_number === 0} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Search</button>
 							</div>
+							<div className="col-lg-1">
+								<div className="form-checkboxes">
+									{homeFilterData.map((each, key) => {
+										return <CustomInput type="checkbox" key={key} id={key + 123} name={each.name} label={each.label} value={each.value} onChange={this.handleCheckBox} />
+									})}
+								</div>
+							</div>
 
 						</FormGroup>
 					</Form>
@@ -301,16 +321,16 @@ class Home extends React.Component {
 						<div className="col-lg-3">
 						</div>
 						<div className="col-lg-6 home-map ">
-								<div className="" style={{width:580, height:350}} id="map"></div>
+							<div className="" style={{ width: 580, height: 350 }} id="map"></div>
 						</div>
 						<div className="col-lg-3">
 						</div>
 
 					</div>
 				</div>
-				
 
-			</div>
+
+			</div >
 		);
 	}
 }
