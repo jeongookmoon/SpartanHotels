@@ -28,17 +28,18 @@ function cancelReservation(transaction_id, user_id, res) {
                 let isCancelConflict = (Array.isArray(results2) && results2.length) ? true : false;
                 console.log(results2)
                 console.log(isCancelConflict)
+                  
                 if (isCancelConflict) {
                     console.log("There is a date conflict for cancelling.");
                     res.status(400).send("Cannot cancel because current date is in conflict with booking dates");
                 }
                 else {
-                    /*
-                    console.log(req.body.room_id)
-                    if(typeof(req.body.room_id) || req.body.room_id == 'undefined' ||
-                        req.body.room_id == null) {
-                    */
-                    //Cancels the entire transaction
+                
+                let query = mysql.format(Queries.booking.getHotel_Info, [transaction_id])
+                Queries.run(query).then(res1 => {
+                     let query2 = mysql.format(Queries.modify.getExistingTransaction, [transaction_id])
+                     Queries.run(query2).then(res2 => {
+                                             //Cancels the entire transaction
                     let query3 = mysql.format(Queries.booking.cancel_transaction, [transaction_id]);
                     //console.log(query3)
                     Queries.run(query3).then(results3 => {
@@ -71,27 +72,45 @@ function cancelReservation(transaction_id, user_id, res) {
                                             cancel_charge: results[0].cancellation_charge.toFixed(2),
                                             reward_refunded: rewards_applied
                                         })
-                                        //TODO: Fix this for getting emails
+                                        //TODO: Fix this for getting emails and get hotel and room info
+                                        //Query getHotel_Info, getExistingTransaction
                                         let q = mysql.format(Queries.user.profile, [user_id])
                                         Queries.run(q).then(res => {
-                                            var emailAddress = res[0].email
-                                            var emailParams = {};
-                                            console.log(emailAddress)
-                                            
-                                            emailParams.to = emailAddress
-                                            console.log('Email being set to: ' + emailAddress)
-                                            emailParams.subject = 'Your Spartan Hotels Cancellation Receipt!'
-                                            // emailParams.text = 'Hello. Thank you for booking a reservation using Spartan Hotels. This is an email to confirm you order for: \n' + JSON.stringify(requestedBooking);
-                                            var emailContents = pug.renderFile("./email_templates/cancelReservation.pug", 
-                                                                                { "transaction_number": transaction_id, 
-                                                                                  "date": new Date().toLocaleDateString(),
-                                                                                  "total_price": results[0].total_price.toFixed(2),
-                                                                                  "amount_refunded": refund.toFixed(2),
-                                                                                  "rewards_applied": rewards_applied_scaled,
-                                                                                  "cancel_charge": results[0].cancellation_charge.toFixed(2),
-                                                                                  "reward_refunded": rewards_applied})
-                                            emailParams.html = emailContents
-                                            var email = Email.email(emailParams)
+                                           
+                                                    let hotelInfo = res1[0]
+                                                    console.log(hotelInfo)
+
+                                                    let transactionInfo = res2
+                                                    console.log(transactionInfo)
+
+                                                    let dateIn = formatDate(results[0].date_in)
+                                                    console.log(dateIn)
+
+                                                    let dateOut = formatDate(results[0].date_out)
+                                                    console.log(dateOut)
+
+                                                    var emailAddress = res[0].email
+                                                    var emailParams = {};
+                                                    console.log(emailAddress)
+                                                    
+                                                    emailParams.to = emailAddress
+                                                    console.log('Email being set to: ' + emailAddress)
+                                                    emailParams.subject = 'Your Spartan Hotels Cancellation Receipt!'
+
+                                                    var emailContents = pug.renderFile("./email_templates/cancelReservation.pug", 
+                                                                                        { "transaction_number": transaction_id, 
+                                                                                          "date": new Date().toLocaleDateString(),
+                                                                                          "total_price": results[0].total_price.toFixed(2),
+                                                                                          "amount_refunded": refund.toFixed(2),
+                                                                                          "rewards_applied": rewards_applied_scaled,
+                                                                                          "cancel_charge": results[0].cancellation_charge.toFixed(2),
+                                                                                          "reward_refunded": rewards_applied,
+                                                                                          "date_in": dateIn,
+                                                                                          "date_out": dateOut,
+                                                                                          "hotel_info": hotelInfo,
+                                                                                          "transaction_info": transactionInfo})
+                                                    emailParams.html = emailContents
+                                                    var email = Email.email(emailParams)                                  
                                         }, err => {
                                             res.status(400).send(err)
                                         })                                  
@@ -112,41 +131,17 @@ function cancelReservation(transaction_id, user_id, res) {
                      }, error3 => {
                         res.status(400).send(error3);
                      });
-                    // }
-                    /*
-                    else {
-                        //Delete one room from transaction
-                        let query6 = mysql.format(Queries.booking.room_price, [req.body.transaction_id, req.body.room_id])
-                        Queries.run(query6).then(
-                           results6 => {
-                                let newTotalPrice = results[0].total_price - results6[0].room_price - (results6[0].room_price*(TAX_RATE/100)
-                                let newAmountPaid = results[0].amount_paid - results6[0].room_price - (results6[0].room_price*(TAX_RATE/100)
-                                let newCancellationCharge = results[0].cancellation_charge - (results6[0].room_price*(CANCELLATION_CHARGE_RATE/100)
-                                let query7 = mysql.format(Queries.booking.cancel_one_room, [parseFloat(newTotalPrice), parseFloat(newCancellationCharge),
-                                    parseFloat(newAmountPaid), req.body.transaction_id])
-                                Queries.run(query7).then(
-                                   results7 => {
-                                       //Another query8 for cancel_one which deletes it from the table
-                                       //Another query9 to subtract reward points from the cancelled booking
 
-                                   },
-                                   error7 => {
-                                       res.status(400).send(error6)
-                                   }
+                     },
+                     res2err => {
+                         res.status(400).send(res2err)
+                     })
+                },
+                res1err => {
+                     res.status(400).send(res1err)
+                })
 
-
-                                )
-
-                           },
-                           error6 => {
-                               res.status(400).send(error6)
-                           }
-
-
-                        )
-                        
-                    }
-                     */
+              
                 }
             }, error2 => {
                 res.status(400).send(error2);
@@ -162,3 +157,16 @@ function cancelReservation(transaction_id, user_id, res) {
     });
 }
 exports.cancelReservation = cancelReservation;
+
+//Used to get rid of the Time to just get Date string
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+}

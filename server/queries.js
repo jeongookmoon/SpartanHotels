@@ -582,6 +582,7 @@ module.exports = {
     cancel_one_room: 'UPDATE spartanhotel.transaction SET total_price=?, cancellation_charge=?, amount_paid=? WHERE transaction_id=?',
     user_id: 'SELECT * FROM transaction WHERE transaction_id=?',
     room_price: 'SELECT * FROM transaction_room WHERE transaction_id=? AND room_id=?',
+    getHotel_Info: 'SELECT DISTINCT e.name, e.address, e.city, e.state, e.hotel_id FROM transaction b, transaction_room c, room d, hotel e WHERE b.transaction_id = ? and b.transaction_id = c.transaction_id and c.room_id = d.room_id and d.hotel_id = e.hotel_id',
 
     //When query is ran -> returns an array that cannot be cancelled, else returns an empty array which means can be cancelled
     isCancellable: function({transaction_id}) {
