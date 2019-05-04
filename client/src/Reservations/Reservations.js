@@ -38,6 +38,7 @@ class Reservations extends React.Component {
       	var quantities = []
       	var room_quan = 1
       	//Putting detailed room information on the panel. Include bed type, price, and quantity
+      	//This stuff should now be handled in MoreInfo.js
       	for (var i = 0; i < viewres.data.length; i++) {
       		bed_types.push(viewres.data[i].bed_type)
       		room_prices.push(viewres.data[i].price)
@@ -65,6 +66,8 @@ class Reservations extends React.Component {
       		quantities = []
       	}
       	console.log(room_info)
+
+      	//Information for the 'My Reservation' Table
       		var booking_id = viewres.data[0].transaction_id
       		var date_in = viewres.data[0].date_in
       		var date_out = viewres.data[0].date_out

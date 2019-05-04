@@ -19,6 +19,8 @@ class MoreInfo extends React.Component {
 		this.toggle = this.toggle.bind(this);
 	}
 
+// Getting the info from the query and formatting it correctly
+// Not entirely sure to recognize which button is getting pressed though
 componentDidMount() {
       var that = this
       axios.get('/api/reservations/viewres')
@@ -26,6 +28,9 @@ componentDidMount() {
       	var room_info = []
       	var reservations = []
       	var same_res = []
+
+      	// Group elements of viewres.data into reservations array. reservations is an array that contains multiple arrays that all hold
+      	// reservations of the same transaction_id. One array per one transaction. Dunno whether or not you have to do it like this.
       	for (var i = 0; i < viewres.data.length; i++) {
       		same_res.push(viewres.data[i])
       		for (var j = i + 1; j < viewres.data.length; j++) {
@@ -41,7 +46,7 @@ componentDidMount() {
       		same_res = []
       	}
 
-      	
+
       	console.log(reservations)
       	that.setState({
             room_history: room_info
@@ -49,6 +54,8 @@ componentDidMount() {
       })
   }
 
+// Kind of like how it is in RewardHistory. Map object to indices and put this in the body of render()
+// Data that gets rendered should depend on which toggle you press. Not sure how to identify that.
   	renderRoomsTableData() {
 		return this.state.history.map((rooms, index) => {
 			const {room_num, bed_price, room_price, quantity} = rooms
@@ -62,6 +69,7 @@ componentDidMount() {
 		})
 	}
 
+// Currently the toggle renders the same data. Not entirely sure how to get it to render different data depending on which toggle you press
 	render() {
 		return (
 			<div>
