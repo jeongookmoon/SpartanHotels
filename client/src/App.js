@@ -11,6 +11,7 @@ import Checkout from './Checkout/Checkout';
 import RoomPage from './RoomPage/RoomPage';
 import Recoverage from './Recoverage/Recoverage';
 import Accesscode from './Recoverage/Accesscode';
+import Confirmation from './Confirmation/Confirmation';
 import './App.css';
 
 class App extends Component {
@@ -28,6 +29,7 @@ class App extends Component {
           <Route path="/RoomPage" component={RoomPage}/>
           <Route exact path="/Recoverage" component={Recoverage} />
           <Route exact path="/Accesscode" component={Accesscode} />
+          <Route exact path="/Confirmation" component={Confirmation} />
 
 
 
