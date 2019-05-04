@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import {withRouter} from 'react-router-dom'
 
 import {
@@ -12,11 +13,48 @@ class MoreInfo extends React.Component {
 
 		this.state={
 			modal: false,
+			room_history: []
 		}
 
 		this.toggle = this.toggle.bind(this);
 	}
 
+componentDidMount() {
+      var that = this
+      axios.get('/api/reservations/viewres')
+      .then(function(viewres) {
+      	var room_info = []
+      	var reservations = []
+      	var same_res = []
+      	for (var i = 0; i < viewres.data.length; i++) {
+      		same_res.push(viewres.data[i])
+      		for (var j = i + 1; j < viewres.data.length; j++) {
+      			if (viewres.data[j].transaction_id == viewres.data[i].transaction_id) {
+      				same_res.push(viewres.data[j])
+      			}
+      			else {
+      				i = j - 1
+      				break
+      			}
+      		}
+      		reservations.push(same_res)
+      		same_res = []
+      	}
+
+      	
+      	console.log(reservations)
+      	that.setState({
+            room_history: room_info
+          })
+      })
+  }
+
+  	renderRoomsTableData() {
+		return this.state.history.map((rooms, index) => {
+			const {room_num, bed_price, room_price, quantity} = rooms
+				
+		})
+	}
 	toggle () {
 		this.setState({
 			...this.state,

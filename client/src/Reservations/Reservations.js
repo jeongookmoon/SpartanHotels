@@ -7,6 +7,7 @@ import homeImage from './homeImage.jpg';
 import axios from 'axios';
 import moment from 'moment';
 import "./Reservations.css";
+import MoreInfo from './MoreInfo';
 
 var pageStyle = {
 	width: "100%",
@@ -110,12 +111,10 @@ class Reservations extends React.Component {
 					<td>{date_in}</td>
 					<td>{date_out}</td>
 					<td>{hotel_name}</td>
-					<td>{bed_type.replace(',', '\n')}</td>
-					<td>{room_price.replace(',', '\n')}</td>
-					<td>{room_quantities.replace(',', '\n')}</td>
-					<td>{total_price}</td>
-					//<td><Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button></td>
+					<td>${total_price}</td>
+					<td><Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button></td>
 					<td>{status}</td>
+					<td> <MoreInfo /> </td>
 				</tr>
 					)
 				}
@@ -126,12 +125,10 @@ class Reservations extends React.Component {
 					<td>{date_in}</td>
 					<td>{date_out}</td>
 					<td>{hotel_name}</td>
-					<td>{bed_type.replace(',', '\n')}</td>
-					<td>{room_price.replace(',', '\n')}</td>
-					<td>{room_quantities.replace(',', '\n')}</td>
-					<td>{total_price}</td>
-					//<td>       </td>
+					<td>${total_price}</td>
+					<td>       </td>
 					<td>{status}</td>
+					<td> <MoreInfo /> </td>
 				</tr>
 					)
 				}
@@ -150,36 +147,32 @@ class Reservations extends React.Component {
 				<br />
 				<br />
 				<br />
-				<div>
-					<Container>
-						<Row>
-							<Col>
-								<div className="reservations-card">
-									<div className="reservations-card-body reservations-inner-card">
-										<br />
-										<div className="reservations-center-title"> <h2> My Reservations </h2> </div>
-										<br />
-										<div className="reservations-table-wrapper-scroll-y reservations-scrollbar">
-											<Table hover>
-												<thead>
-													<tr>
-														<th className="reservations-table-header">Booking ID</th>
-														<th className="reservations-table-header">Date In</th>
-														<th className="reservations-table-header">Date Out</th>
-														<th className="reservations-table-header">Hotel</th>
-														<th className="reservations-table-header">Bed Type</th>
-														<th className="reservations-table-header">Room Price</th>
-														<th className="reservations-table-header">Quantity</th>
-														<th className="reservations-table-header">Total Price</th>
-														<th className="reservations-table-header">Modify/Cancel</th>
-														<th className="reservations-table-header">Status</th>
-													</tr>
-												</thead>
-												<tbody>
-													{this.renderReservationsTableData()}
-												</tbody>
-											</Table>
-										</div>
+				<Container>
+					<Row>
+						<Col>
+							<div className="reservations-card">
+								<div className="reservations-card-body reservations-inner-card">
+									<br />
+									<div className="reservations-center-title"> <h2> My Reservations </h2> </div>
+									<br />
+									<div className="reservations-table-wrapper-scroll-y reservations-scrollbar">
+										<Table hover>
+											<thead>
+												<tr>
+													<th>Booking ID</th>
+													<th>Check-in</th>
+													<th>Check-out</th>
+													<th>Hotel</th>
+													<th>Total Price</th>
+													<th>Modify/Cancel</th>
+													<th>Status</th>
+													<th>Details</th>
+												</tr>
+											</thead>
+											<tbody>
+												{this.renderReservationsTableData()}
+											</tbody>
+										</Table>
 									</div>
 								</div>
 							</div>
@@ -188,16 +181,8 @@ class Reservations extends React.Component {
 				</Container>
 			</div>
 		)
+
 		return (
-								    	</div>
-								    </div>
-								    	</div>
-								    </div>
-								</Col>
-							</Row>
-						</Container>
-					</div>
-				</div>
 			<div>
 				{localStorage.accesstoken ? reservationPage : this.redirectToHome()}
 			</div>
