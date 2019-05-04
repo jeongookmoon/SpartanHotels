@@ -286,8 +286,44 @@ class RoomPage extends React.Component {
 
 									*/}
 
-									<div className="room-page-checkout-description">
+									<div className="room-page-checkout-guest-information custom-row">
+									
+										<div className="col-lg-4"> 
+											<strong className="py-3"> Guest: </strong>
+											<p>{this.state.guest_number}</p>
+										</div>
+										<div className="col-lg-4"> 
+											<strong> Date In: </strong> 
+											<p>{this.state.date_in}</p>
+										</div>
+										<div className="col-lg-4"> 
+											<strong> Date Out: </strong> 
+											<p>{this.state.date_out}</p>
+										</div> 
+										{/*
+										<Table hover borderless>
+											<thead>
+												<tr>
+													<th>Guests</th>
+													<th>Date In</th>
+													<th>Date Out</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>{this.state.guest_number}</td>
+													<td>{this.state.date_in}</td>
+													<td>{this.state.date_out}</td>
+												</tr>
+											</tbody>
+										</Table>
+									*/}
+									</div>
 
+									
+
+
+									<div className="room-page-checkout-description">
 										<Table hover borderless>
 											<thead>
 												<tr>
