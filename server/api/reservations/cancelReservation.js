@@ -50,8 +50,14 @@ function cancelReservation(transaction_id, user_id, res) {
                             //console.log(query4)
                             Queries.run(query5).then(results5 => {
                                 //Will delete all the transaction_room_id rows that contain that transaction_id
+                                /*
                                 let query6 = mysql.format(Queries.booking.cancel_all, [transaction_id]);
                                 Queries.run(query6).then(results6 => {
+
+                                }, error6 => {
+                                    res.status(400).send(error6);
+                                });
+                                */
                                     console.log(results4[0]);
                                     //Refund is the amount paid - cancellation charge
                                     let refund = results[0].amount_paid - results[0].cancellation_charge;
@@ -119,9 +125,6 @@ function cancelReservation(transaction_id, user_id, res) {
                                     else {
                                         res.status(400).send("Cannot cancel transaction id: " + transaction_id + " because already cancelled");
                                     }
-                                }, error6 => {
-                                    res.status(400).send(error6);
-                                });
                             }, error5 => {
                                 res.status(400).send(error5);
                             });
