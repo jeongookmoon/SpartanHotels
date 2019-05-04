@@ -7,6 +7,7 @@ var Queries = require('../../queries')
 var mysql = require('mysql')
 var Email = require('../email.js')
 const pug = require('pug')
+const compiledPugMakeResEmail = pug.compileFile("./email_templates/makeReservation.pug");
 
 async function makeReservation(requestedBooking = {}, res) {
     console.log(requestedBooking)
@@ -27,6 +28,8 @@ async function makeReservation(requestedBooking = {}, res) {
     if( ! checkResult.pass){
         return 
     }
+    let totalRoomPricePerNight = checkResult.totalRoomPricePerNight
+    let nights_stayed = checkResult.nights_stayed
 
     let checkPassed = false
 
@@ -154,12 +157,18 @@ async function makeReservation(requestedBooking = {}, res) {
         //Send order confirmation email
         var emailParams = {};
         console.log(emailAddress)
+
+        let hotelInfo = await Queries.run( Queries.email.getHotelInfo(requestedBooking.hotel_id))
+        console.log(hotelInfo)
         
         emailParams.to = emailAddress
-        console.log('Email being set to: ' + emailAddress)
-        emailParams.subject = 'Your Spartan Hotels Order Confirmation!'
+        console.log('Email being sent to: ' + emailAddress)
+        emailParams.subject = 'Your Spartan Hotels Booking Confirmation!'
         // emailParams.text = 'Hello. Thank you for booking a reservation using Spartan Hotels. This is an email to confirm you order for: \n' + JSON.stringify(requestedBooking);
-        var emailContents = pug.renderFile("./email_templates/makeReservation.pug", { "transaction_number": transactionID, "date": new Date().toLocaleDateString() })
+        var emailContents = compiledPugMakeResEmail({ "transaction_number": transactionID, "date": new Date().toLocaleDateString(),
+        "availableRequestedRooms": availableRequestedRooms, "requestedBooking":requestedBooking, "hotelInfo":hotelInfo[0],
+        "totalRoomPricePerNight":totalRoomPricePerNight, "numberOfNightsStayed":nights_stayed
+    })
         emailParams.html = emailContents
         var email = Email.email(emailParams)
     })
