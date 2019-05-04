@@ -1151,6 +1151,7 @@ code {
   margin-left: 5vw;
   margin-right:5vw;
   margin-bottom:5vh;
+  margin-top:2vh;
   -webkit-box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2);
   box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2);
 }
@@ -1165,6 +1166,17 @@ code {
 .room-page-checkout-description tbody{
     padding-top:1.5rem;
     padding-bottom:1.5rem;
+
+}
+
+.room-page-checkout-guest-information{
+    padding-bottom:5vh;
+  padding-top:5vh;
+  margin-left: 5vw;
+  margin-right:5vw;
+  margin-top:5vh;
+  -webkit-box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 20px -5px rgba(0, 0, 0, 0.1);
 
 }
 
