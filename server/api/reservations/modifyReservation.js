@@ -7,6 +7,8 @@ var Queries = require('../../queries')
 var mysql = require('mysql')
 var Email = require('../email.js')
 const pug = require('pug')
+const { getUserEmail } = require("./getUserEmail");
+const compiledPugModifyResEmail = pug.compileFile("./email_templates/modifyReservation.pug");
 
 /**
  * 
@@ -41,6 +43,9 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
         return
     }
 
+    let totalRoomPricePerNight = checkResults.totalRoomPricePerNight
+    let nights_stayed = checkResults.nights_stayed
+
     let checkPassed = false
 
 
@@ -65,6 +70,14 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
 
     // issue refund or take payment? or check if stripe transaction valid ?
 
+
+    let emailAddress
+    if( ! requestedBooking.user){
+        emailAddress = requestedBooking.guest_email
+    }
+    else{
+        emailAddress = await getUserEmail(requestedBooking.user)
+    }
 
     // query to insert new transaction_room data
     let insertNewTRDataQuery;
@@ -181,7 +194,26 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
             res.status(400).send("update transaction failed")
         }
 
+        // send email
+        var emailParams = {};
+        console.log(emailAddress)
+
+        let hotelInfo = await Queries.run( Queries.email.getHotelInfo(requestedBooking.hotel_id))
+        console.log(hotelInfo)
+        
+        emailParams.to = emailAddress
+        console.log('Email being sent to: ' + emailAddress)
+        emailParams.subject = 'Your Spartan Hotels Booking Has Been Modified!'
+        // emailParams.text = 'Hello. Thank you for booking a reservation using Spartan Hotels. This is an email to confirm you order for: \n' + JSON.stringify(requestedBooking);
+        var emailContents = compiledPugModifyResEmail({ "transaction_number": transaction_id, "date": new Date().toLocaleDateString(),
+        "availableRequestedRooms": availableRequestedRooms, "requestedBooking":requestedBooking, "hotelInfo":hotelInfo[0],
+        "totalRoomPricePerNight":totalRoomPricePerNight, "numberOfNightsStayed":nights_stayed
     })
+        emailParams.html = emailContents
+        var email = Email.email(emailParams)
+
+    })
+    
 }
 
 exports.modifyReservation = modifyReservation
