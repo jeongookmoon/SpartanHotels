@@ -582,6 +582,7 @@ module.exports = {
     cancel_one_room: 'UPDATE spartanhotel.transaction SET total_price=?, cancellation_charge=?, amount_paid=? WHERE transaction_id=?',
     user_id: 'SELECT * FROM transaction WHERE transaction_id=?',
     room_price: 'SELECT * FROM transaction_room WHERE transaction_id=? AND room_id=?',
+    getHotel_Info: 'SELECT DISTINCT e.name, e.address, e.city, e.state, e.hotel_id FROM transaction b, transaction_room c, room d, hotel e WHERE b.transaction_id = ? and b.transaction_id = c.transaction_id and c.room_id = d.room_id and d.hotel_id = e.hotel_id',
 
     //When query is ran -> returns an array that cannot be cancelled, else returns an empty array which means can be cancelled
     isCancellable: function({transaction_id}) {
@@ -1019,7 +1020,7 @@ module.exports = {
       gainFromBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, transaction_id, date_active, `change`) values (null, ?, 2, ?, ?, ?)',
       getUserRecords: 'SELECT R.*,RR.reason FROM spartanhotel.reward R join spartanhotel.reward_reason RR on R.reward_reason_id = RR.reward_reason_id WHERE user_id=?',
       cancelBooking: 'DELETE from spartanhotel.reward where transaction_id=?',
-      getOldBookingAppliedRewards: 'SELECT R.change FROM spartanhotel.reward R WHERE transaction_id = ? AND SIGN(change) = -1'
+      getOldBookingAppliedRewards: 'SELECT R.change FROM spartanhotel.reward R WHERE transaction_id = ? AND SIGN(R.change) = -1'
     },
 
     guest: {
