@@ -9,7 +9,7 @@ import './CSS/react_dates_overrides.css'; //NEEDED in order to OVERRIDE css styl
 import { HotelSearchFunction, extractFromAddress } from '../Utility/HotelSearchFunction'
 import Autocomplete from "../Utility/Autocomplete";
 
-import homeImage from './Images/homeImage7.jpg';
+import homeImage from './Images/homeImage14.jpeg';
 import {
 	Form, CustomInput, FormGroup
 } from 'reactstrap'

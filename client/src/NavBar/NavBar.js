@@ -136,7 +136,9 @@ class NavBar extends React.Component {
           <div className="col-auto pl-0">
             <div className="input-group">
               {/*Error message for invalid login credentials (email or pw)*/}
-              <div className="form-inline my-2 my-lg-0"><div className="text-warning">{this.state.loginerror}</div></div>
+              <div className="form-inline my-2 my-lg-0">
+                <div className="text-warning">{this.state.loginerror}</div>
+              </div>
               <div className="input-group-prepend">
                 <div className="email-icon input-group-text"><i className="far fa-user"></i></div>
               </div>
@@ -181,7 +183,7 @@ class NavBar extends React.Component {
 
     function navbarChange(temp) {
 
-      if (temp === "/") {
+      if (temp === "/" || temp ==="/Confirmation") {
         return "sticky-top navbar navbar-home fixed-top"
       }
 
