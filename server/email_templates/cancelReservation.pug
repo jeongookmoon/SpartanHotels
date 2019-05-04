@@ -7,15 +7,31 @@ html(lang="en")
         meta(http-equiv="X-UA-Compatible", content="ie=edge")
         title Document
     body
-        p Here is your cancellation receipt for booking #{transaction_number}!
+        p Here is your cancellation receipt!
 
         h2 Booking # #{transaction_number}
-        h6 #{date}
-        h2 #{total_price}
-        h2 #{amount_refunded}
-        h2 #{cancel_charge}
-        h2 #{reward_refunded}
+        h4 #{date}
 
-        p Cancel Confirmation
+            tbody(style={"background-color": "#3f87a6", "color":"#fff"})  
 
-        
+
+
+                tr
+                    td(colspan="4" style={"text-align":"right"}) Total Price
+                    td(style={"text-align":"right"})  $#{total_price}
+                tr
+                    td(colspan="4" style={"text-align":"right"}) Cancellation charge
+                    td(style={"text-align":"right"})  $#{cancel_charge}
+                tr
+                    td(colspan="4" style={"text-align":"right"}) Rewards Applied
+                    td(style={"text-align":"right"})  -$#{rewards_applied}
+                tr
+                    td(colspan="4" style={"text-align":"right"})
+                    td
+                        hr(style={"background-color":"white", "color":"white"})
+                tr
+                    td(colspan="4" style={"text-align":"right"}) Total Amount Refund
+                    td(style={"text-align":"right"})  $#{amount_refunded}
+                tr
+                    td(colspan="4" style={"text-align":"right"}) Total Rewards Refund
+                    td(style={"text-align":"right"})  #{reward_refunded}

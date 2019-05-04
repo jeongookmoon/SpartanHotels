@@ -51,14 +51,17 @@ function cancelReservation(transaction_id, user_id, res) {
                                 //Will delete all the transaction_room_id rows that contain that transaction_id
                                 let query6 = mysql.format(Queries.booking.cancel_all, [transaction_id]);
                                 Queries.run(query6).then(results6 => {
-                                    console.log(query6);
+                                    console.log(results4[0]);
                                     //Refund is the amount paid - cancellation charge
                                     let refund = results[0].amount_paid - results[0].cancellation_charge;
                                     let rewards_applied;
-                                    if(results4[0].change == null || results4[0].change == undefined) {
+                                    if(results4[0] === null || results4[0]=== undefined) {
                                        rewards_applied = 0;
                                     }
+                                    else{ 
                                        rewards_applied = Math.abs(results4[0].change)
+                                    }
+                                    let rewards_applied_scaled = (rewards_applied/100).toFixed(2)
                                     if (results[0].status == 'booked') {
                                         res.status(200).send({
                                             message: "Booking cancelled & Rewards were refunded",
@@ -82,8 +85,9 @@ function cancelReservation(transaction_id, user_id, res) {
                                             var emailContents = pug.renderFile("./email_templates/cancelReservation.pug", 
                                                                                 { "transaction_number": transaction_id, 
                                                                                   "date": new Date().toLocaleDateString(),
-                                                                                  "total_price": results[0].total_price,
+                                                                                  "total_price": results[0].total_price.toFixed(2),
                                                                                   "amount_refunded": refund.toFixed(2),
+                                                                                  "rewards_applied": rewards_applied_scaled,
                                                                                   "cancel_charge": results[0].cancellation_charge.toFixed(2),
                                                                                   "reward_refunded": rewards_applied})
                                             emailParams.html = emailContents
