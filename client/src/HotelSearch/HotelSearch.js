@@ -181,12 +181,13 @@ class HotelSearch extends React.Component {
 			//^^ FOR DAVID
 			const hotelInfo = `
 
-											<a href="" style="padding-top:1vh; text-align:center;"><h5>${eachHotel.name}</h5></a>
-											<div style="font-size: 1em; font-weight:600">${eachHotel.address}</div>
-											<div style="font-size: 1em; font-weight:600">${eachHotel.city}</div>
-											<p style="font-size: 1em; font-weight:600">${eachHotel.phone_number}</p>
-											<p style="font-size: 1em; font-weight:600">$${eachHotel.min_price.toFixed(2)} ~ ${eachHotel.max_price.toFixed(2)}/per night</p>
-											<img src=${imageURL} style="max-width: 100%; max-height: 100%; "/>
+									<img src=${imageURL} style="max-width: 100%; max-height: 100%; padding-bottom: 10px"/>
+									<a href="" style="padding-top:1vh; text-align:center;"><h5>${eachHotel.name}</h5></a>
+									<div style="font-weight: 425;"> ${eachHotel.address}</div>
+									<div style="font-weight: 425; padding-bottom: 8px;">${eachHotel.city}, ${eachHotel.state}</div>
+									<p style="text-align: center"> <img src="http://www.stickpng.com/assets/images/5a4525cd546ddca7e1fcbc84.png" alt="phone"style="width: 12px; height: 12px" /> &nbsp;${eachHotel.phone_number}</p>
+									<p style="font-size: 1.2em; font-weight:500"> <img src="https://static.thenounproject.com/png/18095-200.png" alt="price" style="width: 25px; height: 25px" /> ${eachHotel.min_price.toFixed(2)} ~ ${eachHotel.max_price.toFixed(2)}</p>
+
 
 
 								`
