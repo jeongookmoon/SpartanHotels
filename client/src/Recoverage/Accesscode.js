@@ -108,7 +108,7 @@ class Accesscode extends Component {
         if (response === "S") {
             // const whatever = { ... this.state}
             // console.log('whatever1', whatever)
-            alert("Code is valid, please set your new password!");
+            // alert("Code is valid, please set your new password!");
             localStorage.removeItem('checkToken')
             window.location.reload();
         }
