@@ -146,17 +146,17 @@ async function availabilityCheck(requestedBooking, res) {
     console.log(placeholders)
     let fullQuery = mysql.format(query,placeholders)
     let availableRooms = await Queries.run(fullQuery)
-    console.log(availableRooms)
+    console.log(`\navailableRooms is ${JSON.stringify(availableRooms)}\n`)
     console.log(requestedBooking.rooms)
 
     let availableRequestedRooms = []
     for(var i=0;i<requestedBooking.rooms.length; i++){
         let reqRoom = requestedBooking.rooms[i]
-        let match = availableRooms.find( x => { return x.bed_type === reqRoom.room_type && x.price === reqRoom.price})
+        let match = availableRooms.find( x => { return x.bed_type === reqRoom.bed_type && x.price === reqRoom.price})
         console.log(match)
         if (match == undefined){
             // requested room_type & price either not available or not exists
-            res.status(400).send("Requested room_type & price either not available or does not exist")
+            res.status(400).send(`Requested room_type & price either not available or does not exist for ${JSON.stringify(reqRoom)}`)
             result.pass = false
             return result
         }

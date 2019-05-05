@@ -13,7 +13,7 @@ const pug = require('pug')
 
 var validator = require('validator');
 
-
+// REPLACED WITH /api/checkout/charge
 //Make a reservation 
 router.post('/', (req, res)=>{
 

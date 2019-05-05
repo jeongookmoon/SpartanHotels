@@ -14,6 +14,8 @@ import Recoverage from './Recoverage/Recoverage';
 import Accesscode from './Recoverage/Accesscode';
 import Confirmation from './Confirmation/Confirmation';
 import ModifyRoomPage from './ModifyRoomPage/ModifyRoomPage';
+//remove CheckoutConfirm Later
+import CheckoutConfirm from './Checkout/Checkout - Confirmation'
 import './App.css';
 
 class App extends Component {
@@ -34,6 +36,11 @@ class App extends Component {
           <Route exact path="/RewardHistory" component={RewardHistory}/>
           <Route exact path="/Confirmation" component={Confirmation} />
           <Route path="/ModifyRoomPage" component={ModifyRoomPage} />
+          
+          <Route exact path="/CheckoutConfirm" component={CheckoutConfirm} />
+
+
+
         </div>
       </Router>
 
