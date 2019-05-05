@@ -48,18 +48,12 @@ class Accesscode extends Component {
         this.handleChange = this.handleChange.bind(this);
     }
 
-    handleChange = name => (event) => {
-      // console.log("before update", this.state.fields.password)
-      const name= event.target.name
-      const value = event.target.value
-      this.setState(prevState => ({
-          fields: {
-            ...prevState.fields,
-            [name]: value
-          }}),
-          // () => console.log("after  update", this.state.fields.password)
-          )
-      this.passwordChecker()
+    handleChange(event) {
+    let temp_fields = this.state.fields;
+    temp_fields[event.target.name] = event.target.value;
+    this.setState({ fields: temp_fields });
+
+    this.passwordChecker()
      }
 
     passwordChecker(){
@@ -235,7 +229,7 @@ class Accesscode extends Component {
                           name="code"
                           variant="outlined"
                           value={this.state.fields.code}
-                          onChange={this.handleChange()}
+                          onChange={this.handleChange}
                           placeholder="1234567"     
                         /> 
                         <button type="submit" className="recoverage-button" onClick={this.checkCode}>SUBMIT</button>
@@ -250,7 +244,7 @@ class Accesscode extends Component {
                             label="Password"
                             name="password"
                             value={this.state.fields.password}
-                            onChange={this.handleChange()}
+                            onChange={this.handleChange}
                             placeholder="**********"
                             pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$"      
                           />
@@ -269,7 +263,7 @@ class Accesscode extends Component {
                             name="repassword"
                             type="password"
                             value={this.state.fields.repassword}
-                            onChange={this.handleChange()}
+                            onChange={this.handleChange}
                             placeholder="**********"     
                           />
                           <div className="text-warning"> {this.state.error.repassword} </div>
