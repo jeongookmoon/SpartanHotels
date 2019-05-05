@@ -28,51 +28,16 @@ app.post("/charge", async (req, res) => {
       currency: "usd",
       description: "Charge",
       source: data.id,
-      metadata: {
-
-        'user_id': data.user_id, 
-        'date_in': data.date_in,
-        'date_out': data.date_out,
-        'status': data.status, // MODIFIED status
-        'total_price': data.total_price/100,
-        'guest_id':data.guest_id,
-        'cancellation_charge': data.cancellation_charge,
-        'type':data.type, // used for checking if transaction is 'charge' or 'modify'
-        'hotel_id': data.hotel_id, // used for checking for backend, I'm not using this
-
-        // Objects couldn't fit in the metadata, but I split the rooms apart into King and Queen
-        
-        'room1_room_ids': data.room.results[0].room_ids,
-        'room1_price': data.room.results[0].price,
-        'room1_quantity': data.room.results[0].quantity,
-        'room1_bed_type': data.room.results[0].bed_type,
-        
-        'room2_room_ids': data.room.results[0].room_ids,
-        'room2_price': data.room.results[0].price,
-        'room2_quantity': data.room.results[0].quantity,
-        'room2_bed_type': data.room.results[0].bed_type,
-        
-        'room3_room_ids': data.room.results[0].room_ids,
-        'room3_price': data.room.results[0].price,
-        'room3_quantity': data.room.results[0].quantity,
-        'room3_bed_type': data.room.results[0].bed_type,
-
-
-        'rewards_applied': data.rewards_applied,
-
-        'amount_due_from_user': data.amount_due_from_user/100,
-      
-     }
     });
 
+   console.log(status.id); // retrieves the charge id.
 
 
    
     console.log(status);
     //console.log("amount: "+data.amount);
     console.log(data);
-    //console.log("rooms: "+data.rooms);
-    //console.log("room1: "+data.rooms[0].price);
+
     res.json({status});
 
   } catch (err) {

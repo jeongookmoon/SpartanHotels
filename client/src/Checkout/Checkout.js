@@ -14,9 +14,6 @@ import {Elements, StripeProvider} from 'react-stripe-elements';
 import NumberFormat from 'react-number-format';
 import { injectStripe, CardCVCElement,CardNumberElement, CardExpiryElement, PostalCodeElement} from 'react-stripe-elements';
 
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
-
 // URL EXAMPLE
 //?date_in=2019-05-15&date_out=2019-05-17&guest_number=2&hotel_id=41&city=Las%2520Vegas&country=United%20States%20of%20America&state=Nevada&address=600%20E%20Fremont%20St&hotelname=El%20Cortez%20Hotel%20and%20Casino&rooms=%7B%22results%22:%5B%7B%22hotel_id%22:41,%22bed_type%22:%22King%22,%22price%22:40,%22capacity%22:2,%22images%22:%22https://www.plazahotelcasino.com/wp-content/uploads/2014/11/DeluxeKing-GalleryPhotos-1-1024x512.jpg%22,%22quantity%22:1,%22room_ids%22:%2291%22,%22desired_quantity%22:%221%22%7D,%7B%22hotel_id%22:41,%22bed_type%22:%22Queen%22,%22price%22:40,%22capacity%22:2,%22images%22:%22https://www.plazahotelcasino.com/wp-content/uploads/2019/02/DeluxeQueen-GalleryPhotos-2-1024x512.jpg%22,%22quantity%22:1,%22room_ids%22:%2292%22,%22desired_quantity%22:0%7D%5D,%22totalResultCount%22:2%7D
 
@@ -111,8 +108,8 @@ class Checkout extends Component {
                 date_in={this.state.date_in}
                 date_out={this.state.date_out}
                 hotel_id = {this.state.hotel_id}
+                rooms={this.state.rooms}
                 />
-               
             </div>
           </Elements> 
           </div>
@@ -206,7 +203,12 @@ class _CheckoutPaymentCheck extends React.Component
 
      this.setState({ discount: event.target.value/100}, function() {
       
-     if(this.state.discount*100 > this.state.rewardPoint)
+      if(this.state.discount < 0)
+     {
+        this.setState({discount: 0})
+      }
+
+     else if(this.state.discount*100 > this.state.rewardPoint)
      {
 
       this.setState({discount: this.state.rewardPoint/100})
@@ -261,18 +263,19 @@ let data={
   // amount cannot have any decimals. Stripe reads 1000 as 10.00
   //parseFloat reduces the decimals to 2, then we multiple 100 to get rid of decimals 
   
-  user_id: this.state.user_id,
+  total_price: this.state.dataTotal,
+  cancellation_charge: this.state.total * 0.20, // TODO: Change this later
   date_in: this.state.date_in,
   date_out: this.state.date_out,
-  status: "Complete",
-  total_price: this.state.dataTotal,
-  guest_id:"0",
-  cancellation_charge: this.state.total * 0.20, // TODO: Change this later
-  type:"charge",
-  hotel_id: this.state.hotel_id,
   rewards_applied: this.state.discount*100,
   rooms: this.state.rooms,
-  amount_due_from_user: parseFloat(this.state.total).toFixed(2)*100
+  hotel_id: this.state.hotel_id,
+  amount_due_from_user: parseFloat(this.state.total).toFixed(2),
+
+  user_id: this.state.user_id,
+  status: "Complete",
+  guest_id:"0",
+  
 }
 
   let response = await fetch("/charge", {
@@ -303,12 +306,12 @@ let data={
     
      
  
- 
    return (
     
  <div class="row" style={{marginRight:"0px", marginLeft:"0px"}}>
      
  
+       {/*   //////////////Payments///////////////////////                          */}
  
      <div class="card text-left w-50">
        <h5 class="card-header">Payment Method</h5>
@@ -344,7 +347,7 @@ let data={
                >
                  <span style={{ fontSize: 12, marginLeft: 13 }}>Postal Code</span>
                  <div>
-                    <PostalCodeElement/>
+                    <PostalCodeElement />
                  </div>
                </div>
  
@@ -432,8 +435,6 @@ let data={
                color="warning"
                onClick={this.toggle}
                style={{ marginBottom: "1rem",  width: '90%'}}
-               
-               
              >
                Pay with Reward Points
              </Button>
