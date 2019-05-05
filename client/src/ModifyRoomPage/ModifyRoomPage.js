@@ -16,17 +16,20 @@ class ModifyRoomPage extends React.Component {
 
 		const params = new URLSearchParams(this.props.location.search);
 		const hotel_id = params.get('hotel_id')
-		const dateIn = params.get('date_in')
-		const dateOut = params.get('date_out')
-		const transactionID = params.get('transactionID')
+		const date_in = moment(params.get('date_in'), ('YYYY-MM-DD'))
+		const date_out = moment(params.get('date_out'), ('YYYY-MM-DD'))
+		const reservation_days = date_out.diff(date_in, 'days')
+
+		const transaction_id = params.get('transaction_id')
 
 		this.state = {
 			hotel: {},
 			rooms: {},
 			hotel_id,
-			date_in: moment(dateIn, ('YYYY-MM-DD')),
-			date_out: moment(dateOut, ('YYYY-MM-DD')),
-			transactionID,
+			date_in,
+			date_out,
+			transaction_id,
+			reservation_days,
 			collapse: false,
 			availableRooms: [],
 			totalPriceWithoutTax: 0.00,
@@ -41,7 +44,7 @@ class ModifyRoomPage extends React.Component {
 
 	async fetchSearchResult() {
 		const params = new URLSearchParams(this.props.location.search);
-		const transaction_id = parseInt(params.get('transactionID'))
+		const transaction_id = parseInt(params.get('transaction_id'))
 
 		const roomSearchQuery = `/api/search/hotels/${this.state.hotel_id}/?date_in=1111-01-01&date_out=1111-01-02`
 		const realroomSearchQuery = `/api/search/hotels/${this.state.hotel_id}/?date_in=${this.state.date_in.format('YYYY-MM-DD')}&date_out=${this.state.date_out.format('YYYY-MM-DD')}`
@@ -74,6 +77,7 @@ class ModifyRoomPage extends React.Component {
 			}
 		})
 
+		totalPriceWithoutTax = totalPriceWithoutTax * 1.0 * this.state.reservation_days
 		const totalPriceWithTax = (totalPriceWithoutTax * 1.1).toFixed(2)
 		const cancellationFee = (totalPriceWithoutTax * .2).toFixed(2)
 
@@ -94,7 +98,7 @@ class ModifyRoomPage extends React.Component {
 		console.log("this.state.transaction_dateOut", this.state.transaction_dateOut.format('YYYY-MM-DD'))
 		const queryString = `?date_in=${this.state.date_in.format('YYYY-MM-DD')}&date_out=${this.state.date_out.format('YYYY-MM-DD')}
 			&hotel_id=${this.state.hotel_id}
-			&transactionID=${this.state.transactionID}`
+			&transaction_id=${this.state.transaction_id}`
 
 		this.props.history.push({
 			pathname: `/ModifyRoomPage`,
