@@ -29,7 +29,6 @@ class ProfileEditName extends React.Component {
 	}
 
 	handleUpdate(event) {
-
 		let temp_fields = this.state.fields;
 		temp_fields[event.target.name] = event.target.value;
 		this.setState({ fields : temp_fields });

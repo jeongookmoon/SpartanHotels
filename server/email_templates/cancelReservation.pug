@@ -1,0 +1,68 @@
+//- https://stackoverflow.com/questions/39489229/pass-variable-to-html-template-in-nodemailer
+
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        title Document
+    body
+        p Sorry to see you go! The following below was cancelled and refunded:
+
+        h2 Booking # #{transaction_number}
+        h4 #{date}
+
+        
+        table(style={"border-collapse": "collapse"})
+            thead(style={"background-color": "#addff4"})
+                tr(colspan="5")
+                    td(colspan="5" style={"font-size": "2em", "font-weight":"bold"}) #{hotel_info.name}
+                tr(colspan="5")
+                    td(colspan="3" style={"font-size": "1em"}) #{hotel_info.address}
+                    td(style={"text-align":"left", "padding-right":"5px"}) Check-in:
+                    td #{date_in}
+                tr(colspan="5")  
+                    td(colspan="3" style={"font-size": "1em"}) #{hotel_info.city}, #{hotel_info.state}
+                    td(style={"text-align":"left", "padding-right":"5px"}) Check-out:
+                    td #{date_out}
+            tbody(colspan="5" style={"background-color": "#e4f0f5"})
+                th(colspan="2") Rooms
+                th(style={"text-align":"right", "padding":"5px"}) Qty.
+                th(style={"text-align":"right", "padding":"5px"}) Price
+                th(style={"text-align":"right"}) Total
+
+                each room in transaction_info
+                    tr(style={"padding":"5px"})
+                        td(style={width: "100px", height:"100px"})
+                            img(src=room.images, alt="", style={width: '100%', height:"auto", display:"block"})
+                
+                        td #{room.bed_type}
+            
+                        td(style={"text-align":"right", "padding":"5px"}) #{room.quantity}
+                
+                        td(style={"text-align":"right", "padding":"5px"}) $#{room.room_price.toFixed(2)}
+                
+                        td(style={"text-align":"right"}) $#{(room.room_price * room.quantity).toFixed(2)}
+
+            tfoot(style={"background-color": "#3f87a6", "color":"#fff"})  
+
+
+                tr
+                    td(colspan="4" style={"text-align":"right"}) Total Price
+                    td(style={"text-align":"right"})  $#{total_price}
+                tr
+                    td(colspan="4" style={"text-align":"right"}) Cancellation charge
+                    td(style={"text-align":"right"}) - $#{cancel_charge}
+                tr
+                    td(colspan="4" style={"text-align":"right"}) Rewards Applied
+                    td(style={"text-align":"right"})  - $#{rewards_applied}
+                tr
+                    td(colspan="4" style={"text-align":"right"})
+                    td
+                        hr(style={"background-color":"white", "color":"white"})
+                tr
+                    td(colspan="4" style={"text-align":"right"}) Total Amount Refunded
+                    td(style={"text-align":"right"})  $#{amount_refunded}
+                tr
+                    td(colspan="4" style={"text-align":"right"}) Total Rewards Refunded
+                    td(style={"text-align":"right"})  #{reward_refunded}
