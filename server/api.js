@@ -409,6 +409,36 @@ router.get('/rewards', authenticationMiddleware(), (req, res) => {
         })
 })
 
+router.get('/applied_rewards', authenticationMiddleware(), (req, res) => {
+    console.log(req.session.passport.user.user_id)
+    const profile = req.session.passport.user.user_id
+    let q1 = mysql.format(Queries.rewards.getAppliedRewards, [req.body.transaction_id, profile])
+       if(req.body.transaction_id != null || req.body.transaction_id != undefined) {
+            Queries.run(q1).then((results) => {
+                if(results[0] != null || results[0] != undefined) {
+                    console.log(results[0].change)
+                    var appliedRewards = Math.abs(results[0].change)
+                    console.log(appliedRewards)
+                    var obj = {
+                        applied_rewards: appliedRewards
+                    }
+                    res.status(200).send(obj)
+                    console.log("Here are the user's applied rewards")                    
+                }
+                else {
+                    res.status(400).send("No rewards applied or transaction doesn't exist for user")
+                }
+            },
+                (error) => {
+                    res.status(400).send(error)
+                    console.log("Cannot get user's rewards")
+                })
+        }
+        else {
+            res.status(400).send("Transaction id does not exist.")
+        }
+})
+
 //Function is used to allow certain users to access features
 //Example. If not logged in, user cannot access his account page or logout.
 function authenticationMiddleware() {
