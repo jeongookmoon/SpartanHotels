@@ -81,7 +81,7 @@ class UserProfile extends React.Component {
 						<Row>
 							<Col sm="12" md={{ size: 6, offset: 3 }}>
 								<div className="profile-card">
-									<div className="profile-center-title"> <h1> Hello {this.state.name}! </h1></div>
+									<div className="profile-center-title"> Hello {this.state.name}! </div>
 									<br />
 									<div className="profile-card-body profile-inner-card">
 										<Col>
