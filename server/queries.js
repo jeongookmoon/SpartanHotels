@@ -538,7 +538,8 @@ module.exports = {
     LEFT JOIN transaction_room ON transaction.transaction_id = transaction_room.transaction_id 
     LEFT JOIN room ON transaction_room.room_id = room.room_id
     LEFT JOIN hotel ON room.hotel_id = hotel.hotel_id 
-    WHERE transaction.user_id = ?`,
+    WHERE transaction.user_id = ?
+    ORDER BY status ASC`,
 
       /**
        * 
