@@ -26,6 +26,7 @@
     "pug": "^2.0.3",
     "randomstring": "^1.1.5",
     "shelljs": "^0.8.3",
+    "stripe": "^6.31.2",
     "validator": "^10.11.0"
   }
 }

@@ -1056,6 +1056,13 @@ module.exports = {
               R.bed_type, B.room_price
       `,
   },
+  email:{
+      getHotelInfo: (hotelID)=>{
+        let q1 = 'select * from spartanhotel.hotel where hotel_id = ?'
+        let query = mysql.format(q1, hotelID)
+        return query
+      }
+    },
 
   /**
   * 
