@@ -1025,6 +1025,7 @@ module.exports = {
       getUserRecords: 'SELECT R.*,RR.reason FROM spartanhotel.reward R join spartanhotel.reward_reason RR on R.reward_reason_id = RR.reward_reason_id WHERE user_id=?',
       cancelBooking: 'DELETE from spartanhotel.reward where transaction_id=?',
       getOldBookingAppliedRewards: 'SELECT R.change FROM spartanhotel.reward R WHERE transaction_id = ? AND SIGN(R.change) = -1',
+      getAppliedRewards: 'SELECT R.change FROM spartanhotel.reward R WHERE transaction_id = ? AND user_id = ? AND SIGN(R.change) = -1',
       getCurrentRewardsHistory: 'SELECT a.reward_id, a.transaction_id, a.date_active, a.change, b.reason FROM reward a, reward_reason b where a.reward_reason_id = b.reward_reason_id and user_id = ? and date_active <= curdate()',
       getFutureRewardsHistory: 'SELECT a.reward_id, a.transaction_id, a.date_active, a.change, b.reason FROM reward a, reward_reason b where a.reward_reason_id = b.reward_reason_id and user_id = ? and date_active >= curdate()',    
       getRewardsHistory: 'SELECT DISTINCT a.transaction_id, a.date_active, a.change, b.date_in, b.date_out, e.name FROM reward a, transaction b, transaction_room c, room d, hotel e WHERE a.transaction_id = b.transaction_id and a.user_id = ? and a.transaction_id = c.transaction_id and c.room_id = d.room_id and d.hotel_id = e.hotel_id'
