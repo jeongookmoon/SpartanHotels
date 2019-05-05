@@ -11,10 +11,10 @@ import Autocomplete from "../Utility/Autocomplete";
 
 import homeImage from './Images/homeImage7.jpg';
 import {
-	Form, FormGroup, CustomInput
+	Form, CustomInput, FormGroup
 } from 'reactstrap'
-
 import { homeFilterData } from '../Utility/DataForMenu'
+
 
 var topSectionStyle = {
 	width: "100%",
@@ -151,6 +151,7 @@ class Home extends React.Component {
 			children: value,
 			guest_number: guest_number
 		})
+
 	}
 
 	putGoogleMapMarker = (latitude, longitude) => {
@@ -184,6 +185,7 @@ class Home extends React.Component {
 				new window.google.maps.LatLng(latitude, longitude)
 			)
 		)
+		this.putGoogleMapMarker(latitude, longitude)
 	}
 
 	search = (event) => {
@@ -224,113 +226,134 @@ class Home extends React.Component {
 		})
 	}
 
+
 	render() {
-		return (
-			<div className="col-lg-12 home-container col-auto" style={topSectionStyle}>
-				<div className="home-form-container col-lg-12">
 
+		const homeHeader = (
 
+				<div className="col-lg-12 home-container col-auto" style={topSectionStyle}>
+					<div className="home-form-container col-lg-12">
+						<Form className="home-form col-lg-12" onSubmit={this.search}>
+							<FormGroup>
+								<div className="col-lg-12 custom-row">
+									<div className="col-lg-6 top-header ml-lg-5 ">
+										<div className="subheading-sm">Welcome</div>
+										<div>Spartan Hotels</div>
+					  				</div>
+					  				<div className="" style={{ width: 0, height: 0 }} id="map"></div>
+				  				</div>
 
-					<Form className="home-form col-lg-12" onSubmit={this.search}>
+				  				<div className="row mb-5 mr-lg-5 ml-lg-5">
+				  				  	<div className="col-md-12 home-inputs-container">
 
-						<div className="top-header ">
-							Plan your next trip
-		  				</div>
+				  				    <div className="block-32">
+				  				        <div className="row">
+				  				          <div className="col-md-6 mb-3 mb-lg-0 col-lg-4" >
+				  				            <label className="input-labels">Location</label>
+				  				            <div className="field-icon-wrap">
+				  				              <div className="icon"><i className="fa fa-search"></i></div>
+				  				            		<Autocomplete onPlaceChanged={this.showPlaceDetails.bind(this)}/>
+				  				            </div>
+				  				          </div>
+				  				          <div className="col-md-6 mb-3 mb-lg-0 col-lg-4">
+				  				            <label className="input-labels">Check In &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;      Check Out</label>
+				  				            <div className="field-icon-wrap check-wrap">
+				  				              <div className="icon"><i className="fa fa-calendar"></i></div>
+				  				              <DateRangePicker
+				  				              	startDatePlaceholderText="mm/dd/yyyy"
+				  				              	startDate={this.state.date_in} // momentPropTypes.momentObj or null,
+				  				              	startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
+				  				              	endDatePlaceholderText="mm/dd/yyyy"
+				  				              	endDate={this.state.date_out} // momentPropTypes.momentObj or null,
+				  				              	endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
+				  				              	onDatesChange={({ startDate, endDate }) => this.setState({ date_in: startDate, date_out: endDate })} // PropTypes.func.isRequired,
+				  				              	focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+				  				              	onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
+				  				              />
+				  				            </div>
+				  				          </div>
+				  				          <div className="col-md-6 mb-3 mb-md-0 col-lg-2">
+				  				            <div className="row">
+				  				                <label className="input-labels">Guests</label>
+				  				                  	<div className="icon"><span className="ion-ios-arrow-down"></span></div>
+				  				                  	<div className={this.state.guest_number === 0 ? "home-guest-dropdown col-lg-12 menu-box menu-item" : "home-guest-dropdown-filled col-lg-12 menu-box menu-item" }> {this.state.guest_number === 0 ? null : this.state.guest_number}&nbsp;guests
+															<ul className="home-guest-dropdown-list-style">
+																<li>
+																	<div className="form-inline home-adults-container">
+																		<div className="home-adults">
+																			Adults
+												                		</div>
 
+																		<div className="home-increments">
+																			<i className="fa fa-minus home-guest-icon-increment" type="button" value="Decrement Value" onClick={this.adultDecrement}></i>
+																			<input readOnly className="home-guest-input" name="adult" type="text" id="adult" value={this.state.adult} onChange={this.handleChange} />
+																			<i className="fa fa-plus home-guest-icon-decrement" type="button" value="Increment Value" onClick={this.adultIncrement} />
+																		</div>
+																	</div>
 
+																	<div className="form-inline home-children-container">
+																		<div className="home-children">
+																			Children
+												                		</div>
 
-						<FormGroup className="form-inline home-form-inputs">
-							<div className="col-lg-1"></div>
-							<div className="col-lg-3 input-group home-location">
-								<div className="input-group-append">
-									<div className="location-input-icon input-group-text"><i className="fa fa-search"></i></div>
-								</div>
-								<Autocomplete onPlaceChanged={this.showPlaceDetails.bind(this)} />
-							</div>
+																		<div className="home-increments">
+																			<i className="fa fa-minus home-guest-icon-increment" type="button" value="Decrement Value" onClick={this.childrenDecrement}></i>
+																			<input readOnly className="home-guest-input" name="children" type="text" id="children" value={this.state.children} onChange={this.handleChange} />
+																			<i className="fa fa-plus home-guest-icon-decrement" type="button" value="Increment Value" onClick={this.childrenIncrement} />
+																		</div>
+																	</div>
+																</li>
+															</ul>
+														</div>
+				  				            </div>
+				  				          </div>
+				  				          <div className="col-md-6 mb-3 mb-md-0 col-lg-2 ">
+				  				          		  				                <label htmlFor="checkin">&nbsp;</label>
 
-							<div className="col-lg-4 input-group home-date">
-								<div className="input-group-append">
-									<div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
-								</div>
-								<DateRangePicker
-									startDatePlaceholderText="Check-In"
-									startDate={this.state.date_in} // momentPropTypes.momentObj or null,
-									startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
-									endDatePlaceholderText="Check-Out"
-									endDate={this.state.date_out} // momentPropTypes.momentObj or null,
-									endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
-									onDatesChange={({ startDate, endDate }) => this.setState({ date_in: startDate, date_out: endDate })} // PropTypes.func.isRequired,
-									focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
-									onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
-								/>
-							</div>
+				  				          	<div className="">
+				  				            <button disabled={!this.state.city || !this.state.date_in || !this.state.date_out || this.state.guest_number === 0} className="home-submit-button btn btn-primary py-3 px-4" type="submit">Search</button>
+				  				            </div>
 
-
-							<div className=" col-lg-1 input-group menu-container">
-
-								<div className="col-lg-12 menu-item">
-									<div className={this.state.guest_number === 0 ? "home-guest-dropdown" : "home-guest-dropdown-filled"}>{this.state.guest_number === 0 ? null : this.state.guest_number}&nbsp;Guests</div>
-									<ul>
-										<li>
-											<div className="form-inline home-adults-container">
-												<div className="col-lg-3 home-adults">
-													Adults
-						                	</div>
-
-												<div className="col-lg-9 home-increments">
-													<i className="fa fa-minus home-guest-icon-increment" type="button" value="Decrement Value" onClick={this.adultDecrement}></i>
-													<input readOnly className="home-guest-input" name="adult" type="text" id="adult" value={this.state.adult} onChange={this.handleChange} />
-													<i className="fa fa-plus home-guest-icon-decrement" type="button" value="Increment Value" onClick={this.adultIncrement} />
-												</div>
-											</div>
-
-											<div className="form-inline home-children-container">
-												<div className="col-lg-3 home-children">
-													Children
-						                	</div>
-
-												<div className="col-lg-9 home-increments">
-													<i className="fa fa-minus home-guest-icon-increment" type="button" value="Decrement Value" onClick={this.childrenDecrement}></i>
-													<input readOnly className="home-guest-input" name="children" type="text" id="children" value={this.state.children} onChange={this.handleChange} />
-													<i className="fa fa-plus home-guest-icon-decrement" type="button" value="Increment Value" onClick={this.childrenIncrement} />
-												</div>
-											</div>
-
-										</li>
-									</ul>
-								</div>
-
-							</div>
-
-							<div className="col-lg-1 home-submit-button-container">
-								<button disabled={!this.state.city || !this.state.date_in || !this.state.date_out || this.state.guest_number === 0} className="p-2 submit-button btn btn-danger my-2 my-sm-0" type="submit">Search</button>
-							</div>
-							<div className="col-lg-1">
-								<div className="form-checkboxes">
-									{homeFilterData.map((each, key) => {
-										return <CustomInput type="checkbox" key={key} id={key + 123} name={each.name} label={each.label} value={each.value} onChange={this.handleCheckBox} />
-									})}
-								</div>
-							</div>
-
-						</FormGroup>
-					</Form>
-
-					<div className="col-lg-12 home-map-container row">
-
-						<div className="col-lg-3">
-						</div>
-						<div className="col-lg-6 home-map ">
-							<div className="" style={{ width: 580, height: 350 }} id="map"></div>
-						</div>
-						<div className="col-lg-3">
-						</div>
-
+				  				          </div>
+				  				        </div>
+				  				    </div>
+				  				    <div className="col-lg-12">
+										<div className="form-checkboxes row home-checkboxes text-center">
+											{homeFilterData.map((each, key) => {
+												return <CustomInput className="col-lg-3 input-labels" type="checkbox" key={key} id={key + 123} name={each.name} label={each.label} value={each.value} onChange={this.handleCheckBox} />
+											})}
+										</div>
+									</div>
+				  				  </div>
+				  				</div>
+			  				</FormGroup>
+						</Form>
 					</div>
-				</div>
+				</div >
+		);
 
+{/*
 
-			</div >
+		const homeFeaturedHotels = (
+
+			<div className="home-featured-hotels">
+			a
+			</div>
+
+		);
+
+		const homeLast = (
+			<div className="">
+			a
+			</div>
+		);
+	*/}	
+
+		return (
+			<div>
+				{homeHeader}
+
+			</div>
 		);
 	}
 }
