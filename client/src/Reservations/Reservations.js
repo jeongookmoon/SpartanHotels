@@ -5,12 +5,9 @@ import {
 } from 'reactstrap';
 import homeImage from './homeImage.jpg';
 import axios from 'axios';
-import moment from 'moment';
 import "./Reservations.css";
 import MoreInfo from './MoreInfo';
 import CancelConfirmation from './CancelConfirmation';
-
-import {cancelTransaction} from '../Utility/CancelButton'
 
 
 var pageStyle = {
@@ -72,7 +69,7 @@ class Reservations extends React.Component {
       		room_prices = []
       		quantities = []
       	}
-      	console.log(room_info)
+      	
       		if(viewres.data[0] === undefined) {
       			resInfo[0] = {}
       		}
@@ -108,7 +105,7 @@ class Reservations extends React.Component {
 
       		resInfo[x] = {booking_id, date_in, date_out, hotel_name, total_price, status}
       	}
-      	console.log(resInfo)
+      	
       	that.setState({
             history: resInfo
           })
@@ -120,13 +117,14 @@ class Reservations extends React.Component {
 			const {booking_id, date_in, date_out, hotel_name, total_price, status} = reservations //destructuring
 				if (status == 'booked') {
 					return (
-				<tr >
+				<tr key={index+11}>
 					<td>{booking_id}</td>
 					<td>{date_in}</td>
 					<td>{date_out}</td>
 					<td>{hotel_name}</td>
 					<td>${total_price}</td>
-					<td> <Button className="reservations-button" color ="warning"> Modify </Button> <CancelConfirmation  id ={booking_id}/> </td>
+					<td> <Button className="reservations-button" color ="warning" onClick={this.modifyRoom(reservations)} > Modify </Button> 
+							 <CancelConfirmation  id ={booking_id}/> </td>
 					<td>{status}</td>
 					<td> <MoreInfo id= {booking_id} /> </td>
 				</tr>
@@ -134,7 +132,7 @@ class Reservations extends React.Component {
 				}
 				else {
 					return (
-				<tr >
+				<tr key={index+22}>
 					<td>{booking_id}</td>
 					<td>{date_in}</td>
 					<td>{date_out}</td>
@@ -149,26 +147,13 @@ class Reservations extends React.Component {
 			
 		})
 	}
-/*
-	handleSubmit = (event) => {
-	    // console.log('Register clicked')
-	    event.preventDefault()
-	    console.log(event.target.value)
-	      	const temp_fields = {
-	      	transaction_id: event.target.value,
-	      }
-	      cancelTransaction(temp_fields).then(response => {
-	      	console.log(response)
-	        if (response === 200) {
-	          window.location.reload();
-	        } else if (response === 400) {
-	        }
-	      })
-	    
-  	}
-*/
+
 	redirectToHome() {
 		this.props.history.push('/')
+	}
+
+	modifyRoom = (reservations) => {
+		console.log("reservations", reservations)
 	}
 
 	render() {
