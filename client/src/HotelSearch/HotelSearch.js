@@ -180,7 +180,7 @@ class HotelSearch extends React.Component {
 			//const imageURL = this.getHotelSearchResultImages(eachHotel.images).split(",")[0]
 			//^^ FOR DAVID
 			const hotelInfo = `
-									<img src={imageURL} style="max-width: 100%; max-height: 100%; padding-bottom: 10px"/>
+									<img src=${imageURL} style="max-width: 100%; max-height: 100%; padding-bottom: 10px"/>
 									<a href="" style="padding-top:1vh; text-align:center;"><h5>${eachHotel.name}</h5></a>
 									<div style="font-weight: 425;"> ${eachHotel.address}</div>
 									<div style="font-weight: 425; padding-bottom: 8px;">${eachHotel.city}, ${eachHotel.state}</div>
