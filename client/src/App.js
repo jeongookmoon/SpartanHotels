@@ -29,7 +29,7 @@ class App extends Component {
           <Route exact path="/Reservations" component={Reservations}/>
           <Route path="/HotelSearchDemo" component={HotelSearchDemo}/>
           <Route path="/HotelSearch" component={HotelSearch}/>
-          <Route exact path="/Checkout" component={Checkout}/>
+          <Route path="/Checkout" component={Checkout}/>
           <Route path="/RoomPage" component={RoomPage}/>
           <Route exact path="/Recoverage" component={Recoverage} />
           <Route exact path="/Accesscode" component={Accesscode} />

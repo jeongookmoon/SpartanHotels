@@ -405,8 +405,8 @@ class HotelSearch extends React.Component {
 		var center = new window.google.maps.LatLng(lat, lng);
 		window.googleMap.panTo(center);
 		window.markers.forEach((eachMarker, i) => {
-			if(eachMarker) {
-				if(i === index) {
+			if (eachMarker) {
+				if (i === index) {
 					eachMarker.setIcon(selectedMarkerImageBaseURL + (index + 1))
 					eachMarker.setZIndex(12)
 					eachMarker.setAnimation(window.google.maps.Animation.BOUNCE)
@@ -415,7 +415,7 @@ class HotelSearch extends React.Component {
 					eachMarker.setZIndex(0)
 					eachMarker.setAnimation(null)
 				}
-				
+
 			}
 		})
 	}
@@ -451,23 +451,23 @@ class HotelSearch extends React.Component {
 							<div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
 						</div>
 						<div className="room-page-date-check-wrap">
-						<DateRangePicker 
-							startDate={this.state.searchParams.date_in} // momentPropTypes.momentObj or null,
-							startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
-							endDate={this.state.searchParams.date_out} // momentPropTypes.momentObj or null,
-							endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
-							onDatesChange={({ startDate, endDate }) =>
-								this.setState(prevState => ({
-									searchParams: {
-										...prevState.searchParams,
-										date_in: startDate,
-										date_out: endDate
-									}
-								}))
-							} // PropTypes.func.isRequired,
-							focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
-							onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
-						/>
+							<DateRangePicker
+								startDate={this.state.searchParams.date_in} // momentPropTypes.momentObj or null,
+								startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
+								endDate={this.state.searchParams.date_out} // momentPropTypes.momentObj or null,
+								endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
+								onDatesChange={({ startDate, endDate }) =>
+									this.setState(prevState => ({
+										searchParams: {
+											...prevState.searchParams,
+											date_in: startDate,
+											date_out: endDate
+										}
+									}))
+								} // PropTypes.func.isRequired,
+								focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+								onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
+							/>
 						</div>
 					</div>
 
