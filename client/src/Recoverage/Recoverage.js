@@ -8,7 +8,7 @@ import { Card, Container, CardTitle } from 'reactstrap';
 
 var topSectionStyle = {
     width: "100%",
-    height: '800px',
+    height: '100vh',
     marginTop: "0%",
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
