@@ -12,7 +12,7 @@ async function getUserEmail(userid) {
     let userEmail;
     try {
         userEmail = await Queries.run(emailquery).then(function (results) {
-            console.log('email for user is' + results[0].email);
+            console.log('email for user is ' + results[0].email);
             return results[0].email;
         });
     }
