@@ -32,7 +32,8 @@
   }
 }
 
-.container-demo{
+
+.containerSC{
   min-height: 100%;
   height:100%;
   margin:100px auto;
@@ -41,7 +42,7 @@
 
 }
 
-.dimScreen{
+.dimScreenSC{
   position:fixed;
   padding:0;
   margin:0;
@@ -52,35 +53,28 @@
   background:rgb(255,255,255);
   overflow-y:scroll;
 }
-.form-group-demo{
-  position:relative;
-  margin-bottom:1.5rem;
 
-}
-.form-control-placeholder{
-  position:absolute;
-  top:0;
-  padding:7px 0 0 13px;
-  transition:all 200ms;
-  opacity: 0.5;
-}
 
-.form-control:focus+ .form-control-placeholder,
-.form-control:valid+.form-control-placeholder{
-  font-size:75%;
-  transform: translate3d(0,-100%,0);
-  opacity:1;
-
-}
-
-.dottedLine{
+.dottedLineSC{
   border-top:dotted 2px;
   color:gray;
   width:100%;
 
 }
-.checkoutPayButton{
+.checkoutPayButtonSC{
   width:45%;
+}
+
+.StripeElement {
+    
+  width: 100%;
+  padding: 12px 5px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+
 }
 
 #map {
