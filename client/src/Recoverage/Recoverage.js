@@ -9,7 +9,6 @@ import { Card, Container, CardTitle } from 'reactstrap';
 var topSectionStyle = {
     width: "100%",
     height: '100vh',
-    marginTop: "0%",
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
     backgroundPosition: "center center",
@@ -88,7 +87,7 @@ class Recoverage extends Component {
         // };
         return(
             <div className="col-lg-12 recoverage-container col-auto" style={topSectionStyle}>
-                <div className="recoverage-form-container col-lg-12">
+                <div className="recoverage-form-container col-lg-12 dark-tint">
                 <br/>
                 <Container style={{marginTop: '9%'}}>
                     <Card className="recoverage-card">

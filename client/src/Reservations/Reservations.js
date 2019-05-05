@@ -172,7 +172,8 @@ class Reservations extends React.Component {
 
 	render() {
 		const reservationPage = (
-			<div className="reservations-form-container col-lg-12" style={pageStyle}>
+
+			<div className="reservation-form-container col-lg-12 dark-tint">
 				<br />
 				<br />
 				<br />
@@ -216,8 +217,8 @@ class Reservations extends React.Component {
 		)
 
 		return (
-			<div>
-				{localStorage.accesstoken ? reservationPage : this.redirectToHome()}
+			<div className="col-lg-12 reservations-container col-auto" style={pageStyle}>
+				{reservationPage}
 			</div>
 		);
 	}

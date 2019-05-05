@@ -33,13 +33,15 @@
   margin-top: 0;
   height:100%;
   width:100%;
+  padding-left:0px;
+  padding-right:0px;
 }
   
 .recoverage-form-container{
   height:100%;
   width:100%;
-  min-height:5.6rem;
-  margin-top: -65px;
+    padding-left:0px;
+  padding-right:0px;
 }
 
 .recoverage-inner-card {
