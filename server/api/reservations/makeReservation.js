@@ -19,8 +19,9 @@ async function makeReservation(requestedBooking = {}, res) {
     }
     let availableRequestedRooms = checkResult.availableRequestedRooms
     availableRequestedRooms.map( x=>{ x.room_ids = x.room_ids.split(",")})
+    console.log("availableRequestedRooms")
     console.log(availableRequestedRooms)
-
+    console.log("end availableRequestedRooms")
 
 
     // check client-submitted total_price, cancellation_charge
