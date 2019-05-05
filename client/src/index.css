@@ -262,7 +262,6 @@ code {
 .home-form-container{
   height:100%;
   width:100%;
-  min-height:100vh;
   background: rgba(0,0,0,0.3);
 }
 
@@ -1392,3 +1391,60 @@ article {
   @media (max-width: 767.98px) {
     .block-4 .room-page-image {
       height: 300px; } }
+/* ///////////////////////////////////////////////////////////////////////////////////////////////    */
+
+/* Confirmation Page CSS */
+
+.confirmation-container{
+  padding-top:17vh;
+}
+
+.confirmation-message{
+  background: white;
+  color:black;
+  font-weight:300;
+}
+
+.confirmation-message-header{
+  padding-top:10vh;
+  padding-bottom:10vh;
+  color:white;
+  background: rgb(65,161,100);
+  background: linear-gradient(180deg, rgba(65,161,100,1) 0%, rgba(23,148,68,1) 24%, rgba(37,133,72,0.9948354341736695) 61%, rgba(43,143,80,0.9948354341736695) 87%);
+  font-size:.5em;
+}
+
+.confirmation-message-icon{
+  font-size:2em;
+  padding-bottom: 2vh;
+}
+
+.confirmation-message-footer{
+  padding-left:5vw;
+  padding-right:5vw;
+  padding-top:5vh;
+  padding-bottom:2vh;
+  font-size:.3em;
+  font-weight:400;
+
+}
+
+.confirmation-message-header-sub{
+  font-size: .5em;
+}
+
+.confirmation-submit-button{
+  color: #fff;
+    background-color: #24aaf2;
+    border-color: #24aaf2;
+    font-size: 14px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+
+}
+
+.confirmation-submit-button:hover{
+  border: 2px solid #24aaf2;
+    background: transparent;
+    color: #24aaf2;
+}
