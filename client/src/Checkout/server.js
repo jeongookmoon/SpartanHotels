@@ -23,7 +23,7 @@ app.post("/charge", async (req, res) => {
   try {
     var data = JSON.parse(req.body)
 
-    let {status} = await stripe.charges.create({
+    let status = await stripe.charges.create({
       amount: data.amount,
       currency: "usd",
       description: "Charge",
