@@ -10,18 +10,21 @@
 
 .profile-card {
 	background: #ffffff;
-	padding-top: 50px;
+	padding-top: 5vh;
 	transition: all 200ms ease;
-	height: 625px;
-	padding-bottom: 50px;
+	padding-bottom:5vh;
+	padding-left:5vh;
+	padding-right:5vh;
+	border-radius:0.3em;
+
 }
 
 .profile-card-body {
-	padding-left: 80px;
 }
 
 .profile-center-title {
 	text-align: center;
+	font-size:2em;
 }
 
 .profile-container{
@@ -37,7 +40,7 @@
 }
 
 .profile-form-card-container{
-	padding-top:6vh;
+	padding-top:10vh;
 }
 
 .profile-human-pic {
@@ -45,9 +48,8 @@
 }
 
 .profile-inner-card {
-	margin-left: -40px;
-	margin-right: 40px;
-	margin-bottom: 30px;
+	padding-bottom: 2vh;
+
 }
 
 .profile-inner-cardbody {
@@ -79,4 +81,5 @@
 
 .profile-text-row {
 	margin-top: 10px;
+	text-align:left;
 }

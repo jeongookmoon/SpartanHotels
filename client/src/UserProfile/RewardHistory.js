@@ -79,7 +79,7 @@ class RewardHistory extends React.Component {
 
 	render() {
 		const rewardPage = (
-			<div className="history-form-container col-lg-12">
+			<div className="history-form-container col-lg-12 dark-tint">
 				<br />
 				<br />
 				<br />
