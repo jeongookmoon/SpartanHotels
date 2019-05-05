@@ -52,17 +52,17 @@ class Checkout extends Component {
 
     var totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 );
     
-<<<<<<< HEAD
-    //Caluclate total price from rooms
 
 
- 
-  //  const user_id = this.state.user_id;
-   // const rewardPoint = this.state.rewardPoint;
-=======
+    console.log(this.props.location.state)
+    console.log(this.props.location.state.rooms)
+
+    const rooms = JSON.parse(this.props.location.state.rooms).results.filter( x => x.desired_quantity > 0 )
+    console.log(rooms)
+    var totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 )
     
-  
->>>>>>> 5263b8c... tmp
+
+    
 
   //We can assume  we have user id  and rewardPoint always present as a state
    // const rewardPoint="1000"
