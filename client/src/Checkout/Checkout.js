@@ -74,7 +74,7 @@ class Checkout extends Component {
 
   render() {
 
-  
+
 
     return (
 
@@ -112,6 +112,7 @@ class Checkout extends Component {
                 date_out={this.state.date_out}
                 hotel_id = {this.state.hotel_id}
                 />
+               
             </div>
           </Elements> 
           </div>
@@ -299,7 +300,8 @@ let data={
 
      const error= validateRP(this.state.rewardPoint,this.state.discount);
      const isEnabled = !error;
-
+    
+     
  
  
    return (
@@ -307,7 +309,6 @@ let data={
  <div class="row" style={{marginRight:"0px", marginLeft:"0px"}}>
      
  
-       {/*   //////////////Payments///////////////////////                          */}
  
      <div class="card text-left w-50">
        <h5 class="card-header">Payment Method</h5>
@@ -321,7 +322,7 @@ let data={
               <div class="form-group">
                <span style={{ fontSize: 12, marginLeft: 13 }}>Card Number</span>
                 <div>
-                  <CardNumberElement/>
+                 <CardNumberElement/>
                 </div>
                </div>
             
@@ -331,7 +332,7 @@ let data={
                  style={{ paddingLeft: 15, marginTop: 8, width:"33%" }}>
                   <span style={{ fontSize: 12, marginLeft: 13 }}>Expiration Date</span>
                   <div>
-                    <CardExpiryElement/>
+                   <CardExpiryElement/>  
                   </div>
                </div>
  
@@ -343,7 +344,7 @@ let data={
                >
                  <span style={{ fontSize: 12, marginLeft: 13 }}>Postal Code</span>
                  <div>
-                    <PostalCodeElement />
+                    <PostalCodeElement/>
                  </div>
                </div>
  
@@ -557,7 +558,9 @@ return (
 
 <p class="font-weight-light text-muted ">          {
         Object.keys(this.state.rooms.results).map((value)=>{
-         return  <span>{this.state.rooms.results[value].quantity} {this.state.rooms.results[value].bed_type} </span>
+          if(this.state.rooms.results[value].desired_quantity > 0){
+          return  <p>{this.state.rooms.results[value].quantity} {this.state.rooms.results[value].bed_type} </p>
+          }
         })}
 
      </p>
