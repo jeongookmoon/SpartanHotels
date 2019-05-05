@@ -1,7 +1,7 @@
 //Email function for when we want to send stuff
 module.exports = {
 
-    email: function (params = { to: 'email', subject: 'cmpe165', text: 'some text here' }) {
+    email: function (params = { to: 'email', subject: 'cmpe165', text: 'some text here', html:'some html here' }) {
         var nodemailer = require('nodemailer');
         //parameter: { subject: "cmpe133", text: "some text here", header:"header1"....
 
@@ -28,6 +28,8 @@ module.exports = {
             subject: params.subject,
 
             text: params.text,
+
+            html: params.html
 
             //headers: params.header
 
