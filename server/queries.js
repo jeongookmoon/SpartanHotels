@@ -70,28 +70,31 @@ module.exports = {
 
   // Example queries to be used with pets db in config.js
   // Important: This means pets db must be specified in config.js, else an error will occur when query is run
-  sql: `select * from pets where  age>4`,
-  sql2: 'select * from pets where  name=?',
+
+    sql: `select * from pets where  age>4`,
+    sql2: 'select * from pets where  name=?',
 
 
-  user: {
-    profile: 'select name, email, reward from spartanhotel.user where user_id=?',
-    checkEmailExists: 'select * from user where email=?',
-    checkUserNameExists: 'select user_id from spartanhotel.user where name=?',
-    create: 'insert into spartanhotel.user (user_id,name,password,email) values (null,?,?,?)',
-    session: 'select LAST_INSERT_ID() as user_id ',
-    authenticate: 'select user_id, password from spartanhotel.user where email=?',
-    getAvailableRewardsIgnoringTransaction: 'SELECT sum(R.change) as sum FROM spartanhotel.reward R where user_id=? and date_active <= curdate() and (transaction_id != ? or transaction_id is NULL);',
-    getBookingForTransaction: 'SELECT * FROM spartanhotel.booking WHERE transaction_id=?',
-    edit: 'UPDATE user SET name=?, password=? WHERE user_id=?',
-    changepass: 'UPDATE user SET password = ? WHERE email = ?',
-    searchEmail: 'SELECT * FROM user WHERE email = ?',
-    getEmailwithID: 'SELECT email FROM user WHERE user_id = ?',
-    getAccessCode: 'SELECT access_code FROM user WHERE email = ?',
-    setAccessCode: 'UPDATE user SET access_code = ? WHERE email = ?',
-    getAvailableRewards: 'SELECT sum(R.change) as rewards FROM spartanhotel.reward R where user_id=? and date_active <= curdate()'
-
-  },
+    user: {
+        profile: 'select name, email, reward from spartanhotel.user where user_id=?',
+        checkEmailExists: 'select * from user where email=?',
+        checkUserNameExists: 'select user_id from spartanhotel.user where name=?',
+        create: 'insert into spartanhotel.user (user_id,name,password,email) values (null,?,?,?)',
+        session: 'select LAST_INSERT_ID() as user_id ',
+        authenticate: 'select user_id, password from spartanhotel.user where email=?',
+        getAvailableRewardsIgnoringTransaction: 'SELECT sum(R.change) as sum FROM spartanhotel.reward R where user_id=? and date_active <= curdate() and (transaction_id != ? or transaction_id is NULL);',
+        getBookingForTransaction:'SELECT * FROM spartanhotel.booking WHERE transaction_id=?',
+        edit: 'UPDATE user SET name=?, password=? WHERE user_id=?',
+        changepass: 'UPDATE user SET password = ? WHERE email = ?',
+        searchEmail: 'SELECT * FROM user WHERE email = ?',
+        getEmailwithID: 'SELECT email FROM user WHERE user_id = ?',
+        getAccessCode: 'SELECT access_code FROM user WHERE email = ?',
+        setAccessCode: 'UPDATE user SET access_code = ? WHERE email = ?',
+        getAvailableRewards: 'SELECT sum(R.change) as rewards FROM spartanhotel.reward R where user_id=? and date_active <= curdate()',
+        userProfileChangePass: 'UPDATE user SET password = ? WHERE user_id = ?',
+        getOldPass: 'SELECT password FROM user where user_id =?',
+        setNewName: 'UPDATE user SET name=? WHERE user_id=?'
+    },
 
   hotel: {
     /**
@@ -531,11 +534,13 @@ module.exports = {
     book: 'INSERT INTO spartanhotel.booking(booking_id, user_id, guest_id, room_id, total_price, cancellation_charge, date_in, date_out, status, amount_paid) values (null, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     cancel: 'UPDATE booking SET status="cancelled" WHERE booking_id=?',
     modify: 'UPDATE booking SET room_id=?, date_in=?, date_out=? WHERE booking_id=?',
-    view: `SELECT transaction.*, room.*, hotel.name, hotel.phone_number, hotel.address, hotel.city, hotel.state, hotel.country, hotel.zipcode FROM transaction 
-    INNER JOIN transaction_room ON transaction.transaction_id = transaction_room.transaction_id 
-    INNER JOIN room ON transaction_room.room_id = room.room_id
-    INNER JOIN hotel ON room.hotel_id = hotel.hotel_id 
-    WHERE transaction.user_id = ?`,
+    view: `SELECT transaction.*, room.*, hotel.name
+    FROM transaction 
+    LEFT JOIN transaction_room ON transaction.transaction_id = transaction_room.transaction_id 
+    LEFT JOIN room ON transaction_room.room_id = room.room_id
+    LEFT JOIN hotel ON room.hotel_id = hotel.hotel_id 
+    WHERE transaction.user_id = ?
+    ORDER BY status ASC`,
 
     /**
      * 
@@ -1012,16 +1017,18 @@ module.exports = {
     },
   },
 
-  rewards: {
-
-    book: 'INSERT INTO spartanhotel.rewards(reward_book_id, user_id, room_id, reward_points, no_cancellation, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',
-    book: 'INSERT INTO spartanhotel.rewards (reward_book_id, user_id, room_id, reward_points, no_cancellation, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',
-    useOnBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, transaction_id, date_active, `change`) values (null, ?, 1, ?, curdate(), ?)',
-    gainFromBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, transaction_id, date_active, `change`) values (null, ?, 2, ?, ?, ?)',
-    getUserRecords: 'SELECT R.*,RR.reason FROM spartanhotel.reward R join spartanhotel.reward_reason RR on R.reward_reason_id = RR.reward_reason_id WHERE user_id=?',
-    cancelBooking: 'DELETE from spartanhotel.reward where transaction_id=?',
-    getOldBookingAppliedRewards: 'SELECT R.change FROM spartanhotel.reward R WHERE transaction_id = ? AND SIGN(change) = -1'
-  },
+    rewards: {
+      book: 'INSERT INTO spartanhotel.rewards(reward_book_id, user_id, room_id, reward_points, no_cancellation, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',
+      book: 'INSERT INTO spartanhotel.rewards (reward_book_id, user_id, room_id, reward_points, no_cancellation, date_in, date_out, status) values (null, ?, ?, ?, ?, ?, ?, ?)',
+      useOnBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, transaction_id, date_active, `change`) values (null, ?, 1, ?, curdate(), ?)',
+      gainFromBooking: 'INSERT INTO spartanhotel.reward (reward_id, user_id, reward_reason_id, transaction_id, date_active, `change`) values (null, ?, 2, ?, ?, ?)',
+      getUserRecords: 'SELECT R.*,RR.reason FROM spartanhotel.reward R join spartanhotel.reward_reason RR on R.reward_reason_id = RR.reward_reason_id WHERE user_id=?',
+      cancelBooking: 'DELETE from spartanhotel.reward where transaction_id=?',
+      getOldBookingAppliedRewards: 'SELECT R.change FROM spartanhotel.reward R WHERE transaction_id = ? AND SIGN(R.change) = -1',
+      getCurrentRewardsHistory: 'SELECT a.reward_id, a.transaction_id, a.date_active, a.change, b.reason FROM reward a, reward_reason b where a.reward_reason_id = b.reward_reason_id and user_id = ? and date_active <= curdate()',
+      getFutureRewardsHistory: 'SELECT a.reward_id, a.transaction_id, a.date_active, a.change, b.reason FROM reward a, reward_reason b where a.reward_reason_id = b.reward_reason_id and user_id = ? and date_active >= curdate()',    
+      getRewardsHistory: 'SELECT DISTINCT a.transaction_id, a.date_active, a.change, b.date_in, b.date_out, e.name FROM reward a, transaction b, transaction_room c, room d, hotel e WHERE a.transaction_id = b.transaction_id and a.user_id = ? and a.transaction_id = c.transaction_id and c.room_id = d.room_id and d.hotel_id = e.hotel_id'
+    },
 
   guest: {
     insert: 'INSERT INTO spartanhotel.guest(guest_id, email, name) values (null, ?, ?)'
