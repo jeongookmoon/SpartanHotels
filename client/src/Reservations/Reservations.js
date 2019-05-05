@@ -44,6 +44,7 @@ class Reservations extends React.Component {
       	var room_quan = 1
       	//Putting detailed room information on the panel. Include bed type, price, and quantity
       	//This stuff should now be handled in MoreInfo.js
+      	
       	for (var i = 0; i < viewres.data.length; i++) {
       		bed_types.push(viewres.data[i].bed_type)
       		room_prices.push(viewres.data[i].price)
@@ -71,17 +72,21 @@ class Reservations extends React.Component {
       		quantities = []
       	}
       	console.log(room_info)
-
-      	//Information for the 'My Reservation' Table
-      		var booking_id = viewres.data[0].transaction_id
-      		var date_in = viewres.data[0].date_in
-      		var date_out = viewres.data[0].date_out
-      		var hotel_name = viewres.data[0].name
-      		var bed_type = room_info[0].beds.toString()
-      		var room_price = room_info[0].prices.toString()
-      		var room_quantities = room_info[0].quans.toString()
-      		var total_price = viewres.data[0].total_price
-      		var status = viewres.data[0].status
+      		if(viewres.data[0] === undefined) {
+      			resInfo[0] = {}
+      		}
+      		else {
+	      	//Information for the 'My Reservation' Table
+	      		var booking_id = viewres.data[0].transaction_id
+	      		var date_in = viewres.data[0].date_in
+	      		var date_out = viewres.data[0].date_out
+	      		var hotel_name = viewres.data[0].name
+	      		var bed_type = room_info[0].beds.toString()
+	      		var room_price = room_info[0].prices.toString()
+	      		var room_quantities = room_info[0].quans.toString()
+	      		var total_price = viewres.data[0].total_price
+	      		var status = viewres.data[0].status
+      		}
 
       		resInfo[0] = {booking_id, date_in, date_out, hotel_name, bed_type, room_price, room_quantities, total_price, status}
       		var counter = 1
