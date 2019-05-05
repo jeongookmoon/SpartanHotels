@@ -50,6 +50,8 @@ class NavBar extends React.Component {
           // console.log("login success")
           empty_fields["email"] = ''
           temp_loginerror = ''
+          if (window.location.pathname === '/recoverage' || window.location.pathname === '/Accesscode')
+            this.props.history.push('/')
         } else {
           temp_loginerror = "*Please enter valid credentials (email or password) or reset password"
           this.setState({ loginerror: temp_loginerror })
