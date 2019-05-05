@@ -8,6 +8,7 @@ import axios from 'axios';
 import moment from 'moment';
 import "./Reservations.css";
 import MoreInfo from './MoreInfo';
+import CancelConfirmation from './CancelConfirmation';
 
 import {cancelTransaction} from '../Utility/CancelButton'
 
@@ -125,7 +126,7 @@ class Reservations extends React.Component {
 					<td>{date_out}</td>
 					<td>{hotel_name}</td>
 					<td>${total_price}</td>
-					<td><Button color ="warning"> Modify </Button> <Button color="danger" onClick={this.handleSubmit} value={booking_id}> Cancel </Button></td>
+					<td> <Button className="reservations-button" color ="warning"> Modify </Button> <CancelConfirmation  id ={booking_id}/> </td>
 					<td>{status}</td>
 					<td> <MoreInfo id= {booking_id} /> </td>
 				</tr>
@@ -148,7 +149,7 @@ class Reservations extends React.Component {
 			
 		})
 	}
-
+/*
 	handleSubmit = (event) => {
 	    // console.log('Register clicked')
 	    event.preventDefault()
@@ -165,7 +166,7 @@ class Reservations extends React.Component {
 	      })
 	    
   	}
-
+*/
 	redirectToHome() {
 		this.props.history.push('/')
 	}
