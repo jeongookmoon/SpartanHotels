@@ -1,69 +1,41 @@
-.recoverage-button {
-  display: block;
-  width: 100%;
-  border: none;
-  padding: 14px 28px;
-  cursor: pointer;
-  text-align: center;
-  background-color: #4169E1;
-  color: white;
-  font-size: 16px;
-}
-
-.recoverage-button:hover {
-  background-color: white;
-  color: #4169E1;
-  border: 2px solid #4169E1;
-}
-
-.recoverage-card {
-  width: 500px;
-  margin-left: 29%;
-  background: #ffffff;
-  padding-top: 30px;
-}
-
-.recoverage-center-title {
-  padding-right: 0px;
-  margin-top: 25px;
-}
-
 .recoverage-container{
-  padding-top: 0px;
-  margin-top: 0;
-  height:100%;
-  width:100%;
-}
+    padding:0;
+    margin:0;
+    height:100%;
+    width:100%;
+  }
   
-.recoverage-form-container{
-  height:100%;
-  width:100%;
-  min-height:5.6rem;
-  margin-top: -65px;
-}
-
-.recoverage-inner-card {
-  margin-top: 10px;
-  padding-bottom: 50px;
-  margin-left: 40px;
-  margin-right: 40px;
-  text-align: center;
-  background: #ffffff;
-}
+  .recoverage-form-container{
+    height:100%;
+    width:100%;
+    min-height:5.6rem;
+  }
   
-.recoverage-picture {
-  width: 50.6px;
-  height: 61.3px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
+  .recoverage-picture {
+      flex: 1;
+      width: 10;
+      height: 10;
+      resizeMode: 'contain';
+  }
+  
+  .recoverage-scrollbar {
+      position: relative;
+      height:150px;
+      overflow: auto;
+  }
+  
+  .recoverage-table-wrapper-scroll-y {
+      display: block;
+  }
+  
+  .recoverage-table-header { /* for later note: static top row */
+      position: sticky;
+  }
+  
+  .flex-container {
+      align-items: flex-start;
+  }
 
-.recoverage-textfield {
-  height: 80px;
-  width: 100%;
-}
-
-.recoverage-textfieldPass {
-  width: 100%;
-}
+  .flex-center {
+      align-items: center;
+  }

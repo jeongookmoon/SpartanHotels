@@ -4,11 +4,11 @@ import TextField from '@material-ui/core/TextField';
 import homeImage from './homeImage7.jpg';
 import './Recoverage.css';
 import { sendcodePost } from '../Utility/RecoverageFunction';
-import { Card, Container, CardTitle } from 'reactstrap';
+import { Card, CardBody, Container, CardTitle } from 'reactstrap';
 
 var topSectionStyle = {
     width: "100%",
-    height: '100vh',
+    height: '800px',
     marginTop: "0%",
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
@@ -90,34 +90,34 @@ class Recoverage extends Component {
             <div className="col-lg-12 recoverage-container col-auto" style={topSectionStyle}>
                 <div className="recoverage-form-container col-lg-12">
                 <br/>
-                <Container style={{marginTop: '9%'}}>
-                    <Card className="recoverage-card">
-                        <img className="recoverage-picture" src="http://cdn.onlinewebfonts.com/svg/img_228829.png" alt="lock" />
-                        <CardTitle className="col-auto pl-0 recoverage-center-title">
-                                <h3>Forgot Password?</h3>
+                <Container style={{marginTop: '10%'}}>
+                    <Card style={{width: "275px", marginLeft: "45%", backgroundColor: 'transparent', align: "center"}}>
+                        <CardTitle>
+                        <div className="col-auto pl-0" style={{alignText: 'center'}}>
+                            <h4> Password Recoverage </h4>
+                        </div>
                         </CardTitle>
-                        <div className="recoverage-inner-card">
-                            Enter your email below and we'll send you an access code: 
-                            <br />
-                            <br />
-                            <TextField className="recoverage-textfield"
-                                id="email"
-                                label="Email"
-                                type="email"
-                                variant="outlined"
-                                value={email}
-                                onChange={this.handleChange('email')}
-                                inputProps={{ maxLength: 99 }}
-                                placeholder="guest@spartanhotels.com"     
+                        <CardBody style={{ backgroundColor: 'transparent'}}>
+                            <TextField
+                            //   style={inputStyle}
+                            id="email"
+                            label="email"
+                            type="email"
+                            value={email}
+                            onChange={this.handleChange('email')}
+                            inputProps={{ maxLength: 99 }}
+                            placeholder="email address"     
                             />
+                            <button type="submit" color="primary" onClick={this.sendcode}>
+                            Send Code</button>
                             {showNullError && (
                                 <div>
-                                    <p className="text-warning"> *Please enter in your email.</p>
+                                    <p>The email address cannot be null.</p>
                                 </div>
                             )}
                             {showError && (
                                 <div>
-                                    <p className="text-warning">*This email address has not been registered!</p>
+                                    <p>The email address has not been register!</p>
                                 </div>
                             )}
                             {msgFromServer === 'recovery email sent!' && (
@@ -125,9 +125,8 @@ class Recoverage extends Component {
                                     <p>Access code has sent!</p>
                                 </div>
                             )}
-                            <button type="submit" className="recoverage-button" onClick={this.sendcode}>RESET</button>
-                            </div>
-                        </Card>
+                            </CardBody>
+                    </Card>
                     </Container>
                 </div>
         </div>
