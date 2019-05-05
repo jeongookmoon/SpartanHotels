@@ -1,5 +1,7 @@
 import React from 'react';
+
 import axios from 'axios';
+
 import {withRouter} from 'react-router-dom'
 
 import {
@@ -8,11 +10,12 @@ import {
 } from 'reactstrap'
 
 class MoreInfo extends React.Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
 
 		this.state={
 			modal: false,
+			id: props.id,
 			room_history: []
 		}
 
@@ -26,46 +29,46 @@ componentDidMount() {
       axios.get('/api/reservations/viewres')
       .then(function(viewres) {
       	var room_info = []
-      	var reservations = []
-      	var same_res = []
-
+      	
       	// Group elements of viewres.data into reservations array. reservations is an array that contains multiple arrays that all hold
       	// reservations of the same transaction_id. One array per one transaction. Dunno whether or not you have to do it like this.
       	for (var i = 0; i < viewres.data.length; i++) {
-      		same_res.push(viewres.data[i])
-      		for (var j = i + 1; j < viewres.data.length; j++) {
-      			if (viewres.data[j].transaction_id == viewres.data[i].transaction_id) {
-      				same_res.push(viewres.data[j])
-      			}
-      			else {
-      				i = j - 1
-      				break
-      			}
+      		var booking_id = viewres.data[i].transaction_id
+      		var room_num = viewres.data[i].room_number
+      		var bed_type = viewres.data[i].bed_type
+      		var room_price = viewres.data[i].price
+
+      		room_info[i] = {booking_id, room_num, bed_type, room_price}
       		}
-      		reservations.push(same_res)
-      		same_res = []
-      	}
 
-
-      	console.log(reservations)
       	that.setState({
             room_history: room_info
           })
       })
   }
 
-// Kind of like how it is in RewardHistory. Map object to indices and put this in the body of render()
-// Data that gets rendered should depend on which toggle you press. Not sure how to identify that.
-  	renderRoomsTableData() {
-		return this.state.history.map((rooms, index) => {
-			const {room_num, bed_price, room_price, quantity} = rooms
-				
-		})
-	}
 	toggle () {
 		this.setState({
 			...this.state,
 			modal: !this.state.modal
+		})
+	}
+
+
+// Kind of like how it is in RewardHistory. Map object to indices and put this in the body of render()
+// Data that gets rendered should depend on which toggle you press. Not sure how to identify that.
+  	renderRoomsTableData() {
+		return this.state.room_history.map((rooms, index) => {
+			const {booking_id, room_num, bed_type, room_price} = rooms
+				if (this.state.id == booking_id) {
+					return (
+				<tr >
+					<td>{room_num}</td>
+					<td>{bed_type}</td>
+					<td>${room_price}</td>
+				</tr>
+					)
+				}
 		})
 	}
 
@@ -86,28 +89,10 @@ componentDidMount() {
 									<th> Room </th>
 									<th> Bed </th>
 									<th> Price </th>
-									<th> Quantity </th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td> 201 </td>
-									<td> King </td>
-									<td> $95 </td>
-									<td> 1 </td>
-								</tr>
-								<tr>
-									<td> 305 </td>
-									<td> Queen </td>
-									<td> $60 </td>
-									<td> 1 </td>
-								</tr>
-								<tr>
-									<td> 505 </td>
-									<td> Suite </td>
-									<td> $200 </td>
-									<td> 1 </td>
-								</tr>
+								{this.renderRoomsTableData()}
 							</tbody>
 						</Table>
 					</ModalBody>
