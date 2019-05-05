@@ -223,7 +223,7 @@ class Registration extends React.Component {
 
     return (
       <div>
-        <Button className={this.props.location.pathname === "/" || this.props.location.pathname === "/Confirmation" || this.props.location.pathname === "/Checkout" || this.props.location.pathname === "/recoverage" || this.props.location.pathname === "/Accesscode" ? "navbar-register-button" : "navbar-register-button-black"} color="primary-outline" onClick={this.toggle}>Register</Button>
+        <Button className={this.props.location.pathname === "/" || this.props.location.pathname === "/Confirmation" || this.props.location.pathname === "/recoverage" || this.props.location.pathname === "/Accesscode" ? "navbar-register-button" : "navbar-register-button-black"} color="primary-outline" onClick={this.toggle}>Register</Button>
 
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
           <ModalHeader toggle={this.toggle}>Registration</ModalHeader>
