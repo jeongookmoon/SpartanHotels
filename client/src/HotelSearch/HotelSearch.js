@@ -180,14 +180,12 @@ class HotelSearch extends React.Component {
 			//const imageURL = this.getHotelSearchResultImages(eachHotel.images).split(",")[0]
 			//^^ FOR DAVID
 			const hotelInfo = `
-
-											<a href="" style="padding-top:1vh; text-align:center;"><h5>${eachHotel.name}</h5></a>
-											<div style="font-size: 1em; font-weight:600">${eachHotel.address}</div>
-											<div style="font-size: 1em; font-weight:600">${eachHotel.city}</div>
-											<p style="font-size: 1em; font-weight:600">${eachHotel.phone_number}</p>
-											<p style="font-size: 1em; font-weight:600">$${eachHotel.min_price.toFixed(2)} ~ ${eachHotel.max_price.toFixed(2)}/per night</p>
-											<img src=${imageURL} style="max-width: 100%; max-height: 100%; "/>
-
+									<img src=${imageURL} style="max-width: 100%; max-height: 100%; padding-bottom: 10px"/>
+									<a href="" style="padding-top:1vh; text-align:center;"><h5>${eachHotel.name}</h5></a>
+									<div style="font-weight: 425;"> ${eachHotel.address}</div>
+									<div style="font-weight: 425; padding-bottom: 8px;">${eachHotel.city}, ${eachHotel.state}</div>
+									<p style="text-align: center"> <img src="http://www.stickpng.com/assets/images/5a4525cd546ddca7e1fcbc84.png" alt="phone"style="width: 12px; height: 12px" /> &nbsp;${eachHotel.phone_number}</p>
+									<p style="font-size: 1.2em; font-weight:500"> <img src="https://static.thenounproject.com/png/18095-200.png" alt="price" style="width: 25px; height: 25px" /> ${eachHotel.min_price.toFixed(2)} ~ ${eachHotel.max_price.toFixed(2)}</p>
 
 								`
 
@@ -403,20 +401,15 @@ class HotelSearch extends React.Component {
 	moveMap(lat, lng, index) {
 		var center = new window.google.maps.LatLng(lat, lng);
 		window.googleMap.panTo(center);
-		window.markers.forEach((eachMarker, i) => {
-			if(eachMarker) {
-				if(i === index) {
-					eachMarker.setIcon(selectedMarkerImageBaseURL + (index + 1))
-					eachMarker.setZIndex(12)
-					eachMarker.setAnimation(window.google.maps.Animation.BOUNCE)
-				} else {
-					eachMarker.setIcon(defaultMarkerImageBaseURL + (i + 1))
-					eachMarker.setZIndex(0)
-					eachMarker.setAnimation(null)
-				}
-				
-			}
+		window.markers.forEach((eachMarker, index) => {
+			eachMarker.setIcon(defaultMarkerImageBaseURL + (index + 1))
+			eachMarker.setZIndex(0)
+			eachMarker.setAnimation(null)
 		})
+		// window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
+		window.markers[index].setIcon(selectedMarkerImageBaseURL + (index + 1))
+		window.markers[index].setZIndex(12)
+		window.markers[index].setAnimation(window.google.maps.Animation.BOUNCE)
 	}
 
 	getHotelSearchResultImages(images) {
@@ -438,19 +431,18 @@ class HotelSearch extends React.Component {
 				<hr className="hotel-search-hr-bottom">
 				</hr>
 				<FormGroup className="form-inline hotel-search-inputs">
-					<div className="col-lg-3 input-group room-page-location">
+					<div className="col-lg-3 input-group home-location">
 						<div className="input-group-append">
 							<div className="location-input-icon input-group-text"><i className="fa fa-search"></i></div>
 						</div>
 						<Autocomplete onPlaceChanged={this.showPlaceDetails.bind(this)} />
 					</div>
 
-					<div className="col-lg-4 field-icon-wrap input-group room-page-search-date custom-row">
+					<div className="col-lg-4 input-group home-date custom-row">
 						<div className="input-group-append">
 							<div className="check-in-icon input-group-text"><i className="fa fa-calendar"></i></div>
 						</div>
-						<div className="room-page-date-check-wrap">
-						<DateRangePicker 
+						<DateRangePicker
 							startDate={this.state.searchParams.date_in} // momentPropTypes.momentObj or null,
 							startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
 							endDate={this.state.searchParams.date_out} // momentPropTypes.momentObj or null,
@@ -467,18 +459,17 @@ class HotelSearch extends React.Component {
 							focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
 							onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
 						/>
-						</div>
 					</div>
 
-					<div className=" col-lg-2 input-group menu-container room-page-guest-container">
-						<div className="col-lg-12 hotel-search-menu-item">
+					<div className=" col-lg-1 input-group menu-container">
+						<div className="col-lg-12 menu-item">
 							<div className="home-guest-dropdown">{this.state.guest_number}&nbsp;Guests</div>
-							<ul className="home-guest-dropdown-list-style">
+							<ul>
 								<li>
 									<div className="form-inline home-adults-container">
 										<div className="col-lg-3 home-adults">
 											Adults
-						        		</div>
+						        </div>
 
 										<div className="col-lg-9 home-increments">
 											<i className="fa fa-minus home-guest-icon-increment" type="button" value="Decrement Value" onClick={this.adultDecrement}></i>
@@ -536,6 +527,8 @@ class HotelSearch extends React.Component {
 				<tbody>
 					{this.state.hotels.results.map((eachHotelResult, index) => {
 						const imageURL = this.getHotelSearchResultImages(eachHotelResult.images)
+						{/*const imageURL = this.getHotelSearchResultImages(eachHotelResult.images).split(",")[0] */ }
+						{/* FOR DAVID */ }
 
 						return (
 							<tr key={index} className="hotel-search-row shadow-sm p-3 mb-5" tag="a" onClick={this.roomSearch(eachHotelResult)} onMouseEnter={() => this.moveMap(eachHotelResult.latitude, eachHotelResult.longitude, index)} style={{ cursor: "pointer" }}>
@@ -554,12 +547,13 @@ class HotelSearch extends React.Component {
 											<span className="fa fa-star hotel-search-item-rating-checked"></span>
 											<span className="fa fa-star hotel-search-item-rating-checked"></span>
 											<span className="fa fa-star hotel-search-item-rating-checked"></span>
+
 											<span className="fa fa-star"></span>
 										</div>
 
 										{/* Hotel Address */}
 										<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.address}</div>
-										<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.city}</div>
+										<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.city}, {eachHotelResult.state}</div>
 										<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.phone_number}</div>
 
 									</div>
