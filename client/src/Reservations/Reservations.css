@@ -7,12 +7,12 @@
 	background: #ffffff;
 	padding-top: 25px;
 	transition: all 200ms ease;
-	height: 520px;
+	height: 60vh;
 	padding-bottom: 50px;
 }
 
 .reservations-card-body {
-	padding-left: 80px;
+	padding-left: 5vw;
 }
 
 .reservations-center-title {
@@ -34,7 +34,6 @@
 .reservations-form-container {
 	height:100%;
   	width:100%;
-  	min-height:41.6rem;
 }
 
 .reservations-image {
