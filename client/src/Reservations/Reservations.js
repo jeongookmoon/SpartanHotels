@@ -8,6 +8,7 @@ import axios from 'axios';
 import moment from 'moment';
 import "./Reservations.css";
 import MoreInfo from './MoreInfo';
+import CancelConfirmation from './CancelConfirmation';
 
 import {cancelTransaction} from '../Utility/CancelButton'
 
@@ -118,7 +119,7 @@ class Reservations extends React.Component {
 					<td>{date_out}</td>
 					<td>{hotel_name}</td>
 					<td>${total_price}</td>
-					<td><Button color ="warning"> Modify </Button> <Button color="danger" onClick={this.handleSubmit} value={booking_id}> Cancel </Button></td>
+					<td><Button color ="warning"> Modify </Button> <Button color="danger" onClick={<CancelConfirmation />} value={booking_id}> Cancel </Button></td>
 					<td>{status}</td>
 					<td> <MoreInfo /> </td>
 				</tr>
