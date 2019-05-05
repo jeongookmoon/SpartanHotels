@@ -30,7 +30,7 @@ app.post("/charge", async (req, res) => {
       source: data.id,
     });
 
-   console.log(status.id); // retrieves the charge id.
+   console.log(status.id); // retrieves the charge
 
 
    
@@ -50,13 +50,15 @@ app.post("/charge", async (req, res) => {
 
 // STATUS: Cancelled
 app.post('/refund', function(req, res) {
-
-  stripe.refunds.create({
-    charge: req.body.charge
-
+  var data = JSON.parse(req.body)
+  let status = stripe.refunds.create({
+    charge: data.stripe_id
+    
   }, function(err, refund) {
     console.log(err);
   });
+  // Returns Success or Fail response to front end
+  res.json({status})
   });
 
   ///////////////////////MODIFY//////////////////////////////////
@@ -66,7 +68,7 @@ app.post('/refund', function(req, res) {
    
         // Refund fully
         stripe.refunds.create({
-          charge: req.body.charge
+          charge: data.stripe_id
       
         }, function(err, refund) {
           console.log(err);
@@ -76,47 +78,14 @@ app.post('/refund', function(req, res) {
 
 
         // Then Charge with the new amount
-         stripe.charges.create({
-          amount: data.amount_due_from_user,
+       let status = stripe.charges.create({
+          amount: data.amount_due_from_user*100,
           currency: "usd",
           description: "Modify",
           source: data.id,
-          metadata: {
-          'user_id': data.user_id, 
-          'date_in': data.date_in,
-          'date_out': data.date_out,
-          'status': data.status, // MODIFIED status
-          'total_price': data.total_price/100,
-          'guest_id':data.guest_id,
-          'cancellation_charge': data.cancellation_charge,
-          'type':data.type, // used for checking if transaction is 'charge' or 'modify'
-          'hotel_id': data.hotel_id, // used for checking for backend, I'm not using this
-          'transaction_id': data.transaction_id, // MUST: for updating the transaction
-
-          // Objects couldn't fit in the metadata, but I split the rooms apart into King and Queen
-          'room1_room_ids': data.room.results[0].room_ids,
-          'room1_price': data.room.results[0].price,
-          'room1_quantity': data.room.results[0].quantity,
-          'room1_bed_type': data.room.results[0].bed_type,
-          
-          'room2_room_ids': data.room.results[1].room_ids,
-          'room2_price': data.room.results[1].price,
-          'room2_quantity': data.room.results[1].quantity,
-          'room2_bed_type': data.room.results[1].bed_type,
-          
-          'room3_room_ids': data.room.results[2].room_ids,
-          'room3_price': data.room.results[2].price,
-          'room3_quantity': data.room.results[2].quantity,
-          'room3_bed_type': data.room.results[2].bed_type,
-
-          'rewards_applied': data.rewards_applied,
-
-          'amount_due_from_user': data.amount_due_from_user/100,
-
-    
-         }
+  
         });
-
+        res.json({status});
     });
 
 

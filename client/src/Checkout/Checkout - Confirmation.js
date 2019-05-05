@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {CardElement, injectStripe, CardCVCElement,CardNumberElement, CardExpiryElement, PostalCodeElement} from 'react-stripe-elements';
-import './../AppSC.css';
+
 import {withRouter} from 'react-router-dom'
 
 

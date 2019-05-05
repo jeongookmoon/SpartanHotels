@@ -278,7 +278,7 @@ let data={
   
 }
 
-  let response = await fetch("/charge", {
+  let response = await fetch("/api/checkout/charge", {
     method: "POST",
     headers: {"Content-Type": "text/plain"},
     body: JSON.stringify(data),
