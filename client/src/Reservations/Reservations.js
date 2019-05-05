@@ -9,6 +9,8 @@ import moment from 'moment';
 import "./Reservations.css";
 import MoreInfo from './MoreInfo';
 
+import {cancelTransaction} from '../Utility/CancelButton'
+
 var pageStyle = {
 	width: "100%",
 	backgroundRepeat: "no-repeat",
@@ -23,7 +25,8 @@ class Reservations extends React.Component {
 		super(props)
 		this.state = {
 			history: [],
-			roominfo: []
+			roominfo: [],
+			transaction_id: ''
 		}
 	}
 
@@ -115,7 +118,7 @@ class Reservations extends React.Component {
 					<td>{date_out}</td>
 					<td>{hotel_name}</td>
 					<td>${total_price}</td>
-					<td><Button color ="warning"> Modify </Button> <Button color="danger"> Cancel </Button></td>
+					<td><Button color ="warning"> Modify </Button> <Button color="danger" onClick={this.handleSubmit} value={booking_id}> Cancel </Button></td>
 					<td>{status}</td>
 					<td> <MoreInfo /> </td>
 				</tr>
@@ -138,6 +141,24 @@ class Reservations extends React.Component {
 			
 		})
 	}
+
+	handleSubmit = (event) => {
+	    // console.log('Register clicked')
+	    event.preventDefault()
+	    console.log(event.target.value)
+	      	const temp_fields = {
+	      	transaction_id: event.target.value,
+	      }
+	      cancelTransaction(temp_fields).then(response => {
+	      	console.log(response)
+	        if (response === 200) {
+	          window.location.reload();
+	        } else if (response === 400) {
+	        }
+	      })
+	    
+  	}
+
 	redirectToHome() {
 		this.props.history.push('/')
 	}
