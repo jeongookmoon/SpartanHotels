@@ -12,6 +12,7 @@ import CancelConfirmation from './CancelConfirmation';
 
 import {cancelTransaction} from '../Utility/CancelButton'
 
+
 var pageStyle = {
 	width: "100%",
 	backgroundRepeat: "no-repeat",
@@ -99,7 +100,7 @@ class Reservations extends React.Component {
       		status = viewres.data[x].status
       		counter++
 
-      		resInfo[x] = {booking_id, date_in, date_out, hotel_name, bed_type, room_price, room_quantities, total_price, status}
+      		resInfo[x] = {booking_id, date_in, date_out, hotel_name, total_price, status}
       	}
       	console.log(resInfo)
       	that.setState({
@@ -110,7 +111,7 @@ class Reservations extends React.Component {
 
   	renderReservationsTableData() {
 		return this.state.history.map((reservations, index) => {
-			const {booking_id, date_in, date_out, hotel_name, bed_type, room_price, room_quantities, total_price, status} = reservations //destructuring
+			const {booking_id, date_in, date_out, hotel_name, total_price, status} = reservations //destructuring
 				if (status == 'booked') {
 					return (
 				<tr >
@@ -121,7 +122,7 @@ class Reservations extends React.Component {
 					<td>${total_price}</td>
 					<td><Button color ="warning"> Modify </Button> <Button color="danger" onClick={<CancelConfirmation />} value={booking_id}> Cancel </Button></td>
 					<td>{status}</td>
-					<td> <MoreInfo /> </td>
+					<td> <MoreInfo id= {booking_id} /> </td>
 				</tr>
 					)
 				}
@@ -135,7 +136,7 @@ class Reservations extends React.Component {
 					<td>${total_price}</td>
 					<td>       </td>
 					<td>{status}</td>
-					<td> <MoreInfo /> </td>
+					<td> <MoreInfo id= {booking_id} /> </td>
 				</tr>
 					)
 				}
