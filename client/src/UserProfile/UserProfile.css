@@ -1,0 +1,80 @@
+
+.profile-button {
+	text-align: center;
+	cursor: pointer;
+	color: white;
+	float: left;
+	margin-bottom: 20px;
+	margin-left: 15px;
+}
+
+.profile-card {
+	background: #ffffff;
+	padding-top: 50px;
+	transition: all 200ms ease;
+	height: 625px;
+	padding-bottom: 50px;
+	margin-bottom: 40px;
+}
+
+.profile-card-body {
+	padding-left: 80px;
+}
+
+.profile-center-title {
+	text-align: center;
+}
+
+.profile-container{
+  padding:0;
+  margin:0;
+  height:100%;
+  width:100%;
+}
+
+.profile-form-container{
+  height:100%;
+  width:100%;
+  min-height: 41.6rem;
+}
+
+.profile-human-pic {
+	padding-left: 35px;
+}
+
+.profile-inner-card {
+	margin-left: -40px;
+	margin-right: 40px;
+	margin-bottom: 30px;
+}
+
+.profile-inner-cardbody {
+	background: #ffffff;
+	border-left: 2px solid #DCDCDC;
+	border-right: 2px solid #DCDCDC;
+	border-bottom: 2px solid #DCDCDC;
+}
+
+.profile-inner-cardheader {
+	border-left: 2px solid #DCDCDC;
+	border-right: 2px solid #DCDCDC;
+	border-top: 2px solid #DCDCDC;
+}
+
+.profile-scrollbar {
+	position: relative;
+	height:150px;
+	overflow: auto;
+}
+
+.profile-table-header { /* for later note: static top row */
+	position: sticky;
+}
+
+.profile-table-wrapper-scroll-y {
+	display: block;
+}
+
+.profile-text-row {
+	margin-top: 10px;
+}
