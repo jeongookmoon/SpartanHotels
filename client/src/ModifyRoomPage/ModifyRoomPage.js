@@ -1,11 +1,14 @@
 import React from 'react';
 import axios from 'axios'
 import { withRouter } from 'react-router-dom'
-import { Table } from 'reactstrap';
+import { Table, Button } from 'reactstrap';
 
 import { getHotelInfoWithTransactionID } from '../Utility/HotelSearchFunction'
+import { convertTimestampToString } from '../Utility/Conversion'
 
 import HotelInfoCard from './Components/HotelInfoCard'
+import { DateRangePicker } from 'react-dates'
+import moment from 'moment'
 
 class ModifyRoomPage extends React.Component {
 	constructor(props) {
@@ -13,52 +16,89 @@ class ModifyRoomPage extends React.Component {
 
 		const params = new URLSearchParams(this.props.location.search);
 		const hotel_id = params.get('hotel_id')
-		const date_in = params.get('date_in')
-		const date_out = params.get('date_out')
-		const city = params.get('city')
-		const guestNumber = params.get('guest_number')
+		const dateIn = params.get('date_in')
+		const dateOut = params.get('date_out')
+		const transactionID = params.get('transactionID')
 
 		this.state = {
 			hotel: {},
 			rooms: {},
 			hotel_id,
-			date_in,
-			date_out,
-			city,
-			totalPrice: 0,
-			guest_number: guestNumber,
-			verifyCheckout: false,
-			verifyRooms: false,
-			verifyGuests: false,
-			collapse: false
+			date_in: moment(dateIn, ('YYYY-MM-DD')),
+			date_out: moment(dateOut, ('YYYY-MM-DD')),
+			transactionID,
+			collapse: false,
+			availableRooms: [],
+			totalPriceWithoutTax: 0.00,
+			totalPriceWithTax: 0.00,
+			cancellationFee: 0.00
 		};
-
-		this.totalPrice = 0;
-
 	}
 
-	async componentWillMount() {
-		const params = new URLSearchParams(this.props.location.search);
-		const ID = parseInt(params.get('transactionID'))
+	componentWillMount() {
+		this.fetchSearchResult()
+	}
 
-		const roomSearchQuery = `/api/search/hotels/${this.state.hotel_id}/?date_in=${this.state.date_in}&date_out=${this.state.date_out}`
-		const hotelSearchQuery = `/api/search/hotels?date_in=${this.state.date_in}&date_out=${this.state.date_out}&hotel_id=${this.state.hotel_id}`
-		const transactionIDparam = { transactionID: ID }
+	async fetchSearchResult() {
+		const params = new URLSearchParams(this.props.location.search);
+		const transaction_id = parseInt(params.get('transactionID'))
+
+		const roomSearchQuery = `/api/search/hotels/${this.state.hotel_id}/?date_in=1111-01-01&date_out=1111-01-02`
+		const realroomSearchQuery = `/api/search/hotels/${this.state.hotel_id}/?date_in=${this.state.date_in.format('YYYY-MM-DD')}&date_out=${this.state.date_out.format('YYYY-MM-DD')}`
+		const hotelSearchQuery = `/api/search/hotels?date_in=1111-01-01&date_out=1111-01-02&hotel_id=${this.state.hotel_id}`
+		const realhotelSearchQuery = `/api/search/hotels?date_in=${this.state.date_in.format('YYYY-MM-DD')}&date_out=${this.state.date_out.format('YYYY-MM-DD')}&hotel_id=${this.state.hotel_id}`
+		const transactionIDparam = { transactionID: transaction_id }
 
 		const rooms = (await axios.get(roomSearchQuery)).data
+		const realrooms = (await axios.get(realroomSearchQuery)).data
 		const hotel = (await axios.get(hotelSearchQuery)).data
-		const roomsFromTransaction = (await getHotelInfoWithTransactionID(transactionIDparam)).data
+		const realhotel = (await axios.get(realhotelSearchQuery)).data
 
-		console.log("roomsFromTransaction", roomsFromTransaction)
+		const roomsFromTransaction = (await getHotelInfoWithTransactionID(transactionIDparam)).data
+		const transaction_date_in = convertTimestampToString(roomsFromTransaction[0].date_in)
+		const transaction_date_out = convertTimestampToString(roomsFromTransaction[0].date_out)
+		const oldTotalPrice = parseFloat(roomsFromTransaction[0].total_price).toFixed(2)
+		const oldAmountPaid = parseFloat(roomsFromTransaction[0].amount_paid).toFixed(2)
+
+		let availableRooms = [...this.state.availableRooms]
+
+		let totalPriceWithoutTax = 0.00
 
 		rooms.results.forEach((eachRoomResult, index) => {
-			if(roomsFromTransaction[index]){
-				rooms.results[index].desired_quantity = roomsFromTransaction[index].quantity
+			if (roomsFromTransaction[index] && transaction_date_in === this.state.date_in.format('YYYY-MM-DD') && transaction_date_out === this.state.date_out.format('YYYY-MM-DD')) {
+				totalPriceWithoutTax = totalPriceWithoutTax + (eachRoomResult.price * roomsFromTransaction[index].quantity)
+				availableRooms[index] = roomsFromTransaction[index].quantity
+			} else {
+				availableRooms[index] = 0
+				totalPriceWithoutTax = totalPriceWithoutTax + (eachRoomResult.price * 0)
 			}
 		})
-		
+
+		const totalPriceWithTax = (totalPriceWithoutTax * 1.1).toFixed(2)
+		const cancellationFee = (totalPriceWithoutTax * .2).toFixed(2)
+
 		this.setState({
-			rooms, hotel, roomsFromTransaction
+			rooms, hotel, realrooms, realhotel, roomsFromTransaction, transaction_dateIn: moment(transaction_date_in, ('YYYY-MM-DD')), transaction_dateOut: moment(transaction_date_out, ('YYYY-MM-DD')), oldTotalPrice, availableRooms
+			, totalPriceWithoutTax, totalPriceWithTax, cancellationFee, transaction_id, oldAmountPaid
+		})
+	}
+
+	componentDidUpdate(prevProps) {
+		if (prevProps.location.search !== this.props.location.search) {
+			this.fetchSearchResult()
+		}
+	}
+
+	roomSearch = (event) => {
+		console.log("this.state.transaction_dateIn", this.state.transaction_dateIn.format('YYYY-MM-DD'))
+		console.log("this.state.transaction_dateOut", this.state.transaction_dateOut.format('YYYY-MM-DD'))
+		const queryString = `?date_in=${this.state.date_in.format('YYYY-MM-DD')}&date_out=${this.state.date_out.format('YYYY-MM-DD')}
+			&hotel_id=${this.state.hotel_id}
+			&transactionID=${this.state.transactionID}`
+
+		this.props.history.push({
+			pathname: `/ModifyRoomPage`,
+			search: `${queryString}`,
 		})
 	}
 
@@ -67,80 +107,71 @@ class ModifyRoomPage extends React.Component {
 	}
 
 	Checkout = (event) => {
+		event.preventDefault()
 
-		let total = 0;
-		let totalCapacity = 0;
-		this.setState({
-			verifyRooms: false,
-			verifyGuests: false
-		})
+		if (this.state.totalPriceWithTax && this.state.totalPriceWithTax > 0) {
 
-		this.state.rooms.results.map((eachRoomResult, index) =>
-			total = total + eachRoomResult.desired_quantity + 0
-		);
-
-		this.state.rooms.results.map((eachRoomResult, index) =>
-			totalCapacity = totalCapacity + (eachRoomResult.desired_quantity * eachRoomResult.capacity)
-		);
-
-		if (total === 0) {
-			this.setState({
-				verifyRooms: true,
+			let roomsInfo = [...this.state.rooms.results]
+			let roomsInfoFinal = []
+			this.state.availableRooms.forEach((eachRoomQuantity, index) => {
+				if (eachRoomQuantity > 0) {
+					roomsInfo[index].desired_quantity = eachRoomQuantity
+					roomsInfoFinal.push(roomsInfo[index])
+				} else {
+					roomsInfo[index].desired_quantity = 0
+				}				
 			})
-		}
-
-		if (totalCapacity < this.state.guest_number) {
-			this.setState({
-				verifyGuests: true,
-			})
-		}
-
-		if ((total > 0) && (totalCapacity >= this.state.guest_number)) {
-			console.log(JSON.stringify(this.state.rooms))
-
-			const dataObjectString = JSON.stringify(this.state.rooms);
-
-			const queryToEncode = this.props.location.search + `&country=${this.state.hotel.results[0].country}&state=${this.state.hotel.results[0].state}&address=${this.state.hotel.results[0].address}&rooms=` + dataObjectString
-
-			let queryString = encodeURI(queryToEncode)
-			console.log(queryString)
-
-			const decodedString = decodeURI(queryString)
-			console.log(decodedString)
+			
+			
+			const oldTotalPrice = this.state.oldTotalPrice.toString()
+			const oldAmountPaid = this.state.oldAmountPaid.toString()
+			const transaction_id = this.state.transaction_id.toString()
+			const totalPriceWithTax = this.state.totalPriceWithTax.toString()
+			const cancellationFee = this.state.cancellationFee.toString()
+			const date_in = this.state.date_in.format('YYYY-MM-DD').toString()
+			const date_out = this.state.date_out.format('YYYY-MM-DD').toString()
+			const hotel_id = this.state.hotel_id.toString()
 
 			this.props.history.push({
 				pathname: `/Checkout`,
-				search: `${queryString}`,
+				state: {
+					totalPriceWithTax,
+					cancellationFee,
+					date_in,
+					date_out,
+					rooms: JSON.stringify(roomsInfoFinal),
+					hotel_id,
+					transaction_id,
+					oldTotalPrice,
+					oldAmountPaid
+					}
 			})
 		}
 	}
 
 	handleEachRoomQuantity = (event) => {
-		const target = event.target;
-		const value = target.value;
-		const name = target.name;
+		const target = event.target
+		const value = target.value
+		const ind = parseInt(target.name)
 
-		let tempArray = [...this.state.rooms.results]
-		tempArray[name].desired_quantity = value;
-		
-		this.setState({
-			rooms: {
-				results: tempArray
-			},
-			verifyRooms: false,
-			verifyGuests: false,
+		let availableRooms = [...this.state.availableRooms]
+		availableRooms[ind] = value
+
+		let totalPriceWithoutTax = 0.00
+
+		this.state.rooms.results.map((eachRoomResult, index) => {
+			if (index === ind)
+				totalPriceWithoutTax = totalPriceWithoutTax + (eachRoomResult.price * availableRooms[index])
+			else
+				totalPriceWithoutTax = totalPriceWithoutTax + (eachRoomResult.price * this.state.availableRooms[index])
 		});
-	}
 
-	handleRoomPrice() {
+		const totalPriceWithTax = (totalPriceWithoutTax * 1.1).toFixed(2)
+		const cancellationFee = (totalPriceWithoutTax * .2).toFixed(2)
 
-		this.totalPrice = 0;
-		this.state.rooms.results.map((eachRoomResult, index) =>
-			this.totalPrice = this.totalPrice + (eachRoomResult.price * eachRoomResult.desired_quantity)
-		);
-
-		return this.totalPrice;
-
+		this.setState({
+			availableRooms, totalPriceWithoutTax, totalPriceWithTax, cancellationFee
+		});
 	}
 
 	createAvailableRooms(index) {
@@ -159,6 +190,7 @@ class ModifyRoomPage extends React.Component {
 				<div className="hotel-search-container"> Loading </div>
 			);
 		}
+
 		const checkOut = (
 			<div className="modify-room-page-checkout-description">
 
@@ -177,15 +209,15 @@ class ModifyRoomPage extends React.Component {
 						<tbody>
 							{
 								this.state.rooms.results.map((eachRoomResult, index) => {
-									if (eachRoomResult.desired_quantity > 0) {
+									if (this.state.availableRooms[index] > 0) {
 										return (
 
 											<tr key={index}>
 												<td>{eachRoomResult.bed_type}</td>
 												<td>{eachRoomResult.capacity}</td>
 												<td>${eachRoomResult.price.toFixed(2)}</td>
-												<td>{eachRoomResult.desired_quantity} </td>
-												<td>$ {(eachRoomResult.desired_quantity * eachRoomResult.price).toFixed(2)}</td>
+												<td>{this.state.availableRooms[index]} </td>
+												<td>$ {(this.state.availableRooms[index] * eachRoomResult.price).toFixed(2)}</td>
 											</tr>
 										)
 									}
@@ -209,17 +241,28 @@ class ModifyRoomPage extends React.Component {
 								<td> </td>
 								<td> </td>
 								<td> </td>
+								<td><strong> Selected Room Price </strong></td>
+								<td> $ {this.state.totalPriceWithoutTax}</td>
+							</tr>
+							<tr>
+								<td> </td>
+								<td> </td>
+								<td> </td>
 								<td><strong> Estimated Total </strong></td>
-								<td> $ {this.handleRoomPrice()}</td>
+								<td> $ {this.state.totalPriceWithTax}</td>
+							</tr>
+							<tr>
+								<td> </td>
+								<td> </td>
+								<td> </td>
+								<td> Estimated Cancellation Fee </td>
+								<td value={this.state.cancellationFee}> $ {this.state.cancellationFee}</td>
 							</tr>
 
 						</tbody>
 					}
 				</Table>
-				{this.state.verifyCheckout ? <div className="room-page-verify-checkout"> Unable to checkout </div> : null}
-				{this.state.verifyRooms ? <div className="room-page-verify-checkout"> Please select a room </div> : null}
-				{this.state.verifyGuests ? <div className="room-page-verify-checkout"> Please select enough rooms to accomodate all guests </div> : null}
-				<p className="room-page-submit-button btn btn-primary py-3 px-5 mb-5" style={{ cursor: "pointer" }} onClick={this.Checkout.bind(this)}>Modify</p>
+				<Button disabled={this.state.totalPriceWithTax === this.state.oldTotalPrice} className="home-submit-button btn btn-primary py-3 px-4" onClick={this.Checkout}>Modify</Button>
 			</div>
 		)
 
@@ -240,9 +283,9 @@ class ModifyRoomPage extends React.Component {
 												return (
 
 													<div className="col-lg-4 mb-5" key={index}>
-														<div className={(this.state.roomsFromTransaction[index]) ? "room-card-active block-44" : "room-card-inactive block-44"}>
+														<div className={(this.state.availableRooms[index] && this.state.availableRooms[index] > 0) ? "room-card-active block-44" : "room-card-inactive block-44"}>
 															<div className="room-page-image">
-																<img src={eachRoomResult.images} alt={index+123}/>
+																<img src={eachRoomResult.images} alt={index + 123} />
 															</div>
 															<div className="text">
 																<h2>{eachRoomResult.bed_type}</h2>
@@ -254,7 +297,7 @@ class ModifyRoomPage extends React.Component {
 
 																<div >
 																	<strong># Of Rooms </strong>
-																	<select className="room-page-room-quantity-dropdown" type="text" name={index} list="numbers" value={eachRoomResult.desired_quantity} onChange={this.handleEachRoomQuantity}>
+																	<select className="room-page-room-quantity-dropdown" type="text" name={index} list="numbers" value={this.state.availableRooms[index]} onChange={this.handleEachRoomQuantity}>
 																		{this.createAvailableRooms({ index })}
 																	</select>
 																</div>
@@ -278,6 +321,45 @@ class ModifyRoomPage extends React.Component {
 		return (
 
 			<div>
+				<div className="d-flex justify-content-center">
+					<div className="block-32">
+
+						<div className="row">
+							<div className="col-md-6 mb-3 mb-lg-0 col-lg-12">
+								<label className="input-labels">Check In &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;      Check Out</label>
+								<div className="field-icon-wrap check-wrap">
+									<DateRangePicker
+										startDate={this.state.date_in} // momentPropTypes.momentObj or null,
+										startDateId="modify_start_date" // PropTypes.string.isRequired,
+										endDate={this.state.date_out} // momentPropTypes.momentObj or null,
+										endDateId="modify_end_date" // PropTypes.string.isRequired,
+										onDatesChange={({ startDate, endDate }) =>
+											this.setState(prevState => ({
+												...prevState,
+												date_in: startDate,
+												date_out: endDate
+											}
+											))
+										} // PropTypes.func.isRequired,
+										focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+										onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
+									/>
+								</div>
+							</div>
+						</div>
+
+
+						<div className="row">
+							<div className="col-md-6 mb-3 mb-lg-0 col-lg-12">
+								<label className="input-labels" style={{ color: 'darkgrey' }}>&nbsp;&nbsp;{this.state.transaction_dateIn.format('YYYY-MM-DD')} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;      {this.state.transaction_dateOut.format('YYYY-MM-DD')}</label>
+							</div>
+						</div>
+
+					</div>
+				</div>
+				<Button onClick={this.roomSearch}>Search</Button>
+
+
 				<HotelInfoCard hotelData={this.state.hotel.results[0]} collapseFlag={this.state.collapse} onCollapse={() => this.toggle} />
 				{roomPage}
 				{checkOut}
