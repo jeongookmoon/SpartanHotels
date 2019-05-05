@@ -460,6 +460,7 @@ router.post('/reservations/reward', (req, res) => {
 
 router.use('/reservations', require("./api/reservation"))
 router.use('/search', require("./api/search"))
+router.use('/checkout', require("./api/checkout"))
 
 
 // Retrieves room info with transaction id
