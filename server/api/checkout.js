@@ -3,6 +3,9 @@ var router = express.Router({mergeParams: true});
 var Queries = require('../queries')
 var mysql = require('mysql')
 
+const { inputChecks } = require("./reservations/inputChecks")
+const { makeReservation } = require("./reservations/makeReservation")
+
 const bodyParser  = require('body-parser');
 const stripe = require("stripe")("sk_test_KMjoJvcxhuiJSV51GJcaJfSi00r9QtVXjo"); // Your Stripe key
 
@@ -17,33 +20,54 @@ router.get('/', (req, res) => {
 
 
 router.post("/charge", async (req, res) => {
-    console.log(req.body)
-
+    
     try {
-      var data = JSON.parse(req.body)
-  
-      let status = await stripe.charges.create({
-        amount: data.total_price*100,
-        currency: "usd",
-        description: "Charge",
-        source: data.id,
-      });
-  
-     console.log(status.id); // retrieves the charge
+        var data = JSON.parse(req.body)
+    }
+    catch (err){
+        console.log(err);
+        res.status(500).end();
+        return
+    }
+    // Check values
+    console.log(data)
+    req.body = data
+    console.log(data.date_out)
+
+    let inputCheckResults = inputChecks(req,res)
+    let requestedBooking
+    if(inputCheckResults.status == true){
+        requestedBooking = inputCheckResults.requestedBooking
+    }
+    else{
+        return
+    }
+    
+    let stripeStatus
+    try{
+        stripeStatus = await stripe.charges.create({
+            amount: data.amount_due_from_user*100,
+            currency: "usd",
+            description: "Charge",
+            source: data.id,
+          });
+          console.log(stripeStatus.id); // retrieves the charge
   
   
      
-      console.log(status);
-      //console.log("amount: "+data.amount);
-      console.log(data);
-  
-      res.json({status});
-  
-    } catch (err) {
-      console.log(err);
-      res.status(500).end();
+      console.log(stripeStatus);
     }
-  
+    catch (err) {
+    console.log(err);
+    res.status(500).end();
+  }
+  // set stripe id
+  requestedBooking.stripe_id = stripeStatus.id
+  console.log(requestedBooking)
+
+ 
+    makeReservation(requestedBooking, res)
+
   
   });
   

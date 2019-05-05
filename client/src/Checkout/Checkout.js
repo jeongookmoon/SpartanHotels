@@ -32,23 +32,19 @@ class Checkout extends Component {
     const address = decodeURI(params.get('address'))
     const country = decodeURI(params.get('country')) 
 
-    const rooms = JSON.parse(decodeURI(params.get('rooms')))
+    const rooms = JSON.parse(decodeURI(params.get('rooms'))).results.filter( x => x.desired_quantity > 0 )
 
-    var totalPrice = 0;
+    var totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 )
     
     //Caluclate total price from rooms
-    for( var i = 0; i< rooms.totalResultCount; i++)
-    {
-      totalPrice += rooms.results[i].price;
-      console.log("totalPrice: "+totalPrice)
-    }
+
 
  
   //  const user_id = this.state.user_id;
    // const rewardPoint = this.state.rewardPoint;
 
   //We can assume  we have user id  and rewardPoint always present as a state
-    const user_id = "1"
+///const user_id = "1"
     const rewardPoint="1000"
 
     //Hotel ID is used for checking to avoid booking at different hotels
@@ -61,7 +57,6 @@ class Checkout extends Component {
       date_in,
       date_out,
       city,
-      user_id,
       totalPrice,
       hotel_id,
       rooms
@@ -104,7 +99,6 @@ class Checkout extends Component {
                 <CheckoutPaymentCheck
                 totalPrice ={this.state.totalPrice}
                 rewardPoint={this.state.rewardPoint}
-                user_id={this.state.user_id}
                 date_in={this.state.date_in}
                 date_out={this.state.date_out}
                 hotel_id = {this.state.hotel_id}
@@ -187,7 +181,6 @@ class _CheckoutPaymentCheck extends React.Component
       rewardPointValid:false,
       total: this.props.totalPrice *1.10,
       discount:"0",
-      user_id: this.props.user_id,
       date_in: this.props.date_in,
       date_out: this.props.date_out,
       hotel_id: this.props.hotel_id,
@@ -256,6 +249,11 @@ async submit(ev) {
 
   console.log(token)
 
+  let  desiredRooms = this.state.rooms.filter( x => x.desired_quantity > 0 )
+  let totalRoomPricePerNight = desiredRooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 )
+  console.log(`total room price per night ${totalRoomPricePerNight}`)
+  const nights_stayed = ((new Date(this.state.date_out) - new Date(this.state.date_in)) / (24 * 60 * 60 * 1000));
+  console.log(`night stayed ${nights_stayed}`)
 
 // Prepares the data for Metadata at server side
 let data={
@@ -264,15 +262,14 @@ let data={
   //parseFloat reduces the decimals to 2, then we multiple 100 to get rid of decimals 
   
   total_price: this.state.dataTotal,
-  cancellation_charge: this.state.total * 0.20, // TODO: Change this later
+  cancellation_charge:totalRoomPricePerNight * nights_stayed * 0.20, // TODO: Change this later
   date_in: this.state.date_in,
   date_out: this.state.date_out,
   rewards_applied: this.state.discount*100,
-  rooms: this.state.rooms,
+  rooms: desiredRooms,
   hotel_id: this.state.hotel_id,
   amount_due_from_user: parseFloat(this.state.total).toFixed(2),
 
-  user_id: this.state.user_id,
   status: "Complete",
   guest_id:"0",
   
@@ -287,7 +284,6 @@ let data={
 
   if (response.ok)
   {
-    console.log("user_id: "+this.state.user_id);
     
 
       this.props.history.push(`/CheckoutConfirm`);   
@@ -558,9 +554,10 @@ return (
     <div >
 
 <p class="font-weight-light text-muted ">          {
-        Object.keys(this.state.rooms.results).map((value)=>{
-          if(this.state.rooms.results[value].desired_quantity > 0){
-          return  <p>{this.state.rooms.results[value].quantity} {this.state.rooms.results[value].bed_type} </p>
+        this.state.rooms.map((value)=>{
+          console.log(value)
+          if(value.desired_quantity > 0){
+          return  <p>{value.quantity} {value.bed_type} </p>
           }
         })}
 
