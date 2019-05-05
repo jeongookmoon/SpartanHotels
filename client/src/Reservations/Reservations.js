@@ -14,6 +14,7 @@ import {cancelTransaction} from '../Utility/CancelButton'
 
 var pageStyle = {
 	width: "100%",
+	height:"100vh",
 	backgroundRepeat: "no-repeat",
 	backgroundSize: "cover",
 	backgroundPosition: "center center",

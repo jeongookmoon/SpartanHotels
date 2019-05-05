@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom'
 import Registration from '../Registration/Registration'
 import { logoutClearSession, loginPost } from '../Utility/ReigstrationLoginFunction'
-
+import imageLogo from './Images/logo.png'
 // import neccessary components
 import {
   Form, FormGroup, Input
@@ -185,16 +185,19 @@ class NavBar extends React.Component {
 
     function navbarChange(temp) {
 
-      if (temp === "/" || temp ==="/Confirmation") {
-        return "sticky-top navbar navbar-home fixed-top"
-      }
+      
 
-      else if (temp === "/HotelSearch") {
+      if (temp === "/HotelSearch") {
         return "sticky-top navbar navbar-pages fixed-top"
       }
 
-      else
+      else if (temp === "/RoomPage" || temp === "/ModifyRoomPage" || temp === "/Checkout"){
         return "sticky-top navbar navbar-page-room fixed-top"
+      }
+
+      else{
+        return "sticky-top navbar navbar-home fixed-top"
+      }
 
     }
 
@@ -204,10 +207,11 @@ class NavBar extends React.Component {
 
         {/*LEFT SIDE*/}
         <div className="navbar-left form-inline my-2 my-lg-0" >
-          <div className="col-auto pl-0" onClick={this.Home.bind(this)}>
-            SPARTAN HOTELS
+          <div className="col-auto pl-0 custom-row" onClick={this.Home.bind(this)}>
+            <img className="imageLogo" src={imageLogo}></img>
+            <div>SPARTAN HOTELS</div>
           </div>
-          {localStorage.accesstoken ? EmptyForm : <div className="col-auto pl-0">|</div>}
+          {localStorage.accesstoken ? EmptyForm : <div className="">|</div>}
           {localStorage.accesstoken ? EmptyForm : <Registration />}
         </div>
 

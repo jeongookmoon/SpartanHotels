@@ -14,7 +14,6 @@
 	transition: all 200ms ease;
 	height: 625px;
 	padding-bottom: 50px;
-	margin-bottom: 40px;
 }
 
 .profile-card-body {
@@ -35,7 +34,10 @@
 .profile-form-container{
   height:100%;
   width:100%;
-  min-height: 41.6rem;
+}
+
+.profile-form-card-container{
+	padding-top:6vh;
 }
 
 .profile-human-pic {

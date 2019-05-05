@@ -14,6 +14,7 @@ import {
 
 var topSectionStyle = {
 	width: "100%",
+	height: "100vh",
 	backgroundRepeat: "no-repeat",
 	backgroundSize: "cover",
 	backgroundPosition: "center center",
@@ -74,14 +75,9 @@ class UserProfile extends React.Component {
 
 	render() {
 		const profilePage = (
-			<div className="profile-form-container col-lg-12">
-				<br />
-				<br />
-				<br />
-				<br />
-				<br />
+			<div className="profile-form-container col-lg-12" >
 				<div>
-					<Container>
+					<Container className="profile-form-card-container">
 						<Row>
 							<Col sm="12" md={{ size: 6, offset: 3 }}>
 								<div className="profile-card">

@@ -21,7 +21,11 @@ code {
 
 /* NavBar CSS */
 
-
+.dark-tint{
+  height:100%;
+  width:100%;
+  background: rgba(0,0,0,0.3);
+}
 
 .email-icon{
   font-size: 0.75rem;
@@ -30,6 +34,12 @@ code {
   color:white;
   cursor:none;
   
+}
+
+.imageLogo{
+  height:3vh;
+  width:2vw;
+  margin-right:0.5vw;
 }
 
 .password-icon{
