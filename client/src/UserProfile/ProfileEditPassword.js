@@ -100,6 +100,7 @@ class ProfileEditPassword extends React.Component {
 	      	console.log(response)
 	        if (response === 200) {
 	          this.setState({old_pass_error : false}, () => this.pushtoCurrentURL())
+	          alert("Your password has been updated!")
 	          window.location.reload();
 	        } else if (response === 400) {
 	          this.setState({old_pass_error : true}, () => this.pushtoCurrentURL())
