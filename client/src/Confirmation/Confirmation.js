@@ -27,7 +27,7 @@ class Confirmation extends React.Component {
 	render() {
 
 
-			const roomPage = (
+			const confirmation = (
 					<div className="home-form-container col-lg-12">
 						<div className="confirmation-container col-lg-12" onSubmit={this.search}>
 								<div className="col-lg-12 custom-row">
@@ -61,7 +61,7 @@ class Confirmation extends React.Component {
 				)
 
 				return(
-					<div className="home-container" style={topSectionStyle}>{roomPage}</div>
+					<div className="home-container" style={topSectionStyle}>{confirmation}</div>
 				);
 			
 	}
