@@ -178,38 +178,40 @@ class Reservations extends React.Component {
 				<br />
 				<br />
 				<br />
-				<Container>
-					<Row>
-						<Col>
-							<div className="reservations-card">
-								<div className="reservations-card-body reservations-inner-card">
-									<br />
-									<div className="reservations-center-title"> <h2> My Reservations </h2> </div>
-									<br />
-									<div className="reservations-table-wrapper-scroll-y reservations-scrollbar">
-										<Table hover>
-											<thead>
-												<tr>
-													<th>Booking ID</th>
-													<th>Check-in</th>
-													<th>Check-out</th>
-													<th>Hotel</th>
-													<th>Total Price</th>
-													<th>Modify/Cancel</th>
-													<th>Status</th>
-													<th>Details</th>
-												</tr>
-											</thead>
-											<tbody>
-												{this.renderReservationsTableData()}
-											</tbody>
-										</Table>
+				<div>
+					<Container>
+						<Row>
+							<Col>
+								<div className="reservations-card">
+									<div className="reservations-card-body reservations-inner-card">
+										<br />
+										<div className="reservations-center-title"> <h2> My Reservations </h2> </div>
+										<br />
+										<div className="reservations-table-wrapper-scroll-y reservations-scrollbar">
+											<Table hover>
+												<thead>
+													<tr>
+														<th>Booking ID</th>
+														<th>Check-in</th>
+														<th>Check-out</th>
+														<th>Hotel</th>
+														<th>Total Price</th>
+														<th>Modify/Cancel</th>
+														<th>Status</th>
+														<th>Details</th>
+													</tr>
+												</thead>
+												<tbody>
+													{this.renderReservationsTableData()}
+												</tbody>
+											</Table>
+										</div>
 									</div>
 								</div>
-							</div>
-						</Col>
-					</Row>
-				</Container>
+							</Col>
+						</Row>
+					</Container>
+				</div>
 			</div>
 		)
 

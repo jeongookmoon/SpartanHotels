@@ -75,7 +75,7 @@ class UserProfile extends React.Component {
 
 	render() {
 		const profilePage = (
-			<div className="profile-form-container col-lg-12" >
+			<div className="profile-form-container col-lg-12 dark-tint" >
 				<div>
 					<Container className="profile-form-card-container">
 						<Row>
