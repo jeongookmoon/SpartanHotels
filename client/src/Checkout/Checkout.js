@@ -23,18 +23,23 @@ class Checkout extends Component {
     super(props);
      
     const params = new URLSearchParams(this.props.location.search); // url ?data=bar
-    const hotel_id = params.get('hotel_id')
-    const hotel = params.get('hotelname')
-    const date_in = params.get('date_in')
-    const date_out = params.get('date_out')
-    const city = params.get('city')
-    const state = params.get('state')
-    const address = params.get('address')
-    const country = params.get('country')
+    const hotel_id = this.props.location.state.hotel_id
+    const hotel = this.props.location.state.hotel
+    const date_in = this.props.location.state.date_in
+    const date_out = this.props.location.state.date_out
+    const city = this.props.location.state.city
+    const state = this.props.location.state.state
+    const address = this.props.location.state.address
+    const country = this.props.location.state.country
 
-    const rooms = JSON.parse(params.get('rooms')).results.filter( x => x.desired_quantity > 0 )
+    console.log(this.props.location.state)
+    console.log(this.props.location.state.rooms)
 
+    const rooms = JSON.parse(this.props.location.state.rooms).results.filter( x => x.desired_quantity > 0 )
+    console.log(rooms)
     var totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 )
+    
+
     
     //Caluclate total price from rooms
 

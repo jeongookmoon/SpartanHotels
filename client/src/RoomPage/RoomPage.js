@@ -6,87 +6,110 @@ import { Table} from 'reactstrap';
 
 
 class RoomPage extends React.Component {
-	constructor(props) {
-		super(props);
+    constructor(props) {
+        super(props);
 
 
-		const params = new URLSearchParams(this.props.location.search);
-		const hotel_id = params.get('hotel_id')
-		const date_in = params.get('date_in')
-		const date_out = params.get('date_out')
-		const city = params.get('city')
-		const guestNumber = params.get('guest_number')
+        const params = new URLSearchParams(this.props.location.search);
+        const hotel_id = params.get('hotel_id')
+        const date_in = params.get('date_in')
+        const date_out = params.get('date_out')
+        const city = params.get('city')
+        const guestNumber = params.get('guest_number')
 
-		this.state = {
-			hotel: {},
-			rooms: {},
-			hotel_id,
-			date_in,
-			date_out,
-			city,
-			totalPrice: 0,
-			guest_number : guestNumber,
-			verifyCheckout : false,
-			verifyRooms : false,
-			verifyGuests: false,
+        this.state = {
+            hotel: {},
+            rooms: {},
+            hotel_id,
+            date_in,
+            date_out,
+            city,
+            totalPrice: 0,
+            guest_number : guestNumber,
+            verifyCheckout : false,
+            verifyRooms : false,
+            verifyGuests: false,
 
-		};
+        };
 
-		this.totalPrice = 0;
+        this.totalPrice = 0;
 
-	}
+    }
 
-	Checkout = (event) => {
+    Checkout = (event) => {
 
-		let total = 0;
-		let totalCapacity = 0;
-		this.setState({
-			verifyRooms:false,
-			verifyGuests:false
-		})
+        let total = 0;
+        let totalCapacity = 0;
+        this.setState({
+            verifyRooms:false,
+            verifyGuests:false
+        })
 
-		this.state.rooms.results.map((eachRoomResult, index) => 
-			total = total + eachRoomResult.desired_quantity
-		);
+        this.state.rooms.results.map((eachRoomResult, index) => 
+            total = total + eachRoomResult.desired_quantity
+        );
 
-		this.state.rooms.results.map((eachRoomResult, index) => 
-			totalCapacity = totalCapacity + (eachRoomResult.desired_quantity * eachRoomResult.capacity)
-		);
+        this.state.rooms.results.map((eachRoomResult, index) => 
+            totalCapacity = totalCapacity + (eachRoomResult.desired_quantity * eachRoomResult.capacity)
+        );
 
-	{/*There is a warning here "expected '===', this needs to be ==, won't work with ===*/}
-		if (total == 0){
-			this.setState({
-				verifyRooms : true,
-			})
-		}
+    {/*There is a warning here "expected '===', this needs to be ==, won't work with ===*/}
+        if (total == 0){
+            this.setState({
+                verifyRooms : true,
+            })
+        }
 
-		if (totalCapacity < this.state.guest_number){
-			this.setState({
-				verifyGuests: true,
-			})
-		}
+        if (totalCapacity < this.state.guest_number){
+            this.setState({
+                verifyGuests: true,
+            })
+        }
 
-		if ((total > 0) && (totalCapacity >= this.state.guest_number)){
-			console.log(JSON.stringify(this.state.rooms))
+        if ((total > 0) && (totalCapacity >= this.state.guest_number)){
+            console.log(JSON.stringify(this.state.rooms))
 
-			const dataObjectString = JSON.stringify(this.state.rooms);
-			
-			const queryString = this.props.location.search + `&country=${this.state.hotel.results[0].country}&state=${this.state.hotel.results[0].state}&address=${this.state.hotel.results[0].address}&hotelname=${this.state.hotel.results[0].name}&rooms=` + dataObjectString 
+            const dataObjectString = JSON.stringify(this.state.rooms);
+            
+            const queryString = this.props.location.search + `&country=${this.state.hotel.results[0].country}&state=${this.state.hotel.results[0].state}&address=${this.state.hotel.results[0].address}&hotelname=${this.state.hotel.results[0].name}&rooms=` + dataObjectString 
 
-		{/*
 
-			let queryString = encodeURI(queryToEncode)
-			console.log(queryString)
+            const rooms = JSON.stringify(this.state.rooms)
+            const hotel_id = this.state.hotel_id.toString()
+            const date_in = this.state.date_in.toString()
+            const date_out = this.state.date_out.toString()
+            const totalPrice = this.totalPrice.toString()
+            const guest_number = this.state.guest_number.toString()
+            const city = this.state.city.toString()
+            const country = this.state.hotel.results[0].country.toString()
+            const state = this.state.hotel.results[0].state.toString()
+            const address = this.state.hotel.results[0].address.toString()
 
-			const decodedString = decodeURI(queryString)
-			console.log(decodedString)
-*/}
-			this.props.history.push({
-				pathname: `/Checkout`,
-				search: `${queryString}`,
-			})
-		}
-	}
+            console.log(rooms)
+            console.log(hotel_id)
+            console.log(date_in)
+            console.log(date_out)
+            console.log(totalPrice)
+            console.log(guest_number)
+            console.log(city)
+
+            this.props.history.push({
+                pathname: `/Checkout`,
+                state: {
+                    rooms,
+                    date_in,
+                    date_out,
+                    hotel_id,
+                    totalPrice,
+                    guest_number,
+                    city,
+                    country,
+                    state,
+                    address,
+                    }
+            })
+        }
+    }
 
 	async componentDidMount() {
 		const roomSearchQuery = `/api/search/hotels/${this.state.hotel_id}/?date_in=${this.state.date_in}&date_out=${this.state.date_out}`
