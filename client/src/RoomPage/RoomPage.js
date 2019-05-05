@@ -71,14 +71,15 @@ class RoomPage extends React.Component {
 
 			const dataObjectString = JSON.stringify(this.state.rooms);
 			
-			const queryToEncode = this.props.location.search + `&country=${this.state.hotel.results[0].country}&state=${this.state.hotel.results[0].state}&address=${this.state.hotel.results[0].address}&hotelname=${this.state.hotel.results[0].name}&rooms=` + dataObjectString 
+			const queryString = this.props.location.search + `&country=${this.state.hotel.results[0].country}&state=${this.state.hotel.results[0].state}&address=${this.state.hotel.results[0].address}&hotelname=${this.state.hotel.results[0].name}&rooms=` + dataObjectString 
 
+		{/*
 			let queryString = encodeURI(queryToEncode)
 			console.log(queryString)
 
 			const decodedString = decodeURI(queryString)
 			console.log(decodedString)
-
+*/}
 			this.props.history.push({
 				pathname: `/Checkout`,
 				search: `${queryString}`,
