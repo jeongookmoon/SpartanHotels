@@ -6,10 +6,10 @@ import TextField from '@material-ui/core/TextField';
 import './Recoverage.css';
 import HomeImage from './homeImage7.jpg';
 import { checkCodePost, changePost } from '../Utility/RecoverageFunction';
-import {Card, Container, CardTitle,
-      UncontrolledPopover, PopoverHeader, PopoverBody,} 
-from 'reactstrap';
+import {UncontrolledPopover, PopoverHeader, PopoverBody,} from 'reactstrap';
 // import accessImage from './Images/homeImage7.jpg';
+import { Card, CardBody, Container, CardTitle} from 'reactstrap';
+
 
 var topSectionStyle = {
   width: "100%",
@@ -108,7 +108,7 @@ class Accesscode extends Component {
         if (response === "S") {
             // const whatever = { ... this.state}
             // console.log('whatever1', whatever)
-            // alert("Code is valid, please set your new password!");
+            alert("Code is valid, please set your new password!");
             localStorage.removeItem('checkToken')
             window.location.reload();
         }
@@ -133,7 +133,7 @@ class Accesscode extends Component {
             alert("The field code, password, and repassword can't be empty!")
           } else if(temp_fields.repassword !== temp_fields.password)
           {
-            alert("The two passwords do not match!")
+            alert("Repassword is not match to password!")
           }
         // if (this.validate()) {
         //   const temp_fields = {
@@ -154,8 +154,8 @@ class Accesscode extends Component {
         //   })
         // }
         else{
-        changePost(temp_fields).then(response=>{
-          alert("Your password has been reset! Please login again.")
+        changePost(temp_fields).then(resopnse=>{
+          alert("Reset password successfully! Please login again")
           window.location.assign("/")
           
         })}
@@ -194,7 +194,7 @@ class Accesscode extends Component {
         }
       }
       this.setState({
-        error: temp_errors,
+        errors: temp_errors,
         password_error: temp_password_error
       });
       return formIsValid;
@@ -204,83 +204,73 @@ class Accesscode extends Component {
         const EmptyForm =(<div></div>);
         var password_requirements_component = this.state.passwordCheck.map(ele=>{
           return <div key={ele.req} className= { ele.valid ? "valid-req" : "invalid-req" }>{ele.req}</div>
-         }) 
+        })
         return(
-          <div className="col-lg-12 recoverage-container col-auto" style={topSectionStyle}>
+          <div className="col-lg-12 recoverage-container col-auto flex-container" style={topSectionStyle}>
             <div className="recoverage-form-container col-lg-12">
             <br/>
-             <Container style={{marginTop: '7.5%'}}>
-              <Card className="recoverage-card">
-                <img className="recoverage-picture" src="http://cdn.onlinewebfonts.com/svg/img_228829.png" alt="lock" />
-                <CardTitle className="col-auto pl-0 recoverage-center-title">
-                    <h3> Forgot Password? </h3>
+             <Container style={{marginTop: '10%'}}>
+              <Card style={{width: "275px", marginLeft: "45%", backgroundColor: 'transparent'}}>
+                <CardTitle>
+                  <div className="col-auto pl-0">
+                    <h3> Password Recoverage </h3>
+                  </div>  
                 </CardTitle>
-                <div className="recoverage-inner-card">
-                {localStorage.checkToken ? 
-                  <div>
-                      <div>An access code has been to sent to your email.</div>
-                      <p> Check your email and enter the code below: </p>
-                  </div>
-                  :
-                  <div> 
-                    <p> Enter in a new password below: </p>
-                  </div>
-                }
+                <CardBody style={{ backgroundColor: 'transparent'}}>
                     <List component="nav">
                       {localStorage.checkToken ? 
                       <div>
-                        <TextField className="recoverage-textfield"  
+                      <ListItem />
+                        <TextField  
                           id="code"
-                          label="Access Code"
+                          label="code"
                           name="code"
-                          variant="outlined"
                           value={this.state.fields.code}
                           onChange={this.handleChange()}
-                          placeholder="1234567"     
-                        /> 
-                        <button type="submit" className="recoverage-button" onClick={this.checkCode}>SUBMIT</button>
+                          placeholder="Access code: 1234567"     
+                        /> <button type="submit" color="primary" onClick={this.checkCode}>
+                              Check Code
+                          </button>
                         </div>: EmptyForm}
                           {localStorage.checkToken ? 
                           EmptyForm :
                           <div>
-                          <TextField className="recoverage-textfieldPass"
+                          <ListItem />
+                          <TextField
                             id="PopoverFocus"
                             type="password"
-                            variant="outlined"
-                            label="Password"
+                            label="password"
                             name="password"
                             value={this.state.fields.password}
                             onChange={this.handleChange()}
                             placeholder="**********"
-                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$"      
+                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$" 
+                            required     
                           />
-                          <div className="text-warning"> {this.state.error.password} </div>
                           <UncontrolledPopover trigger="focus" placement="right" target="PopoverFocus">
                             <PopoverHeader>Password Requirements</PopoverHeader>
                             <PopoverBody>
-                              {password_requirements_component}
+                            {password_requirements_component}
                             </PopoverBody>
                           </UncontrolledPopover>
                           <ListItem />
-                          <TextField className="recoverage-textfieldPass"
-                            id="reenterpass"
-                            label="Re-enter Password"
-                            variant="outlined"
+                          <TextField
+                            id="repassword"
+                            label="repassword"
                             name="repassword"
                             type="password"
                             value={this.state.fields.repassword}
                             onChange={this.handleChange()}
                             placeholder="**********"     
                           />
-                          <div className="text-warning"> {this.state.error.repassword} </div>
                           <ListItem/>
-                            <button type="submit" className="recoverage-button" onClick={this.reset}>
-                                SAVE
+                            <button type="submit" color="primary" onClick={this.reset}>
+                                Reset Password
                             </button>
                             </div>}
                             </List>
-                      </div>
-                  </Card>
+                      </CardBody>
+                </Card>
               </Container>
             </div>
           </div>
