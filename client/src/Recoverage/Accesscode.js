@@ -246,7 +246,8 @@ class Accesscode extends Component {
                             value={this.state.fields.password}
                             onChange={this.handleChange}
                             placeholder="**********"
-                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$"      
+                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$"
+                            required      
                           />
                           <div className="text-warning"> {this.state.error.password} </div>
                           <UncontrolledPopover trigger="focus" placement="right" target="PopoverFocus">
