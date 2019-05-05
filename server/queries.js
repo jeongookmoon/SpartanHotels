@@ -70,49 +70,7 @@ module.exports = {
 
   // Example queries to be used with pets db in config.js
   // Important: This means pets db must be specified in config.js, else an error will occur when query is run
-  sql: `select * from pets where  age>4`,
-  sql2: 'select * from pets where  name=?',
 
-
-  user: {
-    profile: 'select name, email, reward from spartanhotel.user where user_id=?',
-    checkEmailExists: 'select * from user where email=?',
-    checkUserNameExists: 'select user_id from spartanhotel.user where name=?',
-    create: 'insert into spartanhotel.user (user_id,name,password,email) values (null,?,?,?)',
-    session: 'select LAST_INSERT_ID() as user_id ',
-    authenticate: 'select user_id, password from spartanhotel.user where email=?',
-    getAvailableRewardsIgnoringTransaction: 'SELECT sum(R.change) as sum FROM spartanhotel.reward R where user_id=? and date_active <= curdate() and (transaction_id != ? or transaction_id is NULL);',
-    getBookingForTransaction: 'SELECT * FROM spartanhotel.booking WHERE transaction_id=?',
-    edit: 'UPDATE user SET name=?, password=? WHERE user_id=?',
-    changepass: 'UPDATE user SET password = ? WHERE email = ?',
-    searchEmail: 'SELECT * FROM user WHERE email = ?',
-    getEmailwithID: 'SELECT email FROM user WHERE user_id = ?',
-    getAccessCode: 'SELECT access_code FROM user WHERE email = ?',
-    setAccessCode: 'UPDATE user SET access_code = ? WHERE email = ?',
-    getAvailableRewards: 'SELECT sum(R.change) as rewards FROM spartanhotel.reward R where user_id=? and date_active <= curdate()'
-
-  },
-
-  hotel: {
-    /**
-     * Returns [ queryWithQuestionMarks, [placeholders] ]
-     * @param {*} params 
-     * Required: date_in, date_out
-     * Optional: city, state, zip, pageNumber, resultsPerPage
-     * @param {boolean} getCount 
-     * When true, the resulting query will only return COUNT(*) of all possible results w/o regard to pagination parameters
-     * Default: false
-     */
-    search: function (params = {}, getCount = false) {
-      // Example parameter: { name: "mint", category: "baby", sortByAsc: true,  priceGreaterThan: 2, priceLessThan: 5 }
-      /*
-        from StackOverflow, Jordan Running,
-        https://stackoverflow.com/questions/31822891/how-to-build-dynamic-query-by-binding-parameters-in-node-js-sql#31823325
-        
-      */
-
-    // Example queries to be used with pets db in config.js
-    // Important: This means pets db must be specified in config.js, else an error will occur when query is run
     sql: `select * from pets where  age>4`,
     sql2: 'select * from pets where  name=?',
 
@@ -137,6 +95,25 @@ module.exports = {
         getOldPass: 'SELECT password FROM user where user_id =?',
         setNewName: 'UPDATE user SET name=? WHERE user_id=?'
     },
+
+  hotel: {
+    /**
+     * Returns [ queryWithQuestionMarks, [placeholders] ]
+     * @param {*} params 
+     * Required: date_in, date_out
+     * Optional: city, state, zip, pageNumber, resultsPerPage
+     * @param {boolean} getCount 
+     * When true, the resulting query will only return COUNT(*) of all possible results w/o regard to pagination parameters
+     * Default: false
+     */
+    search: function (params = {}, getCount = false) {
+      // Example parameter: { name: "mint", category: "baby", sortByAsc: true,  priceGreaterThan: 2, priceLessThan: 5 }
+      /*
+        from StackOverflow, Jordan Running,
+        https://stackoverflow.com/questions/31822891/how-to-build-dynamic-query-by-binding-parameters-in-node-js-sql#31823325
+        
+      */
+
 
       /* USING THIS
       Example of Query to see what is available:
