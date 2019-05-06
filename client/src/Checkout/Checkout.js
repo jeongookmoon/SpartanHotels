@@ -52,7 +52,7 @@ class Checkout extends Component {
     const oldPrice =  params.get('oldPrice')
     const rewards_applied =  params.get('rewards_applied')
 
-    var totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 );
+    var totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.desired_quantity),0 );
     
 
 
@@ -244,7 +244,7 @@ class _CheckoutPaymentCheck extends React.Component
      this.state = {
        complete: false,
       tax: this.props.totalPrice*0.10,
-      dataTotal: this.props.totalPrice*1.10,
+      totalPriceBeforeTaxAndRewards: this.props.totalPrice,
       tempTotal: this.props.totalPrice *1.10,
       finalTotal: this.props.totalPrice,
       //TODO: Change rewardpoint
@@ -311,9 +311,9 @@ class _CheckoutPaymentCheck extends React.Component
    handleDiscountUsed = () => {
      this.setState({ discountUsed:true});
 
-     if(this.state.discount > this.state.dataTotal)
+     if(this.state.discount > this.state.totalPriceBeforeTaxAndRewards)
      {
-      this.setState({discount: this.state.dataTotal})
+      this.setState({discount: this.state.totalPriceBeforeTaxAndRewards})
       this.setState({total: 0 })
 
      }
@@ -338,19 +338,20 @@ async submit(ev) {
   let {token} = await this.props.stripe.createToken({name: "SpartanHotel"});
 
   console.log(token)
-
+  console.log(this.state.nights_stayed)
+  console.log(this.state.totalPriceBeforeTaxAndRewards)
   let  desiredRooms = this.state.rooms.filter( x => x.desired_quantity > 0 )
-  let totalRoomPricePerNight = desiredRooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 )
+  let totalRoomPricePerNight = desiredRooms.reduce( (acc,cur) => acc + (cur.price * cur.desired_quantity),0 )
   console.log(`total room price per night ${totalRoomPricePerNight}`)
-  
+  desiredRooms.map( ele => {ele.quantity = ele.desired_quantity; delete ele.desired_quantity})
 // Prepares the data for Metadata at server side
 let data={
   id: token.id,
   // amount cannot have any decimals. Stripe reads 1000 as 10.00
   //parseFloat reduces the decimals to 2, then we multiple 100 to get rid of decimals 
   
-  total_price:parseFloat(this.state.dataTotal).toFixed(2),
-  cancellation_charge: parseFloat( (totalRoomPricePerNight * this.state.nights_stayed * 0.20)), // TODO: Change this later
+  total_price:parseFloat(this.state.totalPriceBeforeTaxAndRewards*1.10).toFixed(2),
+  cancellation_charge: parseFloat( (totalRoomPricePerNight * this.state.nights_stayed * 0.20)).toFixed(2), // TODO: Change this later
   date_in: this.state.date_in,
   date_out: this.state.date_out,
   rewards_applied: this.state.discount*100,
@@ -645,7 +646,7 @@ return (
        this.state.rooms.map((value)=>{
         console.log(value)
         if(value.desired_quantity > 0){
-        return  <p>{value.quantity} {value.bed_type} </p>
+        return  <p>{value.desired_quantity} {value.bed_type} </p>
         }
       })}
 
@@ -732,7 +733,7 @@ return (
          this.state.rooms.map((value)=>{
           console.log(value)
           if(value.desired_quantity > 0){
-          return  <p>{value.quantity} {value.bed_type} </p>
+          return  <p>{value.desired_quantity} {value.bed_type} </p>
           }
         })}
 
