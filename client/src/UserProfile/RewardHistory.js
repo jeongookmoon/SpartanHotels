@@ -62,7 +62,7 @@ class RewardHistory extends React.Component {
 		return this.state.rewardsHistory.map((rewards, index) => {
 			const { booking_id, hotel, dates, points_pending, points_earned } = rewards //destructuring
 			return (
-				<tr >
+				<tr key={index+1234}>
 					<td>{booking_id}</td>
 					<td>{hotel}</td>
 					<td>{dates}</td>
