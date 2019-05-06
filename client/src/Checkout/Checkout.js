@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Route, withRouter } from 'react-router-dom'
 import {Elements, StripeProvider} from 'react-stripe-elements';
 import axios from 'axios'
 //import './../AppSC.css';
+import {cancelTransaction} from '../Utility/CancelButton'
 
 
 
@@ -366,8 +367,6 @@ class _CheckoutPaymentCheck extends React.Component
    handleChange = name => event => {
      this.setState({[name]: event.target.value});
    }
-
-  
  
 async submit(ev) {
   let {token} = await this.props.stripe.createToken({name: "SpartanHotel"});
@@ -383,7 +382,18 @@ if(typeof(this.state.transaction_id) === 'undefined' || this.state.transaction_i
     desiredRooms = this.state.rooms.filter( x => x.desired_quantity > 0 )
 }
 else{
+
    desiredRooms = this.state.rooms;
+   const temp_fields = {
+          transaction_id: this.state.transaction_id
+        }
+   console.log(temp_fields)
+   cancelTransaction(temp_fields).then(response => {
+          console.log(response)
+          if (response === 200) {
+          } else if (response === 400) {
+          }
+        })
 }
   
 var totalRoomPricePerNight=0;
@@ -602,6 +612,7 @@ let data={
                color="primary"
                onClick={this.submit}
                style={{ marginBottom: "1rem", width: '90%'}}
+               value={this.state.transaction_id}
              >
                Checkout
              </Button>
