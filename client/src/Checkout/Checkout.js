@@ -36,7 +36,6 @@ class Checkout extends Component {
     const date_out = dummy_date_out.replace(/\s/g, '');
     const hotel_id = dummy_hotel_id.replace(/\s/g, '');
     console.log(date_in)
-    console.log(date_ou)
     console.log(date_out)
   {/*
     Finding ways to deal with the extra spaces being sent
@@ -53,7 +52,7 @@ class Checkout extends Component {
 */}
     const rooms = JSON.parse(this.props.location.state.rooms).results.filter( x => x.desired_quantity > 0 )
 
-    var totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 )
+    var totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.desired_quantity),0 )
     
 
     
@@ -194,7 +193,7 @@ class _CheckoutPaymentCheck extends React.Component
      this.state = {
        complete: false,
       tax: this.props.totalPrice*0.10,
-      dataTotal: this.props.totalPrice*1.10,
+      dataTotal: this.props.totalPrice,
       tempTotal: this.props.totalPrice *1.10,
       finalTotal: this.props.totalPrice,
       //TODO: Change rewardpoint
@@ -271,7 +270,7 @@ async submit(ev) {
   console.log(token)
 
   let  desiredRooms = this.state.rooms.filter( x => x.desired_quantity > 0 )
-  let totalRoomPricePerNight = desiredRooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 )
+  let totalRoomPricePerNight = desiredRooms.reduce( (acc,cur) => acc + (cur.price * cur.desired_quantity),0 )
   console.log(`total room price per night ${totalRoomPricePerNight}`)
   const nights_stayed = ((new Date(this.state.date_out) - new Date(this.state.date_in)) / (24 * 60 * 60 * 1000));
   console.log(`night stayed ${nights_stayed}`)
@@ -282,14 +281,14 @@ let data={
   // amount cannot have any decimals. Stripe reads 1000 as 10.00
   //parseFloat reduces the decimals to 2, then we multiple 100 to get rid of decimals 
   
-  total_price: this.state.dataTotal,
+  total_price: parseFloat(this.state.dataTotal * nights_stayed * 1.10).toFixed(2) ,
   cancellation_charge:totalRoomPricePerNight * nights_stayed * 0.20, // TODO: Change this later
   date_in: this.state.date_in,
   date_out: this.state.date_out,
   rewards_applied: this.state.discount*100,
   rooms: desiredRooms,
   hotel_id: this.state.hotel_id,
-  amount_due_from_user: parseFloat(this.state.total).toFixed(2),
+  amount_due_from_user: parseFloat(this.state.total * nights_stayed).toFixed(2),
 
   status: "Complete",
   guest_id:"0",

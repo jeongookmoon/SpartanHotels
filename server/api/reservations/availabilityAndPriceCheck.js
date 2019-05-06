@@ -162,7 +162,7 @@ async function availabilityCheck(requestedBooking, res) {
         }
         else{
             // requested room_type & price exists and is available
-            let desiredNumberOfRooms = reqRoom.quantity
+            let desiredNumberOfRooms = reqRoom.desired_quantity
             let availableNumberOfRooms = match.quantity
             if ( desiredNumberOfRooms > availableNumberOfRooms){
                 // not enough rooms available
@@ -172,7 +172,7 @@ async function availabilityCheck(requestedBooking, res) {
             }
             else{
                 // enough rooms available
-                match.desired_quantity = reqRoom.quantity
+                match.desired_quantity = reqRoom.desired_quantity
                 availableRequestedRooms.push(match)
             }
         }
@@ -203,7 +203,7 @@ exports.availabilityCheck = availabilityCheck;
 async function totalPriceAndCancellationChargeCheck(requestedBooking, res) {
     let result = {}
     
-    let totalRoomCost = requestedBooking.rooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 )
+    let totalRoomCost = requestedBooking.rooms.reduce( (acc,cur) => acc + (cur.price * cur.desired_quantity),0 )
 
     // check client submitted total price, cancellation charge accurate
     console.log(`totalRoomCost ${totalRoomCost}`);
@@ -305,7 +305,7 @@ async function modifyAvailabilityCheck(requestedBooking, transaction_id, res) {
         else{
             // requested room_type & price exists and is available
             console.log(`checking room quantity for ${reqRoom.room_type} at price ${reqRoom.price}`)
-            let desiredNumberOfRooms = reqRoom.quantity
+            let desiredNumberOfRooms = reqRoom.desired_quantity
             console.log(desiredNumberOfRooms)
             let availableNumberOfRooms = match.quantity
             console.log(availableNumberOfRooms)
