@@ -54,11 +54,21 @@ class Checkout extends Component {
     
 
 
-    console.log(this.props.location.state)
-    console.log(this.props.location.state.rooms)
+  {/*
+    Finding ways to deal with the extra spaces being sent
+    console.log(date_in)
 
+    console.log(date_out)
+
+    const date_out1 = String(date_out).replace('\t', '');
+    const date_out2 = String(date_out1).replace('\n', '');
+    const date_out3 = String(date_out2).replace('/\s/g', '');
+
+    console.log(date_out3)
+
+*/}
     const rooms = JSON.parse(this.props.location.state.rooms).results.filter( x => x.desired_quantity > 0 )
-    console.log(rooms)
+
     var totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 )
     
 
