@@ -278,7 +278,7 @@ class _CheckoutPaymentCheck extends React.Component
      this.state = {
        complete: false,
       tax: this.props.totalPrice*0.10,
-      totalPriceBeforeTaxAndRewards: this.props.totalPrice,
+      totalPriceBeforeTaxAndRewards: this.props.totalPrice*1.10,
       tempTotal: this.props.totalPrice *1.10,
       finalTotal: this.props.totalPrice,
       //TODO: Change rewardpoint
@@ -411,7 +411,7 @@ let data={
   // amount cannot have any decimals. Stripe reads 1000 as 10.00
   //parseFloat reduces the decimals to 2, then we multiple 100 to get rid of decimals 
   
-  total_price:parseFloat(this.state.totalPriceBeforeTaxAndRewards*1.10).toFixed(2),
+  total_price:parseFloat(this.state.totalPriceBeforeTaxAndRewards).toFixed(2),
   cancellation_charge: parseFloat( (totalRoomPricePerNight * this.state.nights_stayed * 0.20)).toFixed(2), // TODO: Change this later
   date_in: this.state.date_in,
   date_out: this.state.date_out,
