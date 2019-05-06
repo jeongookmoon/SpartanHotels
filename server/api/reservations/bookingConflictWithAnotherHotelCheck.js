@@ -38,7 +38,9 @@ async function bookingConflictWithAnotherHotelCheck(requestedBooking, res) {
         // remove desired hotel from being conflicted
         distinctConflictingHotels = distinctConflictingHotels.filter(ele => ele != requestedBooking.hotel_id);
         if (distinctConflictingHotels.length > 0) {
-            res.status(400).send(`Attempted booking overlaps with existing bookings at hotels ${distinctConflictingHotels}`);
+            res.status(400).send(
+                `Attempted booking overlaps with existing bookings at hotels ${distinctConflictingHotels}`
+            );
             return false;
         }
     }

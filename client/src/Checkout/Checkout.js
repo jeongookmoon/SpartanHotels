@@ -261,6 +261,8 @@ class _CheckoutPaymentCheck extends React.Component
       cancellation_charge:this.props.cancellation_charge,
       nights_stayed:this.props.nights_stayed,
 
+      checkBookings:false,
+
     };
      this.submit = this.submit.bind(this);
 
@@ -375,9 +377,21 @@ let data={
   {
     
 
-      this.props.history.push(`/CheckoutConfirm`);   
+      this.props.history.push(`/Confirmation`);   
   }
   else{
+    console.log(response)
+    let textPromise = await response.text()
+    console.log(`textPromise is ${textPromise}`)
+    if ( textPromise.includes("Attempted booking overlaps")){
+        this.setState({
+          checkBookings:true,
+        })
+
+        console.log(this.state.checkBookings)
+      // show message when no multiple booking condition at different hotel failed
+    }
+
     console.log("error "+ response.status)
   }
 }
@@ -562,6 +576,8 @@ let data={
                </div>
              </Collapse>
          </div>
+
+         {this.state.checkBookings ? <div className="room-page-verify-checkout"> There is a booking that already exists within this date. </div> : null}
  
          </form>
        </div>

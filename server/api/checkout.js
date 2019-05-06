@@ -44,9 +44,10 @@ router.post("/charge", async (req, res) => {
     }
     
     let stripeStatus
+    console.log("\n\n hello " + data.amount_due_from_user +"\n\n")
     try{
         stripeStatus = await stripe.charges.create({
-            amount: parseFloat(data.amount_due_from_user).toFixed(2) *100,
+            amount: parseInt(data.amount_due_from_user *100) ,
             currency: "usd",
             description: "Charge",
             source: data.id,
