@@ -102,9 +102,10 @@ class Reservations extends React.Component {
 					room_quantities = room_info[counter].quans.toString()
 					total_price = viewres.data[x].total_price
 					status = viewres.data[x].status
+					hotel_id = viewres.data[x].hotel_id
 					counter++
 
-					resInfo.push({ booking_id, date_in, date_out, hotel_name, total_price, status })
+					resInfo.push({ booking_id, date_in, date_out, hotel_name, total_price, status, hotel_id })
 				}
 
 				that.setState({
