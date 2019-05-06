@@ -142,9 +142,9 @@ class ModifyRoomPage extends React.Component {
 	}
 
 	roomSearch = (event) => {
-		const queryString = `?date_in=${this.state.date_in.format('YYYY-MM-DD')}&date_out=${this.state.date_out.format('YYYY-MM-DD')}
-			&hotel_id=${this.state.hotel_id}
-			&transaction_id=${this.state.transaction_id}`
+		const queryString = `?date_in=${this.state.date_in.format('YYYY-MM-DD')}&date_out=${this.state.date_out.format('YYYY-MM-DD')}`+
+			`&hotel_id=${this.state.hotel_id}`+
+			`&transaction_id=${this.state.transaction_id}`
 
 		this.props.history.push({
 			pathname: `/ModifyRoomPage`,
@@ -217,7 +217,7 @@ class ModifyRoomPage extends React.Component {
 				}
 			}
 		}
-		totalPriceWithoutTax = parseFloat(totalPriceWithoutTax).toFixed(2)
+		totalPriceWithoutTax = parseFloat(totalPriceWithoutTax * this.state.reservation_days).toFixed(2)
 		const salesTax = (totalPriceWithoutTax * .1).toFixed(2)
 		const totalPriceWithTax = (totalPriceWithoutTax * 1.1).toFixed(2)
 		const cancellationFee = (totalPriceWithoutTax * .2).toFixed(2)
@@ -338,21 +338,21 @@ class ModifyRoomPage extends React.Component {
 								<td> </td>
 								<td> </td>
 								<td><span> Total Room Price </span><span style={{ color: '#38af7b' }}><strong>({this.state.reservation_days} {this.state.reservation_days === 1 ? 'Night' : 'Nights'})</strong></span></td>
-								<td> $ {this.state.totalPriceWithoutTax}</td>
+								<td> $ {parseFloat(this.state.totalPriceWithoutTax).toFixed(2)}</td>
 							</tr>
 							<tr>
 								<td> </td>
 								<td> </td>
 								<td> </td>
 								<td> Sales Tax </td>
-								<td> $ {(this.state.totalPriceWithTax - this.state.totalPriceWithoutTax).toFixed(2)}</td>
+								<td> $ {parseFloat(this.state.totalPriceWithoutTax*0.1).toFixed(2)}</td>
 							</tr>
 							<tr>
 								<td> </td>
 								<td> </td>
 								<td> </td>
 								<td style={{ color: '#3b73d3' }}><strong> Estimated Total </strong></td>
-								<td><strong>$ {this.state.totalPriceWithTax} </strong></td>
+								<td><strong>$ {(this.state.totalPriceWithoutTax*1.10).toFixed(2)} </strong></td>
 							</tr>
 							<tr>
 								<td> </td>
