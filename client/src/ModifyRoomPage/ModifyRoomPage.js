@@ -94,8 +94,6 @@ class ModifyRoomPage extends React.Component {
 	}
 
 	roomSearch = (event) => {
-		console.log("this.state.transaction_dateIn", this.state.transaction_dateIn.format('YYYY-MM-DD'))
-		console.log("this.state.transaction_dateOut", this.state.transaction_dateOut.format('YYYY-MM-DD'))
 		const queryString = `?date_in=${this.state.date_in.format('YYYY-MM-DD')}&date_out=${this.state.date_out.format('YYYY-MM-DD')}
 			&hotel_id=${this.state.hotel_id}
 			&transaction_id=${this.state.transaction_id}`
@@ -245,28 +243,35 @@ class ModifyRoomPage extends React.Component {
 								<td> </td>
 								<td> </td>
 								<td> </td>
-								<td><strong> Selected Room Price </strong></td>
+								<td> Total Room Price ({this.state.reservation_days} {this.state.reservation_days === 1 ? 'Night' : 'Nights'})</td>
 								<td> $ {this.state.totalPriceWithoutTax}</td>
 							</tr>
 							<tr>
 								<td> </td>
 								<td> </td>
 								<td> </td>
-								<td><strong> Estimated Total </strong></td>
-								<td> $ {this.state.totalPriceWithTax}</td>
+								<td> Sales Tax </td>
+								<td> $ {(this.state.totalPriceWithTax - this.state.totalPriceWithoutTax).toFixed(2)}</td>
 							</tr>
 							<tr>
 								<td> </td>
 								<td> </td>
 								<td> </td>
-								<td> Estimated Cancellation Fee </td>
-								<td value={this.state.cancellationFee}> $ {this.state.cancellationFee}</td>
+								<td style={{ color: '#3b73d3' }}><strong> Estimated Total </strong></td>
+								<td><strong>$ {this.state.totalPriceWithTax} </strong></td>
+							</tr>
+							<tr>
+								<td> </td>
+								<td> </td>
+								<td> </td>
+								<td style={{ color: '#f977a1' }}> Estimated Cancellation Fee </td>
+								<td> $ {this.state.cancellationFee}</td>
 							</tr>
 
 						</tbody>
 					}
 				</Table>
-				<Button disabled={this.state.totalPriceWithTax === this.state.oldTotalPrice} className="home-submit-button btn btn-primary py-3 px-4" onClick={this.Checkout}>Modify</Button>
+				<Button disabled={this.state.totalPriceWithTax  === this.state.oldTotalPrice} className="home-submit-button btn btn-primary py-3 px-4" onClick={this.Checkout}>Modify</Button>
 			</div>
 		)
 
