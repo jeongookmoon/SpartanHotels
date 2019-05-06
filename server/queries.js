@@ -1074,6 +1074,16 @@ module.exports = {
   * 
  */
   transaction: {
-    getRoomInfo: 'select ANY_VALUE(bed_type), ANY_VALUE(room_price), count(*) as quantity from transaction_room natural join room where transaction_id = ? group by bed_type, room_price;'
+    getRoomInfo: `SELECT T.*, group_concat(TR.transaction_room_id) as transaction_room_ids, group_concat(TR.room_id) as room_ids, ANY_VALUE(TR.room_price) as room_price, ANY_VALUE(R.hotel_id) as hotel_id, group_concat(R.room_number), R.bed_type, ANY_VALUE(R.capacity) as capacity, ANY_VALUE(RI.url) as image,
+                  COUNT(*) as quantity
+                  FROM spartanhotel.transaction T
+                  join spartanhotel.transaction_room TR
+                  on T.transaction_id = TR.transaction_id
+                  join spartanhotel.room R
+                  on TR.room_id = R.room_id
+                  join spartanhotel.room_image RI
+                  on RI.bed_type = R.bed_type AND RI.hotel_id = R.hotel_id
+                  where T.transaction_id = ?
+                  group by R.bed_type, R.price;`
   }
 }

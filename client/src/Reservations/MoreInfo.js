@@ -62,7 +62,7 @@ componentDidMount() {
 			const {booking_id, room_num, bed_type, room_price} = rooms
 				if (this.state.id == booking_id) {
 					return (
-				<tr >
+				<tr key={index+1233}>
 					<td>{room_num}</td>
 					<td>{bed_type}</td>
 					<td>${room_price}</td>
