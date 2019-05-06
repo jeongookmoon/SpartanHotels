@@ -387,7 +387,7 @@ class RoomPage extends React.Component {
 																		<td> </td>
 																		<td> </td>
 																		<td> </td>
-																		<td><strong> Estimated Total </strong></td>
+																		<td><strong> Estimated Total Per Night</strong></td>
 																		<td> $ {this.handleRoomPrice().toFixed(2)}</td>
 														</tr>
 
