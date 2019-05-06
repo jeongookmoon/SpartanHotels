@@ -24,17 +24,17 @@ class Checkout extends Component {
      
 
     const params = new URLSearchParams(this.props.location.search); // url ?data=bar
-    const hotel_id = this.props.location.state.hotel_id
+    const dummy_hotel_id = this.props.location.state.hotel_id
     const hotel = this.props.location.state.hotel
     const date_in = this.props.location.state.date_in
-    const date_ou = this.props.location.state.date_out
+    const dummy_date_out = this.props.location.state.date_out
     const city = this.props.location.state.city
     const state = this.props.location.state.state
     const address = this.props.location.state.address
     const country = this.props.location.state.country
 
-    const date_out = date_ou.replace(/\s/g, '');
-
+    const date_out = dummy_date_out.replace(/\s/g, '');
+    const hotel_id = dummy_hotel_id.replace(/\s/g, '');
     console.log(date_in)
     console.log(date_ou)
     console.log(date_out)
