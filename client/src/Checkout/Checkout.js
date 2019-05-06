@@ -856,7 +856,9 @@ return (
   
 
     </div>
+
     <div>
+      
     <p class="font-weight-bold" style={{fontSize:"20px"}} >Check In: {this.props.date_in}</p>
     <p class="font-weight-bold" style={{fontSize:"20px"}} >Check Out: {this.props.date_out}</p>
     </div>
