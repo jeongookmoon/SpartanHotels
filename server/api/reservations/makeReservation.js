@@ -165,6 +165,7 @@ async function makeReservation(requestedBooking = {}, res) {
         emailParams.to = emailAddress
         console.log('Email being sent to: ' + emailAddress)
         emailParams.subject = 'Your Spartan Hotels Booking Confirmation!'
+        console.log(JSON.stringify(requestedBooking))
         // emailParams.text = 'Hello. Thank you for booking a reservation using Spartan Hotels. This is an email to confirm you order for: \n' + JSON.stringify(requestedBooking);
         var emailContents = compiledPugMakeResEmail({ "transaction_number": transactionID, "date": new Date().toLocaleDateString(),
         "availableRequestedRooms": availableRequestedRooms, "requestedBooking":requestedBooking, "hotelInfo":hotelInfo[0],
