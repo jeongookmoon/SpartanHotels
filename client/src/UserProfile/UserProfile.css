@@ -19,27 +19,25 @@
 
 }
 
-.profile-card-body {
-}
 
 .profile-center-title {
 	text-align: center;
 	font-size:2em;
 }
 
-.profile-container{
+.profile-container {
   padding:0;
   margin:0;
   height:100%;
   width:100%;
 }
 
-.profile-form-container{
+.profile-form-container {
   height:100%;
   width:100%;
 }
 
-.profile-form-card-container{
+.profile-form-card-container {
 	padding-top:10vh;
 }
 
