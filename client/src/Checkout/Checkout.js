@@ -81,7 +81,7 @@ if(typeof(transaction_id) === 'undefined' || transaction_id === null )
 else{
   console.log("oldroomForeach passed")
   rooms.forEach(element => {
-    totalPrice += element.price
+    totalPrice += element.price*element.quantity
   });
   console.log("totalPrice:"+totalPrice)
 }
@@ -176,6 +176,7 @@ else{
               totalPrice={this.state.totalPrice}
               oldPrice={this.state.oldPrice}
               rewards_applied={this.state.rewards_applied}
+              nights_stayed={this.state.nights_stayed}
               />
 
               : 
@@ -277,7 +278,7 @@ class _CheckoutPaymentCheck extends React.Component
      this.state = {
        complete: false,
       tax: this.props.totalPrice*0.10,
-      totalPriceBeforeTaxAndRewards: this.props.totalPrice,
+      totalPriceBeforeTaxAndRewards: this.props.totalPrice*1.10,
       tempTotal: this.props.totalPrice *1.10,
       finalTotal: this.props.totalPrice,
       //TODO: Change rewardpoint
@@ -410,20 +411,23 @@ let data={
   // amount cannot have any decimals. Stripe reads 1000 as 10.00
   //parseFloat reduces the decimals to 2, then we multiple 100 to get rid of decimals 
   
-  total_price:parseFloat(this.state.totalPriceBeforeTaxAndRewards*1.10).toFixed(2),
+  total_price:parseFloat(this.state.totalPriceBeforeTaxAndRewards).toFixed(2),
   cancellation_charge: parseFloat( (totalRoomPricePerNight * this.state.nights_stayed * 0.20)).toFixed(2), // TODO: Change this later
   date_in: this.state.date_in,
   date_out: this.state.date_out,
-  rewards_applied: this.state.discount*100,
+  rewards_applied: parseInt(this.state.discount*100),
   rooms: desiredRooms,
   hotel_id: this.state.hotel_id,
   amount_due_from_user: parseFloat(this.state.total).toFixed(2),
+  transaction_id:this.state.transaction_id,
 
   status: "Complete",
   guest_id:"0",
   
 }
 
+if(typeof(this.state.transaction_id) === 'undefined' || this.state.transaction_id === null)
+{
   let response = await fetch("/api/checkout/charge", {
     method: "POST",
     headers: {"Content-Type": "text/plain"},
@@ -453,6 +457,46 @@ let data={
     console.log("error "+ response.status)
   }
 }
+else{
+
+
+  let response = await fetch("/api/checkout/modify", {
+    method: "POST",
+    headers: {"Content-Type": "text/plain"},
+    body: JSON.stringify(data),
+    
+  }).catch(error=>console.log("Error: "+error));
+
+  if (response.ok)
+  {
+    
+      this.props.history.push(`/Confirmation`);   
+  }
+  else{
+    console.log(response)
+    let textPromise = await response.text()
+    console.log(`textPromise is ${textPromise}`)
+    if ( textPromise.includes("Attempted booking overlaps")){
+        this.setState({
+          checkBookings:true,
+        })
+
+        console.log(this.state.checkBookings)
+      // show message when no multiple booking condition at different hotel failed
+    }
+
+    console.log("error "+ response.status)
+  }
+
+
+
+
+}
+
+
+}
+
+ 
    
    render(){
 
@@ -730,6 +774,7 @@ return (
 
     </div>
     <div>
+
     <p class="font-weight-bold" style={{fontSize:"20px"}} >Check In: {this.props.date_in}</p>
     <p class="font-weight-bold" style={{fontSize:"20px"}} >Check Out: {this.props.date_out}</p>
     </div>
@@ -765,6 +810,7 @@ const rooms = this.props.rooms
 //Modify
 const oldPrice = this.props.oldPrice
 const rewards_applied = this.props.rewards_applied
+const nights_stayed = this.props.nights_stayed
 
 //console.log("test"+rooms)
 
@@ -778,7 +824,7 @@ this.state = {
   city,
   totalPrice,
   rooms,
-
+  nights_stayed,
   oldPrice,
   rewards_applied,
 };
@@ -796,19 +842,15 @@ return (
   
     <h4>
    
-    
-    <div >
-    <p class="font-weight-bold" style={{fontSize:"30px"}} >{this.props.hotel}</p>
-    <p class="font-weight-light" style={{fontSize:"20px"}}>{this.props.address}, {this.props.city}</p>
-    <p class="font-weight-light" style={{fontSize:"20px"}}> {this.props.state}, {this.props.country} </p>
-    </div>
+    <br/>
+    <br/>
     <div >
 
-<p class="font-weight-light text-muted ">          {
+    <p class="font-weight-light text-muted ">          {
          this.state.rooms.map((value)=>{
           console.log(value)
-          if(value.desired_quantity > 0){
-          return  <p>{value.desired_quantity} {value.bed_type} </p>
+          if(value.quantity > 0){
+          return  <p>{value.quantity} {value.bed_type} x {this.state.nights_stayed} days = $ {value.quantity * value.price * this.state.nights_stayed} </p>
           }
         })}
 
@@ -816,7 +858,9 @@ return (
   
 
     </div>
+
     <div>
+
     <p class="font-weight-bold" style={{fontSize:"20px"}} >Check In: {this.props.date_in}</p>
     <p class="font-weight-bold" style={{fontSize:"20px"}} >Check Out: {this.props.date_out}</p>
     </div>
@@ -858,7 +902,7 @@ return (
              <tr>
                <td style={{ width: '100%' }}>New Price: </td>
               
-              <NumberFormat value={this.state.totalPrice} displayType={'text'}
+              <NumberFormat value={this.state.totalPrice*this.state.nights_stayed} displayType={'text'}
                prefix={'$'} decimalScale={2} fixedDecimalScale={true}
                renderText={value => <td align="right">{value}</td>} defaultValue={0.00}
                ></NumberFormat>
@@ -867,7 +911,7 @@ return (
       
              <tr>
                <td>Total Difference:  </td>
-               <NumberFormat value={this.state.totalPrice-this.state.oldPrice} displayType={'text'}
+               <NumberFormat value={(this.state.totalPrice*this.state.nights_stayed)-this.state.oldPrice} displayType={'text'}
                prefix={'$'} decimalScale={2} fixedDecimalScale={true}
                renderText={value => <td align="right">{value}</td>} defaultValue={0}
                ></NumberFormat>
