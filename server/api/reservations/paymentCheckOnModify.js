@@ -56,7 +56,7 @@ async function paymentCheckOnModify(requestedBooking, transaction_id, res) {
         oldBookingData = oldBookingData[0];
         returnValue.oldTransactionData = oldBookingData;
         
-        let amountDueFromUser = requestedBooking.total_price //to calculate difference - oldBookingData.amount_paid - applied_reward_cash_value;
+        let amountDueFromUser = requestedBooking.total_price - applied_reward_cash_value //to calculate difference - oldBookingData.amount_paid ;
         amountDueFromUser = parseFloat(amountDueFromUser).toFixed(2)
         console.log(`amountDueFromUser ${amountDueFromUser}`);
         returnValue.amountDueFromUser = parseFloat(amountDueFromUser).toFixed(2);
