@@ -671,6 +671,7 @@ const address = this.props.address
 const country = this.props.country
 const totalPrice = this.props.totalPrice
 const rooms = this.props.rooms
+const nights_stayed = ((new Date(date_out) - new Date(date_in)) / (24 * 60 * 60 * 1000));
 
 //console.log("test"+rooms)
 
@@ -684,7 +685,7 @@ this.state = {
   city,
   totalPrice,
   rooms,
-
+  nights_stayed:nights_stayed,
 };
 
 
@@ -720,7 +721,7 @@ return (
        this.state.rooms.map((value)=>{
         console.log(value)
         if(value.desired_quantity > 0){
-        return  <p>{value.desired_quantity} {value.bed_type} </p>
+        return  <p>{value.desired_quantity} {value.bed_type} x {this.state.nights_stayed} Day = $ {(value.price * value.desired_quantity * this.state.nights_stayed)}</p>
         }
       })}
 
