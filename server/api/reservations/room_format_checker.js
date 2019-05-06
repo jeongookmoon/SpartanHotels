@@ -34,7 +34,7 @@ exports.room_format_checker = room_format_checker;
  */
 function room_type_format_checker(rooms, res) {
     for (i = 0; i < rooms.length; i++) {
-        let room_type = rooms[i].room_type + '';
+        let room_type = rooms[i].bed_type + '';
         let price = rooms[i].price + '';
         let quantity = rooms[i].quantity + ''
         if (typeof (room_type) == 'undefined') {

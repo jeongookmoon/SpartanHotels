@@ -166,7 +166,7 @@ async function availabilityCheck(requestedBooking, res) {
             let availableNumberOfRooms = match.quantity
             if ( desiredNumberOfRooms > availableNumberOfRooms){
                 // not enough rooms available
-                res.status(400).send(`Not enough rooms of type ${reqRoom.room_type} at price ${reqRoom.price} available`)
+                res.status(400).send(`Not enough rooms of type ${reqRoom.bed_type} at price ${reqRoom.price} available`)
                 result.pass = false
                 return result
             }
@@ -294,7 +294,7 @@ async function modifyAvailabilityCheck(requestedBooking, transaction_id, res) {
     let availableRequestedRooms = []
     for(var i=0;i<requestedBooking.rooms.length; i++){
         let reqRoom = requestedBooking.rooms[i]
-        let match = availableRoomsToModify.find( x => { return x.bed_type === reqRoom.room_type && x.price === reqRoom.price})
+        let match = availableRoomsToModify.find( x => { return x.bed_type === reqRoom.bed_type && x.price === reqRoom.price})
         console.log(match)
         if (match == undefined){
             // requested room_type & price either not available or not exists
@@ -304,14 +304,14 @@ async function modifyAvailabilityCheck(requestedBooking, transaction_id, res) {
         }
         else{
             // requested room_type & price exists and is available
-            console.log(`checking room quantity for ${reqRoom.room_type} at price ${reqRoom.price}`)
+            console.log(`checking room quantity for ${reqRoom.bed_type} at price ${reqRoom.price}`)
             let desiredNumberOfRooms = reqRoom.quantity
             console.log(desiredNumberOfRooms)
             let availableNumberOfRooms = match.quantity
             console.log(availableNumberOfRooms)
             if ( desiredNumberOfRooms > availableNumberOfRooms){
                 // not enough rooms available
-                res.status(400).send(`Not enough rooms of type ${reqRoom.room_type} at price ${reqRoom.price} available`)
+                res.status(400).send(`Not enough rooms of type ${reqRoom.bed_type} at price ${reqRoom.price} available`)
                 result.pass = false
                 return result
             }
