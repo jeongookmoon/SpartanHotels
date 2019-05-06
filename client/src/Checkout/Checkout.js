@@ -415,7 +415,7 @@ let data={
   cancellation_charge: parseFloat( (totalRoomPricePerNight * this.state.nights_stayed * 0.20)).toFixed(2), // TODO: Change this later
   date_in: this.state.date_in,
   date_out: this.state.date_out,
-  rewards_applied: this.state.discount*100,
+  rewards_applied: parseInt(this.state.discount*100),
   rooms: desiredRooms,
   hotel_id: this.state.hotel_id,
   amount_due_from_user: parseFloat(this.state.total).toFixed(2),
@@ -859,7 +859,7 @@ return (
     </div>
 
     <div>
-      
+
     <p class="font-weight-bold" style={{fontSize:"20px"}} >Check In: {this.props.date_in}</p>
     <p class="font-weight-bold" style={{fontSize:"20px"}} >Check Out: {this.props.date_out}</p>
     </div>
