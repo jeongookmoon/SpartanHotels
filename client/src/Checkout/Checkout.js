@@ -462,7 +462,7 @@ let data={
  
  
  
-     <div class="card text-left h-50 w-50 " >
+     <div class="card text-left w-50 " >
        <h5 class="card-header">Payment Summary</h5>
        <div class="card-body">
          <div class="col" />

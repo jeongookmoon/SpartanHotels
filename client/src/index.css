@@ -13,7 +13,7 @@ code {
     monospace;
 }
 
-.page-link{
+.page-link {
   background-color:white;
   color:black;
 }
@@ -21,13 +21,13 @@ code {
 
 /* NavBar CSS */
 
-.dark-tint{
+.dark-tint {
   height:100%;
   width:100%;
   background: rgba(0,0,0,0.3);
 }
 
-.email-icon{
+.email-icon {
   font-size: 0.75rem;
   background:none;
   border:none;
@@ -36,13 +36,13 @@ code {
   
 }
 
-.imageLogo{
+.imageLogo {
   height:3vh;
   width:2vw;
   margin-right:0.5vw;
 }
 
-.password-icon{
+.password-icon {
   font-size: .75rem;
   background:none;
   border:none;
@@ -59,7 +59,6 @@ code {
   color:white;
   background:transparent;
 
-
 }
 
 
@@ -71,15 +70,11 @@ code {
   color:black;
   background:white;
 
-
-
 }
 
 .navbar-pages div{
   
   color:black;
-  
-
 
 }
 
@@ -99,8 +94,6 @@ code {
 .navbar-page-room div{
   
   color:black;
-  
-
 
 }
 
@@ -121,17 +114,11 @@ code {
 }
 
 
-.navbar-left{
-
-
-
-}
-
 .navbar-register-button {
   color:white;
 }
 
-.navbar-register-button-black{
+.navbar-register-button-black {
   color:black;
 }
 
@@ -139,11 +126,7 @@ code {
 
 /* Home CSS */
 
-.bot-section{
-
-}
-
-.check-in-icon{
+.check-in-icon {
 
   font-size: 1em;
   background-color:white;
@@ -152,7 +135,7 @@ code {
 
 }
 
-.check-in-input{
+.check-in-input {
   font-size:1.3em;
   font-weight: 200;
     border:none;
@@ -233,9 +216,6 @@ code {
 .home-checkboxes div{
   padding:2em 1em 2em 1em;
 
-}
-
-.home-checkboxes div:hover{
 }
 
 
@@ -386,10 +366,6 @@ code {
   max-height:50em;
   max-width:87em;
   
-}
-
-.home-submit-form{
-
 }
 
 
@@ -759,11 +735,6 @@ code {
  }
 
 
-
- .hotel-search-item-number{
-
- }
-
  .hotel-search-item-price{
   color:#d32f2f;
   font-size: 1em;
@@ -805,7 +776,6 @@ code {
   min-height:33rem;
 
 
-
  }
 
  hr.hotel-search-hr-top{
@@ -828,10 +798,6 @@ code {
     font-weight:200;
  }
 
- .hotel-search-location-header-demo{
-
- }
-
  .hotel-search-location-header-container-demo{
   padding-top: .5em;
   padding-bottom: 1em;
@@ -852,7 +818,6 @@ code {
     -o-transition: transform .5s ease;
     -ms-transition: transform .5s ease;
     transition: transform .5s ease;
-
 
  }
    
@@ -889,7 +854,6 @@ code {
 .hotel-search-menu-item:hover ul {
   height:15vh;
       z-index: 100;
-
 
 }
 
@@ -1078,12 +1042,6 @@ code {
 }
 
 
-.room-page-hotel-description{
-
-
-
-}
-
 .room-page-location{
   font-size: 1.2em;
 }
@@ -1139,10 +1097,6 @@ code {
     width:10vw;
 }
 
-.room-page-room-quantity-dropdown: focus{
-
-}
-
  .room-page-search-date{
   padding-right:-3em;
   padding: 0 0 0 0;
@@ -1195,11 +1149,6 @@ code {
 
 }
 
-
-.room-page-rooms-container{
-
-
-}
 
 .room-page-submit-button{
   color: #fff;
