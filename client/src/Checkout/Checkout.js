@@ -33,7 +33,9 @@ class Checkout extends Component {
     const address = this.props.location.state.address
     const country = this.props.location.state.country
     const transaction_id = this.props.location.state.transactionID
-
+    const nights_stayed = ((new Date(date_out) - new Date(date_in)) / (24 * 60 * 60 * 1000));
+    
+    console.log(`night stayed ${nights_stayed}`)
   {/*
     Finding ways to deal with the extra spaces being sent
     console.log(date_in)
@@ -85,8 +87,8 @@ class Checkout extends Component {
       date_in,
       date_out,
       city,
-
-      rewardPoint:null,
+      nights_stayed,
+      rewardPoint:0,
       totalPrice,
       hotel_id,
       rooms,
@@ -102,16 +104,17 @@ class Checkout extends Component {
 
   componentDidMount() {
     axios.get('/api/profile')
-    .then(res => 
-      this.setState({
-        rewardPoint: res.data[0].reward
-      }))  
+    .then(res => {
+       this.setState({
+         rewardPoint: res.data.reward
+       })
+
+    })
+        
   }
 
 
   render() {
-
-    
 
     return (
 
@@ -136,7 +139,7 @@ class Checkout extends Component {
               country={this.state.country}
               rooms={this.state.rooms}
               transaction_id={this.state.transaction_id}
-
+            
               totalPrice={this.state.totalPrice}
               oldPrice={this.state.oldPrice}
               rewards_applied={this.state.rewards_applied}
@@ -167,7 +170,7 @@ class Checkout extends Component {
     
             <div class="">
                 <CheckoutPaymentCheck
-                totalPrice ={this.state.totalPrice}
+                totalPrice ={this.state.totalPrice* this.state.nights_stayed}
                 rewardPoint={this.state.rewardPoint}
  
                 date_in={this.state.date_in}
@@ -175,6 +178,8 @@ class Checkout extends Component {
                 hotel_id = {this.state.hotel_id}
                 rooms={this.state.rooms}
                 transaction_id={this.state.transaction_id}
+                cancellation_charge={this.state.cancellation_charge}
+                nights_stayed={this.state.nights_stayed}
                 />
             </div>
           </Elements> 
@@ -253,12 +258,28 @@ class _CheckoutPaymentCheck extends React.Component
       hotel_id: this.props.hotel_id,
       rooms:this.props.rooms,
       transaction_id:this.props.transaction_id,
+      cancellation_charge:this.props.cancellation_charge,
+      nights_stayed:this.props.nights_stayed,
 
     };
      this.submit = this.submit.bind(this);
 
+    
    }
- 
+
+   componentDidMount() {
+    axios.get('/api/profile')
+    .then(res => {
+       this.setState({
+         rewardPoint: res.data.reward
+       })
+      console.log("res"+JSON.stringify(res));
+      
+      console.log("resReward "+JSON.stringify(res.data.reward));
+    })
+        
+  }
+
      //When reward points used, decrease price.
      // Does not go over the amount of reward point user currently have
      handleDiscountUsedInput(event){
@@ -321,17 +342,15 @@ async submit(ev) {
   let  desiredRooms = this.state.rooms.filter( x => x.desired_quantity > 0 )
   let totalRoomPricePerNight = desiredRooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 )
   console.log(`total room price per night ${totalRoomPricePerNight}`)
-  const nights_stayed = ((new Date(this.state.date_out) - new Date(this.state.date_in)) / (24 * 60 * 60 * 1000));
-  console.log(`night stayed ${nights_stayed}`)
-
+  
 // Prepares the data for Metadata at server side
 let data={
   id: token.id,
   // amount cannot have any decimals. Stripe reads 1000 as 10.00
   //parseFloat reduces the decimals to 2, then we multiple 100 to get rid of decimals 
   
-  total_price: parseFloat( (this.state.dataTotal+'').toFixed(2)),
-  cancellation_charge: parseFloat( (totalRoomPricePerNight * nights_stayed * 0.20)+''), // TODO: Change this later
+  total_price:parseFloat(this.state.dataTotal).toFixed(2),
+  cancellation_charge: parseFloat( (totalRoomPricePerNight * this.state.nights_stayed * 0.20)), // TODO: Change this later
   date_in: this.state.date_in,
   date_out: this.state.date_out,
   rewards_applied: this.state.discount*100,
@@ -364,7 +383,7 @@ let data={
    
    render(){
 
-
+    console.log("rewardpoint:"+this.state.rewardPoint) 
 
      const error= validateRP(this.state.rewardPoint,this.state.discount);
      const isEnabled = !error;
