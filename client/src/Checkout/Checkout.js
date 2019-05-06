@@ -282,7 +282,7 @@ let data={
   //parseFloat reduces the decimals to 2, then we multiple 100 to get rid of decimals 
   
   total_price: parseFloat(this.state.dataTotal * nights_stayed * 1.10).toFixed(2) ,
-  cancellation_charge:totalRoomPricePerNight * nights_stayed * 0.20, // TODO: Change this later
+  cancellation_charge:(totalRoomPricePerNight * nights_stayed * 0.20).toFixed(2), // TODO: Change this later
   date_in: this.state.date_in,
   date_out: this.state.date_out,
   rewards_applied: this.state.discount*100,
