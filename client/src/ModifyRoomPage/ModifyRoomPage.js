@@ -50,7 +50,7 @@ class ModifyRoomPage extends React.Component {
 		const realroomSearchQuery = `/api/search/hotels/${this.state.hotel_id}/?date_in=${this.state.date_in.format('YYYY-MM-DD')}&date_out=${this.state.date_out.format('YYYY-MM-DD')}`
 		const hotelSearchQuery = `/api/search/hotels?date_in=1111-01-01&date_out=1111-01-02&hotel_id=${this.state.hotel_id}`
 		const realhotelSearchQuery = `/api/search/hotels?date_in=${this.state.date_in.format('YYYY-MM-DD')}&date_out=${this.state.date_out.format('YYYY-MM-DD')}&hotel_id=${this.state.hotel_id}`
-		const transactionIDparam = { transactionID: transaction_id }
+		const transactionIDparam = { transaction_id: transaction_id }
 
 		const rooms = (await axios.get(roomSearchQuery)).data
 		const realrooms = (await axios.get(realroomSearchQuery)).data
