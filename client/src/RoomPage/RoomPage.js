@@ -85,14 +85,6 @@ class RoomPage extends React.Component {
             const state = this.state.hotel.results[0].state.toString()
             const address = this.state.hotel.results[0].address.toString()
 
-            console.log(rooms)
-            console.log(hotel_id)
-            console.log(date_in)
-            console.log(date_out)
-            console.log(totalPrice)
-            console.log(guest_number)
-            console.log(city)
-
             this.props.history.push({
                 pathname: `/Checkout`,
                 state: {
