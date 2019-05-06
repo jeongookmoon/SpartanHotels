@@ -74,7 +74,7 @@ class ModifyRoomPage extends React.Component {
 		if (realrooms.results && realrooms.results.length > 0) {
 			realrooms.results.forEach((eachRealRoomResult) => {
 				const key = { bed_type: eachRealRoomResult.bed_type, price: eachRealRoomResult.price }
-				const value = { available_quantity: eachRealRoomResult.quantity, image: eachRealRoomResult.images, capacity: eachRealRoomResult.capacity, taken_quantity: 0}
+				const value = { available_quantity: eachRealRoomResult.quantity, image: eachRealRoomResult.images, capacity: eachRealRoomResult.capacity, taken_quantity: 0 }
 				roomsMap.set(key, value)
 			})
 		}
@@ -196,10 +196,10 @@ class ModifyRoomPage extends React.Component {
 
 	handleEachRoomQuantity = (roomInfoForRoomMap) => (event) => {
 		event.preventDefault()
-		
+
 		const { value } = event.target
 		let { roomsMap } = this.state
-		
+
 		let updateTakenQuantity = roomsMap.get(roomInfoForRoomMap[0])
 		updateTakenQuantity.taken_quantity = value
 		roomsMap.set(roomInfoForRoomMap[0], updateTakenQuantity)
@@ -221,7 +221,7 @@ class ModifyRoomPage extends React.Component {
 		const salesTax = (totalPriceWithoutTax * .1).toFixed(2)
 		const totalPriceWithTax = (totalPriceWithoutTax * 1.1).toFixed(2)
 		const cancellationFee = (totalPriceWithoutTax * .2).toFixed(2)
-		
+
 		this.setState({
 			roomsMap, totalPriceWithoutTax, totalPriceWithTax, cancellationFee, salesTax
 		});
@@ -365,7 +365,7 @@ class ModifyRoomPage extends React.Component {
 						</tbody>
 					}
 				</Table>
-				<Button disabled={this.state.totalPriceWithTax === this.state.oldTotalPrice} className="home-submit-button btn btn-primary py-3 px-4" onClick={this.Checkout}>Modify</Button>
+				<Button disabled={this.state.totalPriceWithTax === this.state.oldTotalPrice || parseInt(this.state.totalPriceWithTax) === 0} className="home-submit-button btn btn-primary py-3 px-4" onClick={this.Checkout}>Modify Checkout</Button>
 			</div>
 		)
 
