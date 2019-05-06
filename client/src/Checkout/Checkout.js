@@ -377,7 +377,7 @@ let data={
   {
     
 
-      this.props.history.push(`/CheckoutConfirm`);   
+      this.props.history.push(`/Confirmation`);   
   }
   else{
     console.log(response)

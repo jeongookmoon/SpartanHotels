@@ -49,11 +49,6 @@ class Home extends React.Component {
 	}
 
 	componentDidMount() {
-		const googleMapHome = new window.google.maps.Map(document.getElementById('map'), {
-			center: { lat: 37.3382082, lng: -121.88632860000001 },
-			zoom: 14
-		})
-		window.googleMapHome = googleMapHome
 	}
 
 	handleChange = (event) => {
@@ -154,13 +149,6 @@ class Home extends React.Component {
 
 	}
 
-	putGoogleMapMarker = (latitude, longitude) => {
-		window.googleHomeMapMarker ? window.googleHomeMapMarker.setPosition({ lat: parseFloat(latitude), lng: parseFloat(longitude) }) : window.googleHomeMapMarker = new window.google.maps.Marker({
-			position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
-			map: window.googleMapHome
-		})
-	}
-
 	showPlaceDetails(place) {
 		let geoDetail = JSON.stringify(place.geometry.location, null, 2).replace(/['"]+/g, '')
 		const latitude = geoDetail.substring(geoDetail.lastIndexOf("lat:") + "lat: ".length, geoDetail.lastIndexOf(","))
@@ -181,11 +169,8 @@ class Home extends React.Component {
 				fullAddress, streetAddress,
 				city, state, place
 			},
-			window.googleMapHome.setCenter(
-				new window.google.maps.LatLng(latitude, longitude)
-			)
+
 		)
-		this.putGoogleMapMarker(latitude, longitude)
 	}
 
 	search = (event) => {
@@ -240,7 +225,6 @@ class Home extends React.Component {
 										<div className="subheading-sm">Welcome</div>
 										<div>Spartan Hotels</div>
 					  				</div>
-					  				<div className="" style={{ width: 0, height: 0 }} id="map"></div>
 				  				</div>
 
 				  				<div className="row mb-5 mr-lg-5 ml-lg-5">
