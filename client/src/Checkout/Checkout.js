@@ -5,6 +5,7 @@ import "./../App.css";
 import { BrowserRouter as Router, Route, withRouter } from 'react-router-dom'
 
 import {Elements, StripeProvider} from 'react-stripe-elements';
+import axios from 'axios'
 //import './../AppSC.css';
 
 
@@ -23,29 +24,48 @@ class Checkout extends Component {
     super(props);
      
     const params = new URLSearchParams(this.props.location.search); // url ?data=bar
-    const hotel_id = params.get('hotel_id')
-    const hotel = params.get('hotelname')
-    const date_in = params.get('date_in')
-    const date_out = params.get('date_out')
-    const city = params.get('city')
-    const state = params.get('state')
-    const address = params.get('address')
-    const country = params.get('country')
+    const hotel_id = this.props.location.state.hotel_id
+    const hotel = this.props.location.state.hotel
+    const date_in = this.props.location.state.date_in
+    const date_out = this.props.location.state.date_out
+    const city = this.props.location.state.city
+    const state = this.props.location.state.state
+    const address = this.props.location.state.address
+    const country = this.props.location.state.country
+    const transaction_id = this.props.location.state.transactionID
 
-    const rooms = JSON.parse(params.get('rooms')).results.filter( x => x.desired_quantity > 0 )
+  {/*
+    Finding ways to deal with the extra spaces being sent
+    console.log(date_in)
 
-    var totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 )
+    console.log(date_out)
+
+
+
+    console.log(date_out3)
+
+*/}
+    const rooms = JSON.parse(this.props.location.state.rooms).results.filter( x => x.desired_quantity > 0 )
+// Modify - TO BE CHANGED
+    const oldPrice =  params.get('oldPrice')
+    const rewards_applied =  params.get('rewards_applied')
+
+    var totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 );
     
+<<<<<<< HEAD
     //Caluclate total price from rooms
 
 
  
   //  const user_id = this.state.user_id;
    // const rewardPoint = this.state.rewardPoint;
+=======
+    
+  
+>>>>>>> 5263b8c... tmp
 
   //We can assume  we have user id  and rewardPoint always present as a state
-///const user_id = "1"
-    const rewardPoint="1000"
+   // const rewardPoint="1000"
 
     //Hotel ID is used for checking to avoid booking at different hotels
   
@@ -57,16 +77,33 @@ class Checkout extends Component {
       date_in,
       date_out,
       city,
+
+      rewardPoint:null,
       totalPrice,
       hotel_id,
-      rooms
+      rooms,
+      transaction_id,
+
+// old modify
+      oldPrice,
+      rewards_applied,
+
     };
+  }
+
+
+  componentDidMount() {
+    axios.get('/api/profile')
+    .then(res => 
+      this.setState({
+        rewardPoint: res.data[0].reward
+      }))  
   }
 
 
   render() {
 
-
+    
 
     return (
 
@@ -78,18 +115,43 @@ class Checkout extends Component {
 
           <div class="w-100">
 
-            <CheckoutBookingSummary 
-            
-            hotel={this.state.hotel}
-            date_in={this.state.date_in}
-            date_out={this.state.date_out}
-            city={this.state.city}
-            state={this.state.state}
-            address={this.state.address}
-            country={this.state.country}
-            rooms={this.state.rooms}
-            />
-                  
+            { 
+              typeof(this.state.transaction_id) !== 'undefined' ? 
+
+              <CheckoutBookingSummaryModify 
+              hotel={this.state.hotel}
+              date_in={this.state.date_in}
+              date_out={this.state.date_out}
+              city={this.state.city}
+              state={this.state.state}
+              address={this.state.address}
+              country={this.state.country}
+              rooms={this.state.rooms}
+              transaction_id={this.state.transaction_id}
+
+              totalPrice={this.state.totalPrice}
+              oldPrice={this.state.oldPrice}
+              rewards_applied={this.state.rewards_applied}
+              />
+
+              : 
+              
+              <CheckoutBookingSummary 
+              hotel={this.state.hotel}
+              date_in={this.state.date_in}
+              date_out={this.state.date_out}
+              city={this.state.city}
+              state={this.state.state}
+              address={this.state.address}
+              country={this.state.country}
+              rooms={this.state.rooms}
+              />
+     }  
+
+
+
+        
+           
           <Elements>
 
 {/* ////////////Payment/////////   */}
@@ -99,10 +161,12 @@ class Checkout extends Component {
                 <CheckoutPaymentCheck
                 totalPrice ={this.state.totalPrice}
                 rewardPoint={this.state.rewardPoint}
+ 
                 date_in={this.state.date_in}
                 date_out={this.state.date_out}
                 hotel_id = {this.state.hotel_id}
                 rooms={this.state.rooms}
+                transaction_id={this.state.transaction_id}
                 />
             </div>
           </Elements> 
@@ -146,19 +210,13 @@ const handleReady = () => {
 };
 
 
-var rewardPoint = "1000";
-
-
 class _CheckoutPaymentCheck extends React.Component
 {
 
 
   state={
      discount: '0',
-     testPay:'59.99',
      tempTotal:'0',
-     rewardPoint: "1000",
-
    }
  
    constructor(props) {
@@ -177,14 +235,17 @@ class _CheckoutPaymentCheck extends React.Component
       tempTotal: this.props.totalPrice *1.10,
       finalTotal: this.props.totalPrice,
       //TODO: Change rewardpoint
-      rewardPoint: '1000',
+      rewardPoint: this.props.rewardPoint,
       rewardPointValid:false,
       total: this.props.totalPrice *1.10,
       discount:"0",
+
       date_in: this.props.date_in,
       date_out: this.props.date_out,
       hotel_id: this.props.hotel_id,
       rooms:this.props.rooms,
+      transaction_id:this.props.transaction_id,
+
     };
      this.submit = this.submit.bind(this);
 
@@ -197,10 +258,10 @@ class _CheckoutPaymentCheck extends React.Component
      this.setState({ discount: event.target.value/100}, function() {
       
       if(this.state.discount < 0)
-     {
+      {
         this.setState({discount: 0})
       }
-
+      
      else if(this.state.discount*100 > this.state.rewardPoint)
      {
 
@@ -311,7 +372,7 @@ let data={
  
      <div class="card text-left w-50">
        <h5 class="card-header">Payment Method</h5>
-       <div class="card-body">
+       <div class="card-body" style={{backgroundColor: "#ffffff"}}>
          <div class="row">
            <div class="col-md-11">
            <form action="/charge" method="post" id="payment-form">
@@ -321,7 +382,7 @@ let data={
               <div class="form-group">
                <span style={{ fontSize: 12, marginLeft: 13 }}>Card Number</span>
                 <div>
-                 <CardNumberElement/>
+                  <CardNumberElement/>
                 </div>
                </div>
             
@@ -331,7 +392,7 @@ let data={
                  style={{ paddingLeft: 15, marginTop: 8, width:"33%" }}>
                   <span style={{ fontSize: 12, marginLeft: 13 }}>Expiration Date</span>
                   <div>
-                   <CardExpiryElement/>  
+                    <CardExpiryElement/>
                   </div>
                </div>
  
@@ -388,7 +449,7 @@ let data={
 
                <NumberFormat value={this.props.totalPrice} displayType={'text'}
                prefix={'$'} decimalScale={2} fixedDecimalScale={true}
-               renderText={value => <td>{value}</td>} defaultValue={this.props.totalPrice}
+               renderText={value => <td align="right">{value}</td>} defaultValue={this.props.totalPrice}
                ></NumberFormat>
 
              </tr>
@@ -398,7 +459,7 @@ let data={
               
               <NumberFormat value={this.state.tax} displayType={'text'}
                prefix={'$'} decimalScale={2} fixedDecimalScale={true}
-               renderText={value => <td>{value}</td>} defaultValue={this.state.tax}
+               renderText={value => <td align="right">{value}</td>} defaultValue={this.state.tax}
                ></NumberFormat>
              </tr>
  
@@ -407,7 +468,7 @@ let data={
               
               <NumberFormat value={this.state.discount} displayType={'text'}
                prefix={'$'} decimalScale={2} fixedDecimalScale={true}
-               renderText={value => <td>-{value}</td>} defaultValue={0.00}
+               renderText={value => <td align="right">{value}</td>} defaultValue={0.00}
                ></NumberFormat>
  
              </tr>
@@ -430,7 +491,7 @@ let data={
            <Button
                color="warning"
                onClick={this.toggle}
-               style={{ marginBottom: "1rem",  width: '90%'}}
+               style={{ marginBottom: "1rem",  width: '90%'}}      
              >
                Pay with Reward Points
              </Button>
@@ -463,11 +524,11 @@ let data={
                      </Button>
                      <p class='small'>
                        <p>
-                         You have {rewardPoint} Reward Points ;
+                         You have {this.state.rewardPoint} Reward Points ;
                        </p>
+                       <p class='font-italic small'> 1 Reward Point = $0.01 (ie. 500 Reward Points = $5.00)</p>
                      </p>
-                     <p class='font-italic small'> 1 Reward Point = $0.01 (ie. 500 Reward Points = $5.00)</p>
- 
+                    
                  </div>
 
                </div>
@@ -476,7 +537,7 @@ let data={
  
          </form>
        </div>
-       <hr />
+    
      </div>
      </div>
    );
@@ -541,7 +602,7 @@ render(){
 return (
 <div class="card text-center h-50">
   <h5 class="card-header">Booking Summary</h5>
-  <div class="card-body " style={{}}>
+  <div class="card-body  " style={{backgroundColor: "#ffffff"}}>
   
     <h4>
    
@@ -554,22 +615,15 @@ return (
     <div >
 
 <p class="font-weight-light text-muted ">          {
-        this.state.rooms.map((value)=>{
-          console.log(value)
-          if(value.desired_quantity > 0){
-          return  <p>{value.quantity} {value.bed_type} </p>
-          }
-        })}
+       this.state.rooms.map((value)=>{
+        console.log(value)
+        if(value.desired_quantity > 0){
+        return  <p>{value.quantity} {value.bed_type} </p>
+        }
+      })}
 
      </p>
    
-     
-    {/* # of Adults, # Children 
-        <p class="text-muted">{this.props.adults} Adults</p>
-  
-  <p class="text-muted">{this.props.children} Children</p>
-    
-    */}
 
     </div>
     <div>
@@ -586,6 +640,155 @@ return (
 }
 
 const CheckoutBookingSummary = withRouter(_CheckoutBookingSummary);
+
+
+class _CheckoutBookingSummaryModify extends React.Component
+{
+
+
+  constructor(props) {
+    super(props);
+
+const hotel = this.props.hotel
+const date_in = this.props.date_in
+const date_out = this.props.date_out
+const city = this.props.city
+const state = this.props.state
+const address = this.props.address
+const country = this.props.country
+const totalPrice = this.props.totalPrice
+const rooms = this.props.rooms
+
+//Modify
+const oldPrice = this.props.oldPrice
+const rewards_applied = this.props.rewards_applied
+
+//console.log("test"+rooms)
+
+this.state = {
+  hotel,
+  country,
+  state,
+  address,
+  date_in,
+  date_out,
+  city,
+  totalPrice,
+  rooms,
+
+  oldPrice,
+  rewards_applied,
+};
+
+}
+
+render(){
+
+return (
+<div class="row " style={{marginRight:"0px", marginLeft:"0px"}}>
+{/*Booking Info */}
+<div class="card w-50">
+  <h5 class="card-header text-left">Booking Summary</h5>
+  <div class="card-body " style={{backgroundColor: "#ffffff"}}>
+  
+    <h4>
+   
+    
+    <div >
+    <p class="font-weight-bold" style={{fontSize:"30px"}} >{this.props.hotel}</p>
+    <p class="font-weight-light" style={{fontSize:"20px"}}>{this.props.address}, {this.props.city}</p>
+    <p class="font-weight-light" style={{fontSize:"20px"}}> {this.props.state}, {this.props.country} </p>
+    </div>
+    <div >
+
+<p class="font-weight-light text-muted ">          {
+         this.state.rooms.map((value)=>{
+          console.log(value)
+          if(value.desired_quantity > 0){
+          return  <p>{value.quantity} {value.bed_type} </p>
+          }
+        })}
+
+     </p>
+  
+
+    </div>
+    <div>
+    <p class="font-weight-bold" style={{fontSize:"20px"}} >Check In: {this.props.date_in}</p>
+    <p class="font-weight-bold" style={{fontSize:"20px"}} >Check Out: {this.props.date_out}</p>
+    </div>
+  
+
+    </h4>
+  </div>
+</div>
+{/*Old Payment*/}
+
+<div class="card text-left w-50 " >
+       <h5 class="card-header">Previous Payment Summary</h5>
+       <div class="card-body" style={{backgroundColor: "#ffffff"}}>
+         <div class="col" />
+         <p class="font-weight-bold" id="test" />
+ 
+ 
+         <table class="table font-weight-bolder">
+           <tbody class="border">
+             <tr>
+               <td>Prev. Price: </td>
+
+               <NumberFormat value={this.state.oldPrice} displayType={'text'}
+               prefix={'$'} decimalScale={2} fixedDecimalScale={true}
+               renderText={value => <td align="right">{value}</td>} defaultValue={0}
+               ></NumberFormat>
+
+             </tr>
+        
+             <tr>
+               <td style={{ width: '100%' }}>Reward Used: </td>
+              
+              <NumberFormat value={this.state.rewards_applied} displayType={'text'}
+               prefix={'$'} decimalScale={2} fixedDecimalScale={true}
+               renderText={value => <td align="right">{value}</td>} defaultValue={0}
+               ></NumberFormat>
+             </tr>
+ 
+             <tr>
+               <td style={{ width: '100%' }}>New Price: </td>
+              
+              <NumberFormat value={this.state.totalPrice} displayType={'text'}
+               prefix={'$'} decimalScale={2} fixedDecimalScale={true}
+               renderText={value => <td align="right">{value}</td>} defaultValue={0.00}
+               ></NumberFormat>
+ 
+             </tr>
+      
+             <tr>
+               <td>Total Difference:  </td>
+               <NumberFormat value={this.state.oldPrice-this.state.totalPrice} displayType={'text'}
+               prefix={'$'} decimalScale={2} fixedDecimalScale={true}
+               renderText={value => <td align="right">{value}</td>} defaultValue={0}
+               ></NumberFormat>
+               
+             </tr>
+             
+           </tbody>
+         </table>
+         <div class= "alert alert-info "style={{}}>
+          <span> We will refund or charge only the difference of the old and new booking prices!</span>
+          </div>
+         </div>
+         </div>
+
+
+
+</div>
+);
+}
+}
+
+const CheckoutBookingSummaryModify = withRouter(_CheckoutBookingSummaryModify);
+
+
 
 
 /*
