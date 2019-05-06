@@ -9,6 +9,8 @@ var Email = require('../email.js')
 const pug = require('pug')
 const { getUserEmail } = require("./getUserEmail");
 const compiledPugModifyResEmail = pug.compileFile("./email_templates/modifyReservation.pug");
+const bodyParser  = require('body-parser');
+const stripe = require("stripe")("sk_test_KMjoJvcxhuiJSV51GJcaJfSi00r9QtVXjo"); // Your Stripe key
 
 /**
  * 
@@ -34,7 +36,23 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
         return 
     }
     let availableRequestedRooms = checkResults.availableRequestedRooms
-    availableRequestedRooms.map( x=>{ x.room_ids = x.room_ids.split(",").map(y=> Number(y))})
+    console.log(`\n\n ${JSON.stringify(availableRequestedRooms)} \n\n`)
+    console.log( (typeof(availableRequestedRooms[0].room_ids)))
+    var test  = "hey,hey"
+    test = test.split(",")
+    //console.log(test.split(","));
+    console.log("test after:"+test)
+    for (i=0;i<availableRequestedRooms.length-1; i++){
+        availableRequestedRooms[i].room_ids =  availableRequestedRooms[i].room_ids.split(",")
+
+        for (x=0;x<availableRequestedRooms[i].room_ids.length-1; x++){
+
+            availableRequestedRooms[i].room_ids[x] =  Number(availableRequestedRooms[i].room_ids[x])
+        }
+    }
+    // availableRequestedRooms.map( x=>{ console.log( typeof(x.room_ids) +"\n"+x.room_ids ); x.room_ids = x.room_ids.split(",")})
+    
+
     console.log(availableRequestedRooms)
 
     // check client-submitted total_price, cancellation_charge
@@ -117,11 +135,25 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
         requestedBooking.date_out,
             "booked",
             amount_user_paid,
-            null,
+            requestedBooking.stripe_id,
             transaction_id
         ])
 
     let connection = Queries.connection
+
+    
+
+    // make refund
+    stripe.refunds.create({
+        charge: oldTransactionData.stripe_id,
+
+    }, err => {
+        console.log(err)
+    })
+
+
+
+
 
     connection.beginTransaction(async function (err) {
         if (err) { throw err; }
