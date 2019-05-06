@@ -34,7 +34,8 @@ class ModifyRoomPage extends React.Component {
 			availableRooms: [],
 			totalPriceWithoutTax: 0.00,
 			totalPriceWithTax: 0.00,
-			cancellationFee: 0.00
+			cancellationFee: 0.00,
+			roomsMap: null
 		};
 	}
 
@@ -73,7 +74,7 @@ class ModifyRoomPage extends React.Component {
 		if (realrooms.results && realrooms.results.length > 0) {
 			realrooms.results.forEach((eachRealRoomResult) => {
 				const key = { bed_type: eachRealRoomResult.bed_type, price: eachRealRoomResult.price }
-				const value = { available_quantity: eachRealRoomResult.quantity, image: eachRealRoomResult.images, capacity: eachRealRoomResult.capacity }
+				const value = { available_quantity: eachRealRoomResult.quantity, image: eachRealRoomResult.images, capacity: eachRealRoomResult.capacity, taken_quantity: 0}
 				roomsMap.set(key, value)
 			})
 		}
@@ -99,8 +100,6 @@ class ModifyRoomPage extends React.Component {
 
 		for (const entry of roomsMap) {
 			let value = entry[1]
-
-
 			if (entry[1].taken_quantity) {
 				if (entry[1].available_quantity) {
 					if (entry[1].available_quantity > entry[1].taken_quantity) {
