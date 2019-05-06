@@ -495,7 +495,7 @@ router.use('/checkout', require("./api/checkout"))
 
 // Retrieves room info with transaction id
 router.get('/transaction/roominfo', (req, res) => {
-    const query = mysql.format(Queries.transaction.getRoomInfo, [req.query.transactionID])
+    const query = mysql.format(Queries.transaction.getRoomInfo, [req.query.transaction_id])
 
     Queries.run(query).then((results) => {
         res.status(200).send(results)
