@@ -142,14 +142,16 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
     let connection = Queries.connection
 
     
-
-    // make refund
+    if (oldTransactionData.amount_paid > 0.5){
+        // make refund
     stripe.refunds.create({
         charge: oldTransactionData.stripe_id,
 
     }, err => {
         console.log(err)
     })
+    }    
+    
 
 
 

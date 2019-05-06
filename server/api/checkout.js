@@ -102,26 +102,30 @@ router.post("/charge", async (req, res) => {
         return
     }
     
-    let stripeStatus
-    console.log("\n\n hello " + data.amount_due_from_user +"\n\n")
-    try{
-        stripeStatus = await stripe.charges.create({
-            amount: parseInt(data.amount_due_from_user *100) ,
-            currency: "usd",
-            description: "Charge",
-            source: data.id,
-          });
-          console.log(stripeStatus.id); // retrieves the charge
-  
-  
+    let stripeStatus = {}
+    stripeStatus.id = null
+    if (data.amount_due_from_user >= 0.50){
      
-      console.log(stripeStatus);
+            console.log("\n\n hello " + data.amount_due_from_user +"\n\n")
+            try{
+                stripeStatus = await stripe.charges.create({
+                    amount: parseInt(data.amount_due_from_user *100) ,
+                    currency: "usd",
+                    description: "Charge",
+                    source: data.id,
+                });
+                console.log(stripeStatus.id); // retrieves the charge
+        
+        
+            
+            console.log(stripeStatus);
+            }
+            catch (err) {
+            console.log(err);
+            res.status(500).end();
+            return
+        }
     }
-    catch (err) {
-    console.log(err);
-    res.status(500).end();
-    return
-  }
   // set stripe id
   requestedBooking.stripe_id = stripeStatus.id
   console.log(requestedBooking)
