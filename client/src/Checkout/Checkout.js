@@ -67,9 +67,7 @@ class Checkout extends Component {
     console.log(date_out3)
 
 */}
-    const rooms = JSON.parse(this.props.location.state.rooms).results.filter( x => x.desired_quantity > 0 )
 
-    var totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 )
     
 
     
@@ -332,8 +330,8 @@ let data={
   // amount cannot have any decimals. Stripe reads 1000 as 10.00
   //parseFloat reduces the decimals to 2, then we multiple 100 to get rid of decimals 
   
-  total_price: this.state.dataTotal,
-  cancellation_charge:totalRoomPricePerNight * nights_stayed * 0.20, // TODO: Change this later
+  total_price: parseFloat( (this.state.dataTotal+'').toFixed(2)),
+  cancellation_charge: parseFloat( (totalRoomPricePerNight * nights_stayed * 0.20)+''), // TODO: Change this later
   date_in: this.state.date_in,
   date_out: this.state.date_out,
   rewards_applied: this.state.discount*100,
