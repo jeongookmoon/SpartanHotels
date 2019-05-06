@@ -164,7 +164,7 @@ class ModifyRoomPage extends React.Component {
 		let rooms = []
 		for (const roomInfo of this.state.roomsMap) {
 			if (roomInfo[1].taken_quantity && roomInfo[1].taken_quantity > 0) {
-				rooms.push({ room_type: roomInfo[0].bed_type, price: roomInfo[0].price, quantity: roomInfo[0].taken_quantity })
+				rooms.push({ bed_type: roomInfo[0].bed_type, price: roomInfo[0].price, quantity: roomInfo[1].taken_quantity })
 			}
 		}
 		const oldTotalPrice = this.state.oldTotalPrice.toString()

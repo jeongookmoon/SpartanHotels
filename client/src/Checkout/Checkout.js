@@ -32,10 +32,12 @@ class Checkout extends Component {
     const state = this.props.location.state.state
     const address = this.props.location.state.address
     const country = this.props.location.state.country
-    const transaction_id = this.props.location.state.transactionID
+    const transaction_id = this.props.location.state.transaction_id
     const nights_stayed = ((new Date(date_out) - new Date(date_in)) / (24 * 60 * 60 * 1000));
     
     console.log(`night stayed ${nights_stayed}`)
+
+    //console.log("test"+JSON.parse(this.props.location.state))
   {/*
     Finding ways to deal with the extra spaces being sent
     console.log(date_in)
@@ -47,12 +49,43 @@ class Checkout extends Component {
     console.log(date_out3)
 
 */}
-    const rooms = JSON.parse(this.props.location.state.rooms).results.filter( x => x.desired_quantity > 0 )
-// Modify - TO BE CHANGED
-    const oldPrice =  params.get('oldPrice')
-    const rewards_applied =  params.get('rewards_applied')
+var rooms=[{}];
 
-    var totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.desired_quantity),0 );
+if(typeof(transaction_id) === 'undefined' || transaction_id === null)
+{
+   rooms = JSON.parse(this.props.location.state.rooms).results.filter( x => x.desired_quantity > 0 )
+}
+else
+{
+   rooms = JSON.parse(this.props.location.state.rooms)
+   console.log("oldroom passed "+transaction_id)
+}
+ //  const rooms = JSON.parse(this.props.location.state.rooms).results.filter( x => x.desired_quantity > 0 )
+
+ console.log("rooms list:"+(this.props.location.state.rooms))
+ console.log("everything :"+JSON.stringify(this.props.location.state))
+ //const rooms = JSON.parse(this.props.location.state.rooms)
+
+    const oldPrice =  this.props.location.state.oldAmountPaid
+    const rewards_applied =  (this.props.location.state.oldTotalPrice - this.props.location.state.oldAmountPaid)*100 
+    
+    console.log("rewards applied:"+rewards_applied)
+    console.log("old price" +this.props.location.state.oldTotalPrice)
+    console.log("old price" +this.props.location.state.oldAmountPaid)
+    var totalPrice=0;
+
+if(typeof(transaction_id) === 'undefined' || transaction_id === null )
+{
+   totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.desired_quantity),0 );
+}
+else{
+  console.log("oldroomForeach passed")
+  rooms.forEach(element => {
+    totalPrice += element.price
+  });
+  console.log("totalPrice:"+totalPrice)
+}
+    
     
 
 
@@ -342,10 +375,35 @@ async submit(ev) {
   console.log(token)
   console.log(this.state.nights_stayed)
   console.log(this.state.totalPriceBeforeTaxAndRewards)
-  let  desiredRooms = this.state.rooms.filter( x => x.desired_quantity > 0 )
-  let totalRoomPricePerNight = desiredRooms.reduce( (acc,cur) => acc + (cur.price * cur.desired_quantity),0 )
+
+
+  var desiredRooms=[{}];
+if(typeof(this.state.transaction_id) === 'undefined' || this.state.transaction_id === null)
+{
+    desiredRooms = this.state.rooms.filter( x => x.desired_quantity > 0 )
+}
+else{
+   desiredRooms = this.state.rooms;
+}
+  
+var totalRoomPricePerNight=0;
+if(typeof(this.state.transaction_id) === 'undefined' || this.state.transaction_id === null)
+{
+  totalRoomPricePerNight = desiredRooms.reduce( (acc,cur) => acc + (cur.price * cur.desired_quantity),0 )
+}
+else{
+  this.state.rooms.forEach(element => {
+    totalRoomPricePerNight += element.price*element.quantity
+  });
+}
+
+
   console.log(`total room price per night ${totalRoomPricePerNight}`)
+  if(typeof(this.state.transaction_id) === 'undefined' || this.state.transaction_id === null)
   desiredRooms.map( ele => {ele.quantity = ele.desired_quantity; delete ele.desired_quantity})
+
+  console.log("cancellation:"+totalRoomPricePerNight );
+  console.log(" nights stayed"+ this.state.nights_stayed);
 // Prepares the data for Metadata at server side
 let data={
   id: token.id,
@@ -613,6 +671,7 @@ const address = this.props.address
 const country = this.props.country
 const totalPrice = this.props.totalPrice
 const rooms = this.props.rooms
+const nights_stayed = ((new Date(date_out) - new Date(date_in)) / (24 * 60 * 60 * 1000));
 
 //console.log("test"+rooms)
 
@@ -626,7 +685,7 @@ this.state = {
   city,
   totalPrice,
   rooms,
-
+  nights_stayed:nights_stayed,
 };
 
 
@@ -662,7 +721,7 @@ return (
        this.state.rooms.map((value)=>{
         console.log(value)
         if(value.desired_quantity > 0){
-        return  <p>{value.desired_quantity} {value.bed_type} </p>
+        return  <p>{value.desired_quantity} {value.bed_type} x {this.state.nights_stayed} Day = $ {(value.price * value.desired_quantity * this.state.nights_stayed)}</p>
         }
       })}
 
@@ -791,7 +850,7 @@ return (
                <td style={{ width: '100%' }}>Reward Used: </td>
               
               <NumberFormat value={this.state.rewards_applied} displayType={'text'}
-               prefix={'$'} decimalScale={2} fixedDecimalScale={true}
+               prefix={''} decimalScale={0} fixedDecimalScale={true}
                renderText={value => <td align="right">{value}</td>} defaultValue={0}
                ></NumberFormat>
              </tr>
@@ -808,7 +867,7 @@ return (
       
              <tr>
                <td>Total Difference:  </td>
-               <NumberFormat value={this.state.oldPrice-this.state.totalPrice} displayType={'text'}
+               <NumberFormat value={this.state.totalPrice-this.state.oldPrice} displayType={'text'}
                prefix={'$'} decimalScale={2} fixedDecimalScale={true}
                renderText={value => <td align="right">{value}</td>} defaultValue={0}
                ></NumberFormat>
