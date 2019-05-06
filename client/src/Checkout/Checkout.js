@@ -3,16 +3,14 @@ import { Button, Collapse } from "reactstrap";
 //import NavBar from "./../NavBar/NavBar";
 import "./../App.css";
 import { BrowserRouter as Router, Route, withRouter } from 'react-router-dom'
-
+import axios from 'axios';
 import {Elements, StripeProvider} from 'react-stripe-elements';
-//import './../AppSC.css';
-
-
 
 ////////Payment////
 
 import NumberFormat from 'react-number-format';
 import { injectStripe, CardCVCElement,CardNumberElement, CardExpiryElement, PostalCodeElement} from 'react-stripe-elements';
+
 
 // URL EXAMPLE
 //?date_in=2019-05-15&date_out=2019-05-17&guest_number=2&hotel_id=41&city=Las%2520Vegas&country=United%20States%20of%20America&state=Nevada&address=600%20E%20Fremont%20St&hotelname=El%20Cortez%20Hotel%20and%20Casino&rooms=%7B%22results%22:%5B%7B%22hotel_id%22:41,%22bed_type%22:%22King%22,%22price%22:40,%22capacity%22:2,%22images%22:%22https://www.plazahotelcasino.com/wp-content/uploads/2014/11/DeluxeKing-GalleryPhotos-1-1024x512.jpg%22,%22quantity%22:1,%22room_ids%22:%2291%22,%22desired_quantity%22:%221%22%7D,%7B%22hotel_id%22:41,%22bed_type%22:%22Queen%22,%22price%22:40,%22capacity%22:2,%22images%22:%22https://www.plazahotelcasino.com/wp-content/uploads/2019/02/DeluxeQueen-GalleryPhotos-2-1024x512.jpg%22,%22quantity%22:1,%22room_ids%22:%2292%22,%22desired_quantity%22:0%7D%5D,%22totalResultCount%22:2%7D
@@ -32,24 +30,26 @@ class Checkout extends Component {
     const address = params.get('address')
     const country = params.get('country')
 
+    const transaction_id = params.get('transactionID')
+
+
     const rooms = JSON.parse(params.get('rooms')).results.filter( x => x.desired_quantity > 0 )
+// Modify - TO BE CHANGED
+    const oldPrice =  params.get('oldPrice')
+    const rewards_applied =  params.get('rewards_applied')
 
-    var totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 )
+    var totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 );
     
-    //Caluclate total price from rooms
-
-
- 
-  //  const user_id = this.state.user_id;
-   // const rewardPoint = this.state.rewardPoint;
+    
+  
 
   //We can assume  we have user id  and rewardPoint always present as a state
-///const user_id = "1"
-    const rewardPoint="1000"
+   // const rewardPoint="1000"
 
     //Hotel ID is used for checking to avoid booking at different hotels
   
     this.state = {
+
       hotel,
       country,
       state,
@@ -57,16 +57,33 @@ class Checkout extends Component {
       date_in,
       date_out,
       city,
+
+      rewardPoint:null,
       totalPrice,
       hotel_id,
-      rooms
+      rooms,
+      transaction_id,
+
+// old modify
+      oldPrice,
+      rewards_applied,
+
     };
+  }
+
+
+  componentDidMount() {
+    axios.get('/api/profile')
+    .then(res => 
+      this.setState({
+        rewardPoint: res.data[0].reward
+      }))  
   }
 
 
   render() {
 
-
+    
 
     return (
 
@@ -78,18 +95,43 @@ class Checkout extends Component {
 
           <div class="w-100">
 
-            <CheckoutBookingSummary 
-            
-            hotel={this.state.hotel}
-            date_in={this.state.date_in}
-            date_out={this.state.date_out}
-            city={this.state.city}
-            state={this.state.state}
-            address={this.state.address}
-            country={this.state.country}
-            rooms={this.state.rooms}
-            />
-                  
+            { 
+              this.state.transaction_id >= 0 ? 
+
+              <CheckoutBookingSummaryModify 
+              hotel={this.state.hotel}
+              date_in={this.state.date_in}
+              date_out={this.state.date_out}
+              city={this.state.city}
+              state={this.state.state}
+              address={this.state.address}
+              country={this.state.country}
+              rooms={this.state.rooms}
+              transaction_id={this.state.transaction_id}
+
+              totalPrice={this.state.totalPrice}
+              oldPrice={this.state.oldPrice}
+              rewards_applied={this.state.rewards_applied}
+              />
+
+              : 
+              
+              <CheckoutBookingSummary 
+              hotel={this.state.hotel}
+              date_in={this.state.date_in}
+              date_out={this.state.date_out}
+              city={this.state.city}
+              state={this.state.state}
+              address={this.state.address}
+              country={this.state.country}
+              rooms={this.state.rooms}
+              />
+     }  
+
+
+
+        
+           
           <Elements>
 
 {/* ////////////Payment/////////   */}
@@ -99,10 +141,12 @@ class Checkout extends Component {
                 <CheckoutPaymentCheck
                 totalPrice ={this.state.totalPrice}
                 rewardPoint={this.state.rewardPoint}
+ 
                 date_in={this.state.date_in}
                 date_out={this.state.date_out}
                 hotel_id = {this.state.hotel_id}
                 rooms={this.state.rooms}
+                transaction_id={this.state.transaction_id}
                 />
             </div>
           </Elements> 
@@ -146,19 +190,13 @@ const handleReady = () => {
 };
 
 
-var rewardPoint = "1000";
-
-
 class _CheckoutPaymentCheck extends React.Component
 {
 
 
   state={
      discount: '0',
-     testPay:'59.99',
      tempTotal:'0',
-     rewardPoint: "1000",
-
    }
  
    constructor(props) {
@@ -177,14 +215,17 @@ class _CheckoutPaymentCheck extends React.Component
       tempTotal: this.props.totalPrice *1.10,
       finalTotal: this.props.totalPrice,
       //TODO: Change rewardpoint
-      rewardPoint: '1000',
+      rewardPoint: this.props.rewardPoint,
       rewardPointValid:false,
       total: this.props.totalPrice *1.10,
       discount:"0",
+
       date_in: this.props.date_in,
       date_out: this.props.date_out,
       hotel_id: this.props.hotel_id,
       rooms:this.props.rooms,
+      transaction_id:this.props.transaction_id,
+
     };
      this.submit = this.submit.bind(this);
 
@@ -197,10 +238,10 @@ class _CheckoutPaymentCheck extends React.Component
      this.setState({ discount: event.target.value/100}, function() {
       
       if(this.state.discount < 0)
-     {
+      {
         this.setState({discount: 0})
       }
-
+      
      else if(this.state.discount*100 > this.state.rewardPoint)
      {
 
@@ -245,6 +286,7 @@ class _CheckoutPaymentCheck extends React.Component
   
  
 async submit(ev) {
+
   let {token} = await this.props.stripe.createToken({name: "SpartanHotel"});
 
   console.log(token)
@@ -255,6 +297,7 @@ async submit(ev) {
   const nights_stayed = ((new Date(this.state.date_out) - new Date(this.state.date_in)) / (24 * 60 * 60 * 1000));
   console.log(`night stayed ${nights_stayed}`)
 
+
 // Prepares the data for Metadata at server side
 let data={
   id: token.id,
@@ -262,35 +305,66 @@ let data={
   //parseFloat reduces the decimals to 2, then we multiple 100 to get rid of decimals 
   
   total_price: this.state.dataTotal,
-  cancellation_charge:totalRoomPricePerNight * nights_stayed * 0.20, // TODO: Change this later
+  cancellation_charge:totalRoomPricePerNight * nights_stayed * 0.20,// TODO: Change this later
   date_in: this.state.date_in,
   date_out: this.state.date_out,
   rewards_applied: this.state.discount*100,
   rooms: desiredRooms,
   hotel_id: this.state.hotel_id,
-  amount_due_from_user: parseFloat(this.state.total).toFixed(2),
+  amount_due_from_user: this.state.total,
+  transaction_id:this.state.transaction_id,
 
   status: "Complete",
   guest_id:"0",
+
   
 }
 
-  let response = await fetch("/api/checkout/charge", {
+
+
+///////////////////////////////////////////
+if(this.state.transaction_id >= 0)
+{
+  console.log("Modify Called")
+
+  let response = await fetch("/modify", {
     method: "POST",
     headers: {"Content-Type": "text/plain"},
     body: JSON.stringify(data),
     
-  }).catch(error=>console.log("Error: "+error));
+  }).catch(error=>console.log("Modify Error: "+error));
 
   if (response.ok)
   {
-    
-
       this.props.history.push(`/CheckoutConfirm`);   
   }
   else{
     console.log("error "+ response.status)
   }
+
+}
+else{
+
+  console.log("Charge Called")
+
+let response = await fetch("/charge", {
+  method: "POST",
+  headers: {"Content-Type": "text/plain"},
+  body: JSON.stringify(data),
+  
+}).catch(error=>console.log("Charge Error: "+error));
+
+if (response.ok)
+{
+    this.props.history.push(`/CheckoutConfirm`);   
+}
+else{
+  console.log("error "+ response.status)
+}
+
+}
+ 
+
 }
    
    render(){
@@ -299,8 +373,8 @@ let data={
 
      const error= validateRP(this.state.rewardPoint,this.state.discount);
      const isEnabled = !error;
-    
-     
+
+ 
  
    return (
     
@@ -311,7 +385,7 @@ let data={
  
      <div class="card text-left w-50">
        <h5 class="card-header">Payment Method</h5>
-       <div class="card-body">
+       <div class="card-body" style={{backgroundColor: "#ffffff"}}>
          <div class="row">
            <div class="col-md-11">
            <form action="/charge" method="post" id="payment-form">
@@ -321,7 +395,7 @@ let data={
               <div class="form-group">
                <span style={{ fontSize: 12, marginLeft: 13 }}>Card Number</span>
                 <div>
-                 <CardNumberElement/>
+                  <CardNumberElement/>
                 </div>
                </div>
             
@@ -331,7 +405,7 @@ let data={
                  style={{ paddingLeft: 15, marginTop: 8, width:"33%" }}>
                   <span style={{ fontSize: 12, marginLeft: 13 }}>Expiration Date</span>
                   <div>
-                   <CardExpiryElement/>  
+                    <CardExpiryElement/>
                   </div>
                </div>
  
@@ -373,9 +447,9 @@ let data={
  
  
  
-     <div class="card text-left h-50 w-50 " >
+     <div class="card text-left w-50 " >
        <h5 class="card-header">Payment Summary</h5>
-       <div class="card-body">
+       <div class="card-body"style={{backgroundColor: "#ffffff"}}>
          <div class="col" />
          <p class="font-weight-bold" id="test" />
  
@@ -388,7 +462,7 @@ let data={
 
                <NumberFormat value={this.props.totalPrice} displayType={'text'}
                prefix={'$'} decimalScale={2} fixedDecimalScale={true}
-               renderText={value => <td>{value}</td>} defaultValue={this.props.totalPrice}
+               renderText={value => <td align="right">{value}</td>} defaultValue={this.props.totalPrice}
                ></NumberFormat>
 
              </tr>
@@ -398,7 +472,7 @@ let data={
               
               <NumberFormat value={this.state.tax} displayType={'text'}
                prefix={'$'} decimalScale={2} fixedDecimalScale={true}
-               renderText={value => <td>{value}</td>} defaultValue={this.state.tax}
+               renderText={value => <td align="right">{value}</td>} defaultValue={this.state.tax}
                ></NumberFormat>
              </tr>
  
@@ -407,7 +481,7 @@ let data={
               
               <NumberFormat value={this.state.discount} displayType={'text'}
                prefix={'$'} decimalScale={2} fixedDecimalScale={true}
-               renderText={value => <td>-{value}</td>} defaultValue={0.00}
+               renderText={value => <td align="right">{value}</td>} defaultValue={0.00}
                ></NumberFormat>
  
              </tr>
@@ -430,7 +504,7 @@ let data={
            <Button
                color="warning"
                onClick={this.toggle}
-               style={{ marginBottom: "1rem",  width: '90%'}}
+               style={{ marginBottom: "1rem",  width: '90%'}}      
              >
                Pay with Reward Points
              </Button>
@@ -463,11 +537,11 @@ let data={
                      </Button>
                      <p class='small'>
                        <p>
-                         You have {rewardPoint} Reward Points ;
+                         You have {this.state.rewardPoint} Reward Points ;
                        </p>
+                       <p class='font-italic small'> 1 Reward Point = $0.01 (ie. 500 Reward Points = $5.00)</p>
                      </p>
-                     <p class='font-italic small'> 1 Reward Point = $0.01 (ie. 500 Reward Points = $5.00)</p>
- 
+                    
                  </div>
 
                </div>
@@ -476,7 +550,7 @@ let data={
  
          </form>
        </div>
-       <hr />
+    
      </div>
      </div>
    );
@@ -541,7 +615,7 @@ render(){
 return (
 <div class="card text-center h-50">
   <h5 class="card-header">Booking Summary</h5>
-  <div class="card-body " style={{}}>
+  <div class="card-body  " style={{backgroundColor: "#ffffff"}}>
   
     <h4>
    
@@ -554,22 +628,15 @@ return (
     <div >
 
 <p class="font-weight-light text-muted ">          {
-        this.state.rooms.map((value)=>{
-          console.log(value)
-          if(value.desired_quantity > 0){
-          return  <p>{value.quantity} {value.bed_type} </p>
-          }
-        })}
+       this.state.rooms.map((value)=>{
+        console.log(value)
+        if(value.desired_quantity > 0){
+        return  <p>{value.quantity} {value.bed_type} </p>
+        }
+      })}
 
      </p>
    
-     
-    {/* # of Adults, # Children 
-        <p class="text-muted">{this.props.adults} Adults</p>
-  
-  <p class="text-muted">{this.props.children} Children</p>
-    
-    */}
 
     </div>
     <div>
@@ -588,6 +655,155 @@ return (
 const CheckoutBookingSummary = withRouter(_CheckoutBookingSummary);
 
 
+class _CheckoutBookingSummaryModify extends React.Component
+{
+
+
+  constructor(props) {
+    super(props);
+
+const hotel = this.props.hotel
+const date_in = this.props.date_in
+const date_out = this.props.date_out
+const city = this.props.city
+const state = this.props.state
+const address = this.props.address
+const country = this.props.country
+const totalPrice = this.props.totalPrice
+const rooms = this.props.rooms
+
+//Modify
+const oldPrice = this.props.oldPrice
+const rewards_applied = this.props.rewards_applied
+
+//console.log("test"+rooms)
+
+this.state = {
+  hotel,
+  country,
+  state,
+  address,
+  date_in,
+  date_out,
+  city,
+  totalPrice,
+  rooms,
+
+  oldPrice,
+  rewards_applied,
+};
+
+}
+
+render(){
+
+return (
+<div class="row " style={{marginRight:"0px", marginLeft:"0px"}}>
+{/*Booking Info */}
+<div class="card w-50">
+  <h5 class="card-header text-left">Booking Summary</h5>
+  <div class="card-body " style={{backgroundColor: "#ffffff"}}>
+  
+    <h4>
+   
+    
+    <div >
+    <p class="font-weight-bold" style={{fontSize:"30px"}} >{this.props.hotel}</p>
+    <p class="font-weight-light" style={{fontSize:"20px"}}>{this.props.address}, {this.props.city}</p>
+    <p class="font-weight-light" style={{fontSize:"20px"}}> {this.props.state}, {this.props.country} </p>
+    </div>
+    <div >
+
+<p class="font-weight-light text-muted ">          {
+         this.state.rooms.map((value)=>{
+          console.log(value)
+          if(value.desired_quantity > 0){
+          return  <p>{value.quantity} {value.bed_type} </p>
+          }
+        })}
+
+     </p>
+  
+
+    </div>
+    <div>
+    <p class="font-weight-bold" style={{fontSize:"20px"}} >Check In: {this.props.date_in}</p>
+    <p class="font-weight-bold" style={{fontSize:"20px"}} >Check Out: {this.props.date_out}</p>
+    </div>
+  
+
+    </h4>
+  </div>
+</div>
+{/*Old Payment*/}
+
+<div class="card text-left w-50 " >
+       <h5 class="card-header">Previous Payment Summary</h5>
+       <div class="card-body" style={{backgroundColor: "#ffffff"}}>
+         <div class="col" />
+         <p class="font-weight-bold" id="test" />
+ 
+ 
+         <table class="table font-weight-bolder">
+           <tbody class="border">
+             <tr>
+               <td>Prev. Price: </td>
+
+               <NumberFormat value={this.state.oldPrice} displayType={'text'}
+               prefix={'$'} decimalScale={2} fixedDecimalScale={true}
+               renderText={value => <td align="right">{value}</td>} defaultValue={0}
+               ></NumberFormat>
+
+             </tr>
+        
+             <tr>
+               <td style={{ width: '100%' }}>Reward Used: </td>
+              
+              <NumberFormat value={this.state.rewards_applied} displayType={'text'}
+               prefix={'$'} decimalScale={2} fixedDecimalScale={true}
+               renderText={value => <td align="right">{value}</td>} defaultValue={0}
+               ></NumberFormat>
+             </tr>
+ 
+             <tr>
+               <td style={{ width: '100%' }}>New Price: </td>
+              
+              <NumberFormat value={this.state.totalPrice} displayType={'text'}
+               prefix={'$'} decimalScale={2} fixedDecimalScale={true}
+               renderText={value => <td align="right">{value}</td>} defaultValue={0.00}
+               ></NumberFormat>
+ 
+             </tr>
+      
+             <tr>
+               <td>Total Difference:  </td>
+               <NumberFormat value={this.state.oldPrice-this.state.totalPrice} displayType={'text'}
+               prefix={'$'} decimalScale={2} fixedDecimalScale={true}
+               renderText={value => <td align="right">{value}</td>} defaultValue={0}
+               ></NumberFormat>
+               
+             </tr>
+             
+           </tbody>
+         </table>
+         <div class= "alert alert-info "style={{}}>
+          <span> We will refund or charge only the difference of the old and new booking prices!</span>
+          </div>
+         </div>
+         </div>
+
+
+
+</div>
+);
+}
+}
+
+const CheckoutBookingSummaryModify = withRouter(_CheckoutBookingSummaryModify);
+
+
+
+
 /*
 Package.json :
 
@@ -603,6 +819,8 @@ Package.json :
  
  npm install express body-parser stripe
   npm install --save react-router-dom
+
+
 
 
 https://stripe.com/docs/recipes/elements-react#setup
