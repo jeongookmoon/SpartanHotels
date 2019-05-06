@@ -164,7 +164,7 @@ class Home extends React.Component {
 	showPlaceDetails(place) {
 		let geoDetail = JSON.stringify(place.geometry.location, null, 2).replace(/['"]+/g, '')
 		const latitude = geoDetail.substring(geoDetail.lastIndexOf("lat:") + "lat: ".length, geoDetail.lastIndexOf(","))
-		const longitude = geoDetail.substring(geoDetail.lastIndexOf("lng:") + "lng: ".length, geoDetail.lastIndexOf("}"))
+		const longitude = geoDetail.substring(geoDetail.lastIndexOf("lng:") + "lng: ".length, geoDetail.lastIndexOf("}")).replace(/\s/g, '')
 
 		const fullAddress = JSON.stringify(place.formatted_address, null, 2).replace(/['"]+/g, '')
 
@@ -211,13 +211,13 @@ class Home extends React.Component {
 
 		HotelSearchFunction(temp_fields).then(response => {
 
-			let queryString = `latitude=${temp_fields.latitude}&longitude=${temp_fields.longitude}
-								&date_in=${temp_fields.date_in}&date_out=${temp_fields.date_out}
-								&adult=${this.state.adult}&children=${this.state.children}
-								&guest_number=${this.state.guest_number}&full_address=${this.state.fullAddress}
-								&city=${temp_fields.city}&street_address=${temp_fields.streetAddress}
-								&state=${temp_fields.state}
-								&amenities=${filteredElements}`
+			let queryString = `latitude=${temp_fields.latitude}&longitude=${temp_fields.longitude}`+
+								`&date_in=${temp_fields.date_in}&date_out=${temp_fields.date_out}`+
+								`&adult=${this.state.adult}&children=${this.state.children}`+
+								`&guest_number=${this.state.guest_number}&full_address=${this.state.fullAddress}`+
+								`&city=${temp_fields.city}&street_address=${temp_fields.streetAddress}`+
+								`&state=${temp_fields.state}`+
+								`&amenities=${filteredElements}`
 
 			this.props.history.push({
 				pathname: `/HotelSearch`,
