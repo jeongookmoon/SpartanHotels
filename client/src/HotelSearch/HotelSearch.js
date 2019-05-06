@@ -347,13 +347,13 @@ class HotelSearch extends React.Component {
 		searchParams.date_out = searchParams.date_out.format('YYYY-MM-DD')
 
 		HotelSearchFunction(searchParams).then(() => {
-			const queryString = `latitude=${searchParams.latitude}&longitude=${searchParams.longitude}
-								&date_in=${searchParams.date_in}&date_out=${searchParams.date_out}
-								&adult=${this.state.adult}&children=${this.state.children}
-								&guest_number=${this.state.guest_number}&full_address=${this.state.fullAddress}
-								&street_address=${this.state.streetAddress}&city=${searchParams.city}
-								&state=${searchParams.state}
-								${additionalClause}`
+			const queryString = `latitude=${searchParams.latitude}&longitude=${searchParams.longitude}`+
+								`&date_in=${searchParams.date_in}&date_out=${searchParams.date_out}`+
+								`&adult=${this.state.adult}&children=${this.state.children}`+
+								`&guest_number=${this.state.guest_number}&full_address=${this.state.fullAddress}`+
+								`&street_address=${this.state.streetAddress}&city=${searchParams.city}`+
+								`&state=${searchParams.state}`+
+								`${additionalClause}`
 
 			this.props.history.push({
 				pathname: `/HotelSearch`,
@@ -369,9 +369,7 @@ class HotelSearch extends React.Component {
 		const guest_number = params.get('guest_number')
 		const city = params.get('city')
 
-		const queryString = `?date_in=${date_in}&date_out=${date_out}
-			&guest_number=${guest_number}&hotel_id=${item.hotel_id}
-			&city=${city}`
+		const queryString = `?date_in=${date_in}&date_out=${date_out}&guest_number=${guest_number}&hotel_id=${item.hotel_id}&city=${city}`
 
 		this.props.history.push({
 			pathname: `/RoomPage`,
