@@ -612,7 +612,6 @@ let data={
                color="primary"
                onClick={this.submit}
                style={{ marginBottom: "1rem", width: '90%'}}
-               value={this.state.transaction_id}
              >
                Checkout
              </Button>
