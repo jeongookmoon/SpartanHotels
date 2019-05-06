@@ -89,6 +89,7 @@ class ModifyRoomPage extends React.Component {
 				if (roomsMap.get(key)) {
 					let currentObjValue = roomsMap.get(key)
 					currentObjValue.taken_quantity = eachRoomFromTransaction.quantity
+					roomsMap.delete(key)
 					roomsMap.set(key, currentObjValue)
 				} else {
 					roomsMap.set(key, value)
