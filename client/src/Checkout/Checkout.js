@@ -773,6 +773,7 @@ return (
 
     </div>
     <div>
+
     <p class="font-weight-bold" style={{fontSize:"20px"}} >Check In: {this.props.date_in}</p>
     <p class="font-weight-bold" style={{fontSize:"20px"}} >Check Out: {this.props.date_out}</p>
     </div>
@@ -844,11 +845,11 @@ return (
     <br/>
     <div >
 
-<p class="font-weight-light text-muted ">          {
+    <p class="font-weight-light text-muted ">          {
          this.state.rooms.map((value)=>{
           console.log(value)
-          if(value.desired_quantity > 0){
-          return  <p>{value.desired_quantity} {value.bed_type} </p>
+          if(value.quantity > 0){
+          return  <p>{value.quantity} {value.bed_type} x {this.state.nights_stayed} days = $ {value.quantity * value.price * this.state.nights_stayed} </p>
           }
         })}
 
