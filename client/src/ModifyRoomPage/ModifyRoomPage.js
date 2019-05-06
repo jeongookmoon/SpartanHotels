@@ -337,7 +337,7 @@ class ModifyRoomPage extends React.Component {
 								<td> </td>
 								<td> </td>
 								<td> </td>
-								<td> Total Room Price ({this.state.reservation_days} {this.state.reservation_days === 1 ? 'Night' : 'Nights'})</td>
+								<td><span> Total Room Price </span><span style={{ color: '#38af7b' }}><strong>({this.state.reservation_days} {this.state.reservation_days === 1 ? 'Night' : 'Nights'})</strong></span></td>
 								<td> $ {this.state.totalPriceWithoutTax}</td>
 							</tr>
 							<tr>
