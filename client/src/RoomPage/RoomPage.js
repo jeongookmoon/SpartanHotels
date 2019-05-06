@@ -85,6 +85,8 @@ class RoomPage extends React.Component {
             const state = this.state.hotel.results[0].state.toString()
             const address = this.state.hotel.results[0].address.toString()
 
+            console.log(rooms)
+
             this.props.history.push({
                 pathname: `/Checkout`,
                 state: {

@@ -22,16 +22,22 @@ class Checkout extends Component {
   constructor(props) {
     super(props);
      
+
     const params = new URLSearchParams(this.props.location.search); // url ?data=bar
     const hotel_id = this.props.location.state.hotel_id
     const hotel = this.props.location.state.hotel
     const date_in = this.props.location.state.date_in
-    const date_out = this.props.location.state.date_out
+    const date_ou = this.props.location.state.date_out
     const city = this.props.location.state.city
     const state = this.props.location.state.state
     const address = this.props.location.state.address
     const country = this.props.location.state.country
 
+    const date_out = date_ou.replace(/\s/g, '');
+
+    console.log(date_in)
+    console.log(date_ou)
+    console.log(date_out)
   {/*
     Finding ways to deal with the extra spaces being sent
     console.log(date_in)
@@ -572,7 +578,7 @@ return (
         this.state.rooms.map((value)=>{
           console.log(value)
           if(value.desired_quantity > 0){
-          return  <p>{value.quantity} {value.bed_type} </p>
+          return  <p>{value.desired_quantity} {value.bed_type} </p>
           }
         })}
 
