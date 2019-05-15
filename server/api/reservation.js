@@ -13,12 +13,12 @@ const pug = require('pug')
 
 var validator = require('validator');
 
-
+// REPLACED WITH /api/checkout/charge
 //Make a reservation 
 router.post('/', (req, res)=>{
 
     // Check values
-    console.log(req.body);
+    // console.log(req.body);
 
     let inputCheckResults = inputChecks(req,res)
     let requestedBooking
@@ -28,22 +28,33 @@ router.post('/', (req, res)=>{
     else{
         return
     }
-    console.log(req.user)
+    // console.log(req.user)
 
     makeReservation(requestedBooking, res)
 })
 
+/*
+Refer to Tommy's Branch api.js /rewardsHistory for how to format date_in and date_out
+Refer to RewardsHistory.js componentDidMont(), renderTables(), and render()
+*/
 router.get('/viewres', (req, res) => {
     if (typeof(req.user) == 'undefined') {
         res.status(400).send('Not signed in')
         return
     }
     const userid = req.user.user_id
-    console.log(userid)
+    // console.log(userid)
     let viewquery = mysql.format(Queries.booking.view, [userid])
 
     Queries.run(viewquery).then((results) => {
         console.log(results)
+        for(x = 0; x < results.length ; x++) {
+            var newDateIn = formatDate(results[x].date_in)
+            var newDateOut = formatDate(results[x].date_out)
+
+            results[x].date_in = newDateIn;
+            results[x].date_out = newDateOut;
+        }
         res.status(200).send(results)
         console.log("Reservations viewed")
     },
@@ -52,9 +63,21 @@ router.get('/viewres', (req, res) => {
     })
 })
 
+//Format the date so we display it correctly on the front end
+function formatDate(date) {
+   var d = new Date(date),
+       month = '' + (d.getMonth() + 1),
+       day = '' + d.getDate(),
+       year = d.getFullYear();
+
+   if (month.length < 2) month = '0' + month;
+   if (day.length < 2) day = '0' + day;
+
+   return [year, month, day].join('-');
+}
 
 router.post('/cancellation', (req,res)=>{
-    console.log(req.body);
+    // console.log(req.body);
     cancelReservation(req.body.transaction_id, req.user.user_id, res)
 })
 
@@ -62,7 +85,7 @@ router.post('/cancellation', (req,res)=>{
 router.post('/modification', (req,res)=>{
 
     // Check values
-    console.log(req.body);
+    // console.log(req.body);
 
     let inputCheckResults = inputChecks(req,res)
     let requestedBooking
@@ -169,7 +192,7 @@ async function modifyCheck(requestedBooking,res){
                 let query = Queries.booking.isModifiable({
                     transaction_id: requestedBooking.transaction_id
                 })
-                console.log(query)
+                // console.log(query)
                 let queryResults;
                 try{
                     queryResults = await Queries.run(query)
@@ -179,7 +202,7 @@ async function modifyCheck(requestedBooking,res){
                     res.status(400).send("bad")
                     return false
                 }
-                console.log(queryResults)
+                // console.log(queryResults)
                 let cantModify = (Array.isArray(queryResults) && queryResults.length) ? true : false
     
                 if(cantModify){
