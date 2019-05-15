@@ -4,15 +4,14 @@ CMPE 165 Project
 ## Running on Heroku Server
 https://spartanhotels.herokuapp.com/
 
+### Local Setup
+
 ## Client
 1. Inside /client, `npm install` to install dependencies and create ".env" file containing the following (replace YOUR_KEY)
 2. `REACT_APP_AUTOCOMPLETE_URL=https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&libraries=places`
 3. `npm start` to start react on port 3000 
 4. http://localhost:3000/ should automatically open up
-
 Any changes in /client should automatically reloaded in browser
-
-## Api Key is on the bottom of HotelSearch.js
 
 ## Server
 Inside /server,  
