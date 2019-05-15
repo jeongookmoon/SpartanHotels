@@ -1,0 +1,59 @@
+.reservations-button {
+	float: left;
+	border: 1px solid white;
+}
+
+.reservations-card {
+	background: #ffffff;
+	padding-top: 25px;
+	transition: all 200ms ease;
+	height: 80vh;
+	padding-bottom: 50px;
+}
+
+.reservations-card-body {
+	padding-left: 5vw;
+}
+
+.reservations-center-title {
+	text-align: center;
+	padding-bottom: 5px;
+}
+
+.reservations-container {
+	padding:0;
+  	margin:0;
+  	height:100%;
+  	width:100%;
+}
+
+.reservations-detail-table-text {
+	text-align: center;
+}
+
+.reservations-form-container {
+	height:100%;
+  	width:100%;
+}
+
+.reservations-image {
+	width: 25px;
+	height: 25px;
+}
+
+.reservations-inner-card {
+	margin-left: -50px;
+	margin-right: 30px;
+}
+
+.reservations-scrollbar {
+	position: relative;
+	height:375px;
+	overflow: auto;
+}
+
+.reservations-table-wrapper-scroll-y {
+	display: block;
+}
+
+

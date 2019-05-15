@@ -10,7 +10,7 @@ const pug = require('pug')
 const compiledPugMakeResEmail = pug.compileFile("./email_templates/makeReservation.pug");
 
 async function makeReservation(requestedBooking = {}, res) {
-    console.log(requestedBooking)
+    // console.log(requestedBooking)
 
     // check requested rooms are available
     let checkResult = await availabilityCheck(requestedBooking,res)
@@ -19,8 +19,9 @@ async function makeReservation(requestedBooking = {}, res) {
     }
     let availableRequestedRooms = checkResult.availableRequestedRooms
     availableRequestedRooms.map( x=>{ x.room_ids = x.room_ids.split(",")})
-    console.log(availableRequestedRooms)
-
+    // console.log("availableRequestedRooms")
+    // console.log(availableRequestedRooms)
+    // console.log("end availableRequestedRooms")
 
 
     // check client-submitted total_price, cancellation_charge
@@ -56,7 +57,7 @@ async function makeReservation(requestedBooking = {}, res) {
         // Insert guest into guest table
         insertGuestQuery = mysql.format(Queries.guest.insert, [requestedBooking.guest_email, requestedBooking.guest_name])
     }
-    console.log(insertTransactionQuery)
+    // console.log(insertTransactionQuery)
 
 
     // Check if stripe payment valid?
@@ -100,12 +101,12 @@ async function makeReservation(requestedBooking = {}, res) {
                 console.log(error)
                 throw error
             }
-            console.log(insertResult)
+            // console.log(insertResult)
             transactionID = insertResult.insertId
 
             // insert transaction rooms
             insertTransactionRoomDataQuery = mysql.format(Queries.booking.makeTransactionDetails(transactionID, availableRequestedRooms))
-            console.log(`insertTransactionRoomDataQuery\n  ${insertTransactionRoomDataQuery}`)
+            // console.log(`insertTransactionRoomDataQuery\n  ${insertTransactionRoomDataQuery}`)
             try {
                 await Queries.run(insertTransactionRoomDataQuery)
             } catch (error) {
@@ -159,11 +160,12 @@ async function makeReservation(requestedBooking = {}, res) {
         console.log(emailAddress)
 
         let hotelInfo = await Queries.run( Queries.email.getHotelInfo(requestedBooking.hotel_id))
-        console.log(hotelInfo)
+        // console.log(hotelInfo)
         
         emailParams.to = emailAddress
         console.log('Email being sent to: ' + emailAddress)
         emailParams.subject = 'Your Spartan Hotels Booking Confirmation!'
+        // console.log(JSON.stringify(requestedBooking))
         // emailParams.text = 'Hello. Thank you for booking a reservation using Spartan Hotels. This is an email to confirm you order for: \n' + JSON.stringify(requestedBooking);
         var emailContents = compiledPugMakeResEmail({ "transaction_number": transactionID, "date": new Date().toLocaleDateString(),
         "availableRequestedRooms": availableRequestedRooms, "requestedBooking":requestedBooking, "hotelInfo":hotelInfo[0],
