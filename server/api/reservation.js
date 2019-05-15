@@ -18,7 +18,7 @@ var validator = require('validator');
 router.post('/', (req, res)=>{
 
     // Check values
-    console.log(req.body);
+    // console.log(req.body);
 
     let inputCheckResults = inputChecks(req,res)
     let requestedBooking
@@ -28,7 +28,7 @@ router.post('/', (req, res)=>{
     else{
         return
     }
-    console.log(req.user)
+    // console.log(req.user)
 
     makeReservation(requestedBooking, res)
 })
@@ -43,7 +43,7 @@ router.get('/viewres', (req, res) => {
         return
     }
     const userid = req.user.user_id
-    console.log(userid)
+    // console.log(userid)
     let viewquery = mysql.format(Queries.booking.view, [userid])
 
     Queries.run(viewquery).then((results) => {
@@ -77,7 +77,7 @@ function formatDate(date) {
 }
 
 router.post('/cancellation', (req,res)=>{
-    console.log(req.body);
+    // console.log(req.body);
     cancelReservation(req.body.transaction_id, req.user.user_id, res)
 })
 
@@ -85,7 +85,7 @@ router.post('/cancellation', (req,res)=>{
 router.post('/modification', (req,res)=>{
 
     // Check values
-    console.log(req.body);
+    // console.log(req.body);
 
     let inputCheckResults = inputChecks(req,res)
     let requestedBooking
@@ -192,7 +192,7 @@ async function modifyCheck(requestedBooking,res){
                 let query = Queries.booking.isModifiable({
                     transaction_id: requestedBooking.transaction_id
                 })
-                console.log(query)
+                // console.log(query)
                 let queryResults;
                 try{
                     queryResults = await Queries.run(query)
@@ -202,7 +202,7 @@ async function modifyCheck(requestedBooking,res){
                     res.status(400).send("bad")
                     return false
                 }
-                console.log(queryResults)
+                // console.log(queryResults)
                 let cantModify = (Array.isArray(queryResults) && queryResults.length) ? true : false
     
                 if(cantModify){

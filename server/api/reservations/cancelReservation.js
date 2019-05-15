@@ -6,9 +6,9 @@ const pug = require('pug')
 
 function cancelReservation(transaction_id, user_id, res) {
     let query = mysql.format(Queries.booking.user_id, [transaction_id]);
-    console.log(query)
+    // console.log(query)
     Queries.run(query).then(results => {
-        console.log(results)
+        // console.log(results)
         //console.log(results[0].user_id)
         //console.log(req.user.user_id)
         if( typeof(results[0]) == 'undefined'){
@@ -16,9 +16,9 @@ function cancelReservation(transaction_id, user_id, res) {
             return
         }
         if (results[0].user_id == user_id) {
-            console.log("Id matches");
-            console.log(results[0].user_id)
-            console.log(user_id )
+            // console.log("Id matches");
+            // console.log(results[0].user_id)
+            // console.log(user_id )
             //Checks if the date_in and date_out is acceptable to cancel
             let query2 = mysql.format(Queries.booking.isCancellable({
                 transaction_id: transaction_id
@@ -26,8 +26,8 @@ function cancelReservation(transaction_id, user_id, res) {
             //console.log(query2)
             Queries.run(query2).then(results2 => {
                 let isCancelConflict = (Array.isArray(results2) && results2.length) ? true : false;
-                console.log(results2)
-                console.log(isCancelConflict)
+                // console.log(results2)
+                // console.log(isCancelConflict)
                   
                 if (isCancelConflict) {
                     console.log("There is a date conflict for cancelling.");
@@ -84,20 +84,20 @@ function cancelReservation(transaction_id, user_id, res) {
                                         Queries.run(q).then(res => {
                                            
                                                     let hotelInfo = res1[0]
-                                                    console.log(hotelInfo)
+                                                    // console.log(hotelInfo)
 
                                                     let transactionInfo = res2
-                                                    console.log(transactionInfo)
+                                                    // console.log(transactionInfo)
 
                                                     let dateIn = formatDate(results[0].date_in)
-                                                    console.log(dateIn)
+                                                    // console.log(dateIn)
 
                                                     let dateOut = formatDate(results[0].date_out)
-                                                    console.log(dateOut)
+                                                    // console.log(dateOut)
 
                                                     var emailAddress = res[0].email
                                                     var emailParams = {};
-                                                    console.log(emailAddress)
+                                                    // console.log(emailAddress)
                                                     
                                                     emailParams.to = emailAddress
                                                     console.log('Email being set to: ' + emailAddress)

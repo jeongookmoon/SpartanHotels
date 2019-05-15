@@ -2,11 +2,10 @@ import React from 'react';
 import {withRouter} from 'react-router-dom'
 import {
 	Button, Modal, ModalHeader,
-	ModalBody, ModalFooter, Table
+	ModalBody, ModalFooter
 } from 'reactstrap'
 
 import {cancelTransaction} from '../Utility/CancelButton'
-import axios from 'axios';
 import "./Reservations.css";
 
 class CancelConfirmation extends React.Component {
@@ -31,12 +30,12 @@ class CancelConfirmation extends React.Component {
 	handleSubmit = (event) => {
 	    // console.log('Register clicked')
 	    event.preventDefault()
-	    console.log(event.target.value)
+	    // console.log(event.target.value)
 	      	const temp_fields = {
 	      	transaction_id: event.target.value,
 	      }
 	      cancelTransaction(temp_fields).then(response => {
-	      	console.log(response)
+	      	// console.log(response)
 	        if (response === 200) {
 	          window.location.reload();
 	        } else if (response === 400) {

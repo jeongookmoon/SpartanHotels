@@ -185,6 +185,7 @@ code {
 }
 
 .guest-dropdown{
+  border-radius: 10px;
   font-size:1.4em;
   font-weight: 200;
     border:none;
@@ -206,6 +207,7 @@ code {
 }
 
 .home-checkboxes{
+  border-radius: 10px;
   margin-top:5vh;
   margin-left:10vw;
   margin-right:10vw;
@@ -263,6 +265,7 @@ code {
 
 .home-guest-dropdown{
     text-align: center;
+    height: 67px;
   padding: 11px 11px 11px 11px;
   font-size: 1.6em;
   text-decoration: none;
@@ -274,6 +277,22 @@ code {
     font-weight: 300;
     font-family: Helvetica,Arial,sans-serif;
     cursor: pointer;
+
+}
+
+.hotelsearch-guest-dropdown{
+  text-align: center;
+padding: 11px 11px 11px 11px;
+font-size: 1.6em;
+text-decoration: none;
+font-weight: bold;
+display: block;
+
+  color:grey;
+
+  font-weight: 300;
+  font-family: Helvetica,Arial,sans-serif;
+  cursor: pointer;
 
 }
 
@@ -294,6 +313,13 @@ code {
 .home-guest-dropdown-list-style{
     list-style: none;
     padding-left: 0;
+
+}
+
+.hotelsearch-dropdown-list-style{
+  list-style: none;
+  font-size: 1.8em;
+  padding-left: 0;
 
 }
 
@@ -473,19 +499,32 @@ code {
     font-weight: 300;
 }
 
+.input-labels-guide{
+  color: darkcyan;
+  font-size: .8em;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  position: relative;
+  display: inline-block;
+  font-weight: 100;
+  margin-left: 4px;
+}
+
 .block-32 {
+  margin-left: 15px;
   font-size:16px;
   text-align:left;
   z-index: 1;
   position: relative;
   background: #fff;
+  border-radius: 15px;
   padding: 30px;
   -webkit-box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1); }
   .block-32 .field-icon-wrap {
     position: relative; }
     .block-32 .field-icon-wrap .form-control {
-      height: 52px !important;
+      height: 66px !important;
       position: relative;
       padding-right: 40px;
       -webkit-box-shadow: none !important;
@@ -505,7 +544,7 @@ code {
       appearance: none;
       width: 100%; }
   .block-32 .btn {
-    height: 62px;
+    height: 66px;
     color: #fff; }
 
 /* ////////////HOME GUEST DROPDOWN//////////////////////////////////////////////////////////////////////////////    */

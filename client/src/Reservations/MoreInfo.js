@@ -28,8 +28,8 @@ componentDidMount() {
       var that = this
       axios.get('/api/reservations/viewres')
       .then(function(viewres) {
-      	var room_info = []
-      	
+				var room_info = []
+				
       	// Group elements of viewres.data into reservations array. reservations is an array that contains multiple arrays that all hold
       	// reservations of the same transaction_id. One array per one transaction. Dunno whether or not you have to do it like this.
       	for (var i = 0; i < viewres.data.length; i++) {
@@ -60,13 +60,17 @@ componentDidMount() {
   	renderRoomsTableData() {
 		return this.state.room_history.map((rooms, index) => {
 			const {booking_id, room_num, bed_type, room_price} = rooms
-				if (this.state.id == booking_id) {
+				if (this.state.id*1 === booking_id*1) {
 					return (
 				<tr key={index+1233}>
 					<td>{room_num}</td>
 					<td>{bed_type}</td>
 					<td>${room_price}</td>
 				</tr>
+					)
+				} else {
+					return (
+						<div></div>
 					)
 				}
 		})

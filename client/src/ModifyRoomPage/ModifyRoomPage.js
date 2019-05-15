@@ -46,7 +46,9 @@ class ModifyRoomPage extends React.Component {
 	async fetchSearchResult() {
 		const params = new URLSearchParams(this.props.location.search);
 		const transaction_id = parseInt(params.get('transaction_id'))
-
+		const date_in = moment(params.get('date_in'), ('YYYY-MM-DD'))
+		const date_out = moment(params.get('date_out'), ('YYYY-MM-DD'))
+		const reservation_days = date_out.diff(date_in, 'days')
 		const roomSearchQuery = `/api/search/hotels/${this.state.hotel_id}/?date_in=1111-01-01&date_out=1111-01-02`
 		const realroomSearchQuery = `/api/search/hotels/${this.state.hotel_id}/?date_in=${this.state.date_in.format('YYYY-MM-DD')}&date_out=${this.state.date_out.format('YYYY-MM-DD')}`
 		const hotelSearchQuery = `/api/search/hotels?date_in=1111-01-01&date_out=1111-01-02&hotel_id=${this.state.hotel_id}`
@@ -73,8 +75,8 @@ class ModifyRoomPage extends React.Component {
 		// pushing unique available rooms (type, price) as a key and available quantity to hashmap
 		if (realrooms.results && realrooms.results.length > 0) {
 			realrooms.results.forEach((eachRealRoomResult) => {
-				const key = { bed_type: eachRealRoomResult.bed_type, price: eachRealRoomResult.price }
-				const value = { available_quantity: eachRealRoomResult.quantity, image: eachRealRoomResult.images, capacity: eachRealRoomResult.capacity, taken_quantity: 0 }
+				const key = "" + eachRealRoomResult.bed_type.toString() + eachRealRoomResult.price.toString()
+				const value = { available_quantity: eachRealRoomResult.quantity, image: eachRealRoomResult.images, capacity: eachRealRoomResult.capacity, taken_quantity: 0, bed_type: eachRealRoomResult.bed_type, price: eachRealRoomResult.price }
 				roomsMap.set(key, value)
 			})
 		}
@@ -84,12 +86,11 @@ class ModifyRoomPage extends React.Component {
 		// also calculate total price of previous transaction
 		if (roomsFromTransaction && roomsFromTransaction.length > 0 && transaction_date_in === this.state.date_in.format('YYYY-MM-DD') && transaction_date_out === this.state.date_out.format('YYYY-MM-DD')) {
 			roomsFromTransaction.forEach((eachRoomFromTransaction) => {
-				const key = { bed_type: eachRoomFromTransaction.bed_type, price: eachRoomFromTransaction.room_price }
-				const value = { taken_quantity: eachRoomFromTransaction.quantity, image: eachRoomFromTransaction.image, capacity: eachRoomFromTransaction.capacity }
+				const key = "" + eachRoomFromTransaction.bed_type.toString() + eachRoomFromTransaction.room_price.toString()
+				const value = { taken_quantity: eachRoomFromTransaction.quantity, image: eachRoomFromTransaction.image, capacity: eachRoomFromTransaction.capacity, bed_type: eachRoomFromTransaction.bed_type, price: eachRoomFromTransaction.room_price }
 				if (roomsMap.get(key)) {
 					let currentObjValue = roomsMap.get(key)
-					currentObjValue.taken_quantity = eachRoomFromTransaction.quantity
-					roomsMap.delete(key)
+					currentObjValue = {...currentObjValue, taken_quantity: parseInt(eachRoomFromTransaction.quantity)}
 					roomsMap.set(key, currentObjValue)
 				} else {
 					roomsMap.set(key, value)
@@ -101,27 +102,16 @@ class ModifyRoomPage extends React.Component {
 
 		for (const entry of roomsMap) {
 			let value = entry[1]
-			if (entry[1].taken_quantity) {
-				if (entry[1].available_quantity) {
-					if (entry[1].available_quantity > entry[1].taken_quantity) {
-						value.option_quantity = entry[1].available_quantity
-						roomsMap.set(entry[0], value)
-					} else {
-						value.option_quantity = entry[1].taken_quantity
-						roomsMap.set(entry[0], value)
-					}
-				} else {
-					//available quantity not exist but taken_quantity
-					value.option_quantity = entry[1].taken_quantity
-					roomsMap.set(entry[0], value)
-				}
-			} else {
-				//takenquantity  not exist but available_quantity
+			if (entry[1].available_quantity > entry[1].taken_quantity) {
 				value.option_quantity = entry[1].available_quantity
+				roomsMap.set(entry[0], value)
+			} else {
+				value.option_quantity = entry[1].taken_quantity
 				roomsMap.set(entry[0], value)
 			}
 		}
 
+		// console.log("roomsMap", roomsMap)
 		// calculate total prices, cancellationfee, salestax
 		totalPriceWithoutTax = (totalPriceWithoutTax * 1.0 * this.state.reservation_days).toFixed(2)
 		const salesTax = (totalPriceWithoutTax * .1).toFixed(2)
@@ -131,7 +121,7 @@ class ModifyRoomPage extends React.Component {
 
 		this.setState({
 			rooms, hotel, realrooms, realhotel, roomsFromTransaction, transaction_dateIn: moment(transaction_date_in, ('YYYY-MM-DD')), transaction_dateOut: moment(transaction_date_out, ('YYYY-MM-DD')), oldTotalPrice, availableRooms
-			, totalPriceWithoutTax, totalPriceWithTax, cancellationFee, salesTax, transaction_id, oldAmountPaid, roomsMap
+			, totalPriceWithoutTax, totalPriceWithTax, cancellationFee, salesTax, transaction_id, oldAmountPaid, roomsMap, date_in, date_out, reservation_days
 		})
 	}
 
@@ -164,7 +154,7 @@ class ModifyRoomPage extends React.Component {
 		let rooms = []
 		for (const roomInfo of this.state.roomsMap) {
 			if (roomInfo[1].taken_quantity && roomInfo[1].taken_quantity > 0) {
-				rooms.push({ bed_type: roomInfo[0].bed_type, price: roomInfo[0].price, quantity: roomInfo[1].taken_quantity })
+				rooms.push({ bed_type: roomInfo[1].bed_type.toString(), price: roomInfo[1].price, quantity: parseInt(roomInfo[1].taken_quantity) })
 			}
 		}
 		const oldTotalPrice = this.state.oldTotalPrice.toString()
@@ -208,12 +198,12 @@ class ModifyRoomPage extends React.Component {
 
 		for (const roomInfo of this.state.roomsMap) {
 			if (roomInfo[0] === roomInfoForRoomMap[0]) {
-				totalPriceWithoutTax = totalPriceWithoutTax + (roomInfo[0].price * parseFloat(value).toFixed(2))
+				totalPriceWithoutTax = totalPriceWithoutTax + (roomInfo[1].price * parseFloat(value).toFixed(2))
 			} else {
 				if (roomInfo[1].taken_quantity) {
-					totalPriceWithoutTax = totalPriceWithoutTax + (roomInfo[0].price * roomInfo[1].taken_quantity)
+					totalPriceWithoutTax = totalPriceWithoutTax + (roomInfo[1].price * roomInfo[1].taken_quantity)
 				} else {
-					totalPriceWithoutTax = totalPriceWithoutTax
+					totalPriceWithoutTax = totalPriceWithoutTax + 0.00
 				}
 			}
 		}
@@ -254,8 +244,8 @@ class ModifyRoomPage extends React.Component {
 							<img src={roomInfo[1].image} alt={roomInfo[1].image} />
 						</div>
 						<div className="text">
-							<h2>{roomInfo[0].bed_type}</h2>
-							<div className="price"><sup className="room-page-room-price">$</sup><span className="room-page-room-price">{roomInfo[0].price.toFixed(2)}</span><sub>/per night</sub></div>
+							<h2>{roomInfo[1].bed_type}</h2>
+							<div className="price"><sup className="room-page-room-price">$</sup><span className="room-page-room-price">{roomInfo[1].price.toFixed(2)}</span><sub>/per night</sub></div>
 							<ul className="specs">
 								<li><strong>Ammenities:</strong> Closet with hangers, HD flat-screen TV, Telephone</li>
 								<li><strong>Capacity Per Room:</strong> {roomInfo[1].capacity}</li>
@@ -270,6 +260,7 @@ class ModifyRoomPage extends React.Component {
 					</div>
 				</div>
 			)
+			// console.log("roomInfo", roomInfo)
 		}
 		return result
 	}
@@ -283,11 +274,11 @@ class ModifyRoomPage extends React.Component {
 			if (roomInfo[1].taken_quantity && roomInfo[1].taken_quantity > 0) {
 				result.push(
 					<tr key={roomInfo[1].image}>
-						<td>{roomInfo[0].bed_type}</td>
+						<td>{roomInfo[1].bed_type}</td>
 						<td>{roomInfo[1].capacity}</td>
-						<td>${roomInfo[0].price.toFixed(2)}</td>
+						<td>${roomInfo[1].price.toFixed(2)}</td>
 						<td>{roomInfo[1].taken_quantity} </td>
-						<td>$ {roomInfo[1].taken_quantity * roomInfo[0].price.toFixed(2)}</td>
+						<td>$ {roomInfo[1].taken_quantity * roomInfo[1].price.toFixed(2)}</td>
 					</tr>
 				)
 			} else {

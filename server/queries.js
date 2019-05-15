@@ -61,7 +61,7 @@ module.exports = {
           reject(error)
         }
         else {
-          console.log(`query result is ${JSON.stringify(results)}`)
+          // console.log(`query result is ${JSON.stringify(results)}`)
           resolve(results)
         }
       })
@@ -566,8 +566,14 @@ module.exports = {
         for (j = 0; j < rooms_booked[i].desired_quantity; j++) {
           placeholders.push("(?,?,?)")
           values.push(transaction_id)
-          values.push(rooms_booked[i].room_ids[j])
-          values.push(rooms_booked[i].price)
+          if(Array.isArray(rooms_booked[i].room_ids)){
+            values.push(rooms_booked[i].room_ids[j])
+            values.push(rooms_booked[i].price)
+          } else {
+            var room_id_array = JSON.parse("[" + rooms_booked[i].room_ids + "]");
+            values.push(room_id_array[j])
+            values.push(rooms_booked[i].price)
+          }          
         }
 
       }
@@ -903,12 +909,12 @@ module.exports = {
         placeholderComponentForRooms.push("room_id = ?")
         rooms.push(params.rooms[i])
       }
-      console.log(`AAA ${rooms}`)
+      // console.log(`AAA ${rooms}`)
       let roomIdCondition = "(" + placeholderComponentForRooms.join(" or ") + ")"
 
       q1 = q1 + " " + roomIdCondition + ")"
       placeholderValues.push.apply(placeholderValues, rooms)
-      console.log(placeholderValues)
+      // console.log(placeholderValues)
 
 
       let q2 = `

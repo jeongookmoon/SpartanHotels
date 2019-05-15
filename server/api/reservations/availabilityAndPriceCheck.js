@@ -11,7 +11,7 @@ const { TAX_RATE, CANCELLATION_CHARGE_RATE } = require("./rates");
  */
 async function availability_SameHotel_AndPriceCheck(requestedBooking, res) {
     let requestedRooms = requestedBooking.rooms.map(ele => ele.room);
-    console.log(requestedRooms);
+    // console.log(requestedRooms);
     let query = Queries.booking.bookableAndPriceCheck({ 
         "date_in": requestedBooking.date_in, 
         "date_out": requestedBooking.date_out, 
@@ -30,7 +30,7 @@ exports.availability_SameHotel_AndPriceCheck = availability_SameHotel_AndPriceCh
  */
 async function modify_Availability_SameHotel_AndPriceCheck(newBooking, transaction_id, res) {
     let requestedRooms = newBooking.rooms.map(ele => ele.room);
-    console.log(requestedRooms);
+    // console.log(requestedRooms);
     let query = Queries.booking.modify_BookableAndPriceCheck({
         "date_in": newBooking.date_in,
         "date_out": newBooking.date_out,
@@ -58,9 +58,9 @@ async function common(res, query){
     // check all requested rooms are at the same hotel
     let requestedHotels = [];
     requestedHotels = bookableAndPriceCheckResults.map(ele => ele.hotel_id);
-    console.log(`requestedHotels ${requestedHotels}`);
+    // console.log(`requestedHotels ${requestedHotels}`);
     let distinctRequestedHotels = [...new Set(requestedHotels)];
-    console.log(`distinctRequestedHotels ${distinctRequestedHotels}`);
+    // console.log(`distinctRequestedHotels ${distinctRequestedHotels}`);
     if (distinctRequestedHotels.length != 1) {
         res.status(400).send(`Not all rooms requested are at the same hotel`);
         return false;
@@ -86,8 +86,8 @@ async function common(res, query){
         let submittedData = newBooking.rooms[i];
         let submittedRoom = submittedData.room;
         let serverData = bookableAndPriceCheckResults.filter(ele => ele.room_id == submittedRoom);
-        console.log(serverData);
-        console.log(submittedData);
+        // console.log(serverData);
+        // console.log(submittedData);
         if (serverData[0].price != submittedData.price) {
             roomsWithInvalidSubmittedPrice.push(submittedRoom);
         }
@@ -98,16 +98,16 @@ async function common(res, query){
     }
     // check client submitted total price, cancellation charge accurate
     let server_prices = bookableAndPriceCheckResults.map(ele => ele.price);
-    console.log(server_prices);
+    // console.log(server_prices);
     let server_sumOfHotelPrices = server_prices.reduce((acc, curr) => { return acc + curr; });
-    console.log(`server_sumOfHotelPrices ${server_sumOfHotelPrices}`);
+    // console.log(`server_sumOfHotelPrices ${server_sumOfHotelPrices}`);
     const nights_stayed = ((new Date(newBooking.date_out) - new Date(newBooking.date_in)) / (24 * 60 * 60 * 1000));
-    console.log(nights_stayed);
+    // console.log(nights_stayed);
     // check total price
     let server_total_price = (server_sumOfHotelPrices * nights_stayed * (1 + (TAX_RATE / 100))).toFixed(2);
     server_total_price = parseFloat(server_total_price);
-    console.log(server_total_price);
-    console.log(newBooking.total_price);
+    // console.log(server_total_price);
+    // console.log(newBooking.total_price);
     if (newBooking.total_price != server_total_price) {
         res.status(400).send("Total price does not match price on server");
         return false;
@@ -115,7 +115,7 @@ async function common(res, query){
     // check cancellation charge
     let server_cancellation_charge = (server_sumOfHotelPrices * nights_stayed * (CANCELLATION_CHARGE_RATE / 100)).toFixed(2);
     server_cancellation_charge = parseFloat(server_cancellation_charge);
-    console.log(server_cancellation_charge);
+    // console.log(server_cancellation_charge);
     if (newBooking.cancellation_charge != server_cancellation_charge) {
         res.status(400).send("Cancellation charge does not match server");
         return false;
@@ -143,17 +143,17 @@ async function common(res, query){
 async function availabilityCheck(requestedBooking, res) {
     let result = {}
     let [query, placeholders] = Queries.hotel.room({"hotelID":requestedBooking.hotel_id}, {"date_in":requestedBooking.date_in, "date_out":requestedBooking.date_out});
-    console.log(placeholders)
+    // console.log(placeholders)
     let fullQuery = mysql.format(query,placeholders)
     let availableRooms = await Queries.run(fullQuery)
-    console.log(`\navailableRooms is ${JSON.stringify(availableRooms)}\n`)
-    console.log(requestedBooking.rooms)
+    // console.log(`\navailableRooms is ${JSON.stringify(availableRooms)}\n`)
+    // console.log(requestedBooking.rooms)
 
     let availableRequestedRooms = []
     for(var i=0;i<requestedBooking.rooms.length; i++){
         let reqRoom = requestedBooking.rooms[i]
         let match = availableRooms.find( x => { return x.bed_type === reqRoom.bed_type && x.price === reqRoom.price})
-        console.log(match)
+        // console.log(match)
         if (match == undefined){
             // requested room_type & price either not available or not exists
             res.status(400).send(`Requested room_type & price either not available or does not exist for ${JSON.stringify(reqRoom)}`)
@@ -206,15 +206,15 @@ async function totalPriceAndCancellationChargeCheck(requestedBooking, res) {
     let totalRoomCost = requestedBooking.rooms.reduce( (acc,cur) => acc + (cur.price * cur.quantity),0 )
 
     // check client submitted total price, cancellation charge accurate
-    console.log(`totalRoomCost ${totalRoomCost}`);
+    // console.log(`totalRoomCost ${totalRoomCost}`);
     const nights_stayed = ((new Date(requestedBooking.date_out) - new Date(requestedBooking.date_in)) / (24 * 60 * 60 * 1000));
-    console.log(nights_stayed);
-    console.log(TAX_RATE)
+    // console.log(nights_stayed);
+    // console.log(TAX_RATE)
     // check total price
     let server_total_price = (totalRoomCost * nights_stayed * (1 + (TAX_RATE / 100))).toFixed(2)
-    console.log(server_total_price);
+    // console.log(server_total_price);
     server_total_price = parseFloat(server_total_price);
-    console.log(server_total_price);
+    // console.log(server_total_price);
     if (requestedBooking.total_price != server_total_price) {
         res.status(400).send("Total price does not match price on server");
         result.pass = false
@@ -263,9 +263,9 @@ exports.totalPriceAndCancellationChargeCheck = totalPriceAndCancellationChargeCh
 async function modifyAvailabilityCheck(requestedBooking, transaction_id, res) {
     let result = {}
     let [query, placeholders] = Queries.hotel.room({"hotelID":requestedBooking.hotel_id}, {"date_in":requestedBooking.date_in, "date_out":requestedBooking.date_out});
-    console.log(placeholders)
+    // console.log(placeholders)
     let fullQuery = mysql.format(query,placeholders)
-    console.log(fullQuery)
+    // console.log(fullQuery)
     let availableRooms = await Queries.run(fullQuery)
 
     fullQuery = mysql.format(Queries.modify.getExistingTransaction,transaction_id)
@@ -277,8 +277,8 @@ async function modifyAvailabilityCheck(requestedBooking, transaction_id, res) {
         let alreadyBookedRoomType = alreadyBookedRooms[i]
         let match = availableRoomsToModify.find( x => { return x.bed_type === alreadyBookedRoomType.bed_type && x.price === alreadyBookedRoomType.room_price})
         if (match == undefined){
-            console.log("ABC")
-            console.log(alreadyBookedRoomType)
+            // console.log("ABC")
+            // console.log(alreadyBookedRoomType)
             alreadyBookedRoomType.price = alreadyBookedRoomType.room_price
             availableRoomsToModify.push(alreadyBookedRoomType)
         }
@@ -288,14 +288,16 @@ async function modifyAvailabilityCheck(requestedBooking, transaction_id, res) {
         }
     }
 
-    console.log(`availableRoomsToModify ${JSON.stringify(availableRoomsToModify)}`)
+    // console.log(`availableRoomsToModify ${JSON.stringify(availableRoomsToModify)}`)
 
     // check that requestedBookings exist inside availableRoomsToModify
     let availableRequestedRooms = []
     for(var i=0;i<requestedBooking.rooms.length; i++){
         let reqRoom = requestedBooking.rooms[i]
         let match = availableRoomsToModify.find( x => { return x.bed_type === reqRoom.bed_type && x.price === reqRoom.price})
-        console.log(match)
+        // console.log("requestedBooking.rooms", requestedBooking.rooms)
+        // console.log("availableRoomsToModify", availableRoomsToModify)
+        // console.log(match)
         if (match == undefined){
             // requested room_type & price either not available or not exists
             res.status(400).send("Requested room_type & price either not available or does not exist")
@@ -304,11 +306,11 @@ async function modifyAvailabilityCheck(requestedBooking, transaction_id, res) {
         }
         else{
             // requested room_type & price exists and is available
-            console.log(`checking room quantity for ${reqRoom.bed_type} at price ${reqRoom.price}`)
+            // console.log(`checking room quantity for ${reqRoom.bed_type} at price ${reqRoom.price}`)
             let desiredNumberOfRooms = reqRoom.quantity
-            console.log(desiredNumberOfRooms)
+            // console.log(desiredNumberOfRooms)
             let availableNumberOfRooms = match.quantity
-            console.log(availableNumberOfRooms)
+            // console.log(availableNumberOfRooms)
             if ( desiredNumberOfRooms > availableNumberOfRooms){
                 // not enough rooms available
                 res.status(400).send(`Not enough rooms of type ${reqRoom.bed_type} at price ${reqRoom.price} available`)

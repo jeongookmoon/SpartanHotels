@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React from "react";
 import { Button, Collapse } from "reactstrap";
 //import NavBar from "./../NavBar/NavBar";
 import "./../App.css";
-import { BrowserRouter as Router, Route, withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 
 import {Elements, StripeProvider} from 'react-stripe-elements';
 import axios from 'axios'
@@ -18,12 +18,11 @@ import { injectStripe, CardCVCElement,CardNumberElement, CardExpiryElement, Post
 // URL EXAMPLE
 //?date_in=2019-05-15&date_out=2019-05-17&guest_number=2&hotel_id=41&city=Las%2520Vegas&country=United%20States%20of%20America&state=Nevada&address=600%20E%20Fremont%20St&hotelname=El%20Cortez%20Hotel%20and%20Casino&rooms=%7B%22results%22:%5B%7B%22hotel_id%22:41,%22bed_type%22:%22King%22,%22price%22:40,%22capacity%22:2,%22images%22:%22https://www.plazahotelcasino.com/wp-content/uploads/2014/11/DeluxeKing-GalleryPhotos-1-1024x512.jpg%22,%22quantity%22:1,%22room_ids%22:%2291%22,%22desired_quantity%22:%221%22%7D,%7B%22hotel_id%22:41,%22bed_type%22:%22Queen%22,%22price%22:40,%22capacity%22:2,%22images%22:%22https://www.plazahotelcasino.com/wp-content/uploads/2019/02/DeluxeQueen-GalleryPhotos-2-1024x512.jpg%22,%22quantity%22:1,%22room_ids%22:%2292%22,%22desired_quantity%22:0%7D%5D,%22totalResultCount%22:2%7D
 
-class Checkout extends Component {
+class Checkout extends React.Component {
 
   constructor(props) {
     super(props);
-     
-    const params = new URLSearchParams(this.props.location.search); // url ?data=bar
+
     const hotel_id = this.props.location.state.hotel_id
     const hotel = this.props.location.state.hotel
     const date_in = this.props.location.state.date_in
@@ -34,21 +33,10 @@ class Checkout extends Component {
     const country = this.props.location.state.country
     const transaction_id = this.props.location.state.transaction_id
     const nights_stayed = ((new Date(date_out) - new Date(date_in)) / (24 * 60 * 60 * 1000));
-    
-    console.log(`night stayed ${nights_stayed}`)
+
+    // console.log(`night stayed ${nights_stayed}`)
 
     //console.log("test"+JSON.parse(this.props.location.state))
-  {/*
-    Finding ways to deal with the extra spaces being sent
-    console.log(date_in)
-
-    console.log(date_out)
-
-
-
-    console.log(date_out3)
-
-*/}
 var rooms=[{}];
 
 if(typeof(transaction_id) === 'undefined' || transaction_id === null)
@@ -58,20 +46,20 @@ if(typeof(transaction_id) === 'undefined' || transaction_id === null)
 else
 {
    rooms = JSON.parse(this.props.location.state.rooms)
-   console.log("oldroom passed "+transaction_id)
+  //  console.log("oldroom passed "+transaction_id)
 }
  //  const rooms = JSON.parse(this.props.location.state.rooms).results.filter( x => x.desired_quantity > 0 )
 
- console.log("rooms list:"+(this.props.location.state.rooms))
- console.log("everything :"+JSON.stringify(this.props.location.state))
+//  console.log("rooms list:"+(this.props.location.state.rooms))
+//  console.log("everything :"+JSON.stringify(this.props.location.state))
  //const rooms = JSON.parse(this.props.location.state.rooms)
 
     const oldPrice =  this.props.location.state.oldAmountPaid
     const rewards_applied =  (this.props.location.state.oldTotalPrice - this.props.location.state.oldAmountPaid)*100 
     
-    console.log("rewards applied:"+rewards_applied)
-    console.log("old price" +this.props.location.state.oldTotalPrice)
-    console.log("old price" +this.props.location.state.oldAmountPaid)
+    // console.log("rewards applied:"+rewards_applied)
+    // console.log("old price" +this.props.location.state.oldTotalPrice)
+    // console.log("old price" +this.props.location.state.oldAmountPaid)
     var totalPrice=0;
 
 if(typeof(transaction_id) === 'undefined' || transaction_id === null )
@@ -79,31 +67,14 @@ if(typeof(transaction_id) === 'undefined' || transaction_id === null )
    totalPrice = rooms.reduce( (acc,cur) => acc + (cur.price * cur.desired_quantity),0 );
 }
 else{
-  console.log("oldroomForeach passed")
+  // console.log("oldroomForeach passed")
   rooms.forEach(element => {
     totalPrice += element.price*element.quantity
   });
-  console.log("totalPrice:"+totalPrice)
+  // console.log("totalPrice:"+totalPrice)
 }
     
-    
-
-
-  {/*
-    Finding ways to deal with the extra spaces being sent
-    console.log(date_in)
-
-    console.log(date_out)
-
-    const date_out1 = String(date_out).replace('\t', '');
-    const date_out2 = String(date_out1).replace('\n', '');
-    const date_out3 = String(date_out2).replace('/\s/g', '');
-
-    console.log(date_out3)
-
-*/}
-
-    
+     
 
     
 
@@ -152,12 +123,12 @@ else{
     return (
 
       //Stripe Publishable Key 
-      <StripeProvider apiKey="pk_test_zEPe15yKunUJ587sdpifv1EG00qBXp1rIj"> 
-      <div class="dimScreenSC ">
+      <StripeProvider apiKey={process.env.REACT_APP_STRIPE_PUBLIC_KEY}> 
+      <div className="dimScreenSC ">
 
-            <div class="containerSC  w-75" style={{}}>
+            <div className="containerSC  w-75" style={{}}>
 
-          <div class="w-100">
+          <div className="w-100">
 
             { 
               typeof(this.state.transaction_id) !== 'undefined' ? 
@@ -202,7 +173,7 @@ else{
 {/* ////////////Payment/////////   */}
 
     
-            <div class="">
+            <div className="">
                 <CheckoutPaymentCheck
                 totalPrice ={this.state.totalPrice* this.state.nights_stayed}
                 rewardPoint={this.state.rewardPoint}
@@ -231,30 +202,30 @@ export default withRouter(Checkout);
 
 
 
-function validateRP(rewardPoint,discount)
-{
-  if(discount > rewardPoint)
-  {
-    return true;
-  }
-  return false;
-}
+// function validateRP(rewardPoint,discount)
+// {
+//   if(discount > rewardPoint)
+//   {
+//     return true;
+//   }
+//   return false;
+// }
 
-const handleBlur = () => {
-  console.log('[blur]');
-};
-const handleChange2 = (change) => {
-  console.log('[change]', change);
-};
-const handleClick = () => {
-  console.log('[click]');
-};
-const handleFocus = () => {
-  console.log('[focus]');
-};
-const handleReady = () => {
-  console.log('[ready]');
-};
+// const handleBlur = () => {
+//   console.log('[blur]');
+// };
+// const handleChange2 = (change) => {
+//   console.log('[change]', change);
+// };
+// const handleClick = () => {
+//   console.log('[click]');
+// };
+// const handleFocus = () => {
+//   console.log('[focus]');
+// };
+// const handleReady = () => {
+//   console.log('[ready]');
+// };
 
 
 class _CheckoutPaymentCheck extends React.Component
@@ -309,9 +280,9 @@ class _CheckoutPaymentCheck extends React.Component
        this.setState({
          rewardPoint: res.data.reward
        })
-      console.log("res"+JSON.stringify(res));
+      // console.log("res"+JSON.stringify(res));
       
-      console.log("resReward "+JSON.stringify(res.data.reward));
+      // console.log("resReward "+JSON.stringify(res.data.reward));
     })
         
   }
@@ -373,9 +344,9 @@ class _CheckoutPaymentCheck extends React.Component
 async submit(ev) {
   let {token} = await this.props.stripe.createToken({name: "SpartanHotel"});
 
-  console.log(token)
-  console.log(this.state.nights_stayed)
-  console.log(this.state.totalPriceBeforeTaxAndRewards)
+  // console.log(token)
+  // console.log(this.state.nights_stayed)
+  // console.log(this.state.totalPriceBeforeTaxAndRewards)
 
 
   var desiredRooms=[{}];
@@ -399,12 +370,12 @@ else{
 }
 
 
-  console.log(`total room price per night ${totalRoomPricePerNight}`)
+  // console.log(`total room price per night ${totalRoomPricePerNight}`)
   if(typeof(this.state.transaction_id) === 'undefined' || this.state.transaction_id === null)
-  desiredRooms.map( ele => {ele.quantity = ele.desired_quantity; delete ele.desired_quantity})
+  desiredRooms.forEach( ele => {ele.quantity = ele.desired_quantity; delete ele.desired_quantity})
 
-  console.log("cancellation:"+totalRoomPricePerNight );
-  console.log(" nights stayed"+ this.state.nights_stayed);
+  // console.log("cancellation:"+totalRoomPricePerNight );
+  // console.log(" nights stayed"+ this.state.nights_stayed);
 // Prepares the data for Metadata at server side
 let data={
   id: token.id,
@@ -426,8 +397,10 @@ let data={
   
 }
 
+// console.log('aaaaaaaaaadatadatadatadata', data)
+
 if(typeof(this.state.transaction_id) === 'undefined' || this.state.transaction_id === null)
-{
+{  
   let response = await fetch("/api/checkout/charge", {
     method: "POST",
     headers: {"Content-Type": "text/plain"},
@@ -442,24 +415,24 @@ if(typeof(this.state.transaction_id) === 'undefined' || this.state.transaction_i
       this.props.history.push(`/Confirmation`);   
   }
   else{
-    console.log(response)
+    // console.log(response)
     let textPromise = await response.text()
-    console.log(`textPromise is ${textPromise}`)
+    // console.log(`textPromise is ${textPromise}`)
     if ( textPromise.includes("Attempted booking overlaps")){
         this.setState({
           checkBookings:true,
         })
 
-        console.log(this.state.checkBookings)
+        // console.log(this.state.checkBookings)
       // show message when no multiple booking condition at different hotel failed
     }
 
-    console.log("error "+ response.status)
+    // console.log("error "+ response.status)
   }
 }
 else{
 
-
+// console.log("sddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")
   let response = await fetch("/api/checkout/modify", {
     method: "POST",
     headers: {"Content-Type": "text/plain"},
@@ -473,19 +446,19 @@ else{
       this.props.history.push(`/Confirmation`);   
   }
   else{
-    console.log(response)
+    // console.log(response)
     let textPromise = await response.text()
-    console.log(`textPromise is ${textPromise}`)
+    // console.log(`textPromise is ${textPromise}`)
     if ( textPromise.includes("Attempted booking overlaps")){
         this.setState({
           checkBookings:true,
         })
 
-        console.log(this.state.checkBookings)
+        // console.log(this.state.checkBookings)
       // show message when no multiple booking condition at different hotel failed
     }
 
-    console.log("error "+ response.status)
+    // console.log("error "+ response.status)
   }
 
 
@@ -500,39 +473,39 @@ else{
    
    render(){
 
-    console.log("rewardpoint:"+this.state.rewardPoint) 
+    // console.log("rewardpoint:"+this.state.rewardPoint) 
 
-     const error= validateRP(this.state.rewardPoint,this.state.discount);
-     const isEnabled = !error;
+    //  const error= validateRP(this.state.rewardPoint,this.state.discount);
+    //  const isEnabled = !error;
     
      
  
    return (
     
- <div class="row" style={{marginRight:"0px", marginLeft:"0px"}}>
+ <div className="row" style={{marginRight:"0px", marginLeft:"0px"}}>
      
  
        {/*   //////////////Payments///////////////////////                          */}
  
-     <div class="card text-left w-50">
-       <h5 class="card-header">Payment Method</h5>
-       <div class="card-body" style={{backgroundColor: "#ffffff"}}>
-         <div class="row">
-           <div class="col-md-11">
+     <div className="card text-left w-50">
+       <h5 className="card-header">Payment Method</h5>
+       <div className="card-body" style={{backgroundColor: "#ffffff"}}>
+         <div className="row">
+           <div className="col-md-11">
            <form action="/charge" method="post" id="payment-form">
-             <div class="form-group"> 
-              <img src="https://images-na.ssl-images-amazon.com/images/I/61cL%2BM-SN%2BL._SL1283_.jpg"  width="405.5" height="153.5"/>{" "}
+             <div className="form-group"> 
+              <img src="https://images-na.ssl-images-amazon.com/images/I/61cL%2BM-SN%2BL._SL1283_.jpg" alt="ckot" width="405.5" height="153.5"/>{" "}
              </div>
-              <div class="form-group">
+              <div className="form-group">
                <span style={{ fontSize: 12, marginLeft: 13 }}>Card Number</span>
                 <div>
                   <CardNumberElement/>
                 </div>
                </div>
             
-             <div class="form-group row">
+             <div className="form-group row">
                <div
-                 class="form-group "
+                 className="form-group "
                  style={{ paddingLeft: 15, marginTop: 8, width:"33%" }}>
                   <span style={{ fontSize: 12, marginLeft: 13 }}>Expiration Date</span>
                   <div>
@@ -543,7 +516,7 @@ else{
               
  
                <div
-                 class="form-group "
+                 className="form-group "
                  style={{ paddingLeft: 30, marginTop: 8, width:"33%" }}
                >
                  <span style={{ fontSize: 12, marginLeft: 13 }}>Postal Code</span>
@@ -555,7 +528,7 @@ else{
        
  
                <div
-                 class="form-group"
+                 className="form-group"
                  style={{ marginTop: 8, paddingLeft: 30, width:"33%"}}
                >
    <span style={{ fontSize: 12, marginLeft: 13 }}>CVC</span>
@@ -578,16 +551,16 @@ else{
  
  
  
-     <div class="card text-left w-50 " >
-       <h5 class="card-header">Payment Summary</h5>
-       <div class="card-body">
-         <div class="col" />
-         <p class="font-weight-bold" id="test" />
+     <div className="card text-left w-50 " >
+       <h5 className="card-header">Payment Summary</h5>
+       <div className="card-body">
+         <div className="col" />
+         <p className="font-weight-bold" id="test" />
  
          <form>
  
-         <table class="table font-weight-bolder">
-           <tbody class="border">
+         <table className="table font-weight-bolder">
+           <tbody className="border">
              <tr>
                <td>Room: </td>
 
@@ -628,10 +601,10 @@ else{
              
            </tbody>
          </table>
-         <hr class="dottedLineSC w-100" />
+         <hr className="dottedLineSC w-100" />
  
-         <div class="row w-100">
-           <div class="w-50 col-sm-auto ">
+         <div className="row w-100">
+           <div className="w-50 col-sm-auto ">
            <Button
                color="warning"
                onClick={this.toggle}
@@ -641,7 +614,7 @@ else{
              </Button>
  
            </div>
-           <div class=" w-50 col-sm-auto">
+           <div className=" w-50 col-sm-auto">
            <Button
                color="primary"
                onClick={this.submit}
@@ -652,12 +625,12 @@ else{
              </div>
          </div >
  
-         <div class=" w-100 row">
+         <div className=" w-100 row">
          <Collapse isOpen={this.state.collapse} style={{ width: '100%'}}>
                <div id="collapse-rewardPoint ">
-                 <div class="form-group col-sm-auto offset-sm-1 row " >
+                 <div className="form-group col-sm-auto offset-sm-1 row " >
                  {/*? "Not enough reward points": ''*/}
-                   <input  type="text" id="rewardPointInput" class="form-control w-75" placeholder="Reward Point Amount"
+                   <input  type="text" id="rewardPointInput" className="form-control w-75" placeholder="Reward Point Amount"
                     onChange= {this.handleDiscountUsedInput.bind(this)}
                    />
                    <Button
@@ -666,12 +639,12 @@ else{
                        style={{ width: '25%'}}>
                        Use
                      </Button>
-                     <p class='small'>
+                     <div className='small'>
                        <p>
                          You have {this.state.rewardPoint} Reward Points ;
                        </p>
-                       <p class='font-italic small'> 1 Reward Point = $0.01 (ie. 500 Reward Points = $5.00)</p>
-                     </p>
+                       <p className='font-italic small'> 1 Reward Point = $0.01 (ie. 500 Reward Points = $5.00)</p>
+                     </div>
                     
                  </div>
 
@@ -747,36 +720,36 @@ this.item = this.state.rooms.map((item, key) =>
 render(){
 
 return (
-<div class="card text-center h-50">
-  <h5 class="card-header">Booking Summary</h5>
-  <div class="card-body  " style={{backgroundColor: "#ffffff"}}>
+<div className="card text-center h-50">
+  <h5 className="card-header">Booking Summary</h5>
+  <div className="card-body  " style={{backgroundColor: "#ffffff"}}>
   
     <h4>
    
     
     <div >
-    <p class="font-weight-bold" style={{fontSize:"30px"}} >{this.props.hotel}</p>
-    <p class="font-weight-light" style={{fontSize:"20px"}}>{this.props.address}, {this.props.city}</p>
-    <p class="font-weight-light" style={{fontSize:"20px"}}> {this.props.state}, {this.props.country} </p>
+    <p className="font-weight-bold" style={{fontSize:"30px"}} >{this.props.hotel}</p>
+    <p className="font-weight-light" style={{fontSize:"20px"}}>{this.props.address}, {this.props.city}</p>
+    <p className="font-weight-light" style={{fontSize:"20px"}}> {this.props.state}, {this.props.country} </p>
     </div>
     <div >
 
-<p class="font-weight-light text-muted ">          {
-       this.state.rooms.map((value)=>{
-        console.log(value)
+<div className="font-weight-light text-muted ">          {
+       this.state.rooms.forEach((value)=>{
+        // console.log(value)
         if(value.desired_quantity > 0){
         return  <p>{value.desired_quantity} {value.bed_type} x {this.state.nights_stayed} Day = $ {(value.price * value.desired_quantity * this.state.nights_stayed)}</p>
         }
       })}
 
-     </p>
+     </div>
    
 
     </div>
     <div>
 
-    <p class="font-weight-bold" style={{fontSize:"20px"}} >Check In: {this.props.date_in}</p>
-    <p class="font-weight-bold" style={{fontSize:"20px"}} >Check Out: {this.props.date_out}</p>
+    <p className="font-weight-bold" style={{fontSize:"20px"}} >Check In: {this.props.date_in}</p>
+    <p className="font-weight-bold" style={{fontSize:"20px"}} >Check Out: {this.props.date_out}</p>
     </div>
   
 
@@ -834,11 +807,11 @@ this.state = {
 render(){
 
 return (
-<div class="row " style={{marginRight:"0px", marginLeft:"0px"}}>
+<div className="row " style={{marginRight:"0px", marginLeft:"0px"}}>
 {/*Booking Info */}
-<div class="card w-50">
-  <h5 class="card-header text-left">Booking Summary</h5>
-  <div class="card-body " style={{backgroundColor: "#ffffff"}}>
+<div className="card w-50">
+  <h5 className="card-header text-left">Booking Summary</h5>
+  <div className="card-body " style={{backgroundColor: "#ffffff"}}>
   
     <h4>
    
@@ -846,23 +819,23 @@ return (
     <br/>
     <div >
 
-    <p class="font-weight-light text-muted ">          {
-         this.state.rooms.map((value)=>{
-          console.log(value)
+    <div className="font-weight-light text-muted ">          {
+         this.state.rooms.forEach((value, index)=>{
+          // console.log(value)
           if(value.quantity > 0){
-          return  <p>{value.quantity} {value.bed_type} x {this.state.nights_stayed} days = $ {value.quantity * value.price * this.state.nights_stayed} </p>
+          return  <p key={index + 1}>{value.quantity} {value.bed_type} x {this.state.nights_stayed} days = $ {value.quantity * value.price * this.state.nights_stayed} </p>
           }
         })}
 
-     </p>
+     </div>
   
 
     </div>
 
     <div>
 
-    <p class="font-weight-bold" style={{fontSize:"20px"}} >Check In: {this.props.date_in}</p>
-    <p class="font-weight-bold" style={{fontSize:"20px"}} >Check Out: {this.props.date_out}</p>
+    <p className="font-weight-bold" style={{fontSize:"20px"}} >Check In: {this.props.date_in}</p>
+    <p className="font-weight-bold" style={{fontSize:"20px"}} >Check Out: {this.props.date_out}</p>
     </div>
   
 
@@ -871,15 +844,15 @@ return (
 </div>
 {/*Old Payment*/}
 
-<div class="card text-left w-50 " >
-       <h5 class="card-header">Previous Payment Summary</h5>
-       <div class="card-body" style={{backgroundColor: "#ffffff"}}>
-         <div class="col" />
-         <p class="font-weight-bold" id="test" />
+<div className="card text-left w-50 " >
+       <h5 className="card-header">Previous Payment Summary</h5>
+       <div className="card-body" style={{backgroundColor: "#ffffff"}}>
+         <div className="col" />
+         <p className="font-weight-bold" id="test" />
  
  
-         <table class="table font-weight-bolder">
-           <tbody class="border">
+         <table className="table font-weight-bolder">
+           <tbody className="border">
              <tr>
                <td>Prev. Price: </td>
 
@@ -920,7 +893,7 @@ return (
              
            </tbody>
          </table>
-         <div class= "alert alert-info "style={{}}>
+         <div className= "alert alert-info "style={{}}>
           <span> We will refund or charge only the difference of the old and new booking prices!</span>
           </div>
          </div>

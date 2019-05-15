@@ -17,7 +17,7 @@ async function bookingConflictWithAnotherHotelCheck(requestedBooking, res) {
             date_in: requestedBooking.date_in,
             date_out: requestedBooking.date_out
         });
-        console.log(query);
+        // console.log(query);
         let queryResults;
         try {
             queryResults = await Queries.run(query);
@@ -28,13 +28,13 @@ async function bookingConflictWithAnotherHotelCheck(requestedBooking, res) {
             res.status(400).send("bad");
             return false;
         }
-        console.log(queryResults);
+        // console.log(queryResults);
         // check that the all booking conflicts for this user are at the same hotel
         let conflictingHotels = [];
         conflictingHotels = queryResults.map(ele => ele.hotel_id);
-        console.log(`conflictingHotels ${conflictingHotels}`);
+        // console.log(`conflictingHotels ${conflictingHotels}`);
         let distinctConflictingHotels = [...new Set(conflictingHotels)];
-        console.log(`distinctConflictingHotels ${distinctConflictingHotels}`);
+        // console.log(`distinctConflictingHotels ${distinctConflictingHotels}`);
         // remove desired hotel from being conflicted
         distinctConflictingHotels = distinctConflictingHotels.filter(ele => ele != requestedBooking.hotel_id);
         if (distinctConflictingHotels.length > 0) {

@@ -300,6 +300,7 @@ class Home extends React.Component {
 
 				  				          </div>
 				  				        </div>
+													<div className="input-labels-guide">Try "Las Vegas" or "New Orleans"</div>
 				  				    </div>
 				  				    <div className="col-lg-12">
 										<div className="form-checkboxes row home-checkboxes text-center">
@@ -316,22 +317,6 @@ class Home extends React.Component {
 				</div >
 		);
 
-{/*
-
-		const homeFeaturedHotels = (
-
-			<div className="home-featured-hotels">
-			a
-			</div>
-
-		);
-
-		const homeLast = (
-			<div className="">
-			a
-			</div>
-		);
-	*/}	
 
 		return (
 			<div>

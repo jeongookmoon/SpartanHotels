@@ -48,8 +48,8 @@ class Reservations extends React.Component {
 					room_prices.push(viewres.data[i].price)
 					quantities.push(1)
 					for (var j = i + 1; j < viewres.data.length; j++) {
-						if (viewres.data[j].transaction_id == viewres.data[i].transaction_id) {
-							if ((viewres.data[j].bed_type == viewres.data[i].bed_type) && (viewres.data[j].price == viewres.data[i].price)) {
+						if (viewres.data[j].transaction_id === viewres.data[i].transaction_id) {
+							if ((viewres.data[j].bed_type === viewres.data[i].bed_type) && (viewres.data[j].price === viewres.data[i].price)) {
 								room_quan++
 							}
 							else {
@@ -90,7 +90,7 @@ class Reservations extends React.Component {
 				resInfo[0] = { booking_id, date_in, date_out, hotel_name, bed_type, room_price, room_quantities, total_price, status, hotel_id }
 				var counter = 1
 				for (var x = 1; x < viewres.data.length; x++) {
-					if (viewres.data[x].transaction_id == viewres.data[x - 1].transaction_id) {
+					if (viewres.data[x].transaction_id*1 === viewres.data[x - 1].transaction_id*1) {
 						continue
 					}
 					booking_id = viewres.data[x].transaction_id
