@@ -1,6 +1,9 @@
 # Spartan-Hotels
 CMPE 165 Project
 
+## Running on Heroku Server
+https://spartanhotels.herokuapp.com/
+
 ## Client
 1. Inside /client, `npm install` to install dependencies and create ".env" file containing the following (replace YOUR_KEY)
 2. `REACT_APP_AUTOCOMPLETE_URL=https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&libraries=places`
