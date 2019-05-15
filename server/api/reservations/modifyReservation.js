@@ -1,16 +1,16 @@
 const { bookingConflictWithAnotherHotelCheck } = require("./bookingConflictWithAnotherHotelCheck");
 const { modifyAvailabilityCheck, totalPriceAndCancellationChargeCheck } = require("./availabilityAndPriceCheck");
 const { paymentCheckOnModify } = require("./paymentCheckOnModify");
-const { TAX_RATE, REWARD_RATE } = require("./rates");
+const { REWARD_RATE } = require("./rates");
 
+const stripe_key = process.env.STRIPE_KEY
 var Queries = require('../../queries')
 var mysql = require('mysql')
 var Email = require('../email.js')
 const pug = require('pug')
 const { getUserEmail } = require("./getUserEmail");
 const compiledPugModifyResEmail = pug.compileFile("./email_templates/modifyReservation.pug");
-const bodyParser  = require('body-parser');
-const stripe = require("stripe")("sk_test_KMjoJvcxhuiJSV51GJcaJfSi00r9QtVXjo"); // Your Stripe key
+const stripe = require("stripe")(stripe_key); // Your Stripe key
 
 /**
  * 
@@ -36,12 +36,12 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
         return 
     }
     let availableRequestedRooms = checkResults.availableRequestedRooms
-    console.log(`\n\n ${JSON.stringify(availableRequestedRooms)} \n\n`)
-    console.log( (typeof(availableRequestedRooms[0].room_ids)))
+    // console.log(`\n\n ${JSON.stringify(availableRequestedRooms)} \n\n`)
+    // console.log( (typeof(availableRequestedRooms[0].room_ids)))
     var test  = "hey,hey"
     test = test.split(",")
     //console.log(test.split(","));
-    console.log("test after:"+test)
+    // console.log("test after:"+test)
     for (i=0;i<availableRequestedRooms.length-1; i++){
         availableRequestedRooms[i].room_ids =  availableRequestedRooms[i].room_ids.split(",")
 
@@ -53,7 +53,7 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
     // availableRequestedRooms.map( x=>{ console.log( typeof(x.room_ids) +"\n"+x.room_ids ); x.room_ids = x.room_ids.split(",")})
     
 
-    console.log(availableRequestedRooms)
+    // console.log(availableRequestedRooms)
 
     // check client-submitted total_price, cancellation_charge
     checkResults = await totalPriceAndCancellationChargeCheck(requestedBooking, res)
@@ -77,14 +77,14 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
     if (!checkPassed) {
         return
     }
-    console.log(oldTransactionData)
+    // console.log(oldTransactionData)
 
     let final_cancellation_charge = (oldTransactionData.cancellation_charge > requestedBooking.cancellation_charge) ? oldTransactionData.cancellation_charge : requestedBooking.cancellation_charge
 
-    console.log(`additionalAmountDueFromUser ${additionalAmountDueFromUser}`)
-    console.log(`oldTransactionData ${oldTransactionData}`)
-    console.log(`oldTransactionData cancellation charge ${oldTransactionData.cancellation_charge}`)
-    console.log(`cancellation_charge ${final_cancellation_charge}`)
+    // console.log(`additionalAmountDueFromUser ${additionalAmountDueFromUser}`)
+    // console.log(`oldTransactionData ${oldTransactionData}`)
+    // console.log(`oldTransactionData cancellation charge ${oldTransactionData.cancellation_charge}`)
+    // console.log(`cancellation_charge ${final_cancellation_charge}`)
 
     // issue refund or take payment? or check if stripe transaction valid ?
 
@@ -108,7 +108,7 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
 
     // query to remove old transaction_room data and old reward data
     let queryToRemoveOldTRDataAndOldRewardData = mysql.format(Queries.modify.removeTransactionRoomDataAndRewardsForTransaction, transaction_id)
-    console.log(`queryToRemoveOldTRDataAndOldRewardData ${queryToRemoveOldTRDataAndOldRewardData}`)
+    // console.log(`queryToRemoveOldTRDataAndOldRewardData ${queryToRemoveOldTRDataAndOldRewardData}`)
 
     if (requestedBooking.rewards_applied > 0) {
         insertNewRewardsAppliedDataQuery = mysql.format(Queries.rewards.useOnBooking, [requestedBooking.user, transaction_id, (-1) * requestedBooking.rewards_applied])
@@ -117,14 +117,15 @@ async function modifyReservation(requestedBooking, transaction_id, res) {
     let applied_reward_cash_value = requestedBooking.rewards_applied / 100
 
     let amountCashPaid = requestedBooking.total_price - applied_reward_cash_value 
-    console.log(amountCashPaid)
+    // console.log(amountCashPaid)
     
     // update rewards gained from this booking
     let rewardsGained = parseInt(amountCashPaid * (REWARD_RATE/100) * 100)
     insertNewRewardsGainedDataQuery = mysql.format(Queries.rewards.gainFromBooking, [requestedBooking.user, transaction_id, requestedBooking.date_out, rewardsGained])
 
     insertNewTRDataQuery = Queries.booking.makeTransactionDetails(transaction_id, availableRequestedRooms)
-    console.log(insertNewTRDataQuery)
+    // console.log("insertNewTRDataQuery", insertNewTRDataQuery)
+    // console.log("availableRequestedRooms", availableRequestedRooms)
     
     let amount_user_paid = requestedBooking.total_price - (requestedBooking.rewards_applied/100)
 

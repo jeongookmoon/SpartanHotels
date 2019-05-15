@@ -52,10 +52,10 @@ class UserProfile extends React.Component {
 	onSubmit = (e) => {//able to se values once submitted
 		e.preventDefault();
 		this.props.onSubmit(this.state)//possibly delete this.state
-		console.log(this.state);
+		// console.log(this.state);
 	};
 	fileSelectedHandler = event => {
-		console.log(event.target.files[0]);
+		// console.log(event.target.files[0]);
 	}
 
 

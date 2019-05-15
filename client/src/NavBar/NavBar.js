@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom'
 import Registration from '../Registration/Registration'
-import { logoutClearSession, loginPost } from '../Utility/ReigstrationLoginFunction'
+import { logoutClearSession, loginPost, verifyLogin } from '../Utility/ReigstrationLoginFunction'
 import imageLogo from './Images/logo.png'
 // import neccessary components
 import {
@@ -24,6 +24,18 @@ class NavBar extends React.Component {
     this.login = this.login.bind(this)
   }
 
+  compoenentDidMount(prevProps) {
+    if (prevProps.location.search !== this.props.location.search || prevProps.location.state !== this.props.location.state) {
+      verifyLogin()
+		}
+  }
+
+	componentDidUpdate(prevProps) {
+		if (prevProps.location.search !== this.props.location.search || prevProps.location.state !== this.props.location.state) {
+      verifyLogin()
+		}
+  }
+  
   updateFields(event) {
     let temp_fields = this.state.loginfields;
     temp_fields[event.target.name] = event.target.value;
@@ -208,7 +220,7 @@ class NavBar extends React.Component {
         {/*LEFT SIDE*/}
         <div className="navbar-left form-inline my-2 my-lg-0" >
           <div className="col-auto pl-0 custom-row" onClick={this.Home.bind(this)}>
-            <img className="imageLogo" src={imageLogo}></img>
+            <img className="imageLogo" src={imageLogo} alt="logologologo"></img>
             <div>SPARTAN HOTELS</div>
           </div>
           {localStorage.accesstoken ? EmptyForm : <div className="">|</div>}
@@ -218,7 +230,6 @@ class NavBar extends React.Component {
 
         {/*RIGHT SIDE*/}
         <div className="navbar-right form-inline my-2 my-lg-0" >
-
           {localStorage.accesstoken ? ProfileLink : EmptyForm}
           {localStorage.accesstoken ? ReservationLink : EmptyForm}
           {localStorage.accesstoken ? EmptyForm : ResetPasswordLink}

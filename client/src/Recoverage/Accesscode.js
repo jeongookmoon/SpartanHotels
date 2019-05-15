@@ -24,7 +24,7 @@ var topSectionStyle = {
 class Accesscode extends Component {
     constructor(props) {
         super(props);
-        console.log('this.props', this.props.location.state)
+        // console.log('this.props', this.props.location.state)
         this.state = {
             fields: {
                 code: '',
@@ -96,8 +96,8 @@ class Accesscode extends Component {
         access_code: this.state.fields.code,
         email: this.props.location.state,
       }
-      console.log('email:',temp_fields.email)
-      console.log('code:', temp_fields.access_code)
+      // console.log('email:',temp_fields.email)
+      // console.log('code:', temp_fields.access_code)
       checkCodePost(temp_fields).then(response =>{
         if (response === "S") {
             // const whatever = { ... this.state}

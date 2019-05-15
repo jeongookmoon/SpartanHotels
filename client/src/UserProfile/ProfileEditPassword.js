@@ -97,7 +97,7 @@ class ProfileEditPassword extends React.Component {
 	        newpass: this.state.fields.newpass
 	      }
 	      changePass(temp_fields).then(response => {
-	      	console.log(response)
+	      	// console.log(response)
 	        if (response === 200) {
 	          this.setState({old_pass_error : false}, () => this.pushtoCurrentURL())
 	          alert("Your password has been updated!")
@@ -173,7 +173,7 @@ class ProfileEditPassword extends React.Component {
 	      <div className="text-warning">Old Password does not match</div>
 	    )
 
-	    var password_requirements_component = this.state.newPasswordCheck.map(ele=>{
+	    this.state.newPasswordCheck.map(ele=>{
 	      return <div key={ele.req} className= { ele.valid ? "valid-req" : "invalid-req" }>{ele.req}</div>
 	    }) 
 

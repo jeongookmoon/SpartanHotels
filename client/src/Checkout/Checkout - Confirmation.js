@@ -1,20 +1,6 @@
 import React, {Component} from 'react';
-import {CardElement, injectStripe, CardCVCElement,CardNumberElement, CardExpiryElement, PostalCodeElement} from 'react-stripe-elements';
 
 import {withRouter} from 'react-router-dom'
-
-
-var testPay;
-var rewardPoint = "1000";
-var cost = "59.99";
-var discount;
-var rewardPointUsed = "1000";
-var total;
-var tempTotal = cost * 1.10;
-var tempReward;
-var tax;
-
-
 
 
 class CheckoutConfirm extends Component {
@@ -43,8 +29,6 @@ class CheckoutConfirm extends Component {
   
   
  render() {
-  const { match, location, history } = this.props;
-
   return (
   <div class="card text-left ">
       <h5 class="card-header">Payment Method</h5>
@@ -52,14 +36,6 @@ class CheckoutConfirm extends Component {
         <div class="row">
          
          <h1>Purchse Complete!</h1>
-         {/*
-         <p>Receipt:</p>
-         <p>ID: {this.state.charge}</p>
-         <p>Email: {this.state.email}</p>
-         
-         */}
-
-
         </div>
       </div>
     </div>
