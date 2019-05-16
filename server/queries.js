@@ -1080,8 +1080,10 @@ module.exports = {
   * 
  */
   transaction: {
-    getRoomInfo: `SELECT T.*, group_concat(TR.transaction_room_id) as transaction_room_ids, group_concat(TR.room_id) as room_ids, ANY_VALUE(TR.room_price) as room_price, ANY_VALUE(R.hotel_id) as hotel_id, group_concat(R.room_number), R.bed_type, ANY_VALUE(R.capacity) as capacity, ANY_VALUE(RI.url) as image,
-                  COUNT(*) as quantity
+    getRoomInfo: `SELECT ANY_VALUE(T.transaction_id) as transaction_id, ANY_VALUE(T.user_id) as user_id, ANY_VALUE(T.total_price) as total_price, ANY_VALUE(T.cancellation_charge) as cancellation_charge, ANY_VALUE(T.date_in) as date_in, ANY_VALUE(T.date_out) as date_out, 
+                  ANY_VALUE(T.amount_paid) as amount_paid, ANY_VALUE(T.stripe_id) as stripe_id, 
+                  ANY_VALUE(TR.room_price) as room_price, ANY_VALUE(R.hotel_id) as hotel_id, group_concat(R.room_number), R.bed_type, ANY_VALUE(R.capacity) as capacity, ANY_VALUE(RI.url) as image,
+                  COUNT(T.transaction_id) as quantity
                   FROM spartanhotel.transaction T
                   join spartanhotel.transaction_room TR
                   on T.transaction_id = TR.transaction_id
