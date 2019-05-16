@@ -560,7 +560,7 @@ class HotelSearch extends React.Component {
 										<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.address}</div>
 										<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.city}</div>
 										<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.phone_number}</div>
-
+										<div className="hotel-search-item-row hotel-search-item-address" style={{ color: '#3b73d3' }}>{eachHotelResult.amenities}</div>
 									</div>
 								</td>
 								<td className="">
