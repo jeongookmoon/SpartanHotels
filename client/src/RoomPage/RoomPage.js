@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios'
 import { withRouter } from 'react-router-dom'
-import { Table } from 'reactstrap';
+import { Table, Button} from 'reactstrap';
 
 
 
@@ -217,6 +217,7 @@ class RoomPage extends React.Component {
 																	<li> {this.state.hotel.results[0].address}, {this.state.hotel.results[0].city}, {this.state.hotel.results[0].state}, {this.state.hotel.results[0].zipcode} </li>
 																	<li> {this.state.hotel.results[0].phone_number}</li>
 																	<li> <sup>{this.state.hotel.results[0].description}</sup></li>
+																	<li style={{ color: '#38af7b' }}> {this.state.hotel.results[0].amenities}</li>
 																</ul>
 
 															</div>
@@ -235,10 +236,10 @@ class RoomPage extends React.Component {
 											{
 												this.state.rooms.results.map((eachRoomResult, index) => {
 													return (
-														<div className="room-page-room-item col-lg-4 mb-5" key={index}>
-															<div className="block-34" style={{ cursor: "pointer" }}>
+														<div className="col-lg-4 mb-5" key={index}>
+															<div className="block-44">
 																<div className="room-page-image">
-																	<a href="#child4"><img src={eachRoomResult.images} alt="Placeholder" /></a>
+																	<img src={eachRoomResult.images} alt="Placeholder" />
 																</div>
 																<div className="text">
 																	<h2 className="heading">{eachRoomResult.bed_type} Size Room</h2>
@@ -397,7 +398,9 @@ class RoomPage extends React.Component {
 							{this.state.verifyCheckout ? <div className="room-page-verify-checkout"> Unable to checkout </div> : null}
 							{this.state.verifyRooms ? <div className="room-page-verify-checkout"> Please select a room </div> : null}
 							{this.state.verifyGuests ? <div className="room-page-verify-checkout"> Please select enough rooms to accomodate all guests </div> : null}
-							<p className="room-page-submit-button btn btn-primary py-3 px-5 mb-5" style={{ cursor: "pointer" }} onClick={this.Checkout.bind(this)}>Checkout</p>
+							{localStorage.accesstoken? null : <p style={{ color: '#f977a1' }}>Please login to proceed to check out</p>}
+							<Button disabled={!localStorage.accesstoken || parseInt(this.handleRoomPrice()) === 0} className="home-submit-button btn btn-primary py-3 px-5 mb-5" onClick={this.Checkout.bind(this)}>Checkout</Button>
+
 
 						</div>
 					</div>
