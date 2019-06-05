@@ -8,7 +8,7 @@
     "db": "cd sql && node ./script.js"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "bcrypt": "^3.0.4",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.5",
