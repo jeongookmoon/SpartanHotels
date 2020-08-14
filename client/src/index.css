@@ -280,8 +280,9 @@ code {
 
 }
 
-.hotelsearch-guest-dropdown{
+.hotelsearch-dropdown{
   text-align: center;
+  height: 45px;
 padding: 11px 11px 11px 11px;
 font-size: 1.6em;
 text-decoration: none;
@@ -293,6 +294,13 @@ display: block;
   font-weight: 300;
   font-family: Helvetica,Arial,sans-serif;
   cursor: pointer;
+
+}
+
+.hotelsearch-dropdown-list-style{
+  list-style: none;
+  font-size: 1.8em;
+  padding-left: 0;
 
 }
 
@@ -313,13 +321,6 @@ display: block;
 .home-guest-dropdown-list-style{
     list-style: none;
     padding-left: 0;
-
-}
-
-.hotelsearch-dropdown-list-style{
-  list-style: none;
-  font-size: 1.8em;
-  padding-left: 0;
 
 }
 
@@ -1445,4 +1446,8 @@ article {
   border: 2px solid #24aaf2;
     background: transparent;
     color: #24aaf2;
+}
+
+.input-labels {
+  z-index: 0;
 }

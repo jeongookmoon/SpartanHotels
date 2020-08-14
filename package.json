@@ -6,16 +6,14 @@
   "dependencies": {},
   "devDependencies": {},
   "scripts": {
+    "start": "cd server && npm install && node ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vtdiep/Spartan-Hotels.git"
+    "type": "git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/vtdiep/Spartan-Hotels/issues"
-  },
-  "homepage": "https://github.com/vtdiep/Spartan-Hotels#readme"
+  }
 }

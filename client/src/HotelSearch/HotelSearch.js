@@ -471,7 +471,7 @@ class HotelSearch extends React.Component {
 
 					<div className=" col-lg-2 input-group menu-container room-page-guest-container">
 						<div className="col-lg-12 hotel-search-menu-item">
-							<div className="hotelsearch-guest-dropdown">{this.state.guest_number}&nbsp;Guests</div>
+							<div className="hotelsearch-dropdown">{this.state.guest_number}&nbsp;Guests</div>
 							<ul className="hotelsearch-dropdown-list-style">
 								<li>
 									<div className="form-inline home-adults-container">
@@ -561,6 +561,7 @@ class HotelSearch extends React.Component {
 										<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.city}</div>
 										<div className="hotel-search-item-row hotel-search-item-address">{eachHotelResult.phone_number}</div>
 										<div className="hotel-search-item-row hotel-search-item-address" style={{ color: '#3b73d3' }}>{eachHotelResult.amenities}</div>
+
 									</div>
 								</td>
 								<td className="">

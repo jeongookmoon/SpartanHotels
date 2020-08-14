@@ -35,7 +35,7 @@ class NavBar extends React.Component {
       verifyLogin()
 		}
   }
-  
+
   updateFields(event) {
     let temp_fields = this.state.loginfields;
     temp_fields[event.target.name] = event.target.value;
@@ -230,6 +230,7 @@ class NavBar extends React.Component {
 
         {/*RIGHT SIDE*/}
         <div className="navbar-right form-inline my-2 my-lg-0" >
+
           {localStorage.accesstoken ? ProfileLink : EmptyForm}
           {localStorage.accesstoken ? ReservationLink : EmptyForm}
           {localStorage.accesstoken ? EmptyForm : ResetPasswordLink}

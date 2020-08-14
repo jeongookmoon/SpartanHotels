@@ -356,7 +356,7 @@ class ModifyRoomPage extends React.Component {
 						</tbody>
 					}
 				</Table>
-				<Button disabled={this.state.totalPriceWithTax === this.state.oldTotalPrice || parseInt(this.state.totalPriceWithTax) === 0} className="home-submit-button btn btn-primary py-3 px-4" onClick={this.Checkout}>Modify Checkout</Button>
+				<Button disabled={(this.state.transaction_dateIn.format('YYYY-MM-DD') === this.state.date_in.format('YYYY-MM-DD') && this.state.transaction_dateOut.format('YYYY-MM-DD') === this.state.date_out.format('YYYY-MM-DD') && this.state.totalPriceWithTax === this.state.oldTotalPrice) || parseInt(this.state.totalPriceWithTax) === 0} className="home-submit-button btn btn-primary py-3 px-4" onClick={this.Checkout}>Modify Checkout</Button>
 			</div>
 		)
 

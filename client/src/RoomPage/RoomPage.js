@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios'
 import { withRouter } from 'react-router-dom'
-import { Table, Button} from 'reactstrap';
+import { Table, Button } from 'reactstrap';
 
 
 
@@ -239,7 +239,7 @@ class RoomPage extends React.Component {
 														<div className="col-lg-4 mb-5" key={index}>
 															<div className="block-44">
 																<div className="room-page-image">
-																	<img src={eachRoomResult.images} alt="Placeholder" />
+																<img src={eachRoomResult.images} alt="Placeholder" />
 																</div>
 																<div className="text">
 																	<h2 className="heading">{eachRoomResult.bed_type} Size Room</h2>
@@ -400,7 +400,6 @@ class RoomPage extends React.Component {
 							{this.state.verifyGuests ? <div className="room-page-verify-checkout"> Please select enough rooms to accomodate all guests </div> : null}
 							{localStorage.accesstoken? null : <p style={{ color: '#f977a1' }}>Please login to proceed to check out</p>}
 							<Button disabled={!localStorage.accesstoken || parseInt(this.handleRoomPrice()) === 0} className="home-submit-button btn btn-primary py-3 px-5 mb-5" onClick={this.Checkout.bind(this)}>Checkout</Button>
-
 
 						</div>
 					</div>
