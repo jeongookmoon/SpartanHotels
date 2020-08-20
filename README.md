@@ -4,6 +4,26 @@ CMPE 165 Project
 ## Running on Heroku Server
 https://spartanhotels.herokuapp.com/
 
+## MERN STACK
+```
+1. MySQL(JAWSDB on Heroku) - user, booking, hotel, room, reward, images, transactions
+2. Express - Backend framework
+3. React - Frontend library - component based design - communication with backend over AJAX/Axios
+4. Node - Backend JS env - handles API calls and manage DB
+```
+
+## Features
+1. Register - Input and DB Validation
+
+2. Search - Autocomplete (via Google Places API) and Filter
+
+3. Search Result - Map Navigation (with Google Maps API), Filter, Sort
+
+4. Payment - Integrated with Stripe API
+
+5. Booking History - Edit/delete booking - DB update 
+
+
 ### Local Setup
 
 ## Client
