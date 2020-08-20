@@ -14,6 +14,7 @@ https://spartanhotels.herokuapp.com/
 
 ## Features
 1. Register - Input and DB Validation
+![](registration.gif)
 
 2. Search - Autocomplete (via Google Places API) and Filter
 
