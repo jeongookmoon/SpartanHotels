@@ -13,19 +13,19 @@ https://spartanhotels.herokuapp.com/
 ```
 
 ## Features
-1. Register - Input and DB Validation
+### 1. Register - Input and DB Validation
 ![](registration.gif)
 
-2. Search - Autocomplete (via Google Places API) and Filter
+### 2. Search - Autocomplete (via Google Places API) and Filter
 ![](autocomplete_filter.gif)
 
-3. Search Result - Map Navigation (with Google Maps API), Filter, Sort
+### 3. Search Result - Map Navigation (with Google Maps API), Filter, Sort
 ![](googlemap_filter_sort.gif)
 
-4. Payment - Integrated with Stripe API
+### 4. Payment - Integrated with Stripe API
 ![](stripe_payment_db.gif)
 
-5. Booking History - Modify/Cancel booking - DB update 
+### 5. Booking History - Modify/Cancel booking - DB update 
 ![](edit_cancel_booking.gif)
 
 ### Local Setup
