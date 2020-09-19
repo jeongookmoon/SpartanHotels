@@ -17,13 +17,16 @@ https://spartanhotels.herokuapp.com/
 ![](registration.gif)
 
 2. Search - Autocomplete (via Google Places API) and Filter
+![](autocomplete_filter.gif)
 
 3. Search Result - Map Navigation (with Google Maps API), Filter, Sort
+![](googlemap_filter_sort.gif)
 
 4. Payment - Integrated with Stripe API
+![](stripe_payment_db.gif)
 
-5. Booking History - Edit/delete booking - DB update 
-
+5. Booking History - Modify/Cancel booking - DB update 
+![](edit_cancel_booking.gif)
 
 ### Local Setup
 
@@ -39,8 +42,6 @@ Inside /server,
     `npm install` to install dependencies  
     `npm start` to start react on port 3001  
 To view express server in browser, open http://localhost:3001/
-
-**If you make any changes inside /server, you will need to restart the server**
 
 ## Postman test
 The post request already saved in Spartan Hotels folder called *Reservation*, *Reservation/cancellation*, and *Reservation/modify*
